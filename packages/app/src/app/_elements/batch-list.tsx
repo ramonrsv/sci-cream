@@ -1,7 +1,10 @@
 "use client";
 
+import { Star } from "lucide-react";
+
 import { BatchLegend } from "@/app/_elements/tables/batch-checklist";
 import { savedBatchToBatch } from "@/lib/batch/builder";
+import { LIST_ITEM_MARKER_ICON_SIZE } from "@/lib/styles/sizes";
 import type { SavedBatchJson } from "@/lib/data";
 
 /** Plural noun for a recipe count, so "1 recipe" reads right alongside "3 recipes". */
@@ -52,6 +55,15 @@ export function BatchList({
               {saved.title || "Untitled batch"}
             </span>
             <div className="flex flex-wrap items-center gap-2">
+              {saved.favourite && (
+                <Star
+                  size={LIST_ITEM_MARKER_ICON_SIZE}
+                  fill="currentColor"
+                  className="text-secondary shrink-0"
+                  aria-label="Favourite"
+                  data-testid="favourite-marker"
+                />
+              )}
               <span className="meta-tag">{saved.date}</span>
               <span className="text-secondary text-xs">
                 {recipeCountLabel(saved.recipes.length)}

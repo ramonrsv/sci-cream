@@ -23,18 +23,30 @@ export function ratingRank(rating: Rating): number {
   return RATINGS.indexOf(rating);
 }
 
-/** Marker for contexts that render text only, such as a native `<option>`. */
+/**
+ * The highest rating present, skipping unrated entries; `undefined` when none carries one. Reads
+ * off `RATINGS` being worst-first, so the last one that appears is the best.
+ */
+export function bestRating(ratings: Iterable<Rating | null | undefined>): Rating | undefined {
+  const present = new Set(ratings);
+  return RATINGS.findLast((rating) => present.has(rating));
+}
+
+/**
+ * Marker for text-only contexts such as a native `<option>`. One character each, since a doubled
+ * glyph leaves a gap no CSS reaches there, and each has a lucide twin so icon and text agree.
+ */
 export const RATING_GLYPHS: Record<Rating, string> = {
   [Rating.Bad]: "👎",
   [Rating.Good]: "👍",
-  [Rating.Great]: "👍👍",
+  [Rating.Great]: "🏆",
 };
 
-/** Human-readable name, used for tooltips and accessible labels. */
+/** Human-readable name for tooltips and accessible labels. Names the verdict, not the mark. */
 export const RATING_LABELS: Record<Rating, string> = {
-  [Rating.Bad]: "Thumbs down",
-  [Rating.Good]: "Thumbs up",
-  [Rating.Great]: "Two thumbs up",
+  [Rating.Bad]: "Bad",
+  [Rating.Good]: "Good",
+  [Rating.Great]: "Great",
 };
 
 /** True for a value that is exactly one of the ratings; guards the server-action boundary. */

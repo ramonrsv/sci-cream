@@ -100,7 +100,10 @@ function versionOptions(versions: RecipeSnapshot[]): SelectOption<number>[] {
     verifyDefined(versionName, "a version choice must offer identifiable versions");
     return {
       value: order,
-      label: formatVersionOption(String(versionName), { isLatest: order === 0 }),
+      label: formatVersionOption(String(versionName), {
+        isLatest: order === 0,
+        ...(entry.rating === undefined ? {} : { rating: entry.rating }),
+      }),
     };
   });
 }

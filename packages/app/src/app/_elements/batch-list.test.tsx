@@ -80,4 +80,14 @@ describe("BatchList", () => {
 
     expect(screen.getByTestId("version-badge-v2.1")).toBeInTheDocument();
   });
+
+  it("marks a favourited batch, so the star shows without opening it", () => {
+    render(<BatchList batches={[{ ...SAVED, favourite: true }]} onLoad={() => undefined} />);
+    expect(screen.getByTestId("favourite-marker")).toBeInTheDocument();
+  });
+
+  it("leaves an unstarred batch unmarked", () => {
+    render(<BatchList batches={[SAVED]} onLoad={() => undefined} />);
+    expect(screen.queryByTestId("favourite-marker")).not.toBeInTheDocument();
+  });
 });

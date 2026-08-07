@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 
+import { RATING_GLYPHS, Rating } from "@/lib/rating";
 import {
   displayVersionName,
   formatVersionOption,
@@ -113,5 +114,28 @@ describe("formatVersionOption", () => {
 
   it("ignores an empty label rather than trailing a separator", () => {
     expect(formatVersionOption("3", { isLatest: false, label: "" })).toBe("v3");
+  });
+
+  it("appends the rating glyph when the version is rated", () => {
+    expect(formatVersionOption("3", { isLatest: false, rating: Rating.Great })).toBe(
+      `v3  ·  ${RATING_GLYPHS[Rating.Great]}`,
+    );
+  });
+
+  it("omits the rating entirely when the version is unrated", () => {
+    expect(formatVersionOption("3", { isLatest: false })).toBe("v3");
+  });
+
+  it("orders label, rating, then the latest marker", () => {
+    expect(
+      formatVersionOption("2.1", { isLatest: true, label: "Best yet", rating: Rating.Good }),
+    ).toBe(`v2.1  ·  Best yet  ·  ${RATING_GLYPHS[Rating.Good]} · latest`);
+  });
+
+  // Bad is -1; a falsy-vs-undefined slip here would silently drop the one rating worth acting on.
+  it("shows a thumbs-down rating rather than treating it as absent", () => {
+    expect(formatVersionOption("1", { isLatest: false, rating: Rating.Bad })).toBe(
+      `v1  ·  ${RATING_GLYPHS[Rating.Bad]}`,
+    );
   });
 });

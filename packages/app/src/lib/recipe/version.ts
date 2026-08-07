@@ -3,10 +3,12 @@
  *
  * A recipe's `version` integer stays the internal per-recipe sequence (identity, sort, lookup key).
  * Opting in adds a free-form `versionName` (`3.1`, `3-a`, `4.2-b`) that gets displayed instead;
- * recipes that never opt in leave it null and keep showing the integer, so the default is unchanged.
+ * recipes that never opt in leave it null and keep showing the integer, so the default is unchanged
  *
  * No WASM or server dependencies, so both the `"use server"` data layer and client can import it.
  */
+
+import { RATING_GLYPHS, type Rating } from "@/lib/rating";
 
 /** Minimal shape shared by DB rows and wire JSON for version-name resolution. */
 export type VersionNameSource = { version: number; versionName?: string | null };
@@ -33,15 +35,18 @@ export function displayVersionName(v: VersionNameSource): string {
 }
 
 /**
- * One option's text in a version dropdown: `v3.1`, plus the version's free-text `label` and a
- * `latest` marker where they apply. Shared so every version picker reads alike.
+ * One option's text in a version dropdown: `v3.1`, plus the version's free-text `label`, its
+ * rating, and a `latest` marker where they apply. Shared so every version picker reads alike.
+ *
+ * A native `<option>` renders text only, hence the glyph rather than the icons the toggle uses.
  */
 export function formatVersionOption(
   versionName: string,
-  { isLatest, label }: { isLatest: boolean; label?: string },
+  { isLatest, label, rating }: { isLatest: boolean; label?: string; rating?: Rating },
 ): string {
   const parts = [`v${versionName}`];
   if (label) parts.push(label);
+  if (rating !== undefined) parts.push(RATING_GLYPHS[rating]);
   return parts.join("  ·  ") + (isLatest ? " · latest" : "");
 }
 

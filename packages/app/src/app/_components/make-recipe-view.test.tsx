@@ -17,6 +17,7 @@ import {
   createUserBatch,
   updateUserBatch,
   deleteUserBatch,
+  setUserBatchFavourite,
   type SavedBatchJson,
   type SavedRecipeJson,
 } from "@/lib/data";
@@ -35,6 +36,7 @@ vi.mock("@/lib/data", () => ({
   createUserBatch: vi.fn(),
   updateUserBatch: vi.fn(),
   deleteUserBatch: vi.fn(),
+  setUserBatchFavourite: vi.fn(),
 }));
 
 /** Point `useSession` at a signed-in user, or `null` for signed-out (the default). */
@@ -823,5 +825,97 @@ describe("MakeRecipeView — adding a saved recipe", () => {
 
     expect(screen.queryByRole("combobox", { name: VERSION_SELECT })).not.toBeInTheDocument();
     expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toHaveTextContent(/^100$/);
+  });
+});
+
+describe("MakeRecipeView — batch quality signals", () => {
+  const PLAIN: SavedBatchJson = {
+    id: 1,
+    title: "Plain batch",
+    date: "2026-07-01",
+    recipes: [{ name: "Loaded", rows: [["Whole Milk", 500]] }],
+    createdAt: "",
+    updatedAt: "",
+  };
+
+  const STARRED: SavedBatchJson = { ...PLAIN, id: 2, title: "Starred batch", favourite: true };
+
+  /** Render signed-in with both batches listed. */
+  async function renderBoth() {
+    setSessionEmail("owner@example.com");
+    setSavedBatches([PLAIN, STARRED]);
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+  }
+
+  it("lists both batches while the favourites filter is off", async () => {
+    await renderBoth();
+
+    expect(screen.getByTestId("batch-open-1")).toBeInTheDocument();
+    expect(screen.getByTestId("batch-open-2")).toBeInTheDocument();
+  });
+
+  it("narrows to the starred batch when the filter is switched on", async () => {
+    await renderBoth();
+
+    fireEvent.click(screen.getByTestId("favourites-filter"));
+
+    expect(screen.queryByTestId("batch-open-1")).not.toBeInTheDocument();
+    expect(screen.getByTestId("batch-open-2")).toBeInTheDocument();
+  });
+
+  it("explains an empty list caused by the filter rather than by the search", async () => {
+    setSessionEmail("owner@example.com");
+    setSavedBatches([PLAIN]);
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+
+    fireEvent.click(screen.getByTestId("favourites-filter"));
+
+    expect(screen.getByTestId("batch-list-empty")).toHaveTextContent(
+      "No favourite batches. Star one to find it here.",
+    );
+  });
+
+  it("offers no star until a saved batch is loaded into the editor", async () => {
+    await renderBoth();
+
+    expect(screen.queryByTestId("favourite-toggle")).not.toBeInTheDocument();
+  });
+
+  it("shows the loaded batch's star state", async () => {
+    await renderBoth();
+
+    fireEvent.click(screen.getByTestId("batch-open-2"));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("favourite-toggle")).toHaveAttribute("aria-pressed", "true"),
+    );
+  });
+
+  it("stars the loaded batch through its own action, never through a save", async () => {
+    await renderBoth();
+
+    fireEvent.click(screen.getByTestId("batch-open-1"));
+    await waitFor(() => expect(screen.getByTestId("favourite-toggle")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("favourite-toggle"));
+
+    await waitFor(() =>
+      expect(setUserBatchFavourite).toHaveBeenCalledWith("owner@example.com", 1, true),
+    );
+    expect(updateUserBatch).not.toHaveBeenCalled();
+    expect(createUserBatch).not.toHaveBeenCalled();
+  });
+
+  it("clears the star on an already-starred batch", async () => {
+    await renderBoth();
+
+    fireEvent.click(screen.getByTestId("batch-open-2"));
+    await waitFor(() => expect(screen.getByTestId("favourite-toggle")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("favourite-toggle"));
+
+    await waitFor(() =>
+      expect(setUserBatchFavourite).toHaveBeenCalledWith("owner@example.com", 2, false),
+    );
   });
 });

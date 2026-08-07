@@ -9,13 +9,14 @@
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
 - [ ] Add a leading emoji to some selects to make their purpose clearer; also add title/labels.
-- [ ] Add a recipe version quality signal and/or favorites; one/two thumbs up, thumb down, star?
 - [ ] `RecipeEditor` does not update the ingredient name/version if the original is deleted.
 - [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
 - [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
 - [ ] In the `PropertiesChart` tooltip, move the numeric value to the left so it does not overflow.
 - [ ] Make the reference and target ticks in `PropertiesBarChart` more visible. Also in watchers?
+- [ ] Move the remaining inline icon `size={…}` literals (12, 13, 14 in `batch-builder`,
+      `batch-checklist`, `list-detail-shell`, `watcher-issues`) into named `styles/sizes` constants.
 
 ## Up Next
 
@@ -24,6 +25,8 @@
       CSS-driven so nothing remounts on resize; opening a batch on mobile switches to the editor.
 - [ ] Add support for showing recipe diffs (ingredient, quantities) between versions of a recipe
       in `/recipes`. Comparing ingredient lines may be tricky, similar to a git diff.
+- [ ] Add support for starring built-in recipes, stored per user. They are embedded crate data
+      rather than `recipes` rows, so it needs a join table keyed by the entry id, not a column.
 - [ ] Add support for comments in blog posts, maybe also in documentation posts.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
@@ -112,6 +115,7 @@
 
 ## Completed
 
+- [x] Add a recipe version quality signal and/or favorites; one/two thumbs up, thumb down, star?
 - [x] Add a reset option to the key selection when `KeySelect.Custom`, to reset to default custom.
 - [x] Trigger `Deploy` from `workflow_run` on App CI rather than `push`, so `verify` stops holding a
       runner idle for the ~15 min it takes App CI to finish. Needs `event.workflow_run.head_sha`

@@ -8,6 +8,7 @@ import type {
   SavedRecipeJson,
   SavedRecipeVersionJson,
 } from "@/lib/data";
+import type { Rating } from "@/lib/rating";
 import { getRecipeStoresFromStorage, makeRecipeId, parseRecipeString } from "@/lib/recipe/recipe";
 import { type CategoryColor, categoryColorFromName, categoryColorName } from "@/lib/styles/colors";
 
@@ -34,6 +35,11 @@ export interface RecipeSnapshot {
   rows: LightRecipe;
   /** The saved version this came from. Absent for a calculator slot, which has none. */
   version?: BatchRecipeVersion;
+  /**
+   * The source version's rating, for the picker label. Kept out of the persisted `version` so the
+   * batch reads it live rather than freezing a verdict that may since have changed.
+   */
+  rating?: Rating;
 }
 
 /**
@@ -83,6 +89,7 @@ export function readSavedSources(savedRecipes: readonly SavedRecipeJson[]): Adda
         .map((version) => ({
           name: recipe.name,
           rows: makeBatchRows(version.recipe),
+          ...(version.rating === undefined ? {} : { rating: version.rating }),
           version: {
             ref: { recipeId: recipe.id, versionNumber: version.version },
             ...(hasVersionName(version) ? { name: version.versionName } : {}),

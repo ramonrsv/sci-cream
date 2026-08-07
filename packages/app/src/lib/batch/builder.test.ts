@@ -16,6 +16,7 @@ import {
 } from "./builder";
 import { type Batch, displayVersion } from "@/lib/batch/batch";
 import type { SavedBatchJson, SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
+import { Rating } from "@/lib/rating";
 import { CategoryColor } from "@/lib/styles/colors";
 
 /** A saved version carrying one row, enough to be a usable batch source. */
@@ -103,6 +104,39 @@ describe("readSavedSources — one picker line per recipe", () => {
 
     expect(versionNumbers(sources[0].versions)).toEqual([2, 1]);
     expect(sources[0]?.versions.map((v) => v.version?.name)).toEqual(["2.1", undefined]);
+  });
+});
+
+describe("readSavedSources — version ratings for the picker", () => {
+  /** A saved recipe whose versions carry the given ratings, indexed from version 1. */
+  function ratedRecipe(ratings: (Rating | undefined)[]): SavedRecipeJson {
+    return {
+      id: 1,
+      name: "My Gelato",
+      versions: ratings.map((rating, idx) => ({
+        ...version(idx + 1),
+        ...(rating === undefined ? {} : { rating }),
+      })),
+    };
+  }
+
+  it("carries each version's rating onto its snapshot, newest first", () => {
+    const sources = readSavedSources([ratedRecipe([Rating.Bad, Rating.Great])]);
+
+    expect(sources[0].versions.map((v) => v.rating)).toEqual([Rating.Great, Rating.Bad]);
+  });
+
+  it("leaves an unrated version's snapshot without a rating", () => {
+    const sources = readSavedSources([ratedRecipe([undefined])]);
+
+    expect(sources[0].versions[0]).not.toHaveProperty("rating");
+  });
+
+  // The rating is live opinion; `version` is the part frozen into `batch_recipes`, so it stays out.
+  it("keeps the rating out of the persisted version snapshot", () => {
+    const sources = readSavedSources([ratedRecipe([Rating.Great])]);
+
+    expect(sources[0].versions[0].version).not.toHaveProperty("rating");
   });
 });
 
@@ -292,6 +326,23 @@ describe("batchToInput / selectionFromSavedBatch — database round-trip", () =>
         { name: "Sorbet", rows: [["Sugar", 100]] },
       ],
     });
+  });
+
+  // A rating is live display data, so saving must not carry it into the batch's stored rows.
+  it("drops a source version's rating rather than persisting it with the batch", () => {
+    const rated: Batch = {
+      date: "2026-07-20",
+      recipes: [
+        {
+          name: "Vanilla",
+          rows: [["Whole Milk", 600]],
+          version: { ref: { recipeId: 5, versionNumber: 2 }, hasSiblings: true },
+          rating: Rating.Great,
+        } as Batch["recipes"][number],
+      ],
+    };
+
+    expect(batchToInput(rated).recipes[0]).not.toHaveProperty("rating");
   });
 
   it("seeds an inline selection from a saved batch, marking it for update in place", () => {

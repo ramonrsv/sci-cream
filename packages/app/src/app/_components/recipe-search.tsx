@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import { Star } from "lucide-react";
 import {
   allRecipeEntries,
   type RecipeEntryJson,
@@ -12,10 +13,20 @@ import {
 import { makeRecipeId, type Recipe } from "@/lib/recipe/recipe";
 import { displayVersionName, formatVersionOption, validateVersionName } from "@/lib/recipe/version";
 import { useResetOnChange } from "@/lib/hooks/use-reset-on-change";
+import { FavouriteToggle } from "@/app/_elements/favourite-toggle";
+import { FavouritesFilter, useFavouritesFilterState } from "@/app/_elements/favourites-filter";
+import { RatingIcon, RatingToggle } from "@/app/_elements/rating-toggle";
+import { RATING_LABELS, bestRating } from "@/lib/rating";
+import {
+  RatingFilter,
+  RatingFilterSelect,
+  ratingMatchesFilter,
+  useRatingFilterState,
+} from "@/app/_elements/selects/rating-filter-select";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
-import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
+import { DETAIL_PANEL_ACTION_ICON_SIZE, LIST_ITEM_MARKER_ICON_SIZE } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm";
 import { STATE_VAL } from "@/lib/util";
@@ -35,6 +46,9 @@ import {
 } from "@/app/_components/detail-panel";
 import type { RecipeVersionMeta, SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
 
+/** Wrapper id, and the root of the persisted keys for this search's filter state. */
+const RECIPE_SEARCH_ID = "recipe-search";
+
 /** Sources of recipes; re-export of {@link EntitySource} for backwards compatibility */
 export const RecipeSource = EntitySource;
 export type RecipeSource = EntitySource;
@@ -51,6 +65,8 @@ export type GroupedRecipe = {
   recipeId?: number;
   name: string;
   author?: string;
+  /** Starred by its owner; only ever set for saved recipes, since built-ins are not owned */
+  favourite?: boolean;
   versions: SavedRecipeVersionJson[];
 };
 
@@ -90,8 +106,22 @@ export function adaptSavedToGrouped(entry: SavedRecipeJson): GroupedRecipe {
     id: `saved-${entry.id}`,
     recipeId: entry.id,
     name: entry.name,
+    ...(entry.favourite && { favourite: true }),
     versions: entry.versions,
   };
+}
+
+/**
+ * True when a recipe passes the filters: starred if `favouritesOnly`, and holding a version that
+ * satisfies `ratingFilter`. Any version counts, since the list shows one item per recipe.
+ */
+export function recipeMatchesFilters(
+  entry: GroupedRecipe,
+  { favouritesOnly, ratingFilter }: { favouritesOnly: boolean; ratingFilter: RatingFilter },
+): boolean {
+  if (favouritesOnly && !entry.favourite) return false;
+  if (ratingFilter === RatingFilter.Any) return true;
+  return entry.versions.some((v) => ratingMatchesFilter(v.rating, ratingFilter));
 }
 
 /** Props for {@link RecipeSearch} */
@@ -128,6 +158,8 @@ export interface RecipeSearchProps {
     version: SavedRecipeVersionJson,
     meta: RecipeVersionMeta,
   ) => void | Promise<void>;
+  /** Called when a recipe's star is toggled; parent persists and refreshes `savedRecipes`. */
+  onToggleSavedRecipeFavourite?: (entry: GroupedRecipe, favourite: boolean) => void | Promise<void>;
 }
 
 /** Props for {@link RecipeDetailPanel} */
@@ -138,6 +170,7 @@ interface RecipeDetailPanelProps extends Pick<
   | "onDeleteSavedRecipe"
   | "onDeleteSavedRecipeVersion"
   | "onUpdateSavedRecipeVersion"
+  | "onToggleSavedRecipeFavourite"
 > {
   entry: TaggedGroupedRecipe;
 }
@@ -190,6 +223,7 @@ function RecipeDetailPanel({
   onDeleteSavedRecipe,
   onDeleteSavedRecipeVersion,
   onUpdateSavedRecipeVersion,
+  onToggleSavedRecipeFavourite,
 }: RecipeDetailPanelProps) {
   const { wasmBridge, updateIdx: wasmUpdateIdx } = useSeededWasmResources()[STATE_VAL];
 
@@ -210,6 +244,7 @@ function RecipeDetailPanel({
       label: formatVersionOption(displayVersionName(v), {
         isLatest: idx === latestIdx,
         ...(v.label === undefined ? {} : { label: v.label }),
+        ...(v.rating === undefined ? {} : { rating: v.rating }),
       }),
     }))
     .reverse();
@@ -230,6 +265,7 @@ function RecipeDetailPanel({
   useFreeOnReplace(recipe.mixProperties);
 
   const deleteRecipeEnabled = isSaved && !!onDeleteSavedRecipe;
+  const favouriteToggleEnabled = isSaved && !!onToggleSavedRecipeFavourite;
   const modVerEnabled = isSaved && !!selectedVersion;
   const deleteVersionEnabled = modVerEnabled && hasMultipleVersions && !!onDeleteSavedRecipeVersion;
   const editVersionEnabled = modVerEnabled && !!onUpdateSavedRecipeVersion;
@@ -260,6 +296,13 @@ function RecipeDetailPanel({
           </>
         }
       >
+        {favouriteToggleEnabled && (
+          <FavouriteToggle
+            favourite={!!entry.favourite}
+            onChange={(next) => onToggleSavedRecipeFavourite(entry, next)}
+            label="recipe"
+          />
+        )}
         {deleteRecipeEnabled && (
           <DeleteAction
             onDelete={() => onDeleteSavedRecipe(entry)}
@@ -310,6 +353,14 @@ function RecipeDetailPanel({
               {/* Action buttons sit flush-right, fixed-size (`shrink-0`); only the select (which
                   can truncate) gives up space when the two don't both fit; no overflow occurs. */}
               <div className="ml-auto flex shrink-0 items-center gap-1">
+                {editVersionEnabled && (
+                  <RatingToggle
+                    rating={selectedVersion.rating}
+                    onChange={(rating) =>
+                      onUpdateSavedRecipeVersion(entry, selectedVersion, { rating })
+                    }
+                  />
+                )}
                 {editVersionEnabled && (
                   <EditVersionDetailsAction
                     // Remount on version change so a still-open popup can't save over the wrong one
@@ -375,26 +426,71 @@ export function RecipeSearch({
   onDeleteSavedRecipe,
   onDeleteSavedRecipeVersion,
   onUpdateSavedRecipeVersion,
+  onToggleSavedRecipeFavourite,
 }: RecipeSearchProps) {
   const embeddedGrouped = useMemo(() => allRecipeEntries.map(adaptEmbeddedToGrouped), []);
   const savedGrouped = useMemo(() => savedRecipes.map(adaptSavedToGrouped), [savedRecipes]);
 
+  const favouritesFilterState = useFavouritesFilterState(RECIPE_SEARCH_ID);
+  const [favouritesOnly] = favouritesFilterState;
+  const ratingFilterState = useRatingFilterState(RECIPE_SEARCH_ID);
+  const [ratingFilter] = ratingFilterState;
+
+  const matchesFilters = useCallback(
+    (entry: GroupedRecipe) => recipeMatchesFilters(entry, { favouritesOnly, ratingFilter }),
+    [favouritesOnly, ratingFilter],
+  );
+
+  const toolbarExtra = (
+    <div className="flex items-center gap-1">
+      <FavouritesFilter favouritesFilterState={favouritesFilterState} />
+      <RatingFilterSelect ratingFilterState={ratingFilterState} />
+    </div>
+  );
+
   return (
     <EntitySearch<GroupedRecipe>
-      id="recipe-search"
+      id={RECIPE_SEARCH_ID}
       embeddedEntries={embeddedGrouped}
       savedEntries={savedGrouped}
       getId={(e) => e.id}
       getDisplayName={(e) => e.name}
       matchesQuery={recipeMatchesQuery}
+      matchesFilters={matchesFilters}
+      toolbarExtra={toolbarExtra}
       searchPlaceholder="Search by name, author, or ingredient…"
       emptyDetailText="Select a recipe to see details"
       emptyResultsText="No recipes found."
-      renderListItemSubtitle={(entry) =>
-        entry.author && (
-          <span className="text-secondary block truncate text-xs">{entry.author}</span>
-        )
-      }
+      renderListItemSubtitle={(entry) => {
+        const best = bestRating(entry.versions.map((v) => v.rating));
+        if (!entry.favourite && best === undefined && !entry.author) return null;
+        return (
+          <span className="flex items-center gap-1">
+            {entry.favourite && (
+              <Star
+                size={LIST_ITEM_MARKER_ICON_SIZE}
+                fill="currentColor"
+                className="text-secondary shrink-0"
+                aria-label="Favourite"
+                data-testid="favourite-marker"
+              />
+            )}
+            {best !== undefined && (
+              <span
+                className="text-secondary flex shrink-0"
+                aria-label={`Best rating: ${RATING_LABELS[best]}`}
+                data-rating={best}
+                data-testid="rating-marker"
+              >
+                <RatingIcon rating={best} size={LIST_ITEM_MARKER_ICON_SIZE} filled />
+              </span>
+            )}
+            {entry.author && (
+              <span className="text-secondary block truncate text-xs">{entry.author}</span>
+            )}
+          </span>
+        );
+      }}
       renderDetailPanel={(entry) => (
         <RecipeDetailPanel
           entry={entry}
@@ -403,6 +499,7 @@ export function RecipeSearch({
           onDeleteSavedRecipe={onDeleteSavedRecipe}
           onDeleteSavedRecipeVersion={onDeleteSavedRecipeVersion}
           onUpdateSavedRecipeVersion={onUpdateSavedRecipeVersion}
+          onToggleSavedRecipeFavourite={onToggleSavedRecipeFavourite}
         />
       )}
     />

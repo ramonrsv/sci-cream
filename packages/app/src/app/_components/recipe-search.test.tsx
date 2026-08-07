@@ -14,6 +14,7 @@ import {
   type GroupedRecipe,
 } from "./recipe-search";
 import type { SavedRecipeJson } from "@/lib/data";
+import { RATING_GLYPHS, Rating } from "@/lib/rating";
 import {
   getSelectOptionLabelsByLabel,
   getSelectedOptionLabel,
@@ -21,6 +22,10 @@ import {
   selectOptionByLabel,
 } from "@/__tests__/unit/select";
 import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
+import {
+  RATING_FILTER_SHORT_LABELS,
+  RatingFilter,
+} from "@/app/_elements/selects/rating-filter-select";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { setQtyToggle } from "@/__tests__/unit/util";
 
@@ -831,6 +836,163 @@ describe("RecipeSearch", () => {
       // Properties table re-rendered (its "Property" header is present), proving a live object.
       const detailPanel = document.querySelector(".search-detail-panel") as HTMLElement;
       expect(within(detailPanel).getByText("Property")).toBeInTheDocument();
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Quality signals: the favourite star and the version rating
+  // -------------------------------------------------------------------------
+
+  describe("quality signals", () => {
+    const starred: SavedRecipeJson = {
+      id: 1,
+      name: "Starred Gelato",
+      favourite: true,
+      versions: [
+        { version: 1, recipe: [["Whole Milk", 300]], rating: Rating.Bad, createdAt: "" },
+        { version: 2, recipe: [["Whole Milk", 320]], rating: Rating.Great, createdAt: "" },
+      ],
+    };
+
+    const plain: SavedRecipeJson = {
+      id: 2,
+      name: "Plain Sorbet",
+      versions: [{ version: 1, recipe: [["Water", 300]], createdAt: "" }],
+    };
+
+    const bothSaved = [starred, plain];
+
+    /** The names of the entries currently listed, in list order. */
+    function listedNames(): string[] {
+      return [starred.name, plain.name, "Standard Base"].filter((name) =>
+        screen.queryByRole("button", { name: new RegExp(name) }),
+      );
+    }
+
+    describe("favourite star", () => {
+      it("marks a favourited entry in the list", () => {
+        render(<RecipeSearch savedRecipes={bothSaved} />);
+        expect(screen.getAllByTestId("favourite-marker")).toHaveLength(1);
+      });
+
+      it("shows the star toggle on a saved entry when the handler is provided", () => {
+        render(<RecipeSearch savedRecipes={bothSaved} onToggleSavedRecipeFavourite={vi.fn()} />);
+        fireEvent.click(screen.getByRole("button", { name: /Starred Gelato/ }));
+        expect(screen.getByTestId("favourite-toggle")).toHaveAttribute("aria-pressed", "true");
+      });
+
+      it("does not show the star toggle on a built-in entry", () => {
+        render(<RecipeSearch onToggleSavedRecipeFavourite={vi.fn()} />);
+        fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+        expect(screen.queryByTestId("favourite-toggle")).not.toBeInTheDocument();
+      });
+
+      it("asks to clear the star on an already-favourited recipe", () => {
+        const onToggle = vi.fn();
+        render(<RecipeSearch savedRecipes={bothSaved} onToggleSavedRecipeFavourite={onToggle} />);
+        fireEvent.click(screen.getByRole("button", { name: /Starred Gelato/ }));
+        fireEvent.click(screen.getByTestId("favourite-toggle"));
+        expect(onToggle).toHaveBeenCalledWith(expect.objectContaining({ recipeId: 1 }), false);
+      });
+    });
+
+    describe("favourites filter", () => {
+      it("lists both saved recipes and the built-ins while off", () => {
+        render(<RecipeSearch savedRecipes={bothSaved} />);
+        expect(listedNames()).toEqual(["Starred Gelato", "Plain Sorbet", "Standard Base"]);
+      });
+
+      it("narrows to the favourited recipe when switched on", () => {
+        render(<RecipeSearch savedRecipes={bothSaved} />);
+        fireEvent.click(screen.getByTestId("favourites-filter"));
+        expect(listedNames()).toEqual(["Starred Gelato"]);
+      });
+
+      it("restores the full list when switched back off", () => {
+        render(<RecipeSearch savedRecipes={bothSaved} />);
+        fireEvent.click(screen.getByTestId("favourites-filter"));
+        fireEvent.click(screen.getByTestId("favourites-filter"));
+        expect(listedNames()).toEqual(["Starred Gelato", "Plain Sorbet", "Standard Base"]);
+      });
+    });
+
+    describe("rating filter", () => {
+      /** Choose a filter by its short label, which carries a glyph alongside the word. */
+      const setRatingFilter = (filter: RatingFilter) =>
+        selectOptionByLabel("Filter by rating", RATING_FILTER_SHORT_LABELS[filter]);
+
+      it("keeps a recipe whose best version clears the bar, not just its latest", async () => {
+        render(<RecipeSearch savedRecipes={bothSaved} />);
+        await setRatingFilter(RatingFilter.Great);
+        expect(listedNames()).toEqual(["Starred Gelato"]);
+      });
+
+      // The same recipe holds a Bad v1 and a Great v2, so "any version matches" must admit both.
+      it("keeps a recipe matched only by an older, worse-rated version", async () => {
+        render(<RecipeSearch savedRecipes={bothSaved} />);
+        await setRatingFilter(RatingFilter.Bad);
+        expect(listedNames()).toEqual(["Starred Gelato"]);
+      });
+
+      it("drops every unrated recipe under Rated", async () => {
+        render(<RecipeSearch savedRecipes={bothSaved} />);
+        await setRatingFilter(RatingFilter.Rated);
+        expect(listedNames()).toEqual(["Starred Gelato"]);
+      });
+
+      it("lists everything again under Any", async () => {
+        render(<RecipeSearch savedRecipes={bothSaved} />);
+        await setRatingFilter(RatingFilter.Great);
+        await setRatingFilter(RatingFilter.Any);
+        expect(listedNames()).toEqual(["Starred Gelato", "Plain Sorbet", "Standard Base"]);
+      });
+    });
+
+    describe("rating toggle", () => {
+      it("shows the selected version's rating", () => {
+        render(<RecipeSearch savedRecipes={bothSaved} onUpdateSavedRecipeVersion={vi.fn()} />);
+        fireEvent.click(screen.getByRole("button", { name: /Starred Gelato/ }));
+        // The latest version (v2, Great) is selected by default.
+        expect(screen.getByTestId("rating-toggle")).toHaveAttribute("data-rating", Rating.Great);
+      });
+
+      it("saves a new rating against the selected version", async () => {
+        const onUpdate = vi.fn();
+        render(<RecipeSearch savedRecipes={bothSaved} onUpdateSavedRecipeVersion={onUpdate} />);
+        fireEvent.click(screen.getByRole("button", { name: /Starred Gelato/ }));
+        fireEvent.click(screen.getByTestId("rating-trigger"));
+        fireEvent.click(await screen.findByTestId("rating-bad"));
+        expect(onUpdate).toHaveBeenCalledWith(
+          expect.objectContaining({ recipeId: 1 }),
+          expect.objectContaining({ version: 2 }),
+          { rating: Rating.Bad },
+        );
+      });
+
+      it("clears the rating when the active choice is made again", async () => {
+        const onUpdate = vi.fn();
+        render(<RecipeSearch savedRecipes={bothSaved} onUpdateSavedRecipeVersion={onUpdate} />);
+        fireEvent.click(screen.getByRole("button", { name: /Starred Gelato/ }));
+        fireEvent.click(screen.getByTestId("rating-trigger"));
+        fireEvent.click(await screen.findByTestId("rating-great"));
+        expect(onUpdate).toHaveBeenCalledWith(expect.anything(), expect.anything(), {
+          rating: null,
+        });
+      });
+
+      it("does not show the rating toggle on a built-in entry", () => {
+        render(<RecipeSearch onUpdateSavedRecipeVersion={vi.fn()} />);
+        fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+        expect(screen.queryByTestId("rating-toggle")).not.toBeInTheDocument();
+      });
+
+      it("labels the rated versions in the version dropdown", async () => {
+        render(<RecipeSearch savedRecipes={bothSaved} onUpdateSavedRecipeVersion={vi.fn()} />);
+        fireEvent.click(screen.getByRole("button", { name: /Starred Gelato/ }));
+        const labels = await getSelectOptionLabelsByLabel("Recipe version");
+        expect(labels.some((l) => l.includes(RATING_GLYPHS[Rating.Great]))).toBe(true);
+        expect(labels.some((l) => l.includes(RATING_GLYPHS[Rating.Bad]))).toBe(true);
+      });
     });
   });
 });

@@ -21,10 +21,12 @@ export function getTaggedEntryKey<E>(entry: Tagged<E>, getId: (e: E) => string) 
 }
 
 /**
- * Merge, tag, and filter entries by source and a free-text query.
+ * Merge, tag, and filter entries by source, a free-text query, and any consumer-specific filters.
  *
  * `matchesQuery` is invoked with a lowercased query and is expected to do case-insensitive matching
  * against whatever fields are meaningful for the entity (e.g. name, author, category).
+ * `matchesFilters`, where given, narrows further on entity-specific state the shell knows nothing
+ * about (e.g. a recipe's favourite or rating), and applies whether or not a query is typed.
  */
 export function filterTaggedEntries<E>(
   embeddedEntries: E[],
@@ -32,13 +34,15 @@ export function filterTaggedEntries<E>(
   source: EntitySource,
   query: string,
   matchesQuery: (e: E, q: string) => boolean,
+  matchesFilters?: (e: Tagged<E>) => boolean,
 ): Tagged<E>[] {
   const all: Tagged<E>[] = [
     ...embeddedEntries.map((e): Tagged<E> => ({ ...e, _source: EntitySource.Embedded })),
     ...savedEntries.map((e): Tagged<E> => ({ ...e, _source: EntitySource.Saved })),
   ];
 
-  const pool = source === EntitySource.All ? all : all.filter((e) => e._source === source);
+  const bySource = source === EntitySource.All ? all : all.filter((e) => e._source === source);
+  const pool = matchesFilters ? bySource.filter((e) => matchesFilters(e)) : bySource;
 
   if (!query.trim()) return pool;
   const q = query.toLowerCase();
@@ -57,6 +61,10 @@ export interface EntitySearchProps<E> {
   getDisplayName?: (e: E) => string;
   /** Case-insensitive query match predicate; `q` is already lowercased */
   matchesQuery: (e: E, q: string) => boolean;
+  /** Extra predicate for filters the shell does not model; pair with {@link toolbarExtra} */
+  matchesFilters?: (e: Tagged<E>) => boolean;
+  /** Optional controls rendered left of the source tabs, for filters the consumer owns */
+  toolbarExtra?: ReactNode;
   /** Optional placeholder text for the search input */
   searchPlaceholder?: string;
   /** Optional text shown in the right panel when no entry is selected */
@@ -89,6 +97,8 @@ export function EntitySearch<E>({
   getId,
   getDisplayName = getId,
   matchesQuery,
+  matchesFilters,
+  toolbarExtra,
   searchPlaceholder = "Search…",
   emptyDetailText = "Select an entry to see details",
   emptyResultsText = "No entries found.",
@@ -105,8 +115,16 @@ export function EntitySearch<E>({
   const [selectedEntryKey, setSelectedEntryKey] = useState<string | null>(null);
 
   const filtered = useMemo(
-    () => filterTaggedEntries(embeddedEntries, savedEntries, source, query, matchesQuery),
-    [embeddedEntries, savedEntries, source, query, matchesQuery],
+    () =>
+      filterTaggedEntries(
+        embeddedEntries,
+        savedEntries,
+        source,
+        query,
+        matchesQuery,
+        matchesFilters,
+      ),
+    [embeddedEntries, savedEntries, source, query, matchesQuery, matchesFilters],
   );
 
   const getEntryKey = (entry: Tagged<E>) => getTaggedEntryKey(entry, getId);
@@ -127,18 +145,21 @@ export function EntitySearch<E>({
     selectedEntry !== null && getEntryKey(entry) === getEntryKey(selectedEntry);
 
   const sourceFilter = (
-    <div className="flex">
-      {sourceOptions.map(({ value, label }) => (
-        <button
-          key={value}
-          onClick={() => setSource(value)}
-          className={`action-button px-2 py-0.5 text-sm ${
-            source === value ? "border-brd font-medium" : ""
-          }`}
-        >
-          {label}
-        </button>
-      ))}
+    <div className="flex items-center gap-2">
+      {toolbarExtra}
+      <div className="flex">
+        {sourceOptions.map(({ value, label }) => (
+          <button
+            key={value}
+            onClick={() => setSource(value)}
+            className={`action-button px-2 py-0.5 text-sm ${
+              source === value ? "border-brd font-medium" : ""
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 

@@ -7,6 +7,8 @@ import { FilePlus2, Trash2 } from "lucide-react";
 import { ShareBatchAction } from "@/app/_elements/batch-share-dialog";
 import { SaveBatchAction } from "@/app/_elements/batch-save-action";
 import { BatchList } from "@/app/_elements/batch-list";
+import { FavouriteToggle } from "@/app/_elements/favourite-toggle";
+import { FavouritesFilter, useFavouritesFilterState } from "@/app/_elements/favourites-filter";
 import { ListDetailShell } from "@/app/_elements/list-detail-shell";
 import { SaveStatusDot } from "@/app/_elements/save-status-dot";
 import { RecipeComments } from "@/app/_elements/recipe-detail-body";
@@ -23,7 +25,7 @@ import {
   makeBatchFromPayload,
 } from "@/lib/batch/share";
 import { type Batch, batchChecklistKey, todayIsoDate, touchChecklist } from "@/lib/batch/batch";
-import { deleteUserBatch, type SavedBatchJson } from "@/lib/data";
+import { deleteUserBatch, setUserBatchFavourite, type SavedBatchJson } from "@/lib/data";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { useSessionResources } from "@/lib/resources/session";
@@ -85,6 +87,8 @@ export function MakeRecipeView() {
     { isValid: isInlineSelection },
   );
   const [batchQuery, setBatchQuery] = useState("");
+  const favouritesFilterState = useFavouritesFilterState(STORAGE_KEYS.makeRecipeBatch);
+  const [favouritesOnly] = favouritesFilterState;
 
   /** Seed the working draft from a saved batch, binding it for update-in-place on the next save. */
   const loadBatch = (saved: SavedBatchJson) => setSelection(selectionFromSavedBatch(saved));
@@ -160,10 +164,27 @@ export function MakeRecipeView() {
     await refreshUserBatches();
   };
 
+  /** The saved batch the draft is bound to, if any; the star reads and writes its row. */
+  const boundBatch = savedBatches.find((b) => b.id === selection.savedBatchId);
+
+  /**
+   * Star or clear the star on the bound batch. Never routed through a save, which would replace the
+   * whole batch from the editor's copy and could clear a star set since it was loaded.
+   */
+  const toggleBatchFavourite = async (favourite: boolean) => {
+    verify(
+      userEmail != null && boundBatch !== undefined,
+      "toggleBatchFavourite invoked without a bound saved batch",
+    );
+    await setUserBatchFavourite(userEmail, boundBatch.id, favourite);
+    await refreshUserBatches();
+  };
+
   const filteredSavedBatches = useMemo(() => {
     const q = batchQuery.trim().toLowerCase();
-    return q === "" ? savedBatches : savedBatches.filter((b) => batchMatchesQuery(b, q));
-  }, [savedBatches, batchQuery]);
+    const starred = favouritesOnly ? savedBatches.filter((b) => b.favourite) : savedBatches;
+    return q === "" ? starred : starred.filter((b) => batchMatchesQuery(b, q));
+  }, [savedBatches, batchQuery, favouritesOnly]);
 
   // Owner and recipient derive one key from the weighing content; progress stays per device.
   const checklistKey = useMemo(() => batchChecklistKey(batch), [batch]);
@@ -255,6 +276,14 @@ export function MakeRecipeView() {
             }}
           />
           <ShareBatchAction batch={batch} />
+          {boundBatch && userEmail && (
+            <FavouriteToggle
+              favourite={!!boundBatch.favourite}
+              onChange={toggleBatchFavourite}
+              label="batch"
+              iconSize={iconSize}
+            />
+          )}
           {selection.savedBatchId !== undefined && userEmail && (
             <button
               type="button"
@@ -286,6 +315,9 @@ export function MakeRecipeView() {
         query={batchQuery}
         onQueryChange={setBatchQuery}
         searchPlaceholder="Search saved batches…"
+        toolbarRight={
+          <FavouritesFilter favouritesFilterState={favouritesFilterState} iconSize={iconSize} />
+        }
         list={
           <BatchList
             batches={filteredSavedBatches}
@@ -293,9 +325,11 @@ export function MakeRecipeView() {
             onLoad={loadBatch}
             emptyMessage={
               userEmail
-                ? batchQuery.trim() === ""
-                  ? "No saved batches yet. Save the current one to start."
-                  : "No batches match your search."
+                ? favouritesOnly && savedBatches.length > 0
+                  ? "No favourite batches. Star one to find it here."
+                  : batchQuery.trim() === ""
+                    ? "No saved batches yet. Save the current one to start."
+                    : "No batches match your search."
                 : "Sign in to save batches and load them here."
             }
           />

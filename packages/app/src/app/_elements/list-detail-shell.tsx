@@ -40,9 +40,9 @@ export function ListDetailShell({
 }: ListDetailShellProps) {
   return (
     <div id={id} className="flex flex-col gap-3">
-      {/* Search bar + optional toolbar */}
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1">
+      {/* Search bar + optional toolbar; the toolbar wraps below rather than squeezing the input */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="relative min-w-50 flex-1">
           <Search
             size={14}
             className="text-secondary pointer-events-none absolute top-1/2 left-2 -translate-y-1/2"
@@ -55,7 +55,12 @@ export function ListDetailShell({
             className="table-fillable-input w-full rounded-lg py-1 pr-2 pl-7"
           />
         </div>
-        {toolbarRight}
+        {/* `ml-auto` keeps it pinned right on the row it lands on, first or wrapped. */}
+        {toolbarRight && (
+          <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+            {toolbarRight}
+          </div>
+        )}
       </div>
 
       {/* Two-column layout */}

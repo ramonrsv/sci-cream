@@ -17,6 +17,7 @@ import { verify } from "@/lib/util";
 import {
   deleteUserRecipe,
   deleteUserRecipeVersion,
+  setUserRecipeFavourite,
   updateUserRecipeVersion,
   type RecipeVersionMeta,
   type SavedRecipeVersionJson,
@@ -98,6 +99,17 @@ export default function RecipesPage() {
     await refreshUserRecipes();
   }
 
+  /** Star or clear the star on a saved recipe, then refresh the list */
+  async function handleToggleSavedRecipeFavourite(entry: GroupedRecipe, favourite: boolean) {
+    verify(
+      userEmail && entry.recipeId !== undefined,
+      "handleToggleSavedRecipeFavourite invoked while userEmail or entry.recipeId is missing",
+    );
+
+    await setUserRecipeFavourite(userEmail, entry.recipeId, favourite);
+    await refreshUserRecipes();
+  }
+
   const slots = Array.from({ length: MAX_RECIPES }, (_, idx) => idx);
 
   return (
@@ -109,6 +121,7 @@ export default function RecipesPage() {
         onDeleteSavedRecipe={userEmail ? handleDeleteSavedRecipe : undefined}
         onDeleteSavedRecipeVersion={userEmail ? handleDeleteSavedRecipeVersion : undefined}
         onUpdateSavedRecipeVersion={userEmail ? handleUpdateSavedRecipeVersion : undefined}
+        onToggleSavedRecipeFavourite={userEmail ? handleToggleSavedRecipeFavourite : undefined}
       />
     </div>
   );
