@@ -13,9 +13,11 @@ import {
   renameUserRecipe,
   deleteUserRecipe,
   deleteUserRecipeVersion,
+  setUserRecipeFavourite,
   createUserBatch,
   fetchAllUserBatches,
   updateUserBatch,
+  setUserBatchFavourite,
   deleteUserBatch,
   IngredientTransfer,
   SavedRecipeJson,
@@ -23,6 +25,7 @@ import {
   SavedBatchJson,
 } from "@/lib/data";
 
+import { Rating } from "@/lib/rating";
 import { UserSelect, batchRecipesTable } from "@/lib/database/schema";
 import * as schema from "@/lib/database/schema";
 import { getDatabaseUrl } from "@/lib/database/util";
@@ -426,6 +429,159 @@ describe("renameUserRecipe", () => {
   });
 });
 
+describe("recipe version ratings", () => {
+  test("stores a rating and surfaces it on the fetched version", async () => {
+    const name = "Rating Round-trip Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+
+    try {
+      const updated = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        rating: Rating.Great,
+      });
+      expect(updated?.rating).toBe(Rating.Great);
+
+      const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      expect(all!.find((r) => r.name === name)?.versions[0].rating).toBe(Rating.Great);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  // Bad is -1: a falsy check anywhere on the write path would drop it and read back as unrated.
+  test("stores a thumbs-down rather than treating it as unrated", async () => {
+    const name = "Rating Negative Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+
+    try {
+      const updated = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        rating: Rating.Bad,
+      });
+      expect(updated?.rating).toBe(Rating.Bad);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("clears a rating when passed null, and omits it from the wire shape", async () => {
+    const name = "Rating Clear Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]], {
+      rating: Rating.Good,
+    });
+    expect(created).toBeDefined();
+
+    try {
+      const cleared = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        rating: null,
+      });
+      expect(cleared).toBeDefined();
+      expect(cleared).not.toHaveProperty("rating");
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("leaves an existing rating alone when the key is omitted", async () => {
+    const name = "Rating Untouched Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]], {
+      rating: Rating.Good,
+    });
+    expect(created).toBeDefined();
+
+    try {
+      const updated = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        label: "unrelated edit",
+      });
+      expect(updated?.rating).toBe(Rating.Good);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("refuses an off-scale rating instead of writing it", async () => {
+    const name = "Rating Invalid Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+
+    try {
+      // Plausible but not on the scale. The guard is what returns `undefined` rather than letting
+      // Postgres reject it as an invalid `recipe_rating` value, which would surface as a throw.
+      const result = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        rating: "Excellent" as Rating,
+      });
+      expect(result).toBeUndefined();
+
+      const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      expect(all!.find((r) => r.name === name)?.versions[0]).not.toHaveProperty("rating");
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+});
+
+describe("setUserRecipeFavourite", () => {
+  test("returns undefined for an unknown user", async () => {
+    const result = await setUserRecipeFavourite("nobody@example.com", 1, true);
+    expect(result).toBeUndefined();
+  });
+
+  test("returns undefined when the recipe is not owned by the user", async () => {
+    const result = await setUserRecipeFavourite(TEST_USER_B.email, 999_999_999, true);
+    expect(result).toBeUndefined();
+  });
+
+  test("stars and unstars a user-owned recipe round-trip", async () => {
+    const name = "Favourite Round-trip Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+
+    try {
+      const starred = await setUserRecipeFavourite(TEST_USER_B.email, created!.recipeId, true);
+      expect(starred?.favourite).toBe(true);
+
+      const afterStar = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      expect(afterStar!.find((r) => r.name === name)?.favourite).toBe(true);
+
+      const cleared = await setUserRecipeFavourite(TEST_USER_B.email, created!.recipeId, false);
+      expect(cleared?.favourite).toBe(false);
+
+      // Omitted rather than `false`, matching the other optional fields in the wire shape.
+      const afterClear = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      expect(afterClear!.find((r) => r.name === name)).not.toHaveProperty("favourite");
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("starts unstarred, so a new recipe never arrives pre-starred", async () => {
+    const name = "Favourite Default Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+
+    try {
+      const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      expect(all!.find((r) => r.name === name)).not.toHaveProperty("favourite");
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("leaves the star alone when the recipe is renamed", async () => {
+    const name = "Favourite Rename Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+
+    try {
+      await setUserRecipeFavourite(TEST_USER_B.email, created!.recipeId, true);
+      const renamed = await renameUserRecipe(TEST_USER_B.email, created!.recipeId, `${name} v2`);
+      expect(renamed?.favourite).toBe(true);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+});
+
 describe("deleteUserRecipe", () => {
   test("returns undefined for an unknown user", async () => {
     const result = await deleteUserRecipe("nobody@example.com", 1);
@@ -720,6 +876,71 @@ describe("updateUserBatch", () => {
       const found = await fetchBatchById(created!.id);
       expect(found!.recipes).toHaveLength(1);
       expect(found!.recipes[0].name).toBe("Strawberry");
+    } finally {
+      await deleteUserBatch(TEST_USER_B.email, created!.id);
+    }
+  });
+});
+
+describe("setUserBatchFavourite", () => {
+  test("returns undefined for an unknown user", async () => {
+    const result = await setUserBatchFavourite("nobody@example.com", 1, true);
+    expect(result).toBeUndefined();
+  });
+
+  test("returns undefined when the batch is not owned by the user", async () => {
+    const result = await setUserBatchFavourite(TEST_USER_B.email, 999_999_999, true);
+    expect(result).toBeUndefined();
+  });
+
+  test("stars and unstars a user-owned batch round-trip", async () => {
+    const created = await createUserBatch(TEST_USER_B.email, makeBatchInput("Favourite Batch"));
+    expect(created).toBeDefined();
+
+    try {
+      const starred = await setUserBatchFavourite(TEST_USER_B.email, created!.id, true);
+      expect(starred?.favourite).toBe(true);
+      expect((await fetchBatchById(created!.id))?.favourite).toBe(true);
+
+      const cleared = await setUserBatchFavourite(TEST_USER_B.email, created!.id, false);
+      expect(cleared?.favourite).toBe(false);
+      expect(await fetchBatchById(created!.id)).not.toHaveProperty("favourite");
+    } finally {
+      await deleteUserBatch(TEST_USER_B.email, created!.id);
+    }
+  });
+
+  test("starts unstarred, so a new batch never arrives pre-starred", async () => {
+    const created = await createUserBatch(TEST_USER_B.email, makeBatchInput("Unstarred Batch"));
+    expect(created).toBeDefined();
+
+    try {
+      expect(created).not.toHaveProperty("favourite");
+      expect(await fetchBatchById(created!.id)).not.toHaveProperty("favourite");
+    } finally {
+      await deleteUserBatch(TEST_USER_B.email, created!.id);
+    }
+  });
+
+  /**
+   * The reason the star has its own action: `updateUserBatch` replaces a batch wholesale from a
+   * client-supplied `BatchInput`. If the star travelled in that input, an editor holding a copy
+   * loaded before the star was set would clear it on the next save.
+   */
+  test("survives a full updateUserBatch, which knows nothing about the star", async () => {
+    const created = await createUserBatch(TEST_USER_B.email, makeBatchInput("Starred Then Edited"));
+    expect(created).toBeDefined();
+
+    try {
+      await setUserBatchFavourite(TEST_USER_B.email, created!.id, true);
+
+      const edited = await updateUserBatch(TEST_USER_B.email, created!.id, {
+        ...makeBatchInput("Starred Then Edited"),
+        notes: "edited after starring",
+      });
+      expect(edited?.notes).toBe("edited after starring");
+      expect(edited?.favourite).toBe(true);
+      expect((await fetchBatchById(created!.id))?.favourite).toBe(true);
     } finally {
       await deleteUserBatch(TEST_USER_B.email, created!.id);
     }

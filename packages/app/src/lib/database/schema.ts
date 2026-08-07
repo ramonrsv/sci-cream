@@ -15,6 +15,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
+import { Rating } from "@/lib/rating";
+
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
 export { SchemaCategory };
 
@@ -38,6 +40,12 @@ export type UserSelect = typeof usersTable.$inferSelect;
 
 /** PostgreSQL enum type for ingredient categories, derived from the Rust `SchemaCategory` enum. */
 export const categoryEnum = pgEnum("category", SchemaCategory);
+
+/**
+ * PostgreSQL enum type for a recorded verdict, derived from `Rating`. Domain-neutral so other
+ * tables can reuse it, and declared worst-first so Postgres's own ordering matches the scale.
+ */
+export const ratingEnum = pgEnum("rating", Rating);
 
 /** Drizzle ORM table definition for ingredients, keyed by name and user. */
 export const ingredientsTable = pgTable(
@@ -69,6 +77,7 @@ export const recipesTable = pgTable(
     user: integer()
       .notNull()
       .references(() => usersTable.id),
+    favourite: boolean().notNull().default(false),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [unique("recipes_user_name_uq").on(table.name, table.user)],
@@ -98,6 +107,7 @@ export const recipeVersionsTable = pgTable(
     versionName: text("version_name"),
     /** Grams of water evaporated during preparation; null when no evaporation was recorded */
     evaporation: real(),
+    rating: ratingEnum(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
@@ -124,6 +134,7 @@ export const batchesTable = pgTable("batches", {
   // Calendar day the batch was made, `YYYY-MM-DD` local — text, so it never shifts timezone.
   date: text().notNull(),
   notes: text(),
+  favourite: boolean().notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

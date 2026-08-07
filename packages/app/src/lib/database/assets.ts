@@ -1,6 +1,7 @@
 import type { LightRecipe } from "@workspace/sci-cream";
 
 import type { BatchInput } from "@/lib/data";
+import { Rating } from "@/lib/rating";
 import { getLightRecipe, RecipeID } from "@/__tests__/assets";
 
 /** Credentials for test user A, used in seeding and integration tests. */
@@ -62,18 +63,28 @@ export const RECIPE_EXCESS_EVAPORATION_EVAP = 500;
 /** Shape of a recipe in the seed/test asset set: one identity with one or more versions */
 export type SeedRecipeAsset = {
   name: string;
-  versions: { recipe: LightRecipe; comments?: string; label?: string; evaporation?: number }[];
+  /** Starred; seeded so the favourites filter has both matching and non-matching rows */
+  favourite?: boolean;
+  versions: {
+    recipe: LightRecipe;
+    comments?: string;
+    label?: string;
+    evaporation?: number;
+    rating?: Rating;
+  }[];
 };
 
 /** Example recipes for TEST_USER_B, used in seeding and integration tests. */
 export const TEST_USER_B_RECIPES: SeedRecipeAsset[] = [
   {
     name: "Chocolate Ice Cream",
+    favourite: true,
     versions: [
       {
         recipe: getLightRecipe(RecipeID.Main),
         comments: "Rich, dark, and bittersweet. Let the mix ripen overnight before churning.",
         label: "first cut",
+        rating: Rating.Bad,
       },
       {
         recipe: getLightRecipe(RecipeID.Main).map(([n, q]) =>
@@ -81,10 +92,14 @@ export const TEST_USER_B_RECIPES: SeedRecipeAsset[] = [
         ) as LightRecipe,
         comments: "Slightly sweeter — bumped sucrose by 5g for a less bitter finish.",
         label: "sweeter tweak",
+        rating: Rating.Great,
       },
     ],
   },
-  { name: "Standard Base", versions: [{ recipe: getLightRecipe(RecipeID.RefA) }] },
+  {
+    name: "Standard Base",
+    versions: [{ recipe: getLightRecipe(RecipeID.RefA), rating: Rating.Good }],
+  },
   { name: "Sugar-Free Base", versions: [{ recipe: getLightRecipe(RecipeID.RefB) }] },
   {
     name: "Chocolate Ice Cream (with user-defined)",
@@ -107,11 +122,17 @@ export const TEST_USER_B_RECIPES: SeedRecipeAsset[] = [
 ];
 
 /**
+ * A batch in the seed asset set. `favourite` rides alongside {@link BatchInput} rather than in it,
+ * mirroring the data layer: the star is never part of a batch's replaceable contents.
+ */
+export type SeedBatchAsset = BatchInput & { favourite?: boolean };
+
+/**
  * Example saved batches for TEST_USER_B, used in seeding and the make-recipe whole-page test.
  * Fixed dates (not today) keep the snapshot stable. Seeded newest-last, so "Friday tasting batch"
  * sits at the top of the list. Colors are stored as display names, as the data layer expects.
  */
-export const TEST_USER_B_BATCHES: BatchInput[] = [
+export const TEST_USER_B_BATCHES: SeedBatchAsset[] = [
   {
     title: "Chocolate trial",
     date: "2026-07-11",
@@ -128,6 +149,7 @@ export const TEST_USER_B_BATCHES: BatchInput[] = [
   },
   {
     title: "Friday tasting batch",
+    favourite: true,
     date: "2026-07-18",
     notes: "Age 12 h at 4 °C, then churn cold.",
     recipes: [

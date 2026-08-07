@@ -15,6 +15,13 @@
       "when": 1785800995785,
       "tag": "0001_drop_surrogate_keys",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786075062675,
+      "tag": "0002_add_quality_signals",
+      "breakpoints": true
     }
   ]
 }

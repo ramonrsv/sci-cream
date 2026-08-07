@@ -8,6 +8,7 @@ import type { LightRecipe } from "@workspace/sci-cream";
 
 import type { BatchRecipeVersion } from "@/lib/batch/batch";
 import { getDatabaseUrl } from "@/lib/database/util";
+import { isRating, type Rating } from "@/lib/rating";
 import { hasVersionNames, isValidVersionName, nextVersionName } from "@/lib/recipe/version";
 import { verifyDefined } from "@/lib/util";
 import {
@@ -41,12 +42,20 @@ export type SavedRecipeVersionJson = {
   versionName?: string;
   /** Grams of water evaporated during preparation; absent when none was recorded */
   evaporation?: number;
+  /** How this version turned out; absent when unrated */
+  rating?: Rating;
   /** ISO 8601 timestamp; created server-side and surfaced as a string for client serialization */
   createdAt: string;
 };
 
 /** A saved recipe with all of its versions, sorted ascending by version number */
-export type SavedRecipeJson = { id: number; name: string; versions: SavedRecipeVersionJson[] };
+export type SavedRecipeJson = {
+  id: number;
+  name: string;
+  /** Starred by its owner; absent rather than `false`, as with the other optional fields here */
+  favourite?: boolean;
+  versions: SavedRecipeVersionJson[];
+};
 
 /** Optional metadata captured per snapshot when creating or amending a version */
 export type RecipeVersionMeta = {
@@ -54,6 +63,7 @@ export type RecipeVersionMeta = {
   label?: string | null;
   versionName?: string | null;
   evaporation?: number | null;
+  rating?: Rating | null;
 };
 
 /** Convert a `recipe_versions` row (or a join row with the same fields) to its JSON wire shape */
@@ -64,6 +74,7 @@ function toSavedRecipeVersionJson(row: {
   label: string | null;
   versionName: string | null;
   evaporation: number | null;
+  rating: Rating | null;
   createdAt: Date;
 }): SavedRecipeVersionJson {
   return {
@@ -73,13 +84,18 @@ function toSavedRecipeVersionJson(row: {
     ...(row.label != null && { label: row.label }),
     ...(row.versionName != null && { versionName: row.versionName }),
     ...(row.evaporation != null && { evaporation: row.evaporation }),
+    ...(row.rating != null && { rating: row.rating }),
     createdAt: row.createdAt.toISOString(),
   };
 }
 
-/** True when `meta` carries no version name, or a grammatically valid one. */
-function isValidVersionNameMeta(meta: RecipeVersionMeta): boolean {
-  return meta.versionName == null || isValidVersionName(meta.versionName);
+/**
+ * True when every field `meta` carries is well-formed: a valid version name and a rating on the
+ * scale. The database enforces both too; checking here returns `undefined` instead of throwing.
+ */
+function isValidVersionMeta(meta: RecipeVersionMeta): boolean {
+  if (meta.versionName != null && !isValidVersionName(meta.versionName)) return false;
+  return meta.rating == null || isRating(meta.rating);
 }
 
 /**
@@ -209,12 +225,14 @@ export async function fetchAllUserSavedRecipes(
     .select({
       id: recipesTable.id,
       name: recipesTable.name,
+      favourite: recipesTable.favourite,
       version: recipeVersionsTable.version,
       recipe: recipeVersionsTable.recipe,
       comments: recipeVersionsTable.comments,
       label: recipeVersionsTable.label,
       versionName: recipeVersionsTable.versionName,
       evaporation: recipeVersionsTable.evaporation,
+      rating: recipeVersionsTable.rating,
       createdAt: recipeVersionsTable.createdAt,
     })
     .from(recipesTable)
@@ -227,7 +245,12 @@ export async function fetchAllUserSavedRecipes(
   for (const row of rows) {
     let grouped = byId.get(row.id);
     if (!grouped) {
-      grouped = { id: row.id, name: row.name, versions: [] };
+      grouped = {
+        id: row.id,
+        name: row.name,
+        ...(row.favourite && { favourite: true }),
+        versions: [],
+      };
       byId.set(row.id, grouped);
     }
     grouped.versions.push(toSavedRecipeVersionJson(row));
@@ -279,6 +302,7 @@ async function insertNextVersion(
       label: meta.label ?? null,
       versionName,
       evaporation: meta.evaporation ?? null,
+      rating: meta.rating ?? null,
     })
     .returning();
 
@@ -305,8 +329,8 @@ export async function createUserRecipe(
     return undefined;
   }
 
-  if (!isValidVersionNameMeta(meta)) {
-    console.warn(`createUserRecipe: invalid version name "${meta.versionName}"`);
+  if (!isValidVersionMeta(meta)) {
+    console.warn(`createUserRecipe: invalid version metadata`);
     return undefined;
   }
 
@@ -338,8 +362,8 @@ export async function createUserRecipeVersion(
     return undefined;
   }
 
-  if (!isValidVersionNameMeta(meta)) {
-    console.warn(`createUserRecipeVersion: invalid version name "${meta.versionName}"`);
+  if (!isValidVersionMeta(meta)) {
+    console.warn(`createUserRecipeVersion: invalid version metadata`);
     return undefined;
   }
 
@@ -371,8 +395,8 @@ export async function updateUserRecipeVersion(
     return undefined;
   }
 
-  if (!isValidVersionNameMeta(updates)) {
-    console.warn(`updateUserRecipeVersion: invalid version name "${updates.versionName}"`);
+  if (!isValidVersionMeta(updates)) {
+    console.warn(`updateUserRecipeVersion: invalid version metadata`);
     return undefined;
   }
 
@@ -389,6 +413,7 @@ export async function updateUserRecipeVersion(
   if (updates.versionName !== undefined)
     setClause.versionName = updates.versionName?.trim() ?? null;
   if (updates.evaporation !== undefined) setClause.evaporation = updates.evaporation;
+  if (updates.rating !== undefined) setClause.rating = updates.rating;
 
   const where = and(
     eq(recipeVersionsTable.recipeId, recipeId),
@@ -430,6 +455,39 @@ export async function renameUserRecipe(
   const [row] = await db
     .update(recipesTable)
     .set({ name: newName })
+    .where(and(eq(recipesTable.id, recipeId), eq(recipesTable.user, user.id)))
+    .returning();
+
+  return row;
+}
+
+/**
+ * Set or clear the star on a user-owned recipe.
+ *
+ * Returns the updated row, or `undefined` if the user is not found or they don't own the recipe.
+ */
+export async function setUserRecipeFavourite(
+  userEmail: string,
+  recipeId: number,
+  favourite: boolean,
+): Promise<RecipeSelect | undefined> {
+  console.log(`[${await FetchCounter.get()}] setUserRecipeFavourite(${recipeId}, ${favourite})`);
+
+  const user = await findUserByEmail(userEmail);
+  if (!user) {
+    console.warn(`setUserRecipeFavourite: user not found`);
+    return undefined;
+  }
+
+  const owned = await findUserRecipe(user.id, recipeId);
+  if (!owned) {
+    console.warn(`setUserRecipeFavourite: recipeId=${recipeId} not owned by userId=${user.id}`);
+    return undefined;
+  }
+
+  const [row] = await db
+    .update(recipesTable)
+    .set({ favourite })
     .where(and(eq(recipesTable.id, recipeId), eq(recipesTable.user, user.id)))
     .returning();
 
@@ -528,13 +586,19 @@ export type SavedBatchJson = {
   title?: string;
   date: string;
   notes?: string;
+  favourite?: boolean;
   recipes: SavedBatchRecipeJson[];
   /** ISO 8601 timestamps, surfaced as strings for client serialization */
   createdAt: string;
   updatedAt: string;
 };
 
-/** Client-supplied batch contents to create or replace; identity and timestamps are excluded */
+/**
+ * Client-supplied batch contents to create or replace; identity and timestamps are excluded.
+ *
+ * So is `favourite`: {@link updateUserBatch} replaces a batch wholesale, so a star carried here
+ * would be cleared by any save made from a pre-star copy. See {@link setUserBatchFavourite}.
+ */
 export type BatchInput = {
   title?: string;
   date: string;
@@ -594,6 +658,7 @@ function toSavedBatchJson(
     ...(batch.title != null && { title: batch.title }),
     date: batch.date,
     ...(batch.notes != null && { notes: batch.notes }),
+    ...(batch.favourite && { favourite: true }),
     recipes: recipeRows
       .sort((a, b) => a.position - b.position)
       .map((row) => {
@@ -642,6 +707,7 @@ export async function fetchAllUserBatches(
       title: batchesTable.title,
       date: batchesTable.date,
       notes: batchesTable.notes,
+      favourite: batchesTable.favourite,
       user: batchesTable.user,
       createdAt: batchesTable.createdAt,
       updatedAt: batchesTable.updatedAt,
@@ -675,6 +741,7 @@ export async function fetchAllUserBatches(
           title: row.title,
           date: row.date,
           notes: row.notes,
+          favourite: row.favourite,
           createdAt: row.createdAt,
           updatedAt: row.updatedAt,
         },
@@ -790,6 +857,39 @@ export async function updateUserBatch(
 
     return toSavedBatchJson(batch, recipeRows);
   });
+}
+
+/**
+ * Set or clear the star on a user-owned batch. Returns the updated row, or `undefined` if the user
+ * is not found or the batch is not owned by them. Kept out of {@link updateUserBatch}, which
+ * replaces a batch wholesale and would let a stale editor copy clear the star.
+ */
+export async function setUserBatchFavourite(
+  userEmail: string,
+  batchId: number,
+  favourite: boolean,
+): Promise<BatchSelect | undefined> {
+  console.log(`[${await FetchCounter.get()}] setUserBatchFavourite(${batchId}, ${favourite})`);
+
+  const user = await findUserByEmail(userEmail);
+  if (!user) {
+    console.warn(`setUserBatchFavourite: user not found`);
+    return undefined;
+  }
+
+  const owned = await findUserBatch(user.id, batchId);
+  if (!owned) {
+    console.warn(`setUserBatchFavourite: batchId=${batchId} not owned by userId=${user.id}`);
+    return undefined;
+  }
+
+  const [row] = await db
+    .update(batchesTable)
+    .set({ favourite })
+    .where(and(eq(batchesTable.id, batchId), eq(batchesTable.user, user.id)))
+    .returning();
+
+  return row;
 }
 
 /**

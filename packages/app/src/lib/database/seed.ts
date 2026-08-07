@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { hash } from "bcryptjs";
 
 import { getDatabaseUrl } from "@/lib/database/util";
-import { createUserBatch, findUserByEmail, type BatchInput } from "@/lib/data";
+import { createUserBatch, findUserByEmail, setUserBatchFavourite } from "@/lib/data";
 import {
   UserInsert,
   usersTable,
@@ -29,6 +29,7 @@ import {
   USER_DEFINED_FRUCTOSE_SPEC,
   TEST_USER_B_RECIPES,
   TEST_USER_B_BATCHES,
+  type SeedBatchAsset,
   type SeedRecipeAsset,
 } from "@/lib/database/assets";
 
@@ -118,7 +119,7 @@ async function seedUserRecipes(userEmail: string, recipes: SeedRecipeAsset[]) {
 
     const [recipeRow] = await db
       .insert(recipesTable)
-      .values({ name: entry.name, user: user.id })
+      .values({ name: entry.name, user: user.id, favourite: entry.favourite ?? false })
       .returning();
 
     for (let i = 0; i < entry.versions.length; i++) {
@@ -132,6 +133,7 @@ async function seedUserRecipes(userEmail: string, recipes: SeedRecipeAsset[]) {
           comments: v.comments ?? null,
           label: v.label ?? null,
           evaporation: v.evaporation ?? null,
+          rating: v.rating ?? null,
         });
     }
   }
@@ -146,7 +148,7 @@ async function seedUserRecipes(userEmail: string, recipes: SeedRecipeAsset[]) {
  * All of the user's existing batches are deleted first (cascading to their recipes), so the seeded
  * set is deterministic. Batches are created in array order, so the last entry sorts to the top.
  */
-async function seedUserBatches(userEmail: string, batches: BatchInput[]) {
+async function seedUserBatches(userEmail: string, batches: SeedBatchAsset[]) {
   const user = await findUserByEmail(userEmail);
   verifyDefined(user, `User with email ${userEmail} not found, cannot seed batches`);
 
@@ -155,8 +157,10 @@ async function seedUserBatches(userEmail: string, batches: BatchInput[]) {
 
   await db.delete(batchesTable).where(eq(batchesTable.user, user.id));
 
-  for (const input of batches) {
-    await createUserBatch(userEmail, input);
+  for (const { favourite, ...input } of batches) {
+    const created = await createUserBatch(userEmail, input);
+    // Two calls, not one: `BatchInput` omits `favourite` so a whole-batch save can't clear a star.
+    if (favourite && created) await setUserBatchFavourite(userEmail, created.id, true);
     console.log(`Added batch "${input.title ?? "(untitled)"}"`);
   }
 
