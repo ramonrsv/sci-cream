@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786138843152,
+  "lastUpdate": 1786138898153,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -455586,6 +455586,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.08%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "461c0a295e7c614cfec776927f27eff0b7b55df7",
+          "message": "Declare only the emoji faces the glyphs use\n\nImporting @fontsource/noto-emoji/400.css emitted all ten subsets in\nboth woff2 and woff, growing deployed fonts from 137KiB to 1260KiB\neven though only two chunks are ever fetched.\n\nDeclare those two faces directly, woff2 only, scoped to the three\nrating codepoints. Deployed fonts drop to 252KiB.\n\nHand-written faces also allow font-display: block, replacing the\nswap Fontsource hardcodes, so the mark no longer repaints from a\nsystem glyph.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T17:17:14-04:00",
+          "tree_id": "0e18e6c68f891dd9cdee9a9859802ded9277643e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/461c0a295e7c614cfec776927f27eff0b7b55df7"
+        },
+        "date": 1786138857233,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 50436,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 512079,
+            "range": "±0.51%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 34260,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 391958,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
