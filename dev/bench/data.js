@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786125402187,
+  "lastUpdate": 1786129201827,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -503007,6 +503007,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/9b6a914a8371eb98ab95aa2666ad875256daff03"
         },
         "date": 1786124563051,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.84,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "621d9c19e53be747b24202b1e28bc71e7cda9943",
+          "message": "Refine the recipe quality signal markers\n\nRating glyphs now carry U+FE0E, the text presentation selector, so the\nversion dropdown and the rating filter render them monochrome rather\nthan as colour emoji shouting over the text they annotate. Platforms\nwith no monochrome glyph for the codepoint ignore the request and keep\nthe colour form, so this degrades to today's look, never to tofu.\n\n`monoRatingGlyph` sits beside the glyph map in lib/rating: both\nconsumers want it, and a rating filter has no business importing from\nrecipe versioning to reach it. Its composition is pinned once, in\nrating.test.ts, so the two consumer suites can call the helper without\ntheir assertions going tautological.\n\nRecipe search list items gain an \"N versions\" badge for recipes\ncarrying more than one. Embedded entries are adapted to a single\nversion, so the count alone marks a saved recipe and no source check\nis needed.\n\nThe quality-signals e2e spec now reads its filter labels from\nRATING_FILTER_SHORT_LABELS instead of rebuilding the strings. Both\nPlaywright's selectOption and the spec's own expectations match\nexactly, so changing a label broke three assertions that had no reason\nto know how the label was assembled.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T14:34:29-04:00",
+          "tree_id": "ca9960ac56d15f1fba66f92d3b1c268008d661c5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/621d9c19e53be747b24202b1e28bc71e7cda9943"
+        },
+        "date": 1786129164131,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
