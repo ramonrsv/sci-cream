@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786124929296,
+  "lastUpdate": 1786124997296,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -66365,6 +66365,192 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 726,
             "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9b6a914a8371eb98ab95aa2666ad875256daff03",
+          "message": "Add UI for recipe and batch quality signals\n\nThe star and the version rating are now visible and filterable:\ntoggles in the detail panels, a favourites chip and rating select in\nthe search toolbars, and markers on the list items themselves.\n\nA recipe's list marker shows the best rating across its versions,\nmatching the filter's rule that any qualifying version admits the\nrecipe, so a filtered list never shows a row whose marker disagrees.\n\n`RatingToggle` collapses to one button that opens the three choices\nin a popup; the toolbar it shares with the version select is tight.\nGreat is drawn as a trophy rather than doubled thumbs, since a native\n`<option>` renders text only and no CSS reaches the gap between two\nemoji. Every rating now has a lucide twin, so icon and text agree.\n\n`EntitySearch` gains `matchesFilters` and `toolbarExtra`, keeping the\nshell entity-agnostic while the consumer owns its filter state.\n`FavouritesFilter` is shared by the recipe and batch lists, ready for\nthe ingredient list to reuse.\n\nThe shared list/detail toolbar wraps rather than squeezing the search\ninput, which the added controls had been collapsing on narrow\nviewports. The input holds a minimum width and the controls drop to\ntheir own row, still pinned right, so each page wraps at whatever\nwidth its own toolbar needs.\n\nBatch picker ratings are read live rather than persisted:\n`RecipeSnapshot.rating` sits outside `version`, so it is dropped from\n`batchToInput` and from unsaved-changes detection for free.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T13:24:34-04:00",
+          "tree_id": "6c5a7eb052953737e92cae2b48c1f64a7697bdf0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9b6a914a8371eb98ab95aa2666ad875256daff03"
+        },
+        "date": 1786124958494,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4568,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 183509,
+            "range": "± 1812",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2922,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 178401,
+            "range": "± 9801",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 5005,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 5294,
+            "range": "± 79",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 5428,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 5363,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 5402,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5599,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 121936,
+            "range": "± 1554",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 126421,
+            "range": "± 1739",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 199733743,
+            "range": "± 288756",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 674671,
+            "range": "± 4997",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 7436,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 54,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 7668,
+            "range": "± 417",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 109812,
+            "range": "± 2482",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 106395,
+            "range": "± 632",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 175991,
+            "range": "± 1276",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 175042,
+            "range": "± 2106",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 375321,
+            "range": "± 2001",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14826,
+            "range": "± 79",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 5,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 726,
+            "range": "± 1",
             "unit": "ns/iter"
           },
           {
