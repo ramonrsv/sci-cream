@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786068431773,
+  "lastUpdate": 1786068434736,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -498040,6 +498040,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/76a23eadce070f89cb0518df9bc3f6cb70f97853"
         },
         "date": 1786026849444,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "386ad4af183a7bb044404b3049f16e4a60d76948",
+          "message": "Persist the Write/Preview tab per markdown field\n\nMarkdownField takes a persistKey and stores its tab under\n`${persistKey}:tab` via usePersistedState, so each render site\nremembers its own choice. Left undefined, the tab stays plain\nstate and no storage is touched.\n\nPersistence is keyed per widget rather than per record: the tab\nis a display preference, so the recipe-search field keeps it\nacross the version remount that reseeds its text.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-06T18:46:08-04:00",
+          "tree_id": "84246290b90faaa4fef14d1e79db6064310bbede",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/386ad4af183a7bb044404b3049f16e4a60d76948"
+        },
+        "date": 1786068434044,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
