@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786124607357,
+  "lastUpdate": 1786124619993,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -480830,6 +480830,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1108.59,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.29,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9b6a914a8371eb98ab95aa2666ad875256daff03",
+          "message": "Add UI for recipe and batch quality signals\n\nThe star and the version rating are now visible and filterable:\ntoggles in the detail panels, a favourites chip and rating select in\nthe search toolbars, and markers on the list items themselves.\n\nA recipe's list marker shows the best rating across its versions,\nmatching the filter's rule that any qualifying version admits the\nrecipe, so a filtered list never shows a row whose marker disagrees.\n\n`RatingToggle` collapses to one button that opens the three choices\nin a popup; the toolbar it shares with the version select is tight.\nGreat is drawn as a trophy rather than doubled thumbs, since a native\n`<option>` renders text only and no CSS reaches the gap between two\nemoji. Every rating now has a lucide twin, so icon and text agree.\n\n`EntitySearch` gains `matchesFilters` and `toolbarExtra`, keeping the\nshell entity-agnostic while the consumer owns its filter state.\n`FavouritesFilter` is shared by the recipe and batch lists, ready for\nthe ingredient list to reuse.\n\nThe shared list/detail toolbar wraps rather than squeezing the search\ninput, which the added controls had been collapsing on narrow\nviewports. The input holds a minimum width and the controls drop to\ntheir own row, still pinned right, so each page wraps at whatever\nwidth its own toolbar needs.\n\nBatch picker ratings are read live rather than persisted:\n`RecipeSnapshot.rating` sits outside `version`, so it is dropped from\n`batchToInput` and from unsaved-changes detection for free.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T13:24:34-04:00",
+          "tree_id": "6c5a7eb052953737e92cae2b48c1f64a7697bdf0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9b6a914a8371eb98ab95aa2666ad875256daff03"
+        },
+        "date": 1786124587992,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 702.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 870.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 640.06,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 808.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 649.81,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 818.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 578.39,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 746.84,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 578.39,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 746.84,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1112.58,
             "unit": "KB"
           },
           {
