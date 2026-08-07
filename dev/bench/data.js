@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786138906825,
+  "lastUpdate": 1786139002831,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -502038,6 +502038,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.59,
             "range": "0.78",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "461c0a295e7c614cfec776927f27eff0b7b55df7",
+          "message": "Declare only the emoji faces the glyphs use\n\nImporting @fontsource/noto-emoji/400.css emitted all ten subsets in\nboth woff2 and woff, growing deployed fonts from 137KiB to 1260KiB\neven though only two chunks are ever fetched.\n\nDeclare those two faces directly, woff2 only, scoped to the three\nrating codepoints. Deployed fonts drop to 252KiB.\n\nHand-written faces also allow font-display: block, replacing the\nswap Fontsource hardcodes, so the mark no longer repaints from a\nsystem glyph.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T17:17:14-04:00",
+          "tree_id": "0e18e6c68f891dd9cdee9a9859802ded9277643e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/461c0a295e7c614cfec776927f27eff0b7b55df7"
+        },
+        "date": 1786138963646,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.51,
+            "range": "10.03",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.65,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.6,
+            "range": "2.19",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 173.5,
+            "range": "14.82",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 173.5,
+            "range": "14.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.65,
+            "range": "10.12",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.69,
+            "range": "1.32",
             "unit": "ms"
           }
         ]
