@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786136212416,
+  "lastUpdate": 1786136222635,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -453045,6 +453045,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.10%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fbb91ee264c8a59cefd9daf0d0f778ca58e9c6a9",
+          "message": "Pin rating glyphs to a shipped emoji font\n\nGeist covers no pictographs, so the rating glyphs fell through to\nwhatever the machine had: Noto Sans Symbols 2 locally, Unifont on\nthe CI runner, which failed the recipe-search visual snapshot.\n\nAdd @fontsource/noto-emoji, pinned exactly, imported through its\naggregate stylesheet so every subset sits behind a unicode-range\nand only the two chunks holding the trophy and the thumbs load.\n\nVisual baselines showing a rating glyph need regenerating.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T16:39:44-04:00",
+          "tree_id": "cf4aaea6ee1f830c6a6c0c3efb5183646a4a3e38",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fbb91ee264c8a59cefd9daf0d0f778ca58e9c6a9"
+        },
+        "date": 1786136190643,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 69540,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 655390,
+            "range": "±0.46%",
+            "unit": "ops/sec",
+            "extra": "99 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 49912,
+            "range": "±1.08%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 538810,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
