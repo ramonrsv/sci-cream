@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786129823854,
+  "lastUpdate": 1786129988510,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -418147,6 +418147,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 661.13,
             "range": "9.51",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "621d9c19e53be747b24202b1e28bc71e7cda9943",
+          "message": "Refine the recipe quality signal markers\n\nRating glyphs now carry U+FE0E, the text presentation selector, so the\nversion dropdown and the rating filter render them monochrome rather\nthan as colour emoji shouting over the text they annotate. Platforms\nwith no monochrome glyph for the codepoint ignore the request and keep\nthe colour form, so this degrades to today's look, never to tofu.\n\n`monoRatingGlyph` sits beside the glyph map in lib/rating: both\nconsumers want it, and a rating filter has no business importing from\nrecipe versioning to reach it. Its composition is pinned once, in\nrating.test.ts, so the two consumer suites can call the helper without\ntheir assertions going tautological.\n\nRecipe search list items gain an \"N versions\" badge for recipes\ncarrying more than one. Embedded entries are adapted to a single\nversion, so the count alone marks a saved recipe and no source check\nis needed.\n\nThe quality-signals e2e spec now reads its filter labels from\nRATING_FILTER_SHORT_LABELS instead of rebuilding the strings. Both\nPlaywright's selectOption and the spec's own expectations match\nexactly, so changing a label broke three assertions that had no reason\nto know how the label was assembled.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T14:34:29-04:00",
+          "tree_id": "ca9960ac56d15f1fba66f92d3b1c268008d661c5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/621d9c19e53be747b24202b1e28bc71e7cda9943"
+        },
+        "date": 1786129942506,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 47.63,
+            "range": "4.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 50.5,
+            "range": "2.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 66,
+            "range": "4.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2511.38,
+            "range": "40.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 303.5,
+            "range": "3.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 311.38,
+            "range": "6.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 329.5,
+            "range": "4.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15788.38,
+            "range": "43.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 15.35,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 894.38,
+            "range": "13.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.25,
+            "range": "1.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.75,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.25,
+            "range": "1.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41.88,
+            "range": "1.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 129.63,
+            "range": "5.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 87.38,
+            "range": "3.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.92,
+            "range": "0.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 43.27,
+            "range": "0.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 616.88,
+            "range": "3.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 657.13,
+            "range": "12.52",
             "unit": "ms"
           }
         ]
