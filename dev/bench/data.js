@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786124622933,
+  "lastUpdate": 1786124698365,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -495888,6 +495888,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.19,
             "range": "1.71",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9b6a914a8371eb98ab95aa2666ad875256daff03",
+          "message": "Add UI for recipe and batch quality signals\n\nThe star and the version rating are now visible and filterable:\ntoggles in the detail panels, a favourites chip and rating select in\nthe search toolbars, and markers on the list items themselves.\n\nA recipe's list marker shows the best rating across its versions,\nmatching the filter's rule that any qualifying version admits the\nrecipe, so a filtered list never shows a row whose marker disagrees.\n\n`RatingToggle` collapses to one button that opens the three choices\nin a popup; the toolbar it shares with the version select is tight.\nGreat is drawn as a trophy rather than doubled thumbs, since a native\n`<option>` renders text only and no CSS reaches the gap between two\nemoji. Every rating now has a lucide twin, so icon and text agree.\n\n`EntitySearch` gains `matchesFilters` and `toolbarExtra`, keeping the\nshell entity-agnostic while the consumer owns its filter state.\n`FavouritesFilter` is shared by the recipe and batch lists, ready for\nthe ingredient list to reuse.\n\nThe shared list/detail toolbar wraps rather than squeezing the search\ninput, which the added controls had been collapsing on narrow\nviewports. The input holds a minimum width and the controls drop to\ntheir own row, still pinned right, so each page wraps at whatever\nwidth its own toolbar needs.\n\nBatch picker ratings are read live rather than persisted:\n`RecipeSnapshot.rating` sits outside `version`, so it is dropped from\n`batchToInput` and from unsaved-changes detection for free.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T13:24:34-04:00",
+          "tree_id": "6c5a7eb052953737e92cae2b48c1f64a7697bdf0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9b6a914a8371eb98ab95aa2666ad875256daff03"
+        },
+        "date": 1786124667600,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 49.51,
+            "range": "6.88",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 12.34,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 12.31,
+            "range": "1.56",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 133,
+            "range": "7.94",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.34,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 133,
+            "range": "7.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 47.16,
+            "range": "6.66",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.96,
+            "range": "0.34",
             "unit": "ms"
           }
         ]
