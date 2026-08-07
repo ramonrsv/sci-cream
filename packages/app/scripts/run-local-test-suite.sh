@@ -3,9 +3,10 @@
 # This script runs a subset of the CI test suite locally, using local resources without running the
 # full GitHub Actions workflow via `act`. This is useful for quick feedback during development.
 
-# Usage: ./run-local-test-suite.sh [--skip-bench]
+# Usage: ./run-local-test-suite.sh [--skip-bench] [--chromium-only]
 
 SKIP_BENCH=false
+CHROMIUM_ONLY=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -13,9 +14,13 @@ while [[ $# -gt 0 ]]; do
             SKIP_BENCH=true
             shift
             ;;
+        --chromium-only)
+            CHROMIUM_ONLY=true
+            shift
+            ;;
         *)
             echo "Unknown option: $1"
-            echo "Usage: ./run-local-test-suite.sh [--skip-bench]"
+            echo "Usage: ./run-local-test-suite.sh [--skip-bench] [--chromium-only]"
             exit 1
             ;;
     esac
@@ -53,7 +58,12 @@ execute env POSTGRES_URL="$MIGRATION_URL" ./scripts/build-migration-test-db.sh
 execute env POSTGRES_URL="$MIGRATION_URL" npx drizzle-kit migrate
 execute env POSTGRES_URL="$MIGRATION_URL" pnpm test:unit src/lib/data.test.ts
 
-execute env CI=true pnpm test:e2e
+if [[ "$CHROMIUM_ONLY" == true ]]; then
+    execute env CI=true pnpm test:e2e:chromium
+else
+    execute env CI=true pnpm test:e2e
+fi
+
 execute pnpm test:visual
 execute pnpm doc
 execute pnpm coverage
