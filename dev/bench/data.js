@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786137352509,
+  "lastUpdate": 1786137355999,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -505193,6 +505193,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/3b6e68b5f5ea9913589f1a2c00e0cd4a0049e119"
         },
         "date": 1786136792420,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 1275.74,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "98b8a7cdce32f550e391f86734a19c24fec089af",
+          "message": "chore: Release app version 0.0.7",
+          "timestamp": "2026-08-07T17:04:58-04:00",
+          "tree_id": "0ff0d9f74dcba6324c86be1719a1f13d8df52461",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/98b8a7cdce32f550e391f86734a19c24fec089af"
+        },
+        "date": 1786137355025,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
