@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786129777022,
+  "lastUpdate": 1786129823854,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -497794,6 +497794,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.75,
             "range": "0.87",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5d4cf4b8543cf3c1f42009ece2b8bc950b1f68a3",
+          "message": "Add `--chromium-only` to `run-local-test-suite.sh`\n\nLets developers run e2e tests against only chromium for faster\nlocal iteration.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T14:44:29-04:00",
+          "tree_id": "b91c2c1a969c8c1f75dc2c94b705e879f202a146",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5d4cf4b8543cf3c1f42009ece2b8bc950b1f68a3"
+        },
+        "date": 1786129785572,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.06,
+            "range": "8.52",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.81,
+            "range": "1.99",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.75,
+            "range": "1.99",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 174.5,
+            "range": "14.41",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.47,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 174.5,
+            "range": "14.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.76,
+            "range": "8.54",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.64,
+            "range": "0.70",
             "unit": "ms"
           }
         ]
