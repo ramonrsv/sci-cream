@@ -11,6 +11,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Quality signals on saved work: a favourite star per recipe and batch, a rating per recipe version:
+  - Star and rating toggles in the `/recipes` and `/batches` detail panels, rated bad/good/great.
+  - Favourites chip and rating select in the search toolbars, with markers on the list rows.
+  - A recipe's marker shows the best rating across its versions, matching how the filter admits it.
+- Comments render as GFM markdown, with a persisted Write/Preview tab on the editable fields.
+- Links from the ingredient detail panel's JSON spec to the spec type's rustdoc and guide chapters.
+- Reset button in the key customize popup, restoring the `Auto` keys or the view's default keys.
+
+### Changed
+
+- List recipes, not every recipe-version pair, in the batch builder's "Add a recipe…" picker:
+  - Picking a recipe adds its latest version; the added row then offers a select of its versions.
+- Render the ingredient spec as a syntax-highlighted JSON tree instead of a plain block of text.
+- Size the recipe editor and composition breakdown row counts to their panel's height when resized.
+- Move the version badge beside the recipe name in the batch builder, not at the row's right edge.
+- Ship from CI once App CI passes, with schema changes applied by a gated, rehearsed migration.
+
+### Fixed
+
+- Range, meter, and color calculations using unrounded values, disagreeing with the shown numbers.
+- Values at or above 1000 losing a factor of 1000 when re-parsed from their compact `k` form.
+- Saving a recipe silently dropping rows whose ingredient name did not resolve to valid ingredients.
+- A saved batch's version label changing or vanishing when the source version was edited or deleted.
+- Recipe-search comment box overflowing into a vertical scrollbar on a 1440p Chrome window.
+
 ## [0.0.6] - 2026-07-30
 
 ### Added
@@ -71,7 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Overhaul how the properties chart scales, replacing ad-hoc per-key scaling with normalization:
   - Each property self-normalizes over its range, value, references, and target onto a 0-100 track.
-  - Labels drop the "/ 2" and "* 10" suffixes; the value axis is a fixed, unlabeled 0-100 track.
+  - Labels drop the "/ 2" and "\* 10" suffixes; the value axis is a fixed, unlabeled 0-100 track.
   - Tooltip gains a `Target` line colored to match the main recipe; the legend moves to the top.
 - Rework which recipe edits stop or trigger auto-balancing while `Auto` is on:
   - Only manual quantity edits and paste stop it; name, ingredient, evaporation, and clear do not.
@@ -151,7 +178,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Save the user's `react-grid-layout` customizations to `localStorage`; persists across reloads.
 - Support for saved recipe versions, modifiable in `RecipeEditor` and `RecipeSearch` details panel.
 - Recipe balancing functionality in `WatchersPanel`, setting the balanced recipe in `RecipeEditor`.
-  - Balancing targets and priorities can be set for properties in their respective  `WatcherCard`s.
+  - Balancing targets and priorities can be set for properties in their respective `WatcherCard`s.
   - Balancing targets can be filled from reference recipe per-property or bulk from the toolbar.
   - Surface balancing validation errors and warnings in cards and as a popup in the panel toolbar.
 
