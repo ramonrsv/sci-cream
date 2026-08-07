@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786136240536,
+  "lastUpdate": 1786136322575,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -498963,6 +498963,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.64,
             "range": "0.70",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fbb91ee264c8a59cefd9daf0d0f778ca58e9c6a9",
+          "message": "Pin rating glyphs to a shipped emoji font\n\nGeist covers no pictographs, so the rating glyphs fell through to\nwhatever the machine had: Noto Sans Symbols 2 locally, Unifont on\nthe CI runner, which failed the recipe-search visual snapshot.\n\nAdd @fontsource/noto-emoji, pinned exactly, imported through its\naggregate stylesheet so every subset sits behind a unicode-range\nand only the two chunks holding the trophy and the thumbs load.\n\nVisual baselines showing a rating glyph need regenerating.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T16:39:44-04:00",
+          "tree_id": "cf4aaea6ee1f830c6a6c0c3efb5183646a4a3e38",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fbb91ee264c8a59cefd9daf0d0f778ca58e9c6a9"
+        },
+        "date": 1786136283909,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.19,
+            "range": "11.64",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.65,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.61,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 176.5,
+            "range": "15.29",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 176.5,
+            "range": "15.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.78,
+            "range": "11.59",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.6,
+            "range": "0.64",
             "unit": "ms"
           }
         ]
