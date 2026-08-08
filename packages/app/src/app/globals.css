@@ -8,13 +8,16 @@
 /* Geist has no pictographs, so the rating glyphs in `lib/rating.ts` would vary with the system
    font. Declared face by face rather than through `@fontsource/noto-emoji/400.css`, which emits
    all ten subsets in two formats: only these two hold the glyphs, and `woff` is dead weight.
-   `block` over `swap` so the mark never repaints from a system glyph to this one. */
+   `block` over `swap` so the mark never repaints from a system glyph to this one. Paths are
+   relative into `node_modules`, not the bare specifier: webpack's CSS resolver (unlike
+   Turbopack's) doesn't resolve package-root url()s. */
 @font-face {
   font-family: "Noto Emoji";
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url("@fontsource/noto-emoji/files/noto-emoji-4-400-normal.woff2") format("woff2");
+  src: url("../../node_modules/@fontsource/noto-emoji/files/noto-emoji-4-400-normal.woff2")
+    format("woff2");
   unicode-range: U+1f3c6;
 }
 @font-face {
@@ -22,7 +25,8 @@
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url("@fontsource/noto-emoji/files/noto-emoji-9-400-normal.woff2") format("woff2");
+  src: url("../../node_modules/@fontsource/noto-emoji/files/noto-emoji-9-400-normal.woff2")
+    format("woff2");
   unicode-range: U+1f44d-1f44e;
 }
 
