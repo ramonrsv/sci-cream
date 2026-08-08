@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786179903369,
+  "lastUpdate": 1786180303152,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -425302,6 +425302,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 671.75,
             "range": "13.11",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6cbbdac364ebd94972a0ca646ee3d6675112927f",
+          "message": "Fix unreadable dropdown options in dark mode\n\nMoving `.boxed-input` onto the wrapper left the inner `<select>`\ntransparent. That is fine for the closed control, which the wrapper\npaints behind, but Chrome draws the native dropdown using the select's\nown background: the options landed on the UA's light default, so the\nwhite dark-theme text vanished and only the hovered row -- which paints\nits own highlight -- stayed visible. Light mode escaped by luck.\n\nInherit the box's background rather than naming a token again, so the\ncontrol follows whatever the wrapper is painted with.\n\nNo baseline moves, since the closed control already rendered in this\ncolour. Native dropdowns are OS-drawn and never enter the DOM, so\nneither the unit tests nor the screenshots could have caught this; a\ncomputed-style comparison against an unmarked select does.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T04:44:13-04:00",
+          "tree_id": "b37bbf1f4df14c6cd88d62169f9895e7fa9e2e8d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6cbbdac364ebd94972a0ca646ee3d6675112927f"
+        },
+        "date": 1786180262253,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.63,
+            "range": "3.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49.5,
+            "range": "3.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 63.38,
+            "range": "3.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2303,
+            "range": "28.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 316.13,
+            "range": "3.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 323.5,
+            "range": "4.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 346.25,
+            "range": "5.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17036.88,
+            "range": "285.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 903.38,
+            "range": "24.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.38,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 52.25,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41.38,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 121.13,
+            "range": "2.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 78.25,
+            "range": "2.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 52.61,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.08,
+            "range": "0.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 609.88,
+            "range": "8.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 661.88,
+            "range": "8.39",
             "unit": "ms"
           }
         ]
