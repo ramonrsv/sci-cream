@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786174797451,
+  "lastUpdate": 1786175011310,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -67678,6 +67678,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "697307d0fb6b603d742f6ab517656a09f64dff66",
+          "message": "Name the toolbar selects with marks and labels\n\nThe calculator toolbars stack several selects whose options overlap:\n`Auto` appears in both the key filter and the color mode, `Target` and\n`Range` in both the color mode and the meter scale. At rest a toolbar\ncould read `Auto | Spread | Auto` with nothing saying which is which.\n\n`Select` gains `icon` and `title`. With an icon, `.boxed-input` moves to\na wrapper holding the mark and a bare `<select>`, so the mark sits on\nthe control alone -- a native `<option>` holds only text, so prefixing\nlabels would repeat the mark down the open list. Without one the markup\nis unchanged, leaving the version and slot pickers untouched.\n\nEach wrapper now passes a mark, an `ariaLabel`, and a tooltip echoing\nthe current value, as `GroupBySelect` already did. Only\n`RatingFilterSelect` had an accessible name before; the rest had none,\ninvisible to the suite because it locates them by wrapper id.\n\nThe delta mark is the drawn `DELTA_GLYPH`, not a lucide icon: lucide has\nno delta, and its `Triangle` is squat where the glyph is narrow and\ntall. Its labels drop the now-redundant glyph prefix.\n\nThe standalone pickers -- the load target and the two version\nselects -- take a `title` but no mark: each is already named by the\nbutton or label beside it, and borrowing a mark would imply it does\nwhat the toolbar select of that mark does. `Select`'s doc states the\nrule so the next one knows which it is.\n\n`selects.spec.ts` shot the control locator -- the bare `<select>`. With\nthe box now on the wrapper those shots caught neither box nor mark, and\nnot one of their baselines moved for this change. A `getSelectBox`\nhelper targets the whole control: the specs drive the inner element and\nscreenshot the box.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T03:27:21-04:00",
+          "tree_id": "3516b85ec2360586a74e66ea411290f3af0d2513",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/697307d0fb6b603d742f6ab517656a09f64dff66"
+        },
+        "date": 1786174981869,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3632,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 140731,
+            "range": "± 1584",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2217,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 139926,
+            "range": "± 2000",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 3770,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4106,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4212,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4148,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4160,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4345,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 98402,
+            "range": "± 3887",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 100899,
+            "range": "± 934",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 154765693,
+            "range": "± 488169",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 515314,
+            "range": "± 4605",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 5724,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 42,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 5524,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 83846,
+            "range": "± 1838",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 81956,
+            "range": "± 1722",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 133174,
+            "range": "± 3014",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 131522,
+            "range": "± 3502",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 291205,
+            "range": "± 1801",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 11501,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 562,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 11,
             "range": "± 0",
             "unit": "ns/iter"
           }
