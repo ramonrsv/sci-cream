@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786179579753,
+  "lastUpdate": 1786179696194,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -505994,6 +505994,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.72,
             "range": "0.66",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6cbbdac364ebd94972a0ca646ee3d6675112927f",
+          "message": "Fix unreadable dropdown options in dark mode\n\nMoving `.boxed-input` onto the wrapper left the inner `<select>`\ntransparent. That is fine for the closed control, which the wrapper\npaints behind, but Chrome draws the native dropdown using the select's\nown background: the options landed on the UA's light default, so the\nwhite dark-theme text vanished and only the hovered row -- which paints\nits own highlight -- stayed visible. Light mode escaped by luck.\n\nInherit the box's background rather than naming a token again, so the\ncontrol follows whatever the wrapper is painted with.\n\nNo baseline moves, since the closed control already rendered in this\ncolour. Native dropdowns are OS-drawn and never enter the DOM, so\nneither the unit tests nor the screenshots could have caught this; a\ncomputed-style comparison against an unmarked select does.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T04:44:13-04:00",
+          "tree_id": "b37bbf1f4df14c6cd88d62169f9895e7fa9e2e8d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6cbbdac364ebd94972a0ca646ee3d6675112927f"
+        },
+        "date": 1786179655182,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.25,
+            "range": "9.29",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14,
+            "range": "0.63",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.96,
+            "range": "0.65",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 169.5,
+            "range": "14.13",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.43,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 169.5,
+            "range": "14.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.5,
+            "range": "9.15",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.25,
+            "range": "0.40",
             "unit": "ms"
           }
         ]
