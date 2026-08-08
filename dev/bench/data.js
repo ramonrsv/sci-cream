@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786177639006,
+  "lastUpdate": 1786177719901,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -504088,6 +504088,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.76,
             "range": "0.65",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6246749fb22b8966366ddf86ce567cb8c0e8f8ed",
+          "message": "Unify toolbar control ordering across the app\n\nStar/Share/Delete sat in different positions on /recipes and\n/make-recipe, and the widget selects (KeyFilter, Qty, Delta, Norm,\nColor) appeared in a different order in every toolbar.\n\nAdopt two canonical left-to-right orders and apply them everywhere:\n\n  selects  RecipeSelect → KeyFilter → Qty → Delta → Norm → Color\n  actions  New → Save → Star/Rating → Edit → Share → Load → Delete\n\nKeyFilter leads the selects because it is the only control present in\nevery toolbar; the conditional selects around it would otherwise shift\nits position. Destructive last is the rule for the action row.\n\n/make-recipe's hand-rolled delete button now uses the shared\nDeleteAction, which owns the window.confirm; DeleteAction gains an\noptional testId so delete-batch-button keeps working.\n\nVisual snapshots still need re-baselining.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T04:16:38-04:00",
+          "tree_id": "e4b2f68bf0d1501e3c74ff462f7924c73f0f26bb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6246749fb22b8966366ddf86ce567cb8c0e8f8ed"
+        },
+        "date": 1786177679740,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.47,
+            "range": "8.85",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 16.16,
+            "range": "3.83",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 16.14,
+            "range": "3.83",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 174,
+            "range": "10.95",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 174,
+            "range": "10.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.6,
+            "range": "9.07",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.81,
+            "range": "1.33",
             "unit": "ms"
           }
         ]
