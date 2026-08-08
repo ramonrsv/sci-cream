@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786175062295,
+  "lastUpdate": 1786175411851,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -422917,6 +422917,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 691.13,
             "range": "13.13",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "697307d0fb6b603d742f6ab517656a09f64dff66",
+          "message": "Name the toolbar selects with marks and labels\n\nThe calculator toolbars stack several selects whose options overlap:\n`Auto` appears in both the key filter and the color mode, `Target` and\n`Range` in both the color mode and the meter scale. At rest a toolbar\ncould read `Auto | Spread | Auto` with nothing saying which is which.\n\n`Select` gains `icon` and `title`. With an icon, `.boxed-input` moves to\na wrapper holding the mark and a bare `<select>`, so the mark sits on\nthe control alone -- a native `<option>` holds only text, so prefixing\nlabels would repeat the mark down the open list. Without one the markup\nis unchanged, leaving the version and slot pickers untouched.\n\nEach wrapper now passes a mark, an `ariaLabel`, and a tooltip echoing\nthe current value, as `GroupBySelect` already did. Only\n`RatingFilterSelect` had an accessible name before; the rest had none,\ninvisible to the suite because it locates them by wrapper id.\n\nThe delta mark is the drawn `DELTA_GLYPH`, not a lucide icon: lucide has\nno delta, and its `Triangle` is squat where the glyph is narrow and\ntall. Its labels drop the now-redundant glyph prefix.\n\nThe standalone pickers -- the load target and the two version\nselects -- take a `title` but no mark: each is already named by the\nbutton or label beside it, and borrowing a mark would imply it does\nwhat the toolbar select of that mark does. `Select`'s doc states the\nrule so the next one knows which it is.\n\n`selects.spec.ts` shot the control locator -- the bare `<select>`. With\nthe box now on the wrapper those shots caught neither box nor mark, and\nnot one of their baselines moved for this change. A `getSelectBox`\nhelper targets the whole control: the specs drive the inner element and\nscreenshot the box.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T03:27:21-04:00",
+          "tree_id": "3516b85ec2360586a74e66ea411290f3af0d2513",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/697307d0fb6b603d742f6ab517656a09f64dff66"
+        },
+        "date": 1786175371876,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 48.25,
+            "range": "5.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 50.13,
+            "range": "4.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 60.75,
+            "range": "3.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2420.75,
+            "range": "35.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 321.13,
+            "range": "4.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 335.38,
+            "range": "5.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 353,
+            "range": "12.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16741.13,
+            "range": "155.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 905,
+            "range": "17.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.5,
+            "range": "1.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54,
+            "range": "0.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41.63,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 124.88,
+            "range": "2.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 81.5,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.29,
+            "range": "0.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.37,
+            "range": "0.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 629.38,
+            "range": "14.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 662.38,
+            "range": "12.36",
             "unit": "ms"
           }
         ]
