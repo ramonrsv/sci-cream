@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786179015371,
+  "lastUpdate": 1786179019007,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -509553,6 +509553,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/6246749fb22b8966366ddf86ce567cb8c0e8f8ed"
         },
         "date": 1786177634760,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 266.95,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5a27c727702b020b5c38173999be0536e7e472e7",
+          "message": "Fix webpack CSS resolution of emoji font url()s\n\nWebpack's CSS resolver can't resolve bare npm specifiers\nin url(), unlike Turbopack's. That broke every page under\n`next dev --webpack`, since globals.css failed to compile.\n\nPoint the two @font-face src urls at relative node_modules\npaths instead, which both bundlers resolve the same way.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T04:38:08-04:00",
+          "tree_id": "6e5789596458b730f4ee561a26c1a49ac1a4ee06",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5a27c727702b020b5c38173999be0536e7e472e7"
+        },
+        "date": 1786179017922,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
