@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786179521846,
+  "lastUpdate": 1786179530739,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -510463,6 +510463,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/5a27c727702b020b5c38173999be0536e7e472e7"
         },
         "date": 1786179017922,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 266.95,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6cbbdac364ebd94972a0ca646ee3d6675112927f",
+          "message": "Fix unreadable dropdown options in dark mode\n\nMoving `.boxed-input` onto the wrapper left the inner `<select>`\ntransparent. That is fine for the closed control, which the wrapper\npaints behind, but Chrome draws the native dropdown using the select's\nown background: the options landed on the UA's light default, so the\nwhite dark-theme text vanished and only the hovered row -- which paints\nits own highlight -- stayed visible. Light mode escaped by luck.\n\nInherit the box's background rather than naming a token again, so the\ncontrol follows whatever the wrapper is painted with.\n\nNo baseline moves, since the closed control already rendered in this\ncolour. Native dropdowns are OS-drawn and never enter the DOM, so\nneither the unit tests nor the screenshots could have caught this; a\ncomputed-style comparison against an unmarked select does.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T04:44:13-04:00",
+          "tree_id": "b37bbf1f4df14c6cd88d62169f9895e7fa9e2e8d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6cbbdac364ebd94972a0ca646ee3d6675112927f"
+        },
+        "date": 1786179524895,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
