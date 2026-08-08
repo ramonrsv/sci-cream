@@ -269,6 +269,28 @@ When working on UI components, prefer routing recipe → mix-property calculatio
 `WasmBridge` rather than constructing `Recipe` / `RecipeLine` from JS — the bridge is the
 performance-tuned path and is what production code uses.
 
+#### Toolbar control order
+
+Toolbars are hand-rolled, so these left-to-right orders are the convention. Omit what doesn't
+apply; never reshuffle what remains.
+
+Widget selects (the `.toolbar` row in each `*View`):
+
+```text
+{toolbarPrefix} → RecipeSelect → KeyFilterSelect → QtyToggleSelect → DeltaToggleSelect
+                → NormModeSelect → ColorModeSelect → (ad-hoc display toggles) → ml-auto group
+```
+
+Entity actions (detail-panel headers, editor action rows):
+
+```text
+New → Save → Star / Rating → Edit → Share → Load → Delete
+```
+
+Destructive last is the rule that matters. Delete is always the shared `DeleteAction`
+(`_components/detail-panel.tsx`), which owns its `window.confirm` — don't hand-roll a trash button
+or add a second confirmation.
+
 ## Linting strictness
 
 The Rust crate uses a very strict configuration: `clippy::all`, `clippy::pedantic`,

@@ -841,7 +841,7 @@ export function RecipeEditor({
               data-testid="recipe-evaporation-grams"
             />
           </div>
-          {/* Action buttons: de-evaporate, copy, share, paste, clear, save, save as new version */}
+          {/* Action buttons: de-evaporate, copy, paste, share, clear */}
           <div className="flex shrink-0">
             {[
               {
@@ -856,18 +856,6 @@ export function RecipeEditor({
                 disabled: !canDeevaporate,
               },
               {
-                node: (
-                  <ShareRecipeAction
-                    name={currentRecipe.name}
-                    rows={makeLightRecipeAllRows(currentRecipe)}
-                    evaporation={currentRecipe.evaporation}
-                    versionName={shareableVersionName}
-                    buttonClassName="action-button px-1 py-0.75"
-                    iconSize={iconSize}
-                  />
-                ),
-              },
-              {
                 label: <ClipboardCopy size={iconSize} />,
                 action: copyCurrentRecipeToClipboard,
                 title: "Copy recipe to clipboard",
@@ -878,6 +866,18 @@ export function RecipeEditor({
                 action: pasteCurrentRecipeFromClipboard,
                 title: "Paste recipe from clipboard",
                 disabled: false,
+              },
+              {
+                node: (
+                  <ShareRecipeAction
+                    name={currentRecipe.name}
+                    rows={makeLightRecipeAllRows(currentRecipe)}
+                    evaporation={currentRecipe.evaporation}
+                    versionName={shareableVersionName}
+                    buttonClassName="action-button px-1 py-0.75"
+                    iconSize={iconSize}
+                  />
+                ),
               },
               {
                 label: <Trash size={iconSize} />,

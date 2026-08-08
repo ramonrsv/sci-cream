@@ -956,14 +956,6 @@ export function WatchersView({
     <div className="flex h-full flex-col">
       <div className="toolbar">
         {toolbarPrefix}
-        <DeltaToggleSelect
-          supportedDeltaToggles={supportedDeltaToggles}
-          deltaToggleState={[deltaToggle, setDeltaToggle]}
-        />
-        <ColorModeSelect
-          supportedModes={supportedColorModes}
-          colorModeState={[colorMode, setColorMode]}
-        />
         <KeyFilterSelect
           supportedKeyFilters={supportedKeyFilters}
           keyFilterState={propsFilterState}
@@ -973,6 +965,14 @@ export function WatchersView({
           autoHeuristic={autoHeuristic}
           key_as_med_str={prop_key_as_med_str}
           orderKeys={orderKeys}
+        />
+        <DeltaToggleSelect
+          supportedDeltaToggles={supportedDeltaToggles}
+          deltaToggleState={[deltaToggle, setDeltaToggle]}
+        />
+        <ColorModeSelect
+          supportedModes={supportedColorModes}
+          colorModeState={[colorMode, setColorMode]}
         />
         {/* Display-region toggles: range meter, target column, reference values. */}
         <div className="flex items-center gap-0.5">

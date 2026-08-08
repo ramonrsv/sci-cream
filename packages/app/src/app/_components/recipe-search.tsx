@@ -303,13 +303,6 @@ function RecipeDetailPanel({
             label="recipe"
           />
         )}
-        {deleteRecipeEnabled && (
-          <DeleteAction
-            onDelete={() => onDeleteSavedRecipe(entry)}
-            confirmText={`Delete saved recipe "${entry.name}" and all ${entry.versions.length} of its versions?`}
-            label="Delete saved recipe"
-          />
-        )}
         {selectedVersion && (
           <ShareRecipeAction
             name={entry.name}
@@ -329,6 +322,13 @@ function RecipeDetailPanel({
             slots={slots}
             slotLabel={makeRecipeId}
             persistKey={STORAGE_KEYS.recipeSearchLoadAction}
+          />
+        )}
+        {deleteRecipeEnabled && (
+          <DeleteAction
+            onDelete={() => onDeleteSavedRecipe(entry)}
+            confirmText={`Delete saved recipe "${entry.name}" and all ${entry.versions.length} of its versions?`}
+            label="Delete saved recipe"
           />
         )}
       </DetailPanelHeader>

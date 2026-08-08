@@ -255,16 +255,6 @@ export function PropertiesView({
     <div id="properties-view" className="flex h-full flex-col">
       <div className="toolbar">
         {toolbarPrefix}
-        <QtyToggleSelect
-          supportedQtyToggles={supportedQtyToggles}
-          qtyToggleState={[qtyToggle, setQtyToggle]}
-        />
-        {recipes.length > 1 && (
-          <DeltaToggleSelect
-            supportedDeltaToggles={supportedDeltaToggles}
-            deltaToggleState={[deltaToggle, setDeltaToggle]}
-          />
-        )}
         <KeyFilterSelect
           supportedKeyFilters={supportedKeyFilters}
           keyFilterState={propsFilterState}
@@ -275,6 +265,16 @@ export function PropertiesView({
           key_as_med_str={prop_key_as_med_str}
           orderKeys={orderKeys}
         />
+        <QtyToggleSelect
+          supportedQtyToggles={supportedQtyToggles}
+          qtyToggleState={[qtyToggle, setQtyToggle]}
+        />
+        {recipes.length > 1 && (
+          <DeltaToggleSelect
+            supportedDeltaToggles={supportedDeltaToggles}
+            deltaToggleState={[deltaToggle, setDeltaToggle]}
+          />
+        )}
       </div>
       <div
         data-testid="properties-table-pane"

@@ -254,10 +254,6 @@ export function CompositionBreakdownView({
             currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
           />
         )}
-        <QtyToggleSelect
-          supportedQtyToggles={supportedQtyToggles}
-          qtyToggleState={[qtyToggle, setQtyToggle]}
-        />
         <KeyFilterSelect
           keyFilterState={compsFilterState}
           selectedKeysState={selectedCompsState}
@@ -266,6 +262,10 @@ export function CompositionBreakdownView({
           autoHeuristic={autoHeuristic}
           key_as_med_str={comp_key_as_med_str}
           orderKeys={orderKeys}
+        />
+        <QtyToggleSelect
+          supportedQtyToggles={supportedQtyToggles}
+          qtyToggleState={[qtyToggle, setQtyToggle]}
         />
       </div>
       <CompositionBreakdown recipe={recipe} compKeys={getEnabledComps()} qtyToggle={qtyToggle} />

@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { FilePlus2, Trash2 } from "lucide-react";
+import { FilePlus2 } from "lucide-react";
 
+import { DeleteAction } from "@/app/_components/detail-panel";
 import { ShareBatchAction } from "@/app/_elements/batch-share-dialog";
 import { SaveBatchAction } from "@/app/_elements/batch-save-action";
 import { BatchList } from "@/app/_elements/batch-list";
@@ -157,8 +158,6 @@ export function MakeRecipeView() {
       userEmail != null && id !== undefined,
       "deleteBatch invoked without a bound saved batch",
     );
-    const title = savedBatches.find((b) => b.id === id)?.title || "Untitled batch";
-    if (!window.confirm(`Delete the batch "${title}"? This can't be undone.`)) return;
     await deleteUserBatch(userEmail, id);
     setSelection((prev) => ({ ...prev, savedBatchId: undefined }));
     await refreshUserBatches();
@@ -275,7 +274,6 @@ export function MakeRecipeView() {
               void refreshUserBatches();
             }}
           />
-          <ShareBatchAction batch={batch} />
           {boundBatch && userEmail && (
             <FavouriteToggle
               favourite={!!boundBatch.favourite}
@@ -284,17 +282,15 @@ export function MakeRecipeView() {
               iconSize={iconSize}
             />
           )}
+          <ShareBatchAction batch={batch} />
           {selection.savedBatchId !== undefined && userEmail && (
-            <button
-              type="button"
-              onClick={() => void deleteBatch()}
-              className="action-button px-2 py-0.5 text-sm"
-              title="Delete batch"
-              aria-label="Delete batch"
-              data-testid="delete-batch-button"
-            >
-              <Trash2 size={iconSize} />
-            </button>
+            <DeleteAction
+              onDelete={deleteBatch}
+              confirmText={`Delete the batch "${boundBatch?.title || "Untitled batch"}"? This can't be undone.`}
+              label="Delete batch"
+              iconSize={iconSize}
+              testId="delete-batch-button"
+            />
           )}
         </div>
       </div>

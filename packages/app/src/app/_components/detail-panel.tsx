@@ -98,11 +98,13 @@ export function DeleteAction({
   confirmText,
   label = "Delete",
   iconSize = DETAIL_PANEL_ACTION_ICON_SIZE,
+  testId,
 }: {
   onDelete: () => void | Promise<void>;
   confirmText: string;
   label?: string;
   iconSize?: number;
+  testId?: string;
 }) {
   const handleClick = async () => {
     if (!window.confirm(confirmText)) return;
@@ -114,6 +116,7 @@ export function DeleteAction({
       title={label}
       aria-label={label}
       className="action-button px-2 py-0.5 text-sm"
+      data-testid={testId}
     >
       <Trash size={iconSize} />
     </button>
