@@ -1,6 +1,9 @@
 "use client";
 
+import { Scale } from "lucide-react";
+
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { SELECT_ICON_SIZE } from "@/lib/styles/sizes";
 
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
@@ -46,6 +49,9 @@ export function useQtyToggleState<const Toggles extends [QtyToggle, ...QtyToggle
   return [value, setValue, supportedQtyToggles];
 }
 
+/** Name of the {@link QtyToggleSelect} control, for its accessible name and tooltip. */
+const QTY_TOGGLE_LABEL = "Quantity display";
+
 /** Select element for switching between `QtyToggle` display modes */
 export function QtyToggleSelect({
   supportedQtyToggles,
@@ -63,7 +69,14 @@ export function QtyToggleSelect({
 
   return (
     <div id="qty-toggle-select">
-      <Select value={qtyToggle} onChange={setQtyToggle} options={options} />
+      <Select
+        value={qtyToggle}
+        onChange={setQtyToggle}
+        options={options}
+        icon={<Scale size={SELECT_ICON_SIZE} />}
+        ariaLabel={QTY_TOGGLE_LABEL}
+        title={`${QTY_TOGGLE_LABEL} (${QTY_TOGGLE_SHORT_LABELS[qtyToggle]})`}
+      />
     </div>
   );
 }

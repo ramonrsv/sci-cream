@@ -145,6 +145,9 @@ function BuilderRow({
             onChange={(order) => onPickVersion(versionChoice.versions[order])}
             options={versionOptions(versionChoice.versions)}
             ariaLabel={`Recipe ${batchRecipeLetter(index)} version`}
+            title={`Recipe ${batchRecipeLetter(index)} version (v${String(
+              displayVersion(versionChoice.current.version),
+            )})`}
             className="min-w-0 shrink truncate"
           />
         ) : (

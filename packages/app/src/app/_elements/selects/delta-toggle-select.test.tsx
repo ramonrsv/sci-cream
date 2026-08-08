@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import {
   getSelectControl,
+  getSelectControlByLabel,
   getSelectedOptionLabel,
   getSelectOptionLabels,
   selectOption,
@@ -32,22 +33,24 @@ describe("DELTA_GLYPH", () => {
 });
 
 describe("DELTA_TOGGLE_SHORT_LABELS", () => {
-  it("prefixes every label with the DELTA_GLYPH (U+2206)", () => {
+  // The control's own icon names it, so the labels carry no glyph; DELTA_GLYPH stays for the
+  // delta column headers, which have no icon beside them.
+  it("carries no DELTA_GLYPH on any label", () => {
     for (const label of Object.values(DELTA_TOGGLE_SHORT_LABELS)) {
-      expect(label.codePointAt(0)).toBe(0x2206);
+      expect(label).not.toContain(DELTA_GLYPH);
     }
   });
 
   it("maps Off to its short label", () => {
-    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Off]).toBe("∆ Off");
+    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Off]).toBe("Off");
   });
 
   it("maps Absolute to its short label", () => {
-    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Absolute]).toBe("∆ Abs");
+    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Absolute]).toBe("Abs");
   });
 
   it("maps Relative to its short label", () => {
-    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Relative]).toBe("∆ Rel");
+    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Relative]).toBe("Rel");
   });
 });
 
@@ -166,6 +169,17 @@ describe("DeltaToggleSelect", () => {
     const { container } = render(<TestWrapper />);
     expect(container.querySelector("#delta-toggle-select")).toBeInTheDocument();
     expect(getSelectControl(container, "#delta-toggle-select")).toBeInTheDocument();
+  });
+
+  it("names the control and echoes the current toggle in its tooltip", () => {
+    const { container } = render(<TestWrapper initialDeltaToggle={DeltaToggle.Absolute} />);
+    expect(getSelectControlByLabel("Delta mode")).toBe(
+      getSelectControl(container, "#delta-toggle-select"),
+    );
+    expect(container.querySelector("#delta-toggle-select [title]")).toHaveAttribute(
+      "title",
+      "Delta mode (Abs)",
+    );
   });
 
   it("shows short labels as options for all supported toggles", async () => {

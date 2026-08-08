@@ -82,6 +82,7 @@ export function LoadAction({
           onChange={setTargetSlot}
           options={slotOptions}
           ariaLabel="Target slot"
+          title={`Target slot (${slotLabel?.(targetSlot) ?? targetSlot})`}
         />
       )}
       <button onClick={() => onLoad(targetSlot)} className="action-button px-2 py-0.5 text-sm">

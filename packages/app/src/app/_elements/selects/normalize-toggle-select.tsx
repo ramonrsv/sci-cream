@@ -1,6 +1,9 @@
 "use client";
 
+import { Gauge } from "lucide-react";
+
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { SELECT_ICON_SIZE } from "@/lib/styles/sizes";
 
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
@@ -46,6 +49,9 @@ export function useNormModeState<const Modes extends [NormMode, ...NormMode[]]>(
   return [value, setValue, supportedModes];
 }
 
+/** Name of the {@link NormModeSelect} control, for its accessible name and tooltip. */
+const NORM_MODE_LABEL = "Meter scale";
+
 /** Select element for switching between {@link NormMode} normalization strategies. */
 export function NormModeSelect({
   supportedModes,
@@ -63,7 +69,14 @@ export function NormModeSelect({
 
   return (
     <div id="normalize-toggle-select">
-      <Select value={normMode} onChange={setNormMode} options={options} />
+      <Select
+        value={normMode}
+        onChange={setNormMode}
+        options={options}
+        icon={<Gauge size={SELECT_ICON_SIZE} />}
+        ariaLabel={NORM_MODE_LABEL}
+        title={`${NORM_MODE_LABEL} (${NORM_MODE_SHORT_LABELS[normMode]})`}
+      />
     </div>
   );
 }

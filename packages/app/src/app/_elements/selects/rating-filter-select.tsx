@@ -1,7 +1,10 @@
 "use client";
 
+import { Award } from "lucide-react";
+
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { monoRatingGlyph, ratingRank, Rating } from "@/lib/rating";
+import { SELECT_ICON_SIZE } from "@/lib/styles/sizes";
 
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
@@ -59,6 +62,9 @@ export function useRatingFilterState(
   });
 }
 
+/** Name of the {@link RatingFilterSelect} control, for its accessible name and tooltip. */
+const RATING_FILTER_LABEL = "Filter by rating";
+
 /** Select element for narrowing a recipe list to the ratings its versions carry. */
 export function RatingFilterSelect({
   ratingFilterState,
@@ -78,7 +84,9 @@ export function RatingFilterSelect({
         value={ratingFilter}
         onChange={setRatingFilter}
         options={options}
-        ariaLabel="Filter by rating"
+        icon={<Award size={SELECT_ICON_SIZE} />}
+        ariaLabel={RATING_FILTER_LABEL}
+        title={`${RATING_FILTER_LABEL} (${RATING_FILTER_SHORT_LABELS[ratingFilter]})`}
       />
     </div>
   );

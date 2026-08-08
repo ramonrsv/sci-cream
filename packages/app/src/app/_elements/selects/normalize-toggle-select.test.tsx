@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import {
   getSelectControl,
+  getSelectControlByLabel,
   getSelectedOptionLabel,
   getSelectOptionLabels,
   selectOption,
@@ -152,6 +153,17 @@ describe("NormModeSelect", () => {
     const { container } = render(<TestWrapper />);
     expect(container.querySelector("#normalize-toggle-select")).toBeInTheDocument();
     expect(getSelectControl(container, "#normalize-toggle-select")).toBeInTheDocument();
+  });
+
+  it("names the control and echoes the current mode in its tooltip", () => {
+    const { container } = render(<TestWrapper initialMode={NormMode.TargetCentered} />);
+    expect(getSelectControlByLabel("Meter scale")).toBe(
+      getSelectControl(container, "#normalize-toggle-select"),
+    );
+    expect(container.querySelector("#normalize-toggle-select [title]")).toHaveAttribute(
+      "title",
+      `Meter scale (${NORM_MODE_SHORT_LABELS[NormMode.TargetCentered]})`,
+    );
   });
 
   it("shows short labels as options for all supported modes", async () => {

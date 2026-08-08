@@ -1,11 +1,11 @@
 "use client";
 
 import { type Dispatch, type SetStateAction } from "react";
-import { X, Settings, RotateCcw } from "lucide-react";
+import { X, ListFilter, Settings, RotateCcw } from "lucide-react";
 
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
 
-import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
+import { COMPONENT_ACTION_ICON_SIZE, SELECT_ICON_SIZE } from "@/lib/styles/sizes";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
@@ -108,6 +108,12 @@ export function useKeyFilterState<Key, const Filters extends [KeyFilter, ...KeyF
   return { keyFilterState, selectedKeysState, supportedKeyFilters };
 }
 
+/**
+ * Name of the {@link KeyFilterSelect} control, for its accessible name and tooltip. Says
+ * "properties" like the customize popup below, though the control is generic over key type.
+ */
+const KEY_FILTER_LABEL = "Properties shown";
+
 /** Select element for choosing a `KeyFilter` mode, with an optional settings popup for `Custom` */
 export function KeyFilterSelect<Key>({
   supportedKeyFilters = Object.values(KeyFilter),
@@ -177,7 +183,14 @@ export function KeyFilterSelect<Key>({
   return (
     <div id="key-filter-select">
       <div className="flex items-center">
-        <Select value={keyFilter} onChange={setKeyFilter} options={options} />
+        <Select
+          value={keyFilter}
+          onChange={setKeyFilter}
+          options={options}
+          icon={<ListFilter size={SELECT_ICON_SIZE} />}
+          ariaLabel={KEY_FILTER_LABEL}
+          title={`${KEY_FILTER_LABEL} (${keyFilter})`}
+        />
         {keyFilter === KeyFilter.Custom && (
           <Popover>
             <PopoverButton

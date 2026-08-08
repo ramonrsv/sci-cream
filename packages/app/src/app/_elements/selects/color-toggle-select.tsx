@@ -1,6 +1,9 @@
 "use client";
 
+import { Palette } from "lucide-react";
+
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { SELECT_ICON_SIZE } from "@/lib/styles/sizes";
 
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { MeterRange, isUsableNumber } from "@/app/_elements/range-meter";
@@ -79,6 +82,9 @@ export function useColorModeState<const Modes extends [ColorMode, ...ColorMode[]
   return [value, setValue, supportedModes];
 }
 
+/** Name of the {@link ColorModeSelect} control, for its accessible name and tooltip. */
+const COLOR_MODE_LABEL = "Color mode";
+
 /** Select element for switching between {@link ColorMode} coloring strategies. */
 export function ColorModeSelect({
   supportedModes,
@@ -96,7 +102,14 @@ export function ColorModeSelect({
 
   return (
     <div id="color-toggle-select">
-      <Select value={colorMode} onChange={setColorMode} options={options} />
+      <Select
+        value={colorMode}
+        onChange={setColorMode}
+        options={options}
+        icon={<Palette size={SELECT_ICON_SIZE} />}
+        ariaLabel={COLOR_MODE_LABEL}
+        title={`${COLOR_MODE_LABEL} (${COLOR_MODE_SHORT_LABELS[colorMode]})`}
+      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import {
   getSelectControl,
+  getSelectControlByLabel,
   getSelectedOptionLabel,
   getSelectOptionLabels,
   selectOption,
@@ -77,6 +78,17 @@ describe("QtyToggleSelect", () => {
     const { container } = render(<TestWrapper />);
     expect(container.querySelector("#qty-toggle-select")).toBeInTheDocument();
     expect(getSelectControl(container, "#qty-toggle-select")).toBeInTheDocument();
+  });
+
+  it("names the control and echoes the current toggle in its tooltip", () => {
+    const { container } = render(<TestWrapper initialQtyToggle={QtyToggle.Quantity} />);
+    expect(getSelectControlByLabel("Quantity display")).toBe(
+      getSelectControl(container, "#qty-toggle-select"),
+    );
+    expect(container.querySelector("#qty-toggle-select [title]")).toHaveAttribute(
+      "title",
+      `Quantity display (${QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity]})`,
+    );
   });
 
   it("shows short labels as options for all supported toggles", async () => {

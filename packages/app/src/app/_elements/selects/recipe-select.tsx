@@ -1,8 +1,10 @@
 "use client";
 
+import { NotebookText } from "lucide-react";
+
 import { Recipe } from "@/lib/recipe/recipe";
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
-import { MAX_RECIPES } from "@/lib/styles/sizes";
+import { MAX_RECIPES, SELECT_ICON_SIZE } from "@/lib/styles/sizes";
 
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
@@ -44,6 +46,9 @@ export function useRecipeIdxState(
   return usePersistedState(effectiveKey, effectiveDefault, { isValid: isValidSlotStore });
 }
 
+/** Name of the {@link RecipeSelect} control, for its accessible name and tooltip. */
+const RECIPE_SELECT_LABEL = "Recipe slot";
+
 /** Select element for switching between recipes; renders only the enabled indices as options */
 export function RecipeSelect({
   allRecipes,
@@ -63,7 +68,14 @@ export function RecipeSelect({
 
   return (
     <div id="recipe-selection">
-      <Select value={currentRecipeIdx} onChange={setCurrentRecipeIdx} options={options} />
+      <Select
+        value={currentRecipeIdx}
+        onChange={setCurrentRecipeIdx}
+        options={options}
+        icon={<NotebookText size={SELECT_ICON_SIZE} />}
+        ariaLabel={RECIPE_SELECT_LABEL}
+        title={`${RECIPE_SELECT_LABEL} (${allRecipes[currentRecipeIdx].id})`}
+      />
     </div>
   );
 }

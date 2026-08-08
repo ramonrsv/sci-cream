@@ -9,6 +9,8 @@ import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "./key-filter-select"
 
 import { openCustomKeyFilters } from "@/__tests__/unit/util";
 import {
+  getSelectControl,
+  getSelectControlByLabel,
   getSelectedOptionLabel,
   getSelectOptionLabels,
   selectOption,
@@ -167,6 +169,17 @@ describe("KeyFilterSelect", () => {
     const { container } = render(<TestWrapper />);
     expect(await getSelectOptionLabels(container, "#key-filter-select")).toEqual(
       Object.values(KeyFilter),
+    );
+  });
+
+  it("names the control and echoes the current filter in its tooltip", () => {
+    const { container } = render(<TestWrapper initialFilter={KeyFilter.Active} />);
+    expect(getSelectControlByLabel("Properties shown")).toBe(
+      getSelectControl(container, "#key-filter-select"),
+    );
+    expect(container.querySelector("#key-filter-select [title]")).toHaveAttribute(
+      "title",
+      `Properties shown (${KeyFilter.Active})`,
     );
   });
 

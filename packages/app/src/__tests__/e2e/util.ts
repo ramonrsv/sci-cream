@@ -19,7 +19,7 @@ import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 
 import { verify } from "@/lib/util";
 
-import { getSelectControl, selectOption } from "@/__tests__/e2e/select";
+import { getSelectBox, getSelectControl, selectOption } from "@/__tests__/e2e/select";
 
 import {
   RecipeID,
@@ -70,9 +70,17 @@ export async function showSidebarItems(page: Page) {
   }
 }
 
+/** Scope of `RecipeEditorPanel`'s `RecipeSelect`; both its control and its box are read from it. */
+const RECIPE_EDITOR_RECIPE_SELECT = "#recipe-editor-panel #recipe-selection";
+
 /** Get `RecipeEditorPanel`'s recipe selector element, in `RecipeSelect` */
 export function getRecipeEditorPanelRecipeSelector(page: Page) {
-  return getSelectControl(page, "#recipe-editor-panel #recipe-selection");
+  return getSelectControl(page, RECIPE_EDITOR_RECIPE_SELECT);
+}
+
+/** Get `RecipeEditorPanel`'s whole `RecipeSelect` — box, mark, and control — for screenshots. */
+export function getRecipeEditorPanelRecipeSelectBox(page: Page) {
+  return getSelectBox(page, RECIPE_EDITOR_RECIPE_SELECT);
 }
 
 /** Get ingredient name search input element at the given index */
@@ -95,9 +103,17 @@ export function getPropertiesPanelQtyToggleSelectInput(page: Page) {
   return getSelectControl(page, "#properties-panel #qty-toggle-select");
 }
 
+/** Scope of `PropertiesPanel`'s `KeyFilterSelect`; its control and box are read from it. */
+const PROPERTIES_KEY_FILTER_SELECT = "#properties-panel #key-filter-select";
+
 /** Get `PropertiesPanel`'s `KeyFilter` select input element, in `KeyFilterSelect` */
 export function getPropertiesPanelKeyFilterSelectInput(page: Page) {
-  return getSelectControl(page, "#properties-panel #key-filter-select");
+  return getSelectControl(page, PROPERTIES_KEY_FILTER_SELECT);
+}
+
+/** Get `PropertiesPanel`'s whole `KeyFilterSelect` — box, mark, and control — for screenshots. */
+export function getPropertiesPanelKeyFilterSelectBox(page: Page) {
+  return getSelectBox(page, PROPERTIES_KEY_FILTER_SELECT);
 }
 
 /** Get `PropertiesPanel`'s `DeltaToggle` select input element, in `DeltaToggleSelect` */
@@ -115,9 +131,17 @@ export function getCompositionBreakdownPanelRecipeSelector(page: Page) {
   return getSelectControl(page, "#composition-breakdown-panel #recipe-selection");
 }
 
+/** Scope of `CompositionBreakdownPanel`'s `QtyToggleSelect`; control and box come from it. */
+const BREAKDOWN_QTY_TOGGLE_SELECT = "#composition-breakdown-panel #qty-toggle-select";
+
 /** Get `CompositionBreakdownPanel`'s `QtyToggle` select input element, in `QtyToggleSelect` */
 export function getCompositionBreakdownPanelQtyToggleSelectInput(page: Page) {
-  return getSelectControl(page, "#composition-breakdown-panel #qty-toggle-select");
+  return getSelectControl(page, BREAKDOWN_QTY_TOGGLE_SELECT);
+}
+
+/** Get `CompositionBreakdownPanel`'s whole `QtyToggleSelect` — box, mark, control. */
+export function getCompositionBreakdownPanelQtyToggleSelectBox(page: Page) {
+  return getSelectBox(page, BREAKDOWN_QTY_TOGGLE_SELECT);
 }
 
 /** Get `CompositionBreakdownPanel`'s `KeyFilter` select input element, in `KeyFilterSelect` */

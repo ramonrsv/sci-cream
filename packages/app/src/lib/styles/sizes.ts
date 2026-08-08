@@ -14,6 +14,8 @@ export const COMPONENT_ACTION_ICON_SIZE = 20;
 export const DETAIL_PANEL_ACTION_ICON_SIZE = 14;
 /** Icon size (px) for the markers in a search list item, matching the `text-xs` line they share. */
 export const LIST_ITEM_MARKER_ICON_SIZE = 12;
+/** Icon size (px) for the mark naming a toolbar select, sized under its `text-sm` label. */
+export const SELECT_ICON_SIZE = 14;
 
 /** Icon size (px) used in the header. */
 export const HEADER_ICON_SIZE = 20;

@@ -34,6 +34,16 @@ export function getSelectControl(page: Page, scopeSelector: string): Locator {
 }
 
 /**
+ * Get the whole `Select` scoped by `scopeSelector` — the box, its mark, and the control within.
+ *
+ * Screenshot this; drive {@link getSelectControl}. A marked `Select` draws its box on a wrapper
+ * around a bare `<select>`, so shooting the control alone captures neither the box nor the mark.
+ */
+export function getSelectBox(page: Page, scopeSelector: string): Locator {
+  return page.locator(scopeSelector);
+}
+
+/**
  * Choose the option labelled `optionLabel` from the `Select` whose control element is `control`.
  *
  * Uses the native `<select>` API for the shared selects, and the click-through listbox flow for the

@@ -1,6 +1,7 @@
 "use client";
 
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { SELECT_ICON_SIZE } from "@/lib/styles/sizes";
 
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
@@ -15,7 +16,7 @@ export enum DeltaToggle {
 }
 
 /**
- * The delta glyph used in delta-mode labels and headers.
+ * The delta glyph used in the control's mark and in delta column headers.
  *
  * This is ∆ U+2206 INCREMENT, not Δ U+0394 GREEK CAPITAL DELTA. The self-hosted Geist font ships
  * U+2206 but not U+0394, so U+2206 renders from the font itself in every environment. U+0394 would
@@ -25,9 +26,9 @@ export const DELTA_GLYPH = "∆";
 
 /** Short label for each `DeltaToggle` option, shown in the UI. */
 export const DELTA_TOGGLE_SHORT_LABELS: Record<DeltaToggle, string> = {
-  [DeltaToggle.Off]: `${DELTA_GLYPH} Off`,
-  [DeltaToggle.Absolute]: `${DELTA_GLYPH} Abs`,
-  [DeltaToggle.Relative]: `${DELTA_GLYPH} Rel`,
+  [DeltaToggle.Off]: "Off",
+  [DeltaToggle.Absolute]: "Abs",
+  [DeltaToggle.Relative]: "Rel",
 };
 
 /**
@@ -55,6 +56,27 @@ export function useDeltaToggleState<const Toggles extends [DeltaToggle, ...Delta
   return [value, setValue, supportedDeltaToggles];
 }
 
+/** Name of the {@link DeltaToggleSelect} control, for its accessible name and tooltip. */
+const DELTA_TOGGLE_LABEL = "Delta mode";
+
+/**
+ * {@link DELTA_GLYPH} drawn to sit like the lucide marks on the neighbouring selects — lucide has
+ * no delta, and its `Triangle` is squat where ∆ is narrow and tall.
+ *
+ * Oversized and nudged down, since the ink fills only part of the em square and sits high in it.
+ * Matched to the lucide marks' ink mass, not their height, at which a triangle reads larger.
+ */
+function DeltaMark() {
+  return (
+    <span
+      className="mt-0.5 flex items-center justify-center leading-none font-bold"
+      style={{ width: SELECT_ICON_SIZE, height: SELECT_ICON_SIZE, fontSize: SELECT_ICON_SIZE + 2 }}
+    >
+      {DELTA_GLYPH}
+    </span>
+  );
+}
+
 /** Select element for switching between `DeltaToggle` display modes */
 export function DeltaToggleSelect({
   supportedDeltaToggles,
@@ -72,7 +94,14 @@ export function DeltaToggleSelect({
 
   return (
     <div id="delta-toggle-select">
-      <Select value={deltaToggle} onChange={setDeltaToggle} options={options} />
+      <Select
+        value={deltaToggle}
+        onChange={setDeltaToggle}
+        options={options}
+        icon={<DeltaMark />}
+        ariaLabel={DELTA_TOGGLE_LABEL}
+        title={`${DELTA_TOGGLE_LABEL} (${DELTA_TOGGLE_SHORT_LABELS[deltaToggle]})`}
+      />
     </div>
   );
 }

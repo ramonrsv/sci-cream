@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Color } from "@/lib/styles/colors";
 import {
   getSelectControl,
+  getSelectControlByLabel,
   getSelectedOptionLabel,
   getSelectOptionLabels,
   selectOption,
@@ -240,6 +241,17 @@ describe("ColorModeSelect", () => {
     const { container } = render(<TestWrapper />);
     expect(container.querySelector("#color-toggle-select")).toBeInTheDocument();
     expect(getSelectControl(container, "#color-toggle-select")).toBeInTheDocument();
+  });
+
+  it("names the control and echoes the current mode in its tooltip", () => {
+    const { container } = render(<TestWrapper initialMode={ColorMode.Target} />);
+    expect(getSelectControlByLabel("Color mode")).toBe(
+      getSelectControl(container, "#color-toggle-select"),
+    );
+    expect(container.querySelector("#color-toggle-select [title]")).toHaveAttribute(
+      "title",
+      `Color mode (${COLOR_MODE_SHORT_LABELS[ColorMode.Target]})`,
+    );
   });
 
   it("shows short labels as options for all supported modes", async () => {

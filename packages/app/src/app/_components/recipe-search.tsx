@@ -347,6 +347,7 @@ function RecipeDetailPanel({
                   onChange={setSelectedVersionIdx}
                   options={versionOptions}
                   ariaLabel="Recipe version"
+                  title={`Recipe version (v${displayVersionName(selectedVersion)})`}
                   className="min-w-0 shrink truncate"
                 />
               )}

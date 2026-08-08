@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { type Recipe } from "@/lib/recipe/recipe";
 import {
   getSelectControl,
+  getSelectControlByLabel,
   getSelectedOptionLabel,
   getSelectOptionLabels,
   selectOption,
@@ -79,6 +80,17 @@ describe("RecipeSelect", () => {
     const { container } = render(<TestWrapper />);
     expect(container.querySelector("#recipe-selection")).toBeInTheDocument();
     expect(getSelectControl(container, "#recipe-selection")).toBeInTheDocument();
+  });
+
+  it("names the control and echoes the current recipe in its tooltip", () => {
+    const { container } = render(<TestWrapper enabledRecipeIndices={[0, 1, 2]} initialIdx={1} />);
+    expect(getSelectControlByLabel("Recipe slot")).toBe(
+      getSelectControl(container, "#recipe-selection"),
+    );
+    expect(container.querySelector("#recipe-selection [title]")).toHaveAttribute(
+      "title",
+      "Recipe slot (Ref A)",
+    );
   });
 
   it("shows recipe names as options for enabled recipes", async () => {

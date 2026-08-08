@@ -3,7 +3,11 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, cleanup, renderHook, act } from "@testing-library/react";
 
-import { getSelectControl, getSelectedOptionLabel } from "@/__tests__/unit/select";
+import {
+  getSelectControl,
+  getSelectControlByLabel,
+  getSelectedOptionLabel,
+} from "@/__tests__/unit/select";
 import { monoRatingGlyph, Rating, RATING_GLYPHS, RATINGS } from "@/lib/rating";
 import {
   RatingFilter,
@@ -138,6 +142,19 @@ describe("RatingFilterSelect", () => {
       <RatingFilterSelect ratingFilterState={[RatingFilter.Any, vi.fn()]} />,
     );
     expect(getSelectControl(container, "#rating-filter-select")).toBeInTheDocument();
+  });
+
+  it("names the control and echoes the current filter in its tooltip", () => {
+    const { container } = render(
+      <RatingFilterSelect ratingFilterState={[RatingFilter.Great, vi.fn()]} />,
+    );
+    expect(getSelectControlByLabel("Filter by rating")).toBe(
+      getSelectControl(container, "#rating-filter-select"),
+    );
+    expect(container.querySelector("#rating-filter-select [title]")).toHaveAttribute(
+      "title",
+      `Filter by rating (${RATING_FILTER_SHORT_LABELS[RatingFilter.Great]})`,
+    );
   });
 
   it("shows the current filter's short label", () => {
