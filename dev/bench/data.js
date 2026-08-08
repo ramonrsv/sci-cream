@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786174672394,
+  "lastUpdate": 1786174797451,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -503063,6 +503063,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.69,
             "range": "1.32",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "697307d0fb6b603d742f6ab517656a09f64dff66",
+          "message": "Name the toolbar selects with marks and labels\n\nThe calculator toolbars stack several selects whose options overlap:\n`Auto` appears in both the key filter and the color mode, `Target` and\n`Range` in both the color mode and the meter scale. At rest a toolbar\ncould read `Auto | Spread | Auto` with nothing saying which is which.\n\n`Select` gains `icon` and `title`. With an icon, `.boxed-input` moves to\na wrapper holding the mark and a bare `<select>`, so the mark sits on\nthe control alone -- a native `<option>` holds only text, so prefixing\nlabels would repeat the mark down the open list. Without one the markup\nis unchanged, leaving the version and slot pickers untouched.\n\nEach wrapper now passes a mark, an `ariaLabel`, and a tooltip echoing\nthe current value, as `GroupBySelect` already did. Only\n`RatingFilterSelect` had an accessible name before; the rest had none,\ninvisible to the suite because it locates them by wrapper id.\n\nThe delta mark is the drawn `DELTA_GLYPH`, not a lucide icon: lucide has\nno delta, and its `Triangle` is squat where the glyph is narrow and\ntall. Its labels drop the now-redundant glyph prefix.\n\nThe standalone pickers -- the load target and the two version\nselects -- take a `title` but no mark: each is already named by the\nbutton or label beside it, and borrowing a mark would imply it does\nwhat the toolbar select of that mark does. `Select`'s doc states the\nrule so the next one knows which it is.\n\n`selects.spec.ts` shot the control locator -- the bare `<select>`. With\nthe box now on the wrapper those shots caught neither box nor mark, and\nnot one of their baselines moved for this change. A `getSelectBox`\nhelper targets the whole control: the specs drive the inner element and\nscreenshot the box.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T03:27:21-04:00",
+          "tree_id": "3516b85ec2360586a74e66ea411290f3af0d2513",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/697307d0fb6b603d742f6ab517656a09f64dff66"
+        },
+        "date": 1786174756805,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.45,
+            "range": "9.19",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.75,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.69,
+            "range": "1.02",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 183,
+            "range": "13.96",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 183,
+            "range": "13.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.34,
+            "range": "9.04",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.76,
+            "range": "0.65",
             "unit": "ms"
           }
         ]
