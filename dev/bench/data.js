@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786177635618,
+  "lastUpdate": 1786177639006,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -457280,6 +457280,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.37%",
             "unit": "ops/sec",
             "extra": "87 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6246749fb22b8966366ddf86ce567cb8c0e8f8ed",
+          "message": "Unify toolbar control ordering across the app\n\nStar/Share/Delete sat in different positions on /recipes and\n/make-recipe, and the widget selects (KeyFilter, Qty, Delta, Norm,\nColor) appeared in a different order in every toolbar.\n\nAdopt two canonical left-to-right orders and apply them everywhere:\n\n  selects  RecipeSelect → KeyFilter → Qty → Delta → Norm → Color\n  actions  New → Save → Star/Rating → Edit → Share → Load → Delete\n\nKeyFilter leads the selects because it is the only control present in\nevery toolbar; the conditional selects around it would otherwise shift\nits position. Destructive last is the rule for the action row.\n\n/make-recipe's hand-rolled delete button now uses the shared\nDeleteAction, which owns the window.confirm; DeleteAction gains an\noptional testId so delete-batch-button keeps working.\n\nVisual snapshots still need re-baselining.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T04:16:38-04:00",
+          "tree_id": "e4b2f68bf0d1501e3c74ff462f7924c73f0f26bb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6246749fb22b8966366ddf86ce567cb8c0e8f8ed"
+        },
+        "date": 1786177594476,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 52578,
+            "range": "±1.20%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 518670,
+            "range": "±0.41%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 35167,
+            "range": "±1.33%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 394957,
+            "range": "±0.90%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
