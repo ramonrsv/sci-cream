@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786179853098,
+  "lastUpdate": 1786179903369,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -68225,6 +68225,192 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 726,
             "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6cbbdac364ebd94972a0ca646ee3d6675112927f",
+          "message": "Fix unreadable dropdown options in dark mode\n\nMoving `.boxed-input` onto the wrapper left the inner `<select>`\ntransparent. That is fine for the closed control, which the wrapper\npaints behind, but Chrome draws the native dropdown using the select's\nown background: the options landed on the UA's light default, so the\nwhite dark-theme text vanished and only the hovered row -- which paints\nits own highlight -- stayed visible. Light mode escaped by luck.\n\nInherit the box's background rather than naming a token again, so the\ncontrol follows whatever the wrapper is painted with.\n\nNo baseline moves, since the closed control already rendered in this\ncolour. Native dropdowns are OS-drawn and never enter the DOM, so\nneither the unit tests nor the screenshots could have caught this; a\ncomputed-style comparison against an unmarked select does.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T04:44:13-04:00",
+          "tree_id": "b37bbf1f4df14c6cd88d62169f9895e7fa9e2e8d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6cbbdac364ebd94972a0ca646ee3d6675112927f"
+        },
+        "date": 1786179862549,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4252,
+            "range": "± 88",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 156498,
+            "range": "± 2376",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2441,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 181663,
+            "range": "± 14957",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4538,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 5810,
+            "range": "± 162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4941,
+            "range": "± 106",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4956,
+            "range": "± 113",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4942,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4881,
+            "range": "± 213",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 104948,
+            "range": "± 1973",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 108665,
+            "range": "± 1272",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 183160812,
+            "range": "± 1585866",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 638560,
+            "range": "± 3613",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 7000,
+            "range": "± 205",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6499,
+            "range": "± 84",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 99183,
+            "range": "± 9240",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 109726,
+            "range": "± 1385",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 182661,
+            "range": "± 1802",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 177807,
+            "range": "± 3278",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 327291,
+            "range": "± 6688",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14189,
+            "range": "± 289",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 9",
             "unit": "ns/iter"
           },
           {
