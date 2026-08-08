@@ -54,8 +54,10 @@ export function Select<T>({
   const selectedIndex = options.findIndex((opt) => opt.value === value);
 
   // Preflight zeroes borders, so the bare `<select>` needs no reset; `.boxed-input` draws the box.
+  // The bare select still inherits its background: the native dropdown paints options in it, and
+  // a transparent one leaves them on the UA's light default, unreadable under a dark theme.
   const selectClass = icon
-    ? "min-w-0 cursor-pointer bg-transparent text-sm"
+    ? "min-w-0 cursor-pointer bg-inherit text-sm"
     : `boxed-input cursor-pointer text-sm ${className}`;
 
   const select = (
