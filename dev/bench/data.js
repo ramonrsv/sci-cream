@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786178028996,
+  "lastUpdate": 1786178454506,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -423712,6 +423712,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 662.38,
             "range": "12.36",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6246749fb22b8966366ddf86ce567cb8c0e8f8ed",
+          "message": "Unify toolbar control ordering across the app\n\nStar/Share/Delete sat in different positions on /recipes and\n/make-recipe, and the widget selects (KeyFilter, Qty, Delta, Norm,\nColor) appeared in a different order in every toolbar.\n\nAdopt two canonical left-to-right orders and apply them everywhere:\n\n  selects  RecipeSelect → KeyFilter → Qty → Delta → Norm → Color\n  actions  New → Save → Star/Rating → Edit → Share → Load → Delete\n\nKeyFilter leads the selects because it is the only control present in\nevery toolbar; the conditional selects around it would otherwise shift\nits position. Destructive last is the rule for the action row.\n\n/make-recipe's hand-rolled delete button now uses the shared\nDeleteAction, which owns the window.confirm; DeleteAction gains an\noptional testId so delete-batch-button keeps working.\n\nVisual snapshots still need re-baselining.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T04:16:38-04:00",
+          "tree_id": "e4b2f68bf0d1501e3c74ff462f7924c73f0f26bb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6246749fb22b8966366ddf86ce567cb8c0e8f8ed"
+        },
+        "date": 1786178413702,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.88,
+            "range": "3.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49,
+            "range": "1.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57.5,
+            "range": "4.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2337.75,
+            "range": "39.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 322.5,
+            "range": "7.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 335.13,
+            "range": "3.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 350,
+            "range": "7.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16412.25,
+            "range": "44.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 900.13,
+            "range": "20.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 53.13,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.13,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41.75,
+            "range": "1.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 127.5,
+            "range": "4.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 82,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.04,
+            "range": "0.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.44,
+            "range": "0.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 612.63,
+            "range": "6.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 662.75,
+            "range": "13.25",
             "unit": "ms"
           }
         ]
