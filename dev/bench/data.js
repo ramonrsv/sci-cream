@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786179696194,
+  "lastUpdate": 1786179770461,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -424507,6 +424507,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 662.75,
             "range": "13.25",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5a27c727702b020b5c38173999be0536e7e472e7",
+          "message": "Fix webpack CSS resolution of emoji font url()s\n\nWebpack's CSS resolver can't resolve bare npm specifiers\nin url(), unlike Turbopack's. That broke every page under\n`next dev --webpack`, since globals.css failed to compile.\n\nPoint the two @font-face src urls at relative node_modules\npaths instead, which both bundlers resolve the same way.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T04:38:08-04:00",
+          "tree_id": "6e5789596458b730f4ee561a26c1a49ac1a4ee06",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5a27c727702b020b5c38173999be0536e7e472e7"
+        },
+        "date": 1786179729478,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 50.13,
+            "range": "6.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 53.63,
+            "range": "3.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 58.38,
+            "range": "5.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2316.5,
+            "range": "33.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 316,
+            "range": "3.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 329.75,
+            "range": "6.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 348.75,
+            "range": "10.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16407.75,
+            "range": "31.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 893.13,
+            "range": "31.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.75,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.38,
+            "range": "1.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 123.88,
+            "range": "3.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 81.63,
+            "range": "2.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.15,
+            "range": "0.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.42,
+            "range": "0.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 614.38,
+            "range": "9.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 671.75,
+            "range": "13.11",
             "unit": "ms"
           }
         ]
