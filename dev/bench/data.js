@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786178454506,
+  "lastUpdate": 1786179005690,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -511922,6 +511922,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/6246749fb22b8966366ddf86ce567cb8c0e8f8ed"
         },
         "date": 1786177580958,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.84,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5a27c727702b020b5c38173999be0536e7e472e7",
+          "message": "Fix webpack CSS resolution of emoji font url()s\n\nWebpack's CSS resolver can't resolve bare npm specifiers\nin url(), unlike Turbopack's. That broke every page under\n`next dev --webpack`, since globals.css failed to compile.\n\nPoint the two @font-face src urls at relative node_modules\npaths instead, which both bundlers resolve the same way.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-08T04:38:08-04:00",
+          "tree_id": "6e5789596458b730f4ee561a26c1a49ac1a4ee06",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5a27c727702b020b5c38173999be0536e7e472e7"
+        },
+        "date": 1786178964665,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
