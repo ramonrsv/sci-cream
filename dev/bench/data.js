@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786487213795,
+  "lastUpdate": 1786487525641,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -427687,6 +427687,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 656.25,
             "range": "16.17",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cce15e526b7a193f73eb7109b172c33ad3a5ab7d",
+          "message": "Add permalinks to markdown headings\n\nrehype-autolink-headings appends a `#` to every heading, on blog\nposts as well as docs pages, since both share the pipeline.\n\nIt runs after the ids are rewritten, not right after rehype-slug:\ninside a /docs composite the ids are slug-prefixed, so linking\nearlier would point every permalink at an id that no longer\nexists. A test pins the order.\n\nThe `#` is hidden until its heading is hovered, and always shown\nwhere there is no hover to reveal it with.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T18:08:15-04:00",
+          "tree_id": "472bfc26847ae2e3f3b5d8683eefd96a038759d3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cce15e526b7a193f73eb7109b172c33ad3a5ab7d"
+        },
+        "date": 1786487484793,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 37.38,
+            "range": "2.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 42.25,
+            "range": "3.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 46.38,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1992.75,
+            "range": "41.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 273.88,
+            "range": "5.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 279.75,
+            "range": "3.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 296.25,
+            "range": "9.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 14308.13,
+            "range": "103.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 850.38,
+            "range": "12.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.13,
+            "range": "1.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 47,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 35.75,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35.88,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 112.25,
+            "range": "3.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 69.88,
+            "range": "1.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 45.59,
+            "range": "0.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 33.91,
+            "range": "0.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 564.38,
+            "range": "9.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 606.25,
+            "range": "17.36",
             "unit": "ms"
           }
         ]
