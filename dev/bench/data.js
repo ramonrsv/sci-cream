@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786485375945,
+  "lastUpdate": 1786485465474,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -68602,6 +68602,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_start)",
             "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5172f01a445a19b4d49f61d5af18937e903c8f0d",
+          "message": "Serve a docs table of contents at /docs\n\ncontent/docs/table-of-content.md now backs the /docs route, in\nplace of the auto-generated list: its frontmatter `pages` list\nnames the pages rendered after it, in that order. A unit test\nasserts every file in the section is reachable from it.\n\nEvery docs route works this way, not just /docs, expanding one\nlevel: a listed page's own list belongs to its own route.\n\nRendering pages together needs three fixes, all opt-in via\ngetMarkdownPage's new options, so a page listing nothing renders\nexactly as before:\n\n- headings demoted a level, leaving the route one <h1>\n- heading ids prefixed by slug; recipes.md and resources.md\n  share four heading names, which collided as anchors\n- links to a listed page rewritten to in-page anchors\n\nThat one list drives both inclusion and rewriting, so an anchor\ncannot outlive the content it points at.\n\nDrop the frontmatter `order` field along with the generated\nlist, leaving blog posts sorted by date, newest first.\n\nAdd .markdownlint.json, setting MD025's front_matter_title to \"\"\nso a frontmatter title stops counting as a competing H1, and\nMD013's line_length to 100. The per-file directives it replaces\nhad been silently inert: prettier's format-on-save puts a blank\nline after them, and they only cover the next line.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T17:44:18-04:00",
+          "tree_id": "181d83809a2ab48e6ed0cda70a4ec8df2891f63a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5172f01a445a19b4d49f61d5af18937e903c8f0d"
+        },
+        "date": 1786485426996,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4622,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 183046,
+            "range": "± 1923",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2922,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 180710,
+            "range": "± 1628",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 5268,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 5208,
+            "range": "± 113",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 5537,
+            "range": "± 306",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 5808,
+            "range": "± 100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 5744,
+            "range": "± 107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5821,
+            "range": "± 213",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 125560,
+            "range": "± 2655",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 130023,
+            "range": "± 2809",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 202016147,
+            "range": "± 753496",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 680580,
+            "range": "± 8777",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 7623,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 54,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 7466,
+            "range": "± 356",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 108885,
+            "range": "± 3530",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 105323,
+            "range": "± 3619",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 175310,
+            "range": "± 3757",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 175988,
+            "range": "± 2506",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 375198,
+            "range": "± 2222",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14823,
+            "range": "± 307",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 725,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
             "range": "± 0",
             "unit": "ns/iter"
           },
