@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786473620352,
+  "lastUpdate": 1786485024813,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -515316,6 +515316,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1883.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5172f01a445a19b4d49f61d5af18937e903c8f0d",
+          "message": "Serve a docs table of contents at /docs\n\ncontent/docs/table-of-content.md now backs the /docs route, in\nplace of the auto-generated list: its frontmatter `pages` list\nnames the pages rendered after it, in that order. A unit test\nasserts every file in the section is reachable from it.\n\nEvery docs route works this way, not just /docs, expanding one\nlevel: a listed page's own list belongs to its own route.\n\nRendering pages together needs three fixes, all opt-in via\ngetMarkdownPage's new options, so a page listing nothing renders\nexactly as before:\n\n- headings demoted a level, leaving the route one <h1>\n- heading ids prefixed by slug; recipes.md and resources.md\n  share four heading names, which collided as anchors\n- links to a listed page rewritten to in-page anchors\n\nThat one list drives both inclusion and rewriting, so an anchor\ncannot outlive the content it points at.\n\nDrop the frontmatter `order` field along with the generated\nlist, leaving blog posts sorted by date, newest first.\n\nAdd .markdownlint.json, setting MD025's front_matter_title to \"\"\nso a frontmatter title stops counting as a competing H1, and\nMD013's line_length to 100. The per-file directives it replaces\nhad been silently inert: prettier's format-on-save puts a blank\nline after them, and they only cover the next line.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T17:44:18-04:00",
+          "tree_id": "181d83809a2ab48e6ed0cda70a4ec8df2891f63a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5172f01a445a19b4d49f61d5af18937e903c8f0d"
+        },
+        "date": 1786484983634,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
             "unit": "KB"
           }
         ]
