@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786472786545,
+  "lastUpdate": 1786472830671,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -491129,6 +491129,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1060.92,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.45,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9203bdd85bb9376d6a266cee84686ec0a8655c72",
+          "message": "Fill out the glucose syrup and HFCS ingredients\n\nThe data only had Maltodextrin 10 DE, Glucose Syrup 42 DE, two glucose\npowders, and a lone HFCS 42. Hull's appendices carry the whole range,\nso add the rest: maltodextrin at 5/15/18 DE, glucose syrup at\n20/25/28/33/37/49/55/63 DE, and HFCS 55 and 90. Sugar spectra, molar\nmasses, and sweetness come from C.1-C.3, solids content from Goff &\nHartel; each entry records which row it took when the appendices don't\nlist the exact DE.\n\nRewrite the Sweetness Values discussion around that reading. Spillane\nquotes the values on a dried basis and Hull does not say, so taking\nthem as dry-solids -- rather than the product basis Goff & Hartel\nstate -- is what makes the three sources agree with each other and\nwith modern manufacturer data. The previous text listed the same\ntensions but left them unresolved.\n\nRename HFCS 42/55/90 to the spelled-out names with the abbreviations\nkept as aliases, and alias plain 'Glucose Syrup' to 42 DE, the grade\nusually sold under that bare name.\n\nHFCS 42 also picks up maltose, 77% solids, and explicit POD/PAC from\nthe appendices, so its spec fixture moves with it; the sweetener bench\nnow names the ingredient rather than the alias, which no longer\nresolves through the independent-spec lookup. The app's doc-link rule\nlearns both HFCS spellings so those entries cite the guide chapter\ntheir comments point at.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T13:43:52-04:00",
+          "tree_id": "80c7f099e83e7dae8e4841c8ed85d2607118b1a3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9203bdd85bb9376d6a266cee84686ec0a8655c72"
+        },
+        "date": 1786472789365,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 704.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 872.96,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 642.02,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 810.47,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 652.21,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 820.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 579.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 748.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 579.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 748.12,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1062.21,
             "unit": "KB"
           },
           {
