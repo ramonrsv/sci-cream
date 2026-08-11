@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786473184959,
+  "lastUpdate": 1786473620352,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -426097,6 +426097,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 661.88,
             "range": "8.39",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9203bdd85bb9376d6a266cee84686ec0a8655c72",
+          "message": "Fill out the glucose syrup and HFCS ingredients\n\nThe data only had Maltodextrin 10 DE, Glucose Syrup 42 DE, two glucose\npowders, and a lone HFCS 42. Hull's appendices carry the whole range,\nso add the rest: maltodextrin at 5/15/18 DE, glucose syrup at\n20/25/28/33/37/49/55/63 DE, and HFCS 55 and 90. Sugar spectra, molar\nmasses, and sweetness come from C.1-C.3, solids content from Goff &\nHartel; each entry records which row it took when the appendices don't\nlist the exact DE.\n\nRewrite the Sweetness Values discussion around that reading. Spillane\nquotes the values on a dried basis and Hull does not say, so taking\nthem as dry-solids -- rather than the product basis Goff & Hartel\nstate -- is what makes the three sources agree with each other and\nwith modern manufacturer data. The previous text listed the same\ntensions but left them unresolved.\n\nRename HFCS 42/55/90 to the spelled-out names with the abbreviations\nkept as aliases, and alias plain 'Glucose Syrup' to 42 DE, the grade\nusually sold under that bare name.\n\nHFCS 42 also picks up maltose, 77% solids, and explicit POD/PAC from\nthe appendices, so its spec fixture moves with it; the sweetener bench\nnow names the ingredient rather than the alias, which no longer\nresolves through the independent-spec lookup. The app's doc-link rule\nlearns both HFCS spellings so those entries cite the guide chapter\ntheir comments point at.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T13:43:52-04:00",
+          "tree_id": "80c7f099e83e7dae8e4841c8ed85d2607118b1a3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9203bdd85bb9376d6a266cee84686ec0a8655c72"
+        },
+        "date": 1786473581094,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 48.38,
+            "range": "4.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 53.25,
+            "range": "2.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 63,
+            "range": "5.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2525.5,
+            "range": "38.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 335.63,
+            "range": "5.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 344.88,
+            "range": "4.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 375,
+            "range": "12.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17337,
+            "range": "28.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 937.88,
+            "range": "20.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.38,
+            "range": "1.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.75,
+            "range": "2.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.38,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.63,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 130.75,
+            "range": "2.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 90.13,
+            "range": "3.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 58.2,
+            "range": "0.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 45.32,
+            "range": "0.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 635,
+            "range": "9.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 694.63,
+            "range": "13.35",
             "unit": "ms"
           }
         ]
