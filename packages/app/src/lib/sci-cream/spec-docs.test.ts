@@ -53,6 +53,8 @@ describe("specDocLinks", () => {
 
   test("name rules catch glucose syrups and powders", () => {
     expect(labelsFor("Glucose Syrup 42 DE")).toContain("Glucose Syrups");
+    expect(labelsFor("High Fructose Corn Syrup 42")).toContain("Glucose Syrups");
+    expect(labelsFor("HFCS 42")).toContain("Glucose Syrups");
     expect(labelsFor("Sucrose")).not.toContain("Glucose Syrups");
   });
 

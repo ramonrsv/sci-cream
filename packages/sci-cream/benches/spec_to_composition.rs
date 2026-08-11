@@ -11,7 +11,7 @@ pub(crate) fn bench_sweetener_spec_to_composition(c: &mut Criterion) {
             .spec
     };
 
-    let sweetener_spec = get_spec("HFCS 42").into_sweetener_spec().unwrap();
+    let sweetener_spec = get_spec("High Fructose Corn Syrup 42").into_sweetener_spec().unwrap();
 
     let simple_milk = "2% Milk";
     let label_milk_g = "USDA Whole Milk";

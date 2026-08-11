@@ -24,7 +24,8 @@
 }
 ```
 
-Dextrose Powder (Monohydrate), typically with a moisture content of around 8%.
+Dextrose Powder (Monohydrate), typically with a moisture content of around 8% (Goff & Hartel, 2013,
+Table 3.4, p. 67)[^2].
 
 ## Fructose
 
@@ -200,23 +201,25 @@ USDA FoodData Central - SR Legacy -
 [Molasses](https://fdc.nal.usda.gov/food-details/168820/nutrients). These values roughly align with
 the analysis in _Glucose Syrups_ (Hull, 2010, Table 12.1, p. 176)[^15].
 
-## HFCS 42
+## Maltodextrin 5 DE
 
 ```json
 {
   "category": "Sweetener",
   "SweetenerSpec": {
-    "sweeteners": { "sugars": { "fructose": 42, "glucose": 53 } },
-    "other_carbohydrates": 5,
-    "ByDryWeight": { "solids": 76 }
+    "sweeteners": { "sugars": { "glucose": 0.9, "maltose": 0.9 } },
+    "other_carbohydrates": 98.2,
+    "ByDryWeight": { "solids": 95 },
+    "pod": { "OfSolids": 6 },
+    "pac": { "OfSolids": { "molar_mass": 3600 } }
   }
 }
 ```
 
-High Fructose Corn Syrup 42 (HFCS 42) composition values were taken from
-[Wikipedia](https://en.wikipedia.org/wiki/High-fructose_corn_syrup#Production). The resulting
-POD/PAC values match those in _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, page 67)[^2]
-and [Ice Cream Calculator](https://icecreamcalc.com/).
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders.
 
 ## Maltodextrin 10 DE
 
@@ -233,8 +236,152 @@ and [Ice Cream Calculator](https://icecreamcalc.com/).
 }
 ```
 
-Sugar spectra, POD value, and molar mass taken from _Glucose Syrups_ (Hull, 2010, Appendix C.3, p. 323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for discussion on sweetness of glucose
-syrups and powders.
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders.
+
+## Maltodextrin 15 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 1.3, "maltose": 4.1 } },
+    "other_carbohydrates": 94.6,
+    "ByDryWeight": { "solids": 95 },
+    "pod": { "OfSolids": 17 },
+    "pac": { "OfSolids": { "molar_mass": 1200 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders.
+
+## Maltodextrin 18 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 1.5, "maltose": 6.0 } },
+    "other_carbohydrates": 92.5,
+    "ByDryWeight": { "solids": 95 },
+    "pod": { "OfSolids": 20 },
+    "pac": { "OfSolids": { "molar_mass": 1000 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders. The sweetness value is for 'Maltodextrin - 19 DE', the closest in C.3.
+
+## Glucose Syrup 20 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 2.0, "maltose": 10.0 } },
+    "other_carbohydrates": 88,
+    "ByDryWeight": { "solids": 80 },
+    "pod": { "OfSolids": 23 },
+    "pac": { "OfSolids": { "molar_mass": 900 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders. The sugar spectra is for 'Glucose syrup 28', the closest in C.1. The
+POD value is for 'Glucose syrup solids - 20 DE' in C.3, equivalent since it's on a dry solids basis.
+
+## Glucose Syrup 25 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 2.0, "maltose": 10.0 } },
+    "other_carbohydrates": 88,
+    "ByDryWeight": { "solids": 80 },
+    "pod": { "OfSolids": 28 },
+    "pac": { "OfSolids": { "molar_mass": 720 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders. The sugar spectra is for 'Glucose syrup 28', the closest in C.1. The
+POD value is for 'Glucose syrup solids - 25 DE' in C.3, equivalent since it's on a dry solids basis.
+
+## Glucose Syrup 28 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 2.0, "maltose": 10.0 } },
+    "other_carbohydrates": 88,
+    "ByDryWeight": { "solids": 80 },
+    "pod": { "OfSolids": 30 },
+    "pac": { "OfSolids": { "molar_mass": 643 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders.
+
+## Glucose Syrup 33 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 11.0, "maltose": 12.0 } },
+    "other_carbohydrates": 77,
+    "ByDryWeight": { "solids": 80 },
+    "pod": { "OfSolids": 40 },
+    "pac": { "OfSolids": { "molar_mass": 545 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders. The sugar spectra is for 'Glucose syrup 35', the closest in C.1.
+
+## Glucose Syrup 37 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 11.0, "maltose": 12.0 } },
+    "other_carbohydrates": 77,
+    "ByDryWeight": { "solids": 80 },
+    "pod": { "OfSolids": 45 },
+    "pac": { "OfSolids": { "molar_mass": 486 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders. The sugar spectra is for 'Glucose syrup 35', the closest in C.1.
 
 ## Glucose Syrup 42 DE
 
@@ -242,7 +389,7 @@ syrups and powders.
 {
   "category": "Sweetener",
   "SweetenerSpec": {
-    "sweeteners": { "sugars": { "glucose": 19, "maltose": 14 } },
+    "sweeteners": { "sugars": { "glucose": 19.0, "maltose": 14.0 } },
     "other_carbohydrates": 67,
     "ByDryWeight": { "solids": 80 },
     "pod": { "OfSolids": 50 },
@@ -251,8 +398,158 @@ syrups and powders.
 }
 ```
 
-Sugar spectra, POD value, and molar mass taken from _Glucose Syrups_ (Hull, 2010, Appendix C.3, p. 323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for discussion on sweetness of glucose
-syrups and powders.
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders.
+
+## Glucose Syrup 49 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 26.0, "maltose": 17.0 } },
+    "other_carbohydrates": 57,
+    "ByDryWeight": { "solids": 80 },
+    "pod": { "OfSolids": 56 },
+    "pac": { "OfSolids": { "molar_mass": 367 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders. The sugar spectra is for 'Glucose syrup 50', the closest in C.1.
+
+## Glucose Syrup 55 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 30.0, "maltose": 24.0 } },
+    "other_carbohydrates": 46,
+    "ByDryWeight": { "solids": 80 },
+    "pod": { "OfSolids": 62 },
+    "pac": { "OfSolids": { "molar_mass": 327 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders.
+
+## Glucose Syrup 63 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 34.0, "maltose": 33.0 } },
+    "other_carbohydrates": 33,
+    "ByDryWeight": { "solids": 80 },
+    "pod": { "OfSolids": 70 },
+    "pac": { "OfSolids": { "molar_mass": 286 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders.
+
+## Glucose Syrup
+
+```json
+{ "for": "Glucose Syrup 42 DE" }
+```
+
+'Glucose Syrup 42 DE' is the most common general-purpose glucose syrup, particularly of those
+available to home cooks, and is often referred to as just 'Glucose Syrup'. @todo Source needed.
+
+## High Fructose Corn Syrup 42
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "fructose": 42, "glucose": 52, "maltose": 4 } },
+    "other_carbohydrates": 2,
+    "ByDryWeight": { "solids": 77 },
+    "pod": { "OfSolids": 95 },
+    "pac": { "OfSolids": { "molar_mass": 190 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders.
+
+## High Fructose Corn Syrup 55
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "fructose": 55, "glucose": 41, "maltose": 2 } },
+    "other_carbohydrates": 2,
+    "ByDryWeight": { "solids": 77 },
+    "pod": { "OfSolids": 105 },
+    "pac": { "OfSolids": { "molar_mass": 185 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders.
+
+## High Fructose Corn Syrup 90
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "fructose": 80, "glucose": 18, "maltose": 1 } },
+    "other_carbohydrates": 1,
+    "ByDryWeight": { "solids": 77 },
+    "pod": { "OfSolids": 135 },
+    "pac": { "OfSolids": { "molar_mass": 182 } }
+  }
+}
+```
+
+Sugar spectra, molar mass, and POD values taken from _Glucose Syrups_ (Hull, 2010, Appendix C.1-3,
+p. 321-323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4,
+p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for a discussion on sweetness of
+glucose syrups and powders. The sugar spectra and molar mass are for 'HFGS 80%' and 'High-fructose
+glucose syrup - 80% FX', the closest in C.1 and C.2, respectively.
+
+## HFCS 42
+
+```json
+{ "for": "High Fructose Corn Syrup 42" }
+```
+
+## HFCS 55
+
+```json
+{ "for": "High Fructose Corn Syrup 55" }
+```
+
+## HFCS 90
+
+```json
+{ "for": "High Fructose Corn Syrup 90" }
+```
 
 ## Glucose Powder 25 DE
 
@@ -260,7 +557,7 @@ syrups and powders.
 {
   "category": "Sweetener",
   "SweetenerSpec": {
-    "sweeteners": { "sugars": { "glucose": 2, "maltose": 10 } },
+    "sweeteners": { "sugars": { "glucose": 2.0, "maltose": 10.0 } },
     "other_carbohydrates": 88,
     "ByDryWeight": { "solids": 95 },
     "pod": { "OfSolids": 28 },
@@ -269,10 +566,8 @@ syrups and powders.
 }
 ```
 
-Sugar spectra (for 'Glucose syrup 28 DE), POD value (for 'Glucose syrup solids - 25 DE'), and molar
-mass taken from _Glucose Syrups_ (Hull, 2010, Appendix C.3, p. 323)[^15], and solids content from
-_Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]. See [Sweetness
-Values](crate::docs#sweetness-values) for discussion on sweetness of glucose syrups and powders.
+This is a copy of 'Glucose Syrup 25 DE' but with the solids content adjusted to 95% to reflect spray
+dried powder form. See the comments there for more details.
 
 ## Glucose Powder 42 DE
 
@@ -280,7 +575,7 @@ Values](crate::docs#sweetness-values) for discussion on sweetness of glucose syr
 {
   "category": "Sweetener",
   "SweetenerSpec": {
-    "sweeteners": { "sugars": { "glucose": 19, "maltose": 14 } },
+    "sweeteners": { "sugars": { "glucose": 19.0, "maltose": 14.0 } },
     "other_carbohydrates": 67,
     "ByDryWeight": { "solids": 95 },
     "pod": { "OfSolids": 50 },

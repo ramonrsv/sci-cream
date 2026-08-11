@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 267  (non-alias: 227, independent: 219)
+total: 284  (non-alias: 240, independent: 232)
 
             0% Milk
             1% Milk
@@ -86,7 +86,16 @@ total: 267  (non-alias: 227, independent: 219)
             Gin
             Glucose Powder 25 DE
             Glucose Powder 42 DE
+[alias]     Glucose Syrup
+            Glucose Syrup 20 DE
+            Glucose Syrup 25 DE
+            Glucose Syrup 28 DE
+            Glucose Syrup 33 DE
+            Glucose Syrup 37 DE
             Glucose Syrup 42 DE
+            Glucose Syrup 49 DE
+            Glucose Syrup 55 DE
+            Glucose Syrup 63 DE
             Goff & Hartel 10% Condensed Milk
             Goff & Hartel 18% Cream
             Goff & Hartel 3% Milk
@@ -110,12 +119,17 @@ total: 267  (non-alias: 227, independent: 219)
 [alias]     Grand Marnier
             Grand Marnier Cordon Rouge
             Guar Gum
-            HFCS 42
+[alias]     HFCS 42
+[alias]     HFCS 55
+[alias]     HFCS 90
             HP Inulin Powder
 [alias]     Half and Half
             Hazelnut
 [alias]     Heavy Cream
             Hershey's 100% Natural Unsweetened Cocoa Powder
+            High Fructose Corn Syrup 42
+            High Fructose Corn Syrup 55
+            High Fructose Corn Syrup 90
             Honey
             Horizon Organic Heavy Whipping Cream
 [alias]     Ice Cream Stabilizer Blend
@@ -156,6 +170,9 @@ total: 267  (non-alias: 227, independent: 219)
             Locust Bean Gum
             Maltitol
             Maltodextrin 10 DE
+            Maltodextrin 15 DE
+            Maltodextrin 18 DE
+            Maltodextrin 5 DE
             Maltose
             Maple Syrup
             Marsala Wine

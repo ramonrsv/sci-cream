@@ -53,10 +53,10 @@
 - [ ] Should `isCompQuantity` return false for ABV? It's a bit confusing as a quantity percentage.
 - [ ] Consider adding an a `RatioKey::StabilizersPerEmulsifiers`; I saw Underbelly mention it.
 - [ ] Add milk solids support to `ChocolateSpec` and add milk chocolate Callebaut ingredients.
-- [ ] Rename 'HFCS 42' to 'High Fructose Corn Syrup 42 DE' and add 'HFCS 42' alias; same for others.
 - [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
 - [ ] Add wine ingredients, and considered adding evaporated wine - how to handle, parametric?
 - [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '\* [Evap 15]', etc.
+- [ ] Look into using sub-footnotes to simplify in-text citations with just a footnote link.
 
 ## Backlog
 
@@ -118,6 +118,7 @@
 
 ## Completed
 
+- [x] Rename 'HFCS 42' to 'High Fructose Corn Syrup 42' and add 'HFCS 42' alias; same for others.
 - [x] Investigate how to support markdown for the data recipe and ingredient comments. It's
       difficult to do in JSON, but doing it in separate `.md` files would be a maintenance issues.
 - [x] Remove `FPD` as a typical balancing key, since it's redundant and competes with `ServingTemp`.

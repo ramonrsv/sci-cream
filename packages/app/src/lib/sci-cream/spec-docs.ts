@@ -101,7 +101,7 @@ const SPEC_DOC_RULES: readonly SpecDocRule[] = [
   { when: hasPath("sweeteners.artificial"), chapters: ["artificial-sweeteners"] },
   { when: hasPath("fiber"), chapters: ["fibers"] },
   {
-    when: nameMatches(/glucose (syrup|powder)|maltodextrin/i),
+    when: nameMatches(/glucose (syrup|powder)|maltodextrin|hfcs|high fructose corn syrup/i),
     chapters: ["glucose-syrups-and-powders"],
   },
 ];
