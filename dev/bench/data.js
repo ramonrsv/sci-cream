@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786473147589,
+  "lastUpdate": 1786473184959,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -68416,6 +68416,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_start)",
             "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9203bdd85bb9376d6a266cee84686ec0a8655c72",
+          "message": "Fill out the glucose syrup and HFCS ingredients\n\nThe data only had Maltodextrin 10 DE, Glucose Syrup 42 DE, two glucose\npowders, and a lone HFCS 42. Hull's appendices carry the whole range,\nso add the rest: maltodextrin at 5/15/18 DE, glucose syrup at\n20/25/28/33/37/49/55/63 DE, and HFCS 55 and 90. Sugar spectra, molar\nmasses, and sweetness come from C.1-C.3, solids content from Goff &\nHartel; each entry records which row it took when the appendices don't\nlist the exact DE.\n\nRewrite the Sweetness Values discussion around that reading. Spillane\nquotes the values on a dried basis and Hull does not say, so taking\nthem as dry-solids -- rather than the product basis Goff & Hartel\nstate -- is what makes the three sources agree with each other and\nwith modern manufacturer data. The previous text listed the same\ntensions but left them unresolved.\n\nRename HFCS 42/55/90 to the spelled-out names with the abbreviations\nkept as aliases, and alias plain 'Glucose Syrup' to 42 DE, the grade\nusually sold under that bare name.\n\nHFCS 42 also picks up maltose, 77% solids, and explicit POD/PAC from\nthe appendices, so its spec fixture moves with it; the sweetener bench\nnow names the ingredient rather than the alias, which no longer\nresolves through the independent-spec lookup. The app's doc-link rule\nlearns both HFCS spellings so those entries cite the guide chapter\ntheir comments point at.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T13:43:52-04:00",
+          "tree_id": "80c7f099e83e7dae8e4841c8ed85d2607118b1a3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9203bdd85bb9376d6a266cee84686ec0a8655c72"
+        },
+        "date": 1786473144038,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4042,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 157407,
+            "range": "± 35445",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2422,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 157467,
+            "range": "± 975",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4493,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4692,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4538,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4577,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4542,
+            "range": "± 100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4779,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 105629,
+            "range": "± 955",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 109030,
+            "range": "± 1062",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 182437636,
+            "range": "± 439918",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 635766,
+            "range": "± 4748",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6940,
+            "range": "± 147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6319,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 97653,
+            "range": "± 621",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 94166,
+            "range": "± 713",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 154933,
+            "range": "± 1216",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 152780,
+            "range": "± 1202",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 331466,
+            "range": "± 5177",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14376,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 15,
             "range": "± 0",
             "unit": "ns/iter"
           },
