@@ -1,10 +1,8 @@
 ---
 title: "Resources"
 description: "Other resources..."
-draft: true
 ---
 
-<!-- markdownlint-disable-next-line MD025 -- frontmatter title is not rendered as H1 -->
 # Resources
 
 Blah blah...

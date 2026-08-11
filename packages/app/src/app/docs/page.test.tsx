@@ -3,16 +3,41 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 
-vi.mock("@/lib/markdown", () => ({ getMarkdownSummaries: vi.fn() }));
-
-vi.mock("next/link", () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+vi.mock("@/lib/markdown", () => ({
+  getMarkdownPage: vi.fn(),
+  getMarkdownComposite: vi.fn(),
+  TABLE_OF_CONTENT_SLUG: "table-of-content",
 }));
 
-const { default: DocsPage } = await import("./page");
-const { getMarkdownSummaries } = await import("@/lib/markdown");
+const { default: DocsPage, generateMetadata } = await import("./page");
+const { getMarkdownPage, getMarkdownComposite } = await import("@/lib/markdown");
+
+/** Build a composite of stub pages, so ordering is observable in the rendered output. */
+function mockComposite(...slugs: string[]) {
+  vi.mocked(getMarkdownComposite).mockResolvedValue(
+    slugs.map((slug) => ({
+      slug,
+      frontmatter: { title: slug },
+      contentHtml: `<h2>${slug} body</h2>`,
+    })),
+  );
+}
+
+// ---------------------------------------------------------------------------
+// generateMetadata
+// ---------------------------------------------------------------------------
+
+describe("generateMetadata", () => {
+  it("returns title and description from the table of contents' frontmatter", async () => {
+    vi.mocked(getMarkdownPage).mockResolvedValue({
+      slug: "table-of-content",
+      frontmatter: { title: "Docs", description: "Index of the documentation." },
+    });
+    const metadata = await generateMetadata();
+    expect(metadata).toEqual({ title: "Docs", description: "Index of the documentation." });
+    expect(getMarkdownPage).toHaveBeenCalledWith("docs", "table-of-content");
+  });
+});
 
 // ---------------------------------------------------------------------------
 // DocsPage
@@ -21,50 +46,29 @@ const { getMarkdownSummaries } = await import("@/lib/markdown");
 describe("DocsPage", () => {
   afterEach(() => cleanup());
 
-  it('renders the "Documentation" heading', () => {
-    vi.mocked(getMarkdownSummaries).mockReturnValue([]);
-    render(<DocsPage />);
-    expect(screen.getByRole("heading", { name: "Documentation" })).toBeInTheDocument();
-  });
+  it("renders the table of contents composite, one article per page, in order", async () => {
+    mockComposite("table-of-content", "getting-started", "recipes");
 
-  it("renders a link for each doc page", () => {
-    vi.mocked(getMarkdownSummaries).mockReturnValue([
-      { slug: "getting-started", frontmatter: { title: "Getting Started" } },
-      { slug: "advanced", frontmatter: { title: "Advanced Usage" } },
+    const { container } = render(await DocsPage());
+    const articles = container.querySelectorAll("article");
+    expect([...articles].map((a) => a.id)).toEqual([
+      "table-of-content",
+      "getting-started",
+      "recipes",
     ]);
-    render(<DocsPage />);
-    expect(screen.getByRole("link", { name: "Getting Started" })).toHaveAttribute(
-      "href",
-      "/docs/getting-started",
-    );
-    expect(screen.getByRole("link", { name: "Advanced Usage" })).toHaveAttribute(
-      "href",
-      "/docs/advanced",
-    );
+    expect(screen.getByText("recipes body")).toBeInTheDocument();
+    expect(getMarkdownComposite).toHaveBeenCalledWith("docs", "table-of-content");
   });
 
-  it("renders the description when present", () => {
-    vi.mocked(getMarkdownSummaries).mockReturnValue([
-      {
-        slug: "with-desc",
-        frontmatter: { title: "With Description", description: "Describes the topic." },
-      },
-    ]);
-    render(<DocsPage />);
-    expect(screen.getByText("Describes the topic.")).toBeInTheDocument();
+  it("renders a single article when the table of contents lists no pages", async () => {
+    mockComposite("table-of-content");
+
+    const { container } = render(await DocsPage());
+    expect(container.querySelectorAll("article")).toHaveLength(1);
   });
 
-  it("omits the description element when description is absent", () => {
-    vi.mocked(getMarkdownSummaries).mockReturnValue([
-      { slug: "no-desc", frontmatter: { title: "No Description" } },
-    ]);
-    render(<DocsPage />);
-    expect(screen.queryByRole("paragraph")).not.toBeInTheDocument();
-  });
-
-  it("renders nothing in the list when there are no doc pages", () => {
-    vi.mocked(getMarkdownSummaries).mockReturnValue([]);
-    render(<DocsPage />);
-    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  it("propagates the error when the table of contents is missing", async () => {
+    vi.mocked(getMarkdownComposite).mockRejectedValue(new Error("ENOENT"));
+    await expect(DocsPage()).rejects.toThrow("ENOENT");
   });
 });

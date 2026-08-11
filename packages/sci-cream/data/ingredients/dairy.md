@@ -238,7 +238,8 @@ kg'](https://www.pantrylot.com/products/1-skimmed-milk-powder-medium-25-kg).
 { "category": "Dairy", "DairySimpleSpec": { "fat": 26, "msnf": 72 } }
 ```
 
-Simplified version of 'Goff & Hartel Whole Milk Powder' (Goff & Hartel, 2025, Table 3.2, p. 48)[^20], also in agreement with bulk products, e.g. ['MMPA - Grade A Whole Milk Powder 26% - 25
+Simplified version of 'Goff & Hartel Whole Milk Powder' (Goff & Hartel, 2025, Table 3.2,
+p. 48)[^20], also in agreement with bulk products, e.g. ['MMPA - Grade A Whole Milk Powder 26% - 25
 Kg'](https://bulkmart.ca/products/mmpa-grade-a-whole-milk-powder-26-25-kg), ['Whole Milk Powder 26%
 25 kg'](https://www.pantrylot.com/products/whole-milk-powder-26-25-kg).
 

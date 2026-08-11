@@ -9,10 +9,14 @@ const mockNotFound = vi.fn(() => {
 
 vi.mock("next/navigation", () => ({ notFound: () => mockNotFound() }));
 
-vi.mock("@/lib/markdown", () => ({ getMarkdownPage: vi.fn(), getMarkdownSlugs: vi.fn() }));
+vi.mock("@/lib/markdown", () => ({
+  getMarkdownPage: vi.fn(),
+  getMarkdownComposite: vi.fn(),
+  getMarkdownSlugs: vi.fn(),
+}));
 
 const { default: DocsSlugPage, generateStaticParams, generateMetadata } = await import("./page");
-const { getMarkdownPage, getMarkdownSlugs } = await import("@/lib/markdown");
+const { getMarkdownPage, getMarkdownComposite, getMarkdownSlugs } = await import("@/lib/markdown");
 
 // ---------------------------------------------------------------------------
 // generateStaticParams
@@ -55,17 +59,38 @@ describe("DocsSlugPage", () => {
   afterEach(() => cleanup());
 
   it("renders the page's HTML content", async () => {
-    vi.mocked(getMarkdownPage).mockResolvedValue({
-      slug: "intro",
-      frontmatter: { title: "Introduction" },
-      contentHtml: "<p>Welcome to the docs.</p>",
-    });
+    vi.mocked(getMarkdownComposite).mockResolvedValue([
+      {
+        slug: "intro",
+        frontmatter: { title: "Introduction" },
+        contentHtml: "<p>Welcome to the docs.</p>",
+      },
+    ]);
     render(await DocsSlugPage({ params: Promise.resolve({ slug: "intro" }) }));
     expect(screen.getByText("Welcome to the docs.")).toBeInTheDocument();
   });
 
-  it("calls notFound when getMarkdownPage throws", async () => {
-    vi.mocked(getMarkdownPage).mockRejectedValue(new Error("not found"));
+  it("renders the pages the page lists, after it and in order", async () => {
+    vi.mocked(getMarkdownComposite).mockResolvedValue(
+      ["other-resources", "other-science", "other-recipes"].map((slug) => ({
+        slug,
+        frontmatter: { title: slug },
+        contentHtml: `<h2>${slug} body</h2>`,
+      })),
+    );
+    const { container } = render(
+      await DocsSlugPage({ params: Promise.resolve({ slug: "other-resources" }) }),
+    );
+    expect([...container.querySelectorAll("article")].map((a) => a.id)).toEqual([
+      "other-resources",
+      "other-science",
+      "other-recipes",
+    ]);
+    expect(getMarkdownComposite).toHaveBeenCalledWith("docs", "other-resources");
+  });
+
+  it("calls notFound when the page does not exist", async () => {
+    vi.mocked(getMarkdownComposite).mockRejectedValue(new Error("not found"));
     await expect(DocsSlugPage({ params: Promise.resolve({ slug: "missing" }) })).rejects.toThrow(
       "NEXT_NOT_FOUND",
     );

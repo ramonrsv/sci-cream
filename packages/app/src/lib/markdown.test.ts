@@ -7,6 +7,8 @@ import {
   filterOutDrafts,
   getMarkdownSummaries,
   getMarkdownPage,
+  getListedPages,
+  getMarkdownComposite,
   type MarkdownPage,
 } from "./markdown";
 
@@ -52,27 +54,7 @@ describe("getMarkdownSlugs", () => {
 // ---------------------------------------------------------------------------
 
 describe("sortMarkdownPages", () => {
-  it("sorts pages with order before pages without order", () => {
-    const pages: MarkdownPage[] = [
-      { slug: "no-order", frontmatter: { title: "B", date: "2026-01-01" } },
-      { slug: "has-order", frontmatter: { title: "A", order: 1 } },
-    ];
-    const sorted = sortMarkdownPages([...pages]);
-    expect(sorted[0].slug).toBe("has-order");
-    expect(sorted[1].slug).toBe("no-order");
-  });
-
-  it("sorts pages with order ascending by order value", () => {
-    const pages: MarkdownPage[] = [
-      { slug: "third", frontmatter: { title: "C", order: 3 } },
-      { slug: "first", frontmatter: { title: "A", order: 1 } },
-      { slug: "second", frontmatter: { title: "B", order: 2 } },
-    ];
-    const sorted = sortMarkdownPages([...pages]);
-    expect(sorted.map((p) => p.slug)).toEqual(["first", "second", "third"]);
-  });
-
-  it("sorts pages without order by date descending", () => {
+  it("sorts pages by date descending", () => {
     const pages: MarkdownPage[] = [
       { slug: "older", frontmatter: { title: "A", date: "2025-06-01" } },
       { slug: "newest", frontmatter: { title: "B", date: "2026-01-10" } },
@@ -82,7 +64,7 @@ describe("sortMarkdownPages", () => {
     expect(sorted.map((p) => p.slug)).toEqual(["newest", "middle", "older"]);
   });
 
-  it("pages without order or date are sorted last and stably among themselves", () => {
+  it("pages without a date are sorted last and stably among themselves", () => {
     const pages: MarkdownPage[] = [
       { slug: "no-meta-1", frontmatter: { title: "Z" } },
       { slug: "dated", frontmatter: { title: "A", date: "2025-01-01" } },
@@ -158,18 +140,18 @@ describe("getMarkdownSummaries", () => {
     expect(summaries[0].slug).toBe("post");
   });
 
-  it("returns summaries sorted by order", () => {
+  it("returns summaries sorted by date, newest first", () => {
     existsSyncSpy.mockReturnValue(true);
-    readdirSyncSpy.mockReturnValue(["beta.md", "alpha.md"]);
+    readdirSyncSpy.mockReturnValue(["older.md", "newer.md"]);
     readFileSyncSpy.mockImplementation((filePath: unknown) => {
-      if (String(filePath).includes("beta")) {
-        return "---\ntitle: Beta\norder: 2\n---\nContent B";
+      if (String(filePath).includes("newer")) {
+        return '---\ntitle: Newer\ndate: "2026-02-01"\n---\nContent B';
       }
-      return "---\ntitle: Alpha\norder: 1\n---\nContent A";
+      return '---\ntitle: Older\ndate: "2026-01-01"\n---\nContent A';
     });
 
-    const summaries = getMarkdownSummaries("docs");
-    expect(summaries.map((s) => s.frontmatter.title)).toEqual(["Alpha", "Beta"]);
+    const summaries = getMarkdownSummaries("blog");
+    expect(summaries.map((s) => s.frontmatter.title)).toEqual(["Newer", "Older"]);
   });
 
   it("throws when the directory does not exist", () => {
@@ -242,5 +224,142 @@ describe("getMarkdownPage", () => {
     const page = await getMarkdownPage("blog", "test");
     expect(page.contentHtml).toContain('<h2 id="my-section-title">');
     expect(page.contentHtml).toContain('<h3 id="sub-section">');
+  });
+
+  it("leaves headings and links untouched when given no render options", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n# Title\n\n[Other](/docs/other)");
+
+    const page = await getMarkdownPage("docs", "test");
+    expect(page.contentHtml).toContain('<h1 id="title">');
+    expect(page.contentHtml).toContain('href="/docs/other"');
+  });
+
+  it("demotes headings by the requested number of levels", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n# Title\n\n## Section");
+
+    const page = await getMarkdownPage("docs", "test", { demoteHeadings: 1 });
+    expect(page.contentHtml).toContain('<h2 id="title">');
+    expect(page.contentHtml).toContain('<h3 id="section">');
+  });
+
+  it("clamps demoted headings at h6", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n##### Deep\n\n###### Deeper");
+
+    const page = await getMarkdownPage("docs", "test", { demoteHeadings: 3 });
+    expect(page.contentHtml).toContain('<h6 id="deep">');
+    expect(page.contentHtml).toContain('<h6 id="deeper">');
+  });
+
+  it("prefixes heading ids, keeping anchors unique across concatenated pages", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n## Underbelly");
+
+    const page = await getMarkdownPage("docs", "recipes", { idPrefix: "recipes" });
+    expect(page.contentHtml).toContain('<h2 id="recipes-underbelly">');
+  });
+
+  it("rewrites links to listed slugs into anchors, leaving every other link alone", async () => {
+    readFileSyncSpy.mockReturnValue(
+      "---\ntitle: Test\n---\n[Recipes](/docs/recipes) [Science](/docs/science) " +
+        "[Blog](/blog/post) [Deep](/docs/recipes#underbelly) " +
+        "[Ext](https://example.com/docs/recipes)",
+    );
+
+    const page = await getMarkdownPage("docs", "test", { anchorSlugs: ["recipes"] });
+    expect(page.contentHtml).toContain('href="#recipes"');
+    // Not listed, so it keeps pointing at its own route rather than dangling as an anchor
+    expect(page.contentHtml).toContain('href="/docs/science"');
+    // Only bare `/docs/{slug}` links are rewritten; everything else is left alone
+    expect(page.contentHtml).toContain('href="/blog/post"');
+    expect(page.contentHtml).toContain('href="/docs/recipes#underbelly"');
+    expect(page.contentHtml).toContain('href="https://example.com/docs/recipes"');
+  });
+
+  it("leaves same-section links alone when no slugs are listed", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n[Recipes](/docs/recipes)");
+
+    const page = await getMarkdownPage("docs", "test");
+    expect(page.contentHtml).toContain('href="/docs/recipes"');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getListedPages
+// ---------------------------------------------------------------------------
+
+describe("getListedPages", () => {
+  it("returns the slugs listed in frontmatter, in order", () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: ToC\npages: [charlie, alpha]\n---\nBody");
+
+    expect(getListedPages("docs", "table-of-content")).toEqual(["charlie", "alpha"]);
+  });
+
+  it("returns an empty array when the page lists none", () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Plain\n---\nBody");
+
+    expect(getListedPages("docs", "plain")).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getMarkdownComposite
+// ---------------------------------------------------------------------------
+
+describe("getMarkdownComposite", () => {
+  /** Serve each slug its own file, so composites can be assembled from the mocked fs. */
+  function mockSection(files: Record<string, string>) {
+    readFileSyncSpy.mockImplementation((filePath: unknown) => {
+      const slug = String(filePath).replace(/^.*\//, "").replace(/\.md$/, "");
+      return files[slug] ?? `---\ntitle: ${slug}\n---\n# ${slug}`;
+    });
+  }
+
+  it("returns the page first, then the pages it lists, in order", async () => {
+    mockSection({ index: "---\ntitle: Index\npages: [beta, alpha]\n---\n# Index" });
+
+    const pages = await getMarkdownComposite("docs", "index");
+    expect(pages.map((p) => p.slug)).toEqual(["index", "beta", "alpha"]);
+  });
+
+  it("returns just the page when it lists none", async () => {
+    mockSection({ solo: "---\ntitle: Solo\n---\n# Solo" });
+
+    const pages = await getMarkdownComposite("docs", "solo");
+    expect(pages.map((p) => p.slug)).toEqual(["solo"]);
+  });
+
+  it("demotes listed pages a level and prefixes their ids, not the first page", async () => {
+    mockSection({
+      index: "---\ntitle: Index\npages: [alpha]\n---\n# Index",
+      alpha: "---\ntitle: Alpha\n---\n# Alpha\n\n## Section",
+    });
+
+    const [index, alpha] = await getMarkdownComposite("docs", "index");
+    expect(index.contentHtml).toContain('<h1 id="index">');
+    expect(alpha.contentHtml).toContain('<h2 id="alpha-alpha">');
+    expect(alpha.contentHtml).toContain('<h3 id="alpha-section">');
+  });
+
+  it("turns links to listed pages into anchors, in every page of the composite", async () => {
+    mockSection({
+      index: "---\ntitle: Index\npages: [alpha]\n---\n[A](/docs/alpha) [B](/docs/beta)",
+      alpha: "---\ntitle: Alpha\n---\n[A](/docs/alpha) [B](/docs/beta)",
+    });
+
+    const [index, alpha] = await getMarkdownComposite("docs", "index");
+    for (const page of [index, alpha]) {
+      expect(page.contentHtml).toContain('href="#alpha"');
+      // `beta` is not part of this composite, so its link still points at its own route
+      expect(page.contentHtml).toContain('href="/docs/beta"');
+    }
+  });
+
+  it("expands one level: a listed page's own list belongs to its own route", async () => {
+    mockSection({
+      index: "---\ntitle: Index\npages: [alpha]\n---\n# Index",
+      alpha: "---\ntitle: Alpha\npages: [beta]\n---\n# Alpha",
+    });
+
+    const pages = await getMarkdownComposite("docs", "index");
+    expect(pages.map((p) => p.slug)).toEqual(["index", "alpha"]);
   });
 });

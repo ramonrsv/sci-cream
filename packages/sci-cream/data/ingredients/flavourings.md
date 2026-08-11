@@ -230,7 +230,10 @@ Sources:
 Ingredients: _Water, Alcohol (37%), Cocoa Extract_. \
 Nutrition facts table: _15kcal, 0g fat, 0g sugar per 1 tsp (5ml)_.
 
-_"1 Tbs. Chocolate Extract = 1 Tbs. Unsweetened Cocoa Powder."_ <!-- markdownlint-disable-line MD036 -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable-next-line MD036 -->
+_"1 Tbs. Chocolate Extract = 1 Tbs. Unsweetened Cocoa Powder."_
+<!-- prettier-ignore-end -->
 
 At 37% ABV the alcohol is ~10kcal/5ml; cocoa butter carried by the cocoa extract, modeled as 10% fat
 (~0.46g/serving, rounds to the label's 0g), brings it to ~15kcal.

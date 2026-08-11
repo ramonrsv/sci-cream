@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import { getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
+import { getMarkdownComposite, getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
+import { MarkdownArticles } from "@/app/_elements/markdown-articles";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -23,21 +24,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-/** Renders a single documentation page from `content/docs/{slug}.md`. */
+/** Renders `content/docs/{slug}.md` and the pages its frontmatter lists, as one composite. */
 export default async function DocsSlugPage({ params }: Props) {
   const { slug } = await params;
-  let page;
+  let pages;
   try {
-    page = await getMarkdownPage("docs", slug);
+    pages = await getMarkdownComposite("docs", slug);
   } catch {
     notFound();
   }
-  return (
-    <div className="doc-page">
-      <article
-        className="prose dark:prose-invert max-w-5xl"
-        dangerouslySetInnerHTML={{ __html: page.contentHtml! }}
-      />
-    </div>
-  );
+  return <MarkdownArticles pages={pages} />;
 }
