@@ -57,6 +57,8 @@
 
 ## Backlog
 
+- [ ] Review whether a section heading in a composite should link to its own `/docs/{slug}` page,
+      once the docs hold more real content; it needs its own affordance, permalinks took `#`.
 - [ ] Add `<link rel="canonical">` if URL variants appear (tracking params, alternate host); needs
       `metadataBase` in `layout.tsx`, else canonicals name the per-deployment host.
 - [ ] Give make-recipe a single total-amount input that rescales every recipe to hit total amount.

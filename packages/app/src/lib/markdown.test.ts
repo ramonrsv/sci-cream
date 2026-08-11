@@ -274,6 +274,23 @@ describe("getMarkdownPage", () => {
     expect(page.contentHtml).toContain('href="https://example.com/docs/recipes"');
   });
 
+  it("appends a permalink to every heading", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n## My Section\n\n### Sub Section");
+
+    const page = await getMarkdownPage("docs", "test");
+    expect(page.contentHtml).toContain('<a class="heading-permalink"');
+    expect(page.contentHtml).toContain('href="#my-section"');
+    expect(page.contentHtml).toContain('href="#sub-section"');
+  });
+
+  it("points heading permalinks at the prefixed id, not the original", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n## Underbelly");
+
+    const page = await getMarkdownPage("docs", "recipes", { idPrefix: "recipes" });
+    expect(page.contentHtml).toContain('href="#recipes-underbelly"');
+    expect(page.contentHtml).not.toContain('href="#underbelly"');
+  });
+
   it("leaves same-section links alone when no slugs are listed", async () => {
     readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n[Recipes](/docs/recipes)");
 

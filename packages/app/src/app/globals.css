@@ -476,6 +476,22 @@ tbody tr:hover > .table-emphasis {
   @apply mx-auto max-w-5xl py-2 pr-2 sm:px-6 sm:py-10;
 }
 
+/* Heading permalinks, from rehype-autolink-headings. Revealed on hover, always shown without it. */
+.heading-permalink {
+  @apply text-txt-sec ml-2 no-underline opacity-0 transition-opacity;
+}
+
+:is(h1, h2, h3, h4, h5, h6):hover > .heading-permalink,
+.heading-permalink:focus-visible {
+  @apply opacity-100;
+}
+
+@media (hover: none) {
+  .heading-permalink {
+    @apply opacity-60;
+  }
+}
+
 /* Search Components */
 .search-list-item {
   @apply w-full rounded-lg border px-3 py-2 text-left transition-colors;

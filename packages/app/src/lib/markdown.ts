@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 
 import matter from "gray-matter";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
 import { remark } from "remark";
@@ -53,6 +54,13 @@ interface ContentNode {
 }
 
 const HEADING_TAGS = ["h1", "h2", "h3", "h4", "h5", "h6"];
+
+/** Permalink appended to every heading, styled by `.heading-permalink` in `globals.css`. */
+const HEADING_PERMALINK = {
+  behavior: "append" as const,
+  properties: { className: "heading-permalink", ariaLabel: "Permalink to this section" },
+  content: { type: "text" as const, value: "#" },
+};
 
 /** Apply `visit` to `node` and every descendant, depth-first in document order. */
 function walkContentTree(node: ContentNode, visit: (node: ContentNode) => void): void {
@@ -153,10 +161,12 @@ export async function getMarkdownPage(
 ): Promise<MarkdownPage> {
   const { data, content } = matter(readFileFromContentRoot(section, `${slug}.md`));
 
+  // Autolinking runs after the ids are rewritten, so permalinks point at their final target
   const processed = await remark()
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeSlug)
     .use(rehypeRenderOptions, section, options)
+    .use(rehypeAutolinkHeadings, HEADING_PERMALINK)
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(content);
 
