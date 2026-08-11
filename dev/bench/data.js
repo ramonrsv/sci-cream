@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786485051593,
+  "lastUpdate": 1786485056044,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -460668,6 +460668,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.91%",
             "unit": "ops/sec",
             "extra": "96 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5172f01a445a19b4d49f61d5af18937e903c8f0d",
+          "message": "Serve a docs table of contents at /docs\n\ncontent/docs/table-of-content.md now backs the /docs route, in\nplace of the auto-generated list: its frontmatter `pages` list\nnames the pages rendered after it, in that order. A unit test\nasserts every file in the section is reachable from it.\n\nEvery docs route works this way, not just /docs, expanding one\nlevel: a listed page's own list belongs to its own route.\n\nRendering pages together needs three fixes, all opt-in via\ngetMarkdownPage's new options, so a page listing nothing renders\nexactly as before:\n\n- headings demoted a level, leaving the route one <h1>\n- heading ids prefixed by slug; recipes.md and resources.md\n  share four heading names, which collided as anchors\n- links to a listed page rewritten to in-page anchors\n\nThat one list drives both inclusion and rewriting, so an anchor\ncannot outlive the content it points at.\n\nDrop the frontmatter `order` field along with the generated\nlist, leaving blog posts sorted by date, newest first.\n\nAdd .markdownlint.json, setting MD025's front_matter_title to \"\"\nso a frontmatter title stops counting as a competing H1, and\nMD013's line_length to 100. The per-file directives it replaces\nhad been silently inert: prettier's format-on-save puts a blank\nline after them, and they only cover the next line.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T17:44:18-04:00",
+          "tree_id": "181d83809a2ab48e6ed0cda70a4ec8df2891f63a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5172f01a445a19b4d49f61d5af18937e903c8f0d"
+        },
+        "date": 1786485007228,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 50061,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 506467,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33462,
+            "range": "±0.91%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 388495,
+            "range": "±1.09%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
