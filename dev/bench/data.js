@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786485465474,
+  "lastUpdate": 1786485824674,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -426892,6 +426892,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 694.63,
             "range": "13.35",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5172f01a445a19b4d49f61d5af18937e903c8f0d",
+          "message": "Serve a docs table of contents at /docs\n\ncontent/docs/table-of-content.md now backs the /docs route, in\nplace of the auto-generated list: its frontmatter `pages` list\nnames the pages rendered after it, in that order. A unit test\nasserts every file in the section is reachable from it.\n\nEvery docs route works this way, not just /docs, expanding one\nlevel: a listed page's own list belongs to its own route.\n\nRendering pages together needs three fixes, all opt-in via\ngetMarkdownPage's new options, so a page listing nothing renders\nexactly as before:\n\n- headings demoted a level, leaving the route one <h1>\n- heading ids prefixed by slug; recipes.md and resources.md\n  share four heading names, which collided as anchors\n- links to a listed page rewritten to in-page anchors\n\nThat one list drives both inclusion and rewriting, so an anchor\ncannot outlive the content it points at.\n\nDrop the frontmatter `order` field along with the generated\nlist, leaving blog posts sorted by date, newest first.\n\nAdd .markdownlint.json, setting MD025's front_matter_title to \"\"\nso a frontmatter title stops counting as a competing H1, and\nMD013's line_length to 100. The per-file directives it replaces\nhad been silently inert: prettier's format-on-save puts a blank\nline after them, and they only cover the next line.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T17:44:18-04:00",
+          "tree_id": "181d83809a2ab48e6ed0cda70a4ec8df2891f63a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5172f01a445a19b4d49f61d5af18937e903c8f0d"
+        },
+        "date": 1786485784873,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.75,
+            "range": "3.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49.13,
+            "range": "2.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 56.25,
+            "range": "2.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2426,
+            "range": "31.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 330.63,
+            "range": "3.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 343.38,
+            "range": "7.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 360.13,
+            "range": "5.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17233.63,
+            "range": "56.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 897,
+            "range": "25.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.88,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.63,
+            "range": "2.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.88,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 125.38,
+            "range": "3.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 82.63,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.41,
+            "range": "0.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.85,
+            "range": "0.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 622.63,
+            "range": "13.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 656.25,
+            "range": "16.17",
             "unit": "ms"
           }
         ]
