@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786485824674,
+  "lastUpdate": 1786486803793,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -516394,6 +516394,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/5172f01a445a19b4d49f61d5af18937e903c8f0d"
         },
         "date": 1786484983634,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cce15e526b7a193f73eb7109b172c33ad3a5ab7d",
+          "message": "Add permalinks to markdown headings\n\nrehype-autolink-headings appends a `#` to every heading, on blog\nposts as well as docs pages, since both share the pipeline.\n\nIt runs after the ids are rewritten, not right after rehype-slug:\ninside a /docs composite the ids are slug-prefixed, so linking\nearlier would point every permalink at an id that no longer\nexists. A test pins the order.\n\nThe `#` is hidden until its heading is hovered, and always shown\nwhere there is no hover to reveal it with.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T18:08:15-04:00",
+          "tree_id": "472bfc26847ae2e3f3b5d8683eefd96a038759d3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cce15e526b7a193f73eb7109b172c33ad3a5ab7d"
+        },
+        "date": 1786486772477,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
