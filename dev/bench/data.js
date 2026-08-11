@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786486803793,
+  "lastUpdate": 1786486819282,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -493016,6 +493016,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 13.43,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cce15e526b7a193f73eb7109b172c33ad3a5ab7d",
+          "message": "Add permalinks to markdown headings\n\nrehype-autolink-headings appends a `#` to every heading, on blog\nposts as well as docs pages, since both share the pipeline.\n\nIt runs after the ids are rewritten, not right after rehype-slug:\ninside a /docs composite the ids are slug-prefixed, so linking\nearlier would point every permalink at an id that no longer\nexists. A test pins the order.\n\nThe `#` is hidden until its heading is hovered, and always shown\nwhere there is no hover to reveal it with.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T18:08:15-04:00",
+          "tree_id": "472bfc26847ae2e3f3b5d8683eefd96a038759d3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cce15e526b7a193f73eb7109b172c33ad3a5ab7d"
+        },
+        "date": 1786486779627,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.47,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 704.54,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 873.01,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 642.06,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 810.53,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 652.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 820.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 579.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 748.18,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 579.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 748.18,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1062.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.53,
             "unit": "KB"
           },
           {
