@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786487525641,
+  "lastUpdate": 1786507786900,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -493952,6 +493952,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1062.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.53,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c830c936827e9eae20b38c894a57de8f552af8e4",
+          "message": "Nest docs routes and regroup external links\n\nThe docs `[slug]` route becomes `[...slug]`, so content subdirectories\nturn into URL segments: content/docs/other-resources/science.md is\nserved at /docs/other-resources/science. Slugs now reach the filesystem\nstraight from the URL, so a read escaping the content root throws\ninstead of returning a file.\n\nExternal links move under a self-contained /docs/other-resources, which\ncomposites three children. Each source is described once in sources.md\nand deep-links into science.md and recipes.md, which stay complete\nlists grouped by source. Both the per-source and per-topic views work\nwithout duplicating a link or a blurb.\n\nLink rewriting now carries a fragment onto the target's prefixed ids:\nwithin a composite /docs/a/b#c becomes #a-b-c rather than staying a\ncross-page link, so the source deep-links no longer navigate away from\nthe page they sit on.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T23:55:13-04:00",
+          "tree_id": "0d197ca0bba858ef6550fc376902b02329d16653",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c830c936827e9eae20b38c894a57de8f552af8e4"
+        },
+        "date": 1786507745244,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.47,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 704.56,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 873.03,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 642.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 810.54,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 652.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 820.73,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 579.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 748.18,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 579.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 748.18,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1062.3,
             "unit": "KB"
           },
           {
