@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786508193675,
+  "lastUpdate": 1786508622884,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -428482,6 +428482,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 606.25,
             "range": "17.36",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c830c936827e9eae20b38c894a57de8f552af8e4",
+          "message": "Nest docs routes and regroup external links\n\nThe docs `[slug]` route becomes `[...slug]`, so content subdirectories\nturn into URL segments: content/docs/other-resources/science.md is\nserved at /docs/other-resources/science. Slugs now reach the filesystem\nstraight from the URL, so a read escaping the content root throws\ninstead of returning a file.\n\nExternal links move under a self-contained /docs/other-resources, which\ncomposites three children. Each source is described once in sources.md\nand deep-links into science.md and recipes.md, which stay complete\nlists grouped by source. Both the per-source and per-topic views work\nwithout duplicating a link or a blurb.\n\nLink rewriting now carries a fragment onto the target's prefixed ids:\nwithin a composite /docs/a/b#c becomes #a-b-c rather than staying a\ncross-page link, so the source deep-links no longer navigate away from\nthe page they sit on.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T23:55:13-04:00",
+          "tree_id": "0d197ca0bba858ef6550fc376902b02329d16653",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c830c936827e9eae20b38c894a57de8f552af8e4"
+        },
+        "date": 1786508580691,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.5,
+            "range": "4.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 54.88,
+            "range": "3.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 65.75,
+            "range": "7.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2410.63,
+            "range": "33.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 325.5,
+            "range": "5.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 329,
+            "range": "3.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 351.38,
+            "range": "5.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16725,
+            "range": "49.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 939.38,
+            "range": "18.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.75,
+            "range": "1.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56.63,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.63,
+            "range": "1.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43.63,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 130.38,
+            "range": "2.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 87,
+            "range": "5.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 58.27,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.92,
+            "range": "0.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 644.5,
+            "range": "15.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 691.13,
+            "range": "14.56",
             "unit": "ms"
           }
         ]
