@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786507786900,
+  "lastUpdate": 1786507790452,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -514823,6 +514823,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/cce15e526b7a193f73eb7109b172c33ad3a5ab7d"
         },
         "date": 1786486821746,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 266.95,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c830c936827e9eae20b38c894a57de8f552af8e4",
+          "message": "Nest docs routes and regroup external links\n\nThe docs `[slug]` route becomes `[...slug]`, so content subdirectories\nturn into URL segments: content/docs/other-resources/science.md is\nserved at /docs/other-resources/science. Slugs now reach the filesystem\nstraight from the URL, so a read escaping the content root throws\ninstead of returning a file.\n\nExternal links move under a self-contained /docs/other-resources, which\ncomposites three children. Each source is described once in sources.md\nand deep-links into science.md and recipes.md, which stay complete\nlists grouped by source. Both the per-source and per-topic views work\nwithout duplicating a link or a blurb.\n\nLink rewriting now carries a fragment onto the target's prefixed ids:\nwithin a composite /docs/a/b#c becomes #a-b-c rather than staying a\ncross-page link, so the source deep-links no longer navigate away from\nthe page they sit on.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T23:55:13-04:00",
+          "tree_id": "0d197ca0bba858ef6550fc376902b02329d16653",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c830c936827e9eae20b38c894a57de8f552af8e4"
+        },
+        "date": 1786507789681,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
