@@ -54,7 +54,7 @@ const TRACKED_ROUTES: { route: string; label: string }[] = [
   { route: "ingredients", label: "/ingredients" },
   { route: "recipes", label: "/recipes" },
   { route: "blog/[slug]", label: "/blog/[slug]" },
-  { route: "docs/[slug]", label: "/docs/[slug]" },
+  { route: "docs/[...slug]", label: "/docs/[...slug]" },
 ];
 
 /** Return the gzipped size in bytes of the file at `filePath`, compressed at level 9 */

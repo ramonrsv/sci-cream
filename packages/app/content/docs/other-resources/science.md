@@ -1,26 +1,16 @@
 ---
-title: "Resources"
-description: "Other resources..."
+title: "Science"
+description: "External writing on the science of ice cream, grouped by source."
 ---
 
-# Resources
+# Science
 
-Blah blah...
+Everything worth reading on how ice cream actually works, grouped by who wrote it. The sites
+themselves are described under [Sources](/docs/other-resources/sources).
 
-## Calculators
+## Underbelly
 
-- [icecreamcalc.com](https://icecreamcalc.com/)
-- [Ice Cream Science spreadsheet](https://www.icecreamscience.com/blog/commercial-ice-cream-amp-gelato-mix-calculation-spreadsheet)
-- [Dream Scoops spreadsheet](https://www.dreamscoops.com/ice-cream-science/ice-cream-calculator/)
-- [Gelatodemy](https://gelatodemy.com/en/ice-cream-balancing-software/)
-- [Dairy Science Mix Calculator](https://www.dairyscience.info/calculator1/index.php)
-- [Owl Software](https://owlsoft.com/)
-
-## Science Knowledge
-
-### Underbelly
-
-_The_ source... [under-belly.org](https://under-belly.org/category/ice-cream/)...
+[About this source](/docs/other-resources/sources#underbelly)
 
 - [What is Gelato? What ISN’T Gelato?](https://under-belly.org/what-is-gelato-what-isnt-gelato/)
 - [On Drawing Temperature—Ice Cream 101 Revisited](https://under-belly.org/on-drawing-temperature-ice-cream-101-revisited/)
@@ -39,9 +29,9 @@ _The_ source... [under-belly.org](https://under-belly.org/category/ice-cream/)..
 - [The Components of Ice Cream](https://under-belly.org/the-components-of-ice-cream/)
 - [Ice Cream Series](https://under-belly.org/ice-cream-series/)
 
-### Ice Cream Science
+## Ice Cream Science
 
-Blah blah... excellent blog at [icecreamscience.com](https://www.icecreamscience.com/)...
+[About this source](/docs/other-resources/sources#ice-cream-science)
 
 - [Commercial Ice Cream & Gelato Mix Calculation Spreadsheet](https://www.icecreamscience.com/blog/commercial-ice-cream-amp-gelato-mix-calculation-spreadsheet)
 - [Why is inulin used in ice cream?](https://www.icecreamscience.com/blog/why-is-inulin-used-in-ice-cream)
@@ -66,9 +56,9 @@ Blah blah... excellent blog at [icecreamscience.com](https://www.icecreamscience
 - [RECOMMENDED READING](https://www.icecreamscience.com/blog/top-5-ice-cream-books)
 - [Air in ice cream](https://www.icecreamscience.com/blog/air-in-ice-cream)
 
-### Dream Scoops
+## Dream Scoops
 
-Blah blah... [dreamscoops.com](https://www.dreamscoops.com/home/)
+[About this source](/docs/other-resources/sources#dream-scoops)
 
 - [Ice Cream Science](https://www.dreamscoops.com/ice-cream-science/)
 - [How to use stabilizers in ice cream](https://www.dreamscoops.com/ice-cream-science/using-stabilizers-ice-cream/)
@@ -78,9 +68,9 @@ Blah blah... [dreamscoops.com](https://www.dreamscoops.com/home/)
 - [Ice in ice cream: A friend and an enemy!](https://www.dreamscoops.com/ice-cream-science/ice-in-ice-cream/)
 - [Air: The invisible Ice Cream ingredient](https://www.dreamscoops.com/ice-cream-science/air-in-ice-cream/)
 
-### icecreamcalc.com
+## icecreamcalc.com
 
-Blah blah... [/science](https://icecreamcalc.com/category/science/)
+[About this source](/docs/other-resources/sources#icecreamcalccom)
 
 - [How is PAC and POD calculated?](https://icecreamcalc.com/2023/08/22/how-is-pac-and-pod-calculated/)
 - [Glucose and Dextrose Explained](https://icecreamcalc.com/2023/07/11/glucose-and-dextrose-explained/)
@@ -94,15 +84,3 @@ Blah blah... [/science](https://icecreamcalc.com/category/science/)
 - [Freezing point depression](https://icecreamcalc.com/2020/07/24/freezing-point-depression/)
 - [Evaporation](https://icecreamcalc.com/2020/07/11/evaporation/)
 - [Stabilizers](https://icecreamcalc.com/stabilizers/)
-
-## Other Resources
-
-- [Ice Cream Nation](https://www.icecreamnation.org/)
-- [if the spoon fits](https://ifthespoonfits.com/)
-- [Scoop Club](https://www.scoopclub.com.au/)
-- [r/icecreamery](https://www.reddit.com/r/icecreamery/)
-- [Saveur](https://www.saveur.com/category/custards-ice-creams-puddings/)
-- [Serious Eats](https://www.seriouseats.com/ice-cream-recipes-5117867)
-- [Scoop Science](https://scoop-science.com/)
-- [Omni Calculator](https://www.omnicalculator.com/food/ice-cream)
-- [jhermann/ice-creamery](https://github.com/jhermann/ice-creamery)

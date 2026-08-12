@@ -1,7 +1,7 @@
 ---
 title: "Table of Content"
 description: "Index of the Sci-Cream documentation."
-pages: [getting-started, recipes, resources]
+pages: [getting-started, other-resources]
 ---
 
 # Documentation
@@ -9,5 +9,7 @@ pages: [getting-started, recipes, resources]
 ## Table of Content
 
 - [Getting Started](/docs/getting-started)
-- [Recipes](/docs/recipes)
-- [Resources](/docs/resources)
+- [Other Resources](/docs/other-resources)
+  - [Sources](/docs/other-resources/sources)
+  - [Science](/docs/other-resources/science)
+  - [Recipes](/docs/other-resources/recipes)

@@ -33,6 +33,7 @@ export interface MarkdownRenderOptions {
   /**
    * Prefix for heading `id`s: `"recipes"` turns `#underbelly` into `#recipes-underbelly`.
    * Keeps anchors unique when several pages are concatenated into one document.
+   * Pass a slug through {@link slugToId} first, so nested slugs stay slash-free.
    */
   idPrefix?: string;
   /** Levels to demote every heading by; `1` renders `#` as `<h2>`. Clamped at `<h6>`. */
@@ -68,14 +69,34 @@ function walkContentTree(node: ContentNode, visit: (node: ContentNode) => void):
   for (const child of node.children ?? []) walkContentTree(child, visit);
 }
 
-/** Match a `/{section}/{slug}` URL, returning the slug, or `undefined` for any other URL. */
-function matchSectionUrl(section: string, url: string | undefined): string | undefined {
-  return new RegExp(`^/${section}/([^/#?]+)$`).exec(url ?? "")?.[1];
+/** A slug as an HTML id: `other-resources/science` becomes `other-resources-science`. */
+export function slugToId(slug: string): string {
+  return slug.replaceAll("/", "-");
 }
 
-/** Read a file from the content directory as UTF-8 text. */
+/**
+ * In-page href for a link to one of `anchorSlugs`, or `undefined` for any other link.
+ *
+ * A fragment carries over onto the target's prefixed ids, so a link to a section of a listed
+ * page still lands on that section: `/docs/a/b#c` becomes `#a-b-c`.
+ */
+function anchorHrefFor(section: string, href: string, anchorSlugs: string[]): string | undefined {
+  const match = new RegExp(`^/${section}/([^#?]+?)(?:#([^#?]+))?$`).exec(href);
+  if (match === null || !anchorSlugs.includes(match[1])) return undefined;
+  return `#${[slugToId(match[1]), match[2]].filter((part) => part !== undefined).join("-")}`;
+}
+
+/**
+ * Read a file from the content directory as UTF-8 text.
+ *
+ * Slugs reach this from the URL, so a path escaping the content root is rejected, not read.
+ */
 function readFileFromContentRoot(...segments: string[]): string {
-  return fs.readFileSync(path.join(contentRoot, ...segments), "utf8");
+  const filePath = path.resolve(contentRoot, ...segments);
+  if (!filePath.startsWith(contentRoot + path.sep)) {
+    throw new Error(`Content path escapes the content root: ${segments.join("/")}`);
+  }
+  return fs.readFileSync(filePath, "utf8");
 }
 
 /** Read only a page's frontmatter, skipping the markdown-to-HTML conversion. */
@@ -88,16 +109,21 @@ export function getListedPages(section: string, slug: string): string[] {
   return readFrontmatter(section, slug).pages ?? [];
 }
 
-/** Return the slugs of all `.md` files in a content subdirectory. */
+/**
+ * Return the slugs of all `.md` files in a content subdirectory, nested ones included.
+ *
+ * A file in a subdirectory keeps it as a slug segment: `docs/other-resources/science.md` is
+ * `other-resources/science`, served at `/docs/other-resources/science`.
+ */
 export function getMarkdownSlugs(section: string): string[] {
   const dir = path.join(contentRoot, section);
   if (!fs.existsSync(dir)) {
     throw new Error(`Content section not found: "${section}" (looked in ${dir})`);
   }
   return fs
-    .readdirSync(dir)
+    .readdirSync(dir, { recursive: true, encoding: "utf8" })
     .filter((f) => f.endsWith(".md"))
-    .map((f) => f.replace(/\.md$/, ""));
+    .map((f) => f.replace(/\.md$/, "").replaceAll(path.sep, "/"));
 }
 
 /**
@@ -146,8 +172,8 @@ function rehypeRenderOptions(section: string, options: MarkdownRenderOptions) {
       }
 
       if (tagName === "a" && typeof properties.href === "string") {
-        const target = matchSectionUrl(section, properties.href);
-        if (target !== undefined && anchorSlugs.includes(target)) properties.href = `#${target}`;
+        const anchor = anchorHrefFor(section, properties.href, anchorSlugs);
+        if (anchor !== undefined) properties.href = anchor;
       }
     });
   };
@@ -186,7 +212,11 @@ export async function getMarkdownComposite(section: string, slug: string): Promi
   return Promise.all([
     getMarkdownPage(section, slug, { anchorSlugs }),
     ...anchorSlugs.map((listed) =>
-      getMarkdownPage(section, listed, { idPrefix: listed, demoteHeadings: 1, anchorSlugs }),
+      getMarkdownPage(section, listed, {
+        idPrefix: slugToId(listed),
+        demoteHeadings: 1,
+        anchorSlugs,
+      }),
     ),
   ]);
 }

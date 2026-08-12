@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, type MockInstance } from "vitest"
 import fs from "fs";
 
 import {
+  slugToId,
   getMarkdownSlugs,
   sortMarkdownPages,
   filterOutDrafts,
@@ -18,6 +19,21 @@ const readFileSyncSpy = vi.spyOn(fs, "readFileSync");
 
 beforeEach(() => {
   vi.resetAllMocks();
+});
+
+// ---------------------------------------------------------------------------
+// slugToId
+// ---------------------------------------------------------------------------
+
+describe("slugToId", () => {
+  it("replaces every path separator with a dash", () => {
+    expect(slugToId("other-resources/science")).toBe("other-resources-science");
+    expect(slugToId("a/b/c")).toBe("a-b-c");
+  });
+
+  it("leaves a flat slug unchanged", () => {
+    expect(slugToId("getting-started")).toBe("getting-started");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -46,6 +62,16 @@ describe("getMarkdownSlugs", () => {
     existsSyncSpy.mockReturnValue(true);
     readdirSyncSpy.mockReturnValue(["README.txt"]);
     expect(getMarkdownSlugs("blog")).toEqual([]);
+  });
+
+  it("returns nested files as slash-separated slugs, skipping the directories", () => {
+    existsSyncSpy.mockReturnValue(true);
+    readdirSyncSpy.mockReturnValue([
+      "other-resources.md",
+      "other-resources",
+      "other-resources/science.md",
+    ]);
+    expect(getMarkdownSlugs("docs")).toEqual(["other-resources", "other-resources/science"]);
   });
 });
 
@@ -260,18 +286,37 @@ describe("getMarkdownPage", () => {
   it("rewrites links to listed slugs into anchors, leaving every other link alone", async () => {
     readFileSyncSpy.mockReturnValue(
       "---\ntitle: Test\n---\n[Recipes](/docs/recipes) [Science](/docs/science) " +
-        "[Blog](/blog/post) [Deep](/docs/recipes#underbelly) " +
-        "[Ext](https://example.com/docs/recipes)",
+        "[Blog](/blog/post) [Ext](https://example.com/docs/recipes)",
     );
 
     const page = await getMarkdownPage("docs", "test", { anchorSlugs: ["recipes"] });
     expect(page.contentHtml).toContain('href="#recipes"');
     // Not listed, so it keeps pointing at its own route rather than dangling as an anchor
     expect(page.contentHtml).toContain('href="/docs/science"');
-    // Only bare `/docs/{slug}` links are rewritten; everything else is left alone
+    // Only `/docs/{slug}` links are rewritten; everything else is left alone
     expect(page.contentHtml).toContain('href="/blog/post"');
-    expect(page.contentHtml).toContain('href="/docs/recipes#underbelly"');
     expect(page.contentHtml).toContain('href="https://example.com/docs/recipes"');
+  });
+
+  it("rewrites a nested slug's link, dashing the separators", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n[S](/docs/other-resources/science)");
+
+    const page = await getMarkdownPage("docs", "test", {
+      anchorSlugs: ["other-resources/science"],
+    });
+    expect(page.contentHtml).toContain('href="#other-resources-science"');
+  });
+
+  it("carries a fragment onto the listed page's prefixed ids", async () => {
+    readFileSyncSpy.mockReturnValue(
+      "---\ntitle: Test\n---\n[Deep](/docs/other/science#underbelly) " +
+        "[Absent](/docs/absent#underbelly)",
+    );
+
+    const page = await getMarkdownPage("docs", "test", { anchorSlugs: ["other/science"] });
+    expect(page.contentHtml).toContain('href="#other-science-underbelly"');
+    // Not listed, so its deep link still points at its own route
+    expect(page.contentHtml).toContain('href="/docs/absent#underbelly"');
   });
 
   it("appends a permalink to every heading", async () => {
@@ -296,6 +341,13 @@ describe("getMarkdownPage", () => {
 
     const page = await getMarkdownPage("docs", "test");
     expect(page.contentHtml).toContain('href="/docs/recipes"');
+  });
+
+  it("rejects a slug that escapes the content root", async () => {
+    await expect(getMarkdownPage("docs", "../../../etc/passwd")).rejects.toThrow(
+      "escapes the content root",
+    );
+    expect(readFileSyncSpy).not.toHaveBeenCalled();
   });
 });
 
@@ -325,7 +377,9 @@ describe("getMarkdownComposite", () => {
   /** Serve each slug its own file, so composites can be assembled from the mocked fs. */
   function mockSection(files: Record<string, string>) {
     readFileSyncSpy.mockImplementation((filePath: unknown) => {
-      const slug = String(filePath).replace(/^.*\//, "").replace(/\.md$/, "");
+      const slug = String(filePath)
+        .replace(/^.*\/docs\//, "")
+        .replace(/\.md$/, "");
       return files[slug] ?? `---\ntitle: ${slug}\n---\n# ${slug}`;
     });
   }
@@ -368,6 +422,18 @@ describe("getMarkdownComposite", () => {
       // `beta` is not part of this composite, so its link still points at its own route
       expect(page.contentHtml).toContain('href="/docs/beta"');
     }
+  });
+
+  it("prefixes a nested page's ids with its slash-free slug", async () => {
+    mockSection({
+      hub: "---\ntitle: Hub\npages: [other/science]\n---\n[S](/docs/other/science)",
+      "other/science": "---\ntitle: Science\n---\n# Science\n\n## Underbelly",
+    });
+
+    const [hub, science] = await getMarkdownComposite("docs", "hub");
+    expect(hub.contentHtml).toContain('href="#other-science"');
+    expect(science.contentHtml).toContain('<h2 id="other-science-science">');
+    expect(science.contentHtml).toContain('<h3 id="other-science-underbelly">');
   });
 
   it("expands one level: a listed page's own list belongs to its own route", async () => {

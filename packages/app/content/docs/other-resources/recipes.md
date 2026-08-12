@@ -1,13 +1,16 @@
 ---
 title: "Recipes"
-description: "Reference recipes..."
+description: "External ice cream recipes, grouped by source."
 ---
 
 # Recipes
 
-Blah blah...
+Recipes from elsewhere, grouped by who published them. The sites themselves are described under
+[Sources](/docs/other-resources/sources).
 
 ## Underbelly
+
+[About this source](/docs/other-resources/sources#underbelly)
 
 - [Rum Raisin - A Holiday Classic](https://under-belly.org/rum-raisin-a-holiday-classic/)
 - [Soft Serve Sample Recipe](https://under-belly.org/so-you-want-to-make-soft-serve/)
@@ -25,6 +28,8 @@ Blah blah...
 - [Light Variation](https://under-belly.org/basic-ice-cream-recipe-examples/)
 
 ## Ice Cream Science
+
+[About this source](/docs/other-resources/sources#ice-cream-science)
 
 - [Easy No-Cook Tres Leches](https://www.icecreamscience.com/blog/ninja-creami-nc30-easy-no-cook-tres-leches-recipe)
 - [Egg-free Vanilla Bean Ice Cream](https://www.icecreamscience.com/blog/egg-free-vanilla-bean-ice-cream-recipe)
@@ -49,6 +54,8 @@ Blah blah...
 
 ## Dream Scoops
 
+[About this source](/docs/other-resources/sources#dream-scoops)
+
 - [Guinness Ice Cream](https://www.dreamscoops.com/recipes/guinness-ice-cream/)
 - [Mint Choc Chip Ice Cream](https://www.dreamscoops.com/recipes/mint-choc-chip-ice-cream/)
 - [Roasted Cherry Ice Cream](https://www.dreamscoops.com/recipes/roasted-cherry-ice-cream/)
@@ -58,6 +65,8 @@ Blah blah...
 - [Mint and Lemon Balm Ice Cream](https://www.dreamscoops.com/recipes/mint-and-lemon-balm-ice-cream/)
 
 ## icecreamcalc.com
+
+[About this source](/docs/other-resources/sources#icecreamcalccom)
 
 - [After Eight Ice Cream](https://icecreamcalc.com/2020/10/31/after-eight-ice-cream/)
 - [After Eight Version 2](https://icecreamcalc.com/2021/05/28/after-eight-version-2/)

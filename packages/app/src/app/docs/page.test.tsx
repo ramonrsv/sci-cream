@@ -3,10 +3,11 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 
-vi.mock("@/lib/markdown", () => ({
+// Only the loaders are stubbed; `slugToId` stays real, so article ids match production
+vi.mock("@/lib/markdown", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/markdown")>()),
   getMarkdownPage: vi.fn(),
   getMarkdownComposite: vi.fn(),
-  TABLE_OF_CONTENT_SLUG: "table-of-content",
 }));
 
 const { default: DocsPage, generateMetadata } = await import("./page");

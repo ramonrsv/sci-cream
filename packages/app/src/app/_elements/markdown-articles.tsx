@@ -1,4 +1,4 @@
-import type { MarkdownPage } from "@/lib/markdown";
+import { slugToId, type MarkdownPage } from "@/lib/markdown";
 
 interface Props {
   /** Pages to render in order, as returned by `getMarkdownComposite`. */
@@ -12,7 +12,7 @@ export function MarkdownArticles({ pages }: Props) {
       {pages.map((page) => (
         <article
           key={page.slug}
-          id={page.slug}
+          id={slugToId(page.slug)}
           className="prose dark:prose-invert max-w-5xl"
           dangerouslySetInnerHTML={{ __html: page.contentHtml! }}
         />
