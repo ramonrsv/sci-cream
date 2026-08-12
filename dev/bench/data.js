@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786507825714,
+  "lastUpdate": 1786507878709,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -510238,6 +510238,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.15,
             "range": "0.23",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c830c936827e9eae20b38c894a57de8f552af8e4",
+          "message": "Nest docs routes and regroup external links\n\nThe docs `[slug]` route becomes `[...slug]`, so content subdirectories\nturn into URL segments: content/docs/other-resources/science.md is\nserved at /docs/other-resources/science. Slugs now reach the filesystem\nstraight from the URL, so a read escaping the content root throws\ninstead of returning a file.\n\nExternal links move under a self-contained /docs/other-resources, which\ncomposites three children. Each source is described once in sources.md\nand deep-links into science.md and recipes.md, which stay complete\nlists grouped by source. Both the per-source and per-topic views work\nwithout duplicating a link or a blurb.\n\nLink rewriting now carries a fragment onto the target's prefixed ids:\nwithin a composite /docs/a/b#c becomes #a-b-c rather than staying a\ncross-page link, so the source deep-links no longer navigate away from\nthe page they sit on.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-11T23:55:13-04:00",
+          "tree_id": "0d197ca0bba858ef6550fc376902b02329d16653",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c830c936827e9eae20b38c894a57de8f552af8e4"
+        },
+        "date": 1786507836689,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.9,
+            "range": "8.75",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.24,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.22,
+            "range": "0.68",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 175.5,
+            "range": "12.40",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.51,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 38,
+            "range": "7.75",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 175.5,
+            "range": "12.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.71,
+            "range": "8.69",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.36,
+            "range": "0.34",
             "unit": "ms"
           }
         ]
