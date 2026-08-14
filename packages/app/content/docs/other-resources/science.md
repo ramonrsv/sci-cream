@@ -5,12 +5,15 @@ description: "External writing on the science of ice cream, grouped by source."
 
 # Science
 
-Everything worth reading on how ice cream actually works, grouped by who wrote it. The sites
-themselves are described under [Sources](/docs/other-resources/sources).
+This page collects links to ice cream science articles from various online sources - the sources
+themselves are described under [Sources](/docs/other-resources#sources). These articles contain a
+wealth of knowledge about ice cream making and the science behind it. I have used them extensively
+throughout my ice cream making journey, and still visit them often. I highly encourage you to give
+them a read!
 
 ## Underbelly
 
-[About this source](/docs/other-resources/sources#underbelly)
+[About this source](/docs/other-resources#underbelly)
 
 - [What is Gelato? What ISN’T Gelato?](https://under-belly.org/what-is-gelato-what-isnt-gelato/)
 - [On Drawing Temperature—Ice Cream 101 Revisited](https://under-belly.org/on-drawing-temperature-ice-cream-101-revisited/)
@@ -31,7 +34,7 @@ themselves are described under [Sources](/docs/other-resources/sources).
 
 ## Ice Cream Science
 
-[About this source](/docs/other-resources/sources#ice-cream-science)
+[About this source](/docs/other-resources#ice-cream-science)
 
 - [Commercial Ice Cream & Gelato Mix Calculation Spreadsheet](https://www.icecreamscience.com/blog/commercial-ice-cream-amp-gelato-mix-calculation-spreadsheet)
 - [Why is inulin used in ice cream?](https://www.icecreamscience.com/blog/why-is-inulin-used-in-ice-cream)
@@ -58,7 +61,7 @@ themselves are described under [Sources](/docs/other-resources/sources).
 
 ## Dream Scoops
 
-[About this source](/docs/other-resources/sources#dream-scoops)
+[About this source](/docs/other-resources#dream-scoops)
 
 - [Ice Cream Science](https://www.dreamscoops.com/ice-cream-science/)
 - [How to use stabilizers in ice cream](https://www.dreamscoops.com/ice-cream-science/using-stabilizers-ice-cream/)
@@ -67,10 +70,11 @@ themselves are described under [Sources](/docs/other-resources/sources).
 - [The importance of sugar in ice cream](https://www.dreamscoops.com/ice-cream-science/sugar-in-ice-cream/)
 - [Ice in ice cream: A friend and an enemy!](https://www.dreamscoops.com/ice-cream-science/ice-in-ice-cream/)
 - [Air: The invisible Ice Cream ingredient](https://www.dreamscoops.com/ice-cream-science/air-in-ice-cream/)
+- [Making gelato at home: How to keep it soft](https://www.dreamscoops.com/gelato/gelato-at-home-keeping-it-soft/)
 
 ## icecreamcalc.com
 
-[About this source](/docs/other-resources/sources#icecreamcalccom)
+[About this source](/docs/other-resources#icecreamcalccom)
 
 - [How is PAC and POD calculated?](https://icecreamcalc.com/2023/08/22/how-is-pac-and-pod-calculated/)
 - [Glucose and Dextrose Explained](https://icecreamcalc.com/2023/07/11/glucose-and-dextrose-explained/)

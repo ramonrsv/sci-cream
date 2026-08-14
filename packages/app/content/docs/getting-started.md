@@ -1,9 +1,9 @@
 ---
 title: "Getting Started"
-description: "Overview of the Sci-Cream project and available resources, including the ice cream
-calculator, reference recipes, ingredient database, documentation, blog, sci-cream Rust crate, etc."
+description: "How to get started using the Sci-Cream app and other resources."
 ---
 
 # Getting Started
 
-Sci-Cream...
+Go to [/recipes](/recipes), pick one from your favourite creator, `Load` it into the
+[/calculator](/calculator), and you're ready to develop!

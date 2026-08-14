@@ -111,6 +111,8 @@ cmd_release() {
   local rm="$PKG_DIR/README.md"
   # 4. Root README.md — versioned lines (if present)
   local rm_root="$REPO_ROOT/README.md"
+  # 5. Docs overview page — the app badge row, served at /docs/overview
+  local ov="$PKG_DIR/content/docs/overview.md"
 
   # Build a description of planned changes for the dry-run report.
   echo "Planned file changes:"
@@ -134,6 +136,13 @@ cmd_release() {
   fi
   if grep -qE 'tag/app-v[^)]*\)' "$rm_root" 2>/dev/null; then
     info "README.md"
+    info "  tag/app-v...  →  tag/app-v$new_ver)"
+    echo
+  fi
+
+  # -- content/docs/overview.md --------------------------------------------
+  if grep -qE 'tag/app-v[^)]*\)' "$ov" 2>/dev/null; then
+    info "$PKG_REL/content/docs/overview.md"
     info "  tag/app-v...  →  tag/app-v$new_ver)"
     echo
   fi
@@ -170,6 +179,12 @@ cmd_release() {
   if grep -qE 'tag/app-v[^)]*\)' "$rm_root" 2>/dev/null; then
     sed -i -E "s/tag\/app-v[^)]*\)/tag\/app-v${new_ver})/" "$rm_root"
     info "Updated README.md"
+  fi
+
+  # -- content/docs/overview.md --------------------------------------------
+  if grep -qE 'tag/app-v[^)]*\)' "$ov" 2>/dev/null; then
+    sed -i -E "s/tag\/app-v[^)]*\)/tag\/app-v${new_ver})/" "$ov"
+    info "Updated $PKG_REL/content/docs/overview.md"
   fi
 
   # -- CHANGELOG.md --------------------------------------------------------

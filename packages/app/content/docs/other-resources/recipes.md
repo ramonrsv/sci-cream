@@ -5,12 +5,36 @@ description: "External ice cream recipes, grouped by source."
 
 # Recipes
 
-Recipes from elsewhere, grouped by who published them. The sites themselves are described under
-[Sources](/docs/other-resources/sources).
+This page collects links to reference recipes from various online sources - the sources themselves
+are described under [Sources](/docs/other-resources#sources). I have found these useful to compare
+against during the development of new recipes, particularly before I had amassed a collection of my
+own. Many of the associated blog posts also discuss more general concepts, preparation techniques,
+challenges, and tradeoffs that need to be made for certain classes of recipes, e.g. booze,
+chocolate, sorbet.
+
+A typical development workflow is to read an article with a recipe and to translate it into the
+Sci-Cream [calculator](/calculator) to be used as a reference. This can be an involved and
+error-prone process if one cares about the precise mix composition. I have already done this with
+many of the recipes below, as well as with others from reference texts. The results are included in
+the database of built-in [recipes](/recipes), ready to be loaded into the `Ref A/B` slots in the
+[calculator](/calculator), to compare against.
+
+[!NOTE]
+Providing these as built-in recipes runs the risk of appropriating the work of these creators, which
+I am mindful not to do. However, I think there is significant value in the convenience that this
+provides for users, sparing them the involved translation process. The compromise that I have
+arrived at is the following guidelines:
+
+- Clearly label the author of a recipe and provide a link to the original article.
+- Include only information necessary for or arising from the translation process.
+
+As a result of the above, the built-in recipes intentionally omit important and useful information
+regarding techniques, tradeoffs, variations, etc. I highly encourage you to visit the original
+articles - these are just here for plug-and-play once you are ready to develop.
 
 ## Underbelly
 
-[About this source](/docs/other-resources/sources#underbelly)
+[About this source](/docs/other-resources#underbelly)
 
 - [Rum Raisin - A Holiday Classic](https://under-belly.org/rum-raisin-a-holiday-classic/)
 - [Soft Serve Sample Recipe](https://under-belly.org/so-you-want-to-make-soft-serve/)
@@ -29,7 +53,7 @@ Recipes from elsewhere, grouped by who published them. The sites themselves are 
 
 ## Ice Cream Science
 
-[About this source](/docs/other-resources/sources#ice-cream-science)
+[About this source](/docs/other-resources#ice-cream-science)
 
 - [Easy No-Cook Tres Leches](https://www.icecreamscience.com/blog/ninja-creami-nc30-easy-no-cook-tres-leches-recipe)
 - [Egg-free Vanilla Bean Ice Cream](https://www.icecreamscience.com/blog/egg-free-vanilla-bean-ice-cream-recipe)
@@ -54,7 +78,7 @@ Recipes from elsewhere, grouped by who published them. The sites themselves are 
 
 ## Dream Scoops
 
-[About this source](/docs/other-resources/sources#dream-scoops)
+[About this source](/docs/other-resources#dream-scoops)
 
 - [Guinness Ice Cream](https://www.dreamscoops.com/recipes/guinness-ice-cream/)
 - [Mint Choc Chip Ice Cream](https://www.dreamscoops.com/recipes/mint-choc-chip-ice-cream/)
@@ -63,10 +87,13 @@ Recipes from elsewhere, grouped by who published them. The sites themselves are 
 - [Chai Spice Ice Cream](https://www.dreamscoops.com/recipes/chai-spice-ice-cream/)
 - [Strawberry Ice Cream with Balsamic Vinegar (No Cook)](https://www.dreamscoops.com/recipes/strawberry-ice-cream-with-balsamic-vinegar/)
 - [Mint and Lemon Balm Ice Cream](https://www.dreamscoops.com/recipes/mint-and-lemon-balm-ice-cream/)
+- [Sugar Free Ice Cream](https://www.dreamscoops.com/science/adventures-in-sugar-free-ice-cream-1/)
+- [The Perfect No-Cook Vanilla Ice Cream Base](https://www.dreamscoops.com/recipes/perfect-no-cook-vanilla-ice-cream-base/)
+- [Fior di Latte Gelato](https://www.dreamscoops.com/recipes/fior-di-latte-gelato-recipe/)
 
 ## icecreamcalc.com
 
-[About this source](/docs/other-resources/sources#icecreamcalccom)
+[About this source](/docs/other-resources#icecreamcalccom)
 
 - [After Eight Ice Cream](https://icecreamcalc.com/2020/10/31/after-eight-ice-cream/)
 - [After Eight Version 2](https://icecreamcalc.com/2021/05/28/after-eight-version-2/)
