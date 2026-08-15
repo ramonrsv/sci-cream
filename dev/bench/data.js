@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786779154731,
+  "lastUpdate": 1786779174221,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -514050,6 +514050,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.41,
             "range": "0.39",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "20800921cb845f758306665dbd69be756393fc24",
+          "message": "Add visual regression tests for docs pages\n\nCover /docs and /docs/other-resources, which render their listed\npages after their own, plus the overview and recipes leaves, in\nlight and dark. Between them the four routes reach every docs\npage, and both callout-bearing routes are shot in each theme.\n\nThe app shell is `h-screen`, so `fullPage` would capture only the\nfirst screen; the viewport is grown to the content height instead.\n\nThe release badges are masked: shields.io renders the version, CI\nresult, and coverage into the art, so those pixels would otherwise\ndrift without the page changing. Each mask box tracks its image,\nso a badge row that stacked instead of staying inline still shows.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T03:20:17-04:00",
+          "tree_id": "5f05861e4c5d5b1a39ed7ebaa893ac6c5e0e84b6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/20800921cb845f758306665dbd69be756393fc24"
+        },
+        "date": 1786779134830,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 56.49,
+            "range": "13.64",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.39,
+            "range": "4.30",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.35,
+            "range": "4.27",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 155.5,
+            "range": "20.54",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.42,
+            "range": "0.10",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 155.5,
+            "range": "20.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 53.81,
+            "range": "13.28",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.09,
+            "range": "1.75",
             "unit": "ms"
           }
         ]
