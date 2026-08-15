@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786779288179,
+  "lastUpdate": 1786779435807,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -430867,6 +430867,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 661.63,
             "range": "10.22",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0030c05005b142b7938ebaeba6a927b80d940e3a",
+          "message": "Enable GFM for docs and blog, add callouts\n\nremark-gfm was already a dependency, used by the client-side\nMarkdown component for user comments, but the build-time pipeline\nnever applied it. Wiring it in brings the two renderers into\nalignment and makes strikethrough render in docs and blog content.\n\nGitHub alert syntax is not part of GFM, so add\nremark-github-blockquote-alert for the `> [!NOTE]` callouts. Its\nstylesheet picks a palette with `prefers-color-scheme`, which\nignores the theme class, but only as the fallback tier of each\n`var()` — defining the names it prefers overrides them. Its hues\nmove into `--color-alert-*` tokens so they follow `.dark` instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T02:58:41-04:00",
+          "tree_id": "df958786cfcb04183b798b46a61246555cb5f140",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0030c05005b142b7938ebaeba6a927b80d940e3a"
+        },
+        "date": 1786779395545,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 47.88,
+            "range": "4.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 55.25,
+            "range": "3.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 63.63,
+            "range": "5.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2394,
+            "range": "37.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 328.38,
+            "range": "4.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 344.5,
+            "range": "3.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 363.75,
+            "range": "6.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17158.38,
+            "range": "61.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 896.88,
+            "range": "10.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 50.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 52.25,
+            "range": "1.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.13,
+            "range": "1.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.13,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 123,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 85.63,
+            "range": "4.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.96,
+            "range": "0.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.56,
+            "range": "0.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 617,
+            "range": "7.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 660,
+            "range": "12.81",
             "unit": "ms"
           }
         ]
