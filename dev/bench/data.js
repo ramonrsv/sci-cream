@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786778612190,
+  "lastUpdate": 1786778724753,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -463964,6 +463964,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.14%",
             "unit": "ops/sec",
             "extra": "88 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0030c05005b142b7938ebaeba6a927b80d940e3a",
+          "message": "Enable GFM for docs and blog, add callouts\n\nremark-gfm was already a dependency, used by the client-side\nMarkdown component for user comments, but the build-time pipeline\nnever applied it. Wiring it in brings the two renderers into\nalignment and makes strikethrough render in docs and blog content.\n\nGitHub alert syntax is not part of GFM, so add\nremark-github-blockquote-alert for the `> [!NOTE]` callouts. Its\nstylesheet picks a palette with `prefers-color-scheme`, which\nignores the theme class, but only as the fallback tier of each\n`var()` — defining the names it prefers overrides them. Its hues\nmove into `--color-alert-*` tokens so they follow `.dark` instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T02:58:41-04:00",
+          "tree_id": "df958786cfcb04183b798b46a61246555cb5f140",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0030c05005b142b7938ebaeba6a927b80d940e3a"
+        },
+        "date": 1786778682916,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 59299,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 527186,
+            "range": "±0.55%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 42453,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 398086,
+            "range": "±1.84%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
