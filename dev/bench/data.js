@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786779033229,
+  "lastUpdate": 1786779066600,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -464811,6 +464811,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.84%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "20800921cb845f758306665dbd69be756393fc24",
+          "message": "Add visual regression tests for docs pages\n\nCover /docs and /docs/other-resources, which render their listed\npages after their own, plus the overview and recipes leaves, in\nlight and dark. Between them the four routes reach every docs\npage, and both callout-bearing routes are shot in each theme.\n\nThe app shell is `h-screen`, so `fullPage` would capture only the\nfirst screen; the viewport is grown to the content height instead.\n\nThe release badges are masked: shields.io renders the version, CI\nresult, and coverage into the art, so those pixels would otherwise\ndrift without the page changing. Each mask box tracks its image,\nso a badge row that stacked instead of staying inline still shows.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T03:20:17-04:00",
+          "tree_id": "5f05861e4c5d5b1a39ed7ebaa893ac6c5e0e84b6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/20800921cb845f758306665dbd69be756393fc24"
+        },
+        "date": 1786779033817,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75222,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 654431,
+            "range": "±0.44%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 52742,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 505394,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
