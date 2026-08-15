@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786778539569,
+  "lastUpdate": 1786778612190,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -512144,6 +512144,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.25,
             "range": "0.40",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1a18bf7649fde3afaa2e0cebac1d405189fddf43",
+          "message": "Fix blog docs links, test internal content links\n\nThe welcome post linked to /docs/resources, which the docs\nrestructuring never served — the route is /docs/other-resources.\nRepoint all seven links and rewrap the paragraphs the longer path\npushed past the 100-column limit.\n\nAdd content-links.test.ts, which resolves every root-relative link\nin content/docs and content/blog against what the app serves: a\nmarkdown slug, a public asset, or a route directory. Fragments\nresolve against the ids the target route renders, so renaming a\nsection breaks the links pointing at it. External links are out of\nscope, as checking them needs network access.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T02:27:09-04:00",
+          "tree_id": "c69cb1f2e32d993be632835f5d8b862c677d5852",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1a18bf7649fde3afaa2e0cebac1d405189fddf43"
+        },
+        "date": 1786778570209,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.61,
+            "range": "7.21",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.99,
+            "range": "0.75",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.92,
+            "range": "0.75",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 184.5,
+            "range": "16.67",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 184.5,
+            "range": "16.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.89,
+            "range": "5.72",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.41,
+            "range": "0.36",
             "unit": "ms"
           }
         ]
