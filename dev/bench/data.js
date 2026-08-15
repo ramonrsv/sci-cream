@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786779233367,
+  "lastUpdate": 1786779288179,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -430723,6 +430723,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 663.75,
             "range": "10.57",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1a18bf7649fde3afaa2e0cebac1d405189fddf43",
+          "message": "Fix blog docs links, test internal content links\n\nThe welcome post linked to /docs/resources, which the docs\nrestructuring never served — the route is /docs/other-resources.\nRepoint all seven links and rewrap the paragraphs the longer path\npushed past the 100-column limit.\n\nAdd content-links.test.ts, which resolves every root-relative link\nin content/docs and content/blog against what the app serves: a\nmarkdown slug, a public asset, or a route directory. Fragments\nresolve against the ids the target route renders, so renaming a\nsection breaks the links pointing at it. External links are out of\nscope, as checking them needs network access.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T02:27:09-04:00",
+          "tree_id": "c69cb1f2e32d993be632835f5d8b862c677d5852",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1a18bf7649fde3afaa2e0cebac1d405189fddf43"
+        },
+        "date": 1786779247780,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 50.25,
+            "range": "4.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49.63,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 59,
+            "range": "4.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2488.5,
+            "range": "46.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 331.88,
+            "range": "4.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 344,
+            "range": "3.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 360.88,
+            "range": "12.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17347.25,
+            "range": "61.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 909.5,
+            "range": "31.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.38,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.13,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.25,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.75,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 127,
+            "range": "3.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 84.88,
+            "range": "3.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.71,
+            "range": "0.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.69,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 627.63,
+            "range": "3.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 661.63,
+            "range": "10.22",
             "unit": "ms"
           }
         ]
