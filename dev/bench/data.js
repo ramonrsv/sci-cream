@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786778525933,
+  "lastUpdate": 1786778529995,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -463912,6 +463912,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.47%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1a18bf7649fde3afaa2e0cebac1d405189fddf43",
+          "message": "Fix blog docs links, test internal content links\n\nThe welcome post linked to /docs/resources, which the docs\nrestructuring never served — the route is /docs/other-resources.\nRepoint all seven links and rewrap the paragraphs the longer path\npushed past the 100-column limit.\n\nAdd content-links.test.ts, which resolves every root-relative link\nin content/docs and content/blog against what the app serves: a\nmarkdown slug, a public asset, or a route directory. Fragments\nresolve against the ids the target route renders, so renaming a\nsection breaks the links pointing at it. External links are out of\nscope, as checking them needs network access.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T02:27:09-04:00",
+          "tree_id": "c69cb1f2e32d993be632835f5d8b862c677d5852",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1a18bf7649fde3afaa2e0cebac1d405189fddf43"
+        },
+        "date": 1786778484606,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 49431,
+            "range": "±1.43%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 500456,
+            "range": "±3.10%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 34065,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 391488,
+            "range": "±1.14%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
           }
         ]
       }
