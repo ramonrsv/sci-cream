@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786508622884,
+  "lastUpdate": 1786778127758,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -518630,6 +518630,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/c830c936827e9eae20b38c894a57de8f552af8e4"
         },
         "date": 1786507782570,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "14e0dc3b8a56dab242245fb3f63e352637513839",
+          "message": "Flesh out docs pages, fold Sources into parent\n\nReplace the docs placeholders with real prose: new Background,\nOverview, and Ice Cream Science pages, plus an Other Resources page\nthat absorbs the per-source descriptions from the deleted Sources\npage and adds a logo, calculators, books, and other sites.\n\nRelease automation now rewrites the release-tag badge links in\ncontent/docs/overview.md: a pre-release-replacement for the crate\ntag, and a sed pass in the app's release.sh for the app tag.\n\nAdd a .badges rule to globals.css so a paragraph of badges stays on\none line under preflight, which makes every image a block.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T02:26:12-04:00",
+          "tree_id": "591e024110312e2354ee4b05a39b89ae47cfaefe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/14e0dc3b8a56dab242245fb3f63e352637513839"
+        },
+        "date": 1786778086018,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
