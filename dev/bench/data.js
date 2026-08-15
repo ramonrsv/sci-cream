@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786778170664,
+  "lastUpdate": 1786778226998,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -511263,6 +511263,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.36,
             "range": "0.34",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "14e0dc3b8a56dab242245fb3f63e352637513839",
+          "message": "Flesh out docs pages, fold Sources into parent\n\nReplace the docs placeholders with real prose: new Background,\nOverview, and Ice Cream Science pages, plus an Other Resources page\nthat absorbs the per-source descriptions from the deleted Sources\npage and adds a logo, calculators, books, and other sites.\n\nRelease automation now rewrites the release-tag badge links in\ncontent/docs/overview.md: a pre-release-replacement for the crate\ntag, and a sed pass in the app's release.sh for the app tag.\n\nAdd a .badges rule to globals.css so a paragraph of badges stays on\none line under preflight, which makes every image a block.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T02:26:12-04:00",
+          "tree_id": "591e024110312e2354ee4b05a39b89ae47cfaefe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/14e0dc3b8a56dab242245fb3f63e352637513839"
+        },
+        "date": 1786778185134,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.63,
+            "range": "8.48",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.54,
+            "range": "0.76",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.49,
+            "range": "0.75",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 169,
+            "range": "7.42",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.41,
+            "range": "0.08",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 38,
+            "range": "7.75",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 169,
+            "range": "7.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.49,
+            "range": "8.44",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.25,
+            "range": "0.40",
             "unit": "ms"
           }
         ]
