@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786778921553,
+  "lastUpdate": 1786778943369,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -512983,6 +512983,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.41,
             "range": "0.36",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0030c05005b142b7938ebaeba6a927b80d940e3a",
+          "message": "Enable GFM for docs and blog, add callouts\n\nremark-gfm was already a dependency, used by the client-side\nMarkdown component for user comments, but the build-time pipeline\nnever applied it. Wiring it in brings the two renderers into\nalignment and makes strikethrough render in docs and blog content.\n\nGitHub alert syntax is not part of GFM, so add\nremark-github-blockquote-alert for the `> [!NOTE]` callouts. Its\nstylesheet picks a palette with `prefers-color-scheme`, which\nignores the theme class, but only as the fallback tier of each\n`var()` — defining the names it prefers overrides them. Its hues\nmove into `--color-alert-*` tokens so they follow `.dark` instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T02:58:41-04:00",
+          "tree_id": "df958786cfcb04183b798b46a61246555cb5f140",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0030c05005b142b7938ebaeba6a927b80d940e3a"
+        },
+        "date": 1786778902589,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.98,
+            "range": "8.67",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.25,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.19,
+            "range": "1.13",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 172,
+            "range": "7.48",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.43,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 172,
+            "range": "7.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.8,
+            "range": "7.16",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.41,
+            "range": "0.39",
             "unit": "ms"
           }
         ]
