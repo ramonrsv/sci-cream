@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786778127758,
+  "lastUpdate": 1786778150701,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -463209,6 +463209,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.03%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "14e0dc3b8a56dab242245fb3f63e352637513839",
+          "message": "Flesh out docs pages, fold Sources into parent\n\nReplace the docs placeholders with real prose: new Background,\nOverview, and Ice Cream Science pages, plus an Other Resources page\nthat absorbs the per-source descriptions from the deleted Sources\npage and adds a logo, calculators, books, and other sites.\n\nRelease automation now rewrites the release-tag badge links in\ncontent/docs/overview.md: a pre-release-replacement for the crate\ntag, and a sed pass in the app's release.sh for the app tag.\n\nAdd a .badges rule to globals.css so a paragraph of badges stays on\none line under preflight, which makes every image a block.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-15T02:26:12-04:00",
+          "tree_id": "591e024110312e2354ee4b05a39b89ae47cfaefe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/14e0dc3b8a56dab242245fb3f63e352637513839"
+        },
+        "date": 1786778108288,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 53644,
+            "range": "±9.48%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 505697,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 40770,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 398292,
+            "range": "±1.47%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
