@@ -19,14 +19,14 @@ many of the recipes below, as well as with others from reference texts. The resu
 the database of built-in [recipes](/recipes), ready to be loaded into the `Ref A/B` slots in the
 [calculator](/calculator), to compare against.
 
-[!NOTE]
-Providing these as built-in recipes runs the risk of appropriating the work of these creators, which
-I am mindful not to do. However, I think there is significant value in the convenience that this
-provides for users, sparing them the involved translation process. The compromise that I have
-arrived at is the following guidelines:
-
-- Clearly label the author of a recipe and provide a link to the original article.
-- Include only information necessary for or arising from the translation process.
+> [!NOTE]
+> Providing these as built-in recipes runs the risk of appropriating the work of these creators,
+> which I am mindful not to do. However, I think there is significant value in the convenience that
+> this provides for users, sparing them the involved translation process. The compromise that I
+> have arrived at is the following guidelines:
+>
+> - Clearly label the author of a recipe and provide a link to the original article.
+> - Include only information necessary for or arising from the translation process.
 
 As a result of the above, the built-in recipes intentionally omit important and useful information
 regarding techniques, tradeoffs, variations, etc. I highly encourage you to visit the original

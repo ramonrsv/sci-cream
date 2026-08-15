@@ -6,6 +6,8 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
 import { remark } from "remark";
+import remarkGfm from "remark-gfm";
+import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkRehype from "remark-rehype";
 
 const contentRoot = path.join(process.cwd(), "content");
@@ -189,6 +191,8 @@ export async function getMarkdownPage(
 
   // Autolinking runs after the ids are rewritten, so permalinks point at their final target
   const processed = await remark()
+    .use(remarkGfm)
+    .use(remarkAlert)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeSlug)
     .use(rehypeRenderOptions, section, options)

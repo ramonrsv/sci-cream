@@ -4,6 +4,7 @@
 @import "react-grid-layout/css/styles.css";
 @import "react-resizable/css/styles.css";
 @import "react-json-view-lite/dist/index.css";
+@import "remark-github-blockquote-alert/alert.css";
 
 /* Geist has no pictographs, so the rating glyphs in `lib/rating.ts` would vary with the system
    font. Declared face by face rather than through `@fontsource/noto-emoji/400.css`, which emits
@@ -109,6 +110,20 @@
   --color-cat-white-ink: #191917;
   --color-cat-black: #2a2a27;
   --color-cat-black-ink: #ffffff;
+
+  /* GitHub's alert palette, lifted from `remark-github-blockquote-alert/alert.css`; re-homed here
+     because the plugin selects between its own light and dark sets with `prefers-color-scheme`. */
+  --color-alert-brd: #d0d7de;
+  --color-alert-note: #0969da;
+  --color-alert-note-brd: #0969da;
+  --color-alert-tip: #1a7f37;
+  --color-alert-tip-brd: #1f883d;
+  --color-alert-important: #8250df;
+  --color-alert-important-brd: #8250df;
+  --color-alert-warning: #9a6700;
+  --color-alert-warning-brd: #9a6700;
+  --color-alert-caution: #d1242f;
+  --color-alert-caution-brd: #cf222e;
 }
 
 .dark {
@@ -149,6 +164,19 @@
   /* Black drops below page and surface, or it coincides with them; pure white glares here. */
   --color-cat-white: #f4f4f2;
   --color-cat-black: #0d0d0c;
+
+  /* The alert palette's own dark set, from the plugin's `prefers-color-scheme: dark` block. */
+  --color-alert-brd: #30363d;
+  --color-alert-note: #58a6ff;
+  --color-alert-note-brd: #1f6feb;
+  --color-alert-tip: #3fb950;
+  --color-alert-tip-brd: #238636;
+  --color-alert-important: #a371f7;
+  --color-alert-important-brd: #8957e5;
+  --color-alert-warning: #d29922;
+  --color-alert-warning-brd: #9e6a03;
+  --color-alert-caution: #f85149;
+  --color-alert-caution-brd: #da3633;
 }
 
 body {
@@ -480,6 +508,28 @@ tbody tr:hover > .table-emphasis {
 /* Badge rows: preflight makes every image a block, so a paragraph of badges would stack. */
 .badges img {
   @apply my-0 inline-block align-middle;
+}
+
+/* Markdown callouts, authored as GitHub alert blockquotes (`> [!NOTE]`). These names win the
+   plugin stylesheet's `var()` fallbacks, so its `prefers-color-scheme` palette never applies. */
+.markdown-alert {
+  --borderColor-default: var(--color-alert-brd);
+  --fgColor-accent: var(--color-alert-note);
+  --borderColor-accent-emphasis: var(--color-alert-note-brd);
+  --fgColor-success: var(--color-alert-tip);
+  --borderColor-success-emphasis: var(--color-alert-tip-brd);
+  --fgColor-done: var(--color-alert-important);
+  --borderColor-done-emphasis: var(--color-alert-important-brd);
+  --fgColor-attention: var(--color-alert-warning);
+  --borderColor-attention-emphasis: var(--color-alert-warning-brd);
+  --fgColor-danger: var(--color-alert-caution);
+  --borderColor-danger-emphasis: var(--color-alert-caution-brd);
+
+  @apply border-l-2;
+}
+
+.markdown-alert-title {
+  @apply lowercase first-letter:uppercase;
 }
 
 /* Heading permalinks, from rehype-autolink-headings. Revealed on hover, always shown without it. */

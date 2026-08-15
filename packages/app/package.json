@@ -67,6 +67,7 @@
     "rehype-stringify": "^10.0.1",
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
+    "remark-github-blockquote-alert": "^2.1.0",
     "remark-rehype": "^11.1.2",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest-canvas-mock": "^1.1.4"
