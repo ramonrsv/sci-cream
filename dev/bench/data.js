@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786874748960,
+  "lastUpdate": 1786874869159,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -434047,6 +434047,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 661.88,
             "range": "11.92",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2de10e6c6baa20b644075d14a763ac40b6801810",
+          "message": "Build the docs nav tree from a manifest\n\nThe sidebar needs the docs page order and hierarchy. Deriving it from\nfrontmatter `pages` would keep the index page special: it would be\nboth a page and the thing listing pages, which leaks a special case\ninto routing, href building, and static params.\n\nDeclare the order in `content/docs/_nav.json` instead, and derive\nnesting from the slug path, which already mirrors the URL. Nothing\nabout a page's position lives in the page itself, so every page is\nserved uniformly at `/docs/{slug}`.\n\nBuilding in two passes means the manifest may list a child before its\nparent, and a page whose parent is unlisted stays at the root, so a\ndirectory of pages needs no page of its own.\n\n`contentRoot` becomes exported `CONTENT_ROOT` so the manifest is\nlocated without re-deriving the path.\n\nNothing reads the manifest yet; the composites and the markdown index\npage are removed in the next commit, which is also where the manifest\nis first checked against what is on disk.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-16T04:35:46-04:00",
+          "tree_id": "d9913a0aa422ede308b98a9289d9738ddc72b3e7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2de10e6c6baa20b644075d14a763ac40b6801810"
+        },
+        "date": 1786874825281,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.88,
+            "range": "3.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 54,
+            "range": "4.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 66.25,
+            "range": "8.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2353.5,
+            "range": "35.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 319.63,
+            "range": "3.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 332.5,
+            "range": "3.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 347.63,
+            "range": "5.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16887.63,
+            "range": "116.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 928.75,
+            "range": "16.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 57.63,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.63,
+            "range": "2.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 46.25,
+            "range": "1.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.38,
+            "range": "2.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 130.13,
+            "range": "7.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 87.5,
+            "range": "5.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.87,
+            "range": "0.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 44.32,
+            "range": "0.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 684.5,
+            "range": "15.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 719.75,
+            "range": "28.80",
             "unit": "ms"
           }
         ]
