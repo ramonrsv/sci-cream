@@ -25,14 +25,15 @@ const RECIPES = "/docs/other-resources/recipes";
  * The cursor is parked so no link renders a hover state, and the viewport is grown to the content
  * height: the app shell is `h-screen`, so `fullPage` would capture only the first screen.
  *
- * Badges are masked: shields.io bakes the version, CI result, and coverage into the art.
+ * Badge rows are masked whole: shields.io bakes its text into the art, so each image's width moves
+ * with it. The `.badges` wrapper is a full-width block, so its box is stable.
  */
 async function shootDocsPage(page: Page, url: string, name: string, { dark = false } = {}) {
   if (dark) await page.emulateMedia({ colorScheme: "dark" });
   await goToPageAndWaitFor(page, url);
   await parkCursor(page);
   await setViewportHeightForAllAppContentScreenshot(page);
-  await expect(page).toHaveScreenshot(name, { mask: [page.locator(".badges img")] });
+  await expect(page).toHaveScreenshot(name, { mask: [page.locator(".badges")] });
 }
 
 test.describe("Visual Regression: Documentation", () => {
