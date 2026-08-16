@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786874159994,
+  "lastUpdate": 1786874163344,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -516618,6 +516618,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.49,
             "range": "0.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2de10e6c6baa20b644075d14a763ac40b6801810",
+          "message": "Build the docs nav tree from a manifest\n\nThe sidebar needs the docs page order and hierarchy. Deriving it from\nfrontmatter `pages` would keep the index page special: it would be\nboth a page and the thing listing pages, which leaks a special case\ninto routing, href building, and static params.\n\nDeclare the order in `content/docs/_nav.json` instead, and derive\nnesting from the slug path, which already mirrors the URL. Nothing\nabout a page's position lives in the page itself, so every page is\nserved uniformly at `/docs/{slug}`.\n\nBuilding in two passes means the manifest may list a child before its\nparent, and a page whose parent is unlisted stays at the root, so a\ndirectory of pages needs no page of its own.\n\n`contentRoot` becomes exported `CONTENT_ROOT` so the manifest is\nlocated without re-deriving the path.\n\nNothing reads the manifest yet; the composites and the markdown index\npage are removed in the next commit, which is also where the manifest\nis first checked against what is on disk.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-16T04:35:46-04:00",
+          "tree_id": "d9913a0aa422ede308b98a9289d9738ddc72b3e7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2de10e6c6baa20b644075d14a763ac40b6801810"
+        },
+        "date": 1786874113822,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.25,
+            "range": "9.94",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.99,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.94,
+            "range": "0.74",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 169.5,
+            "range": "10.19",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.4,
+            "range": "0.10",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 169.5,
+            "range": "10.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.15,
+            "range": "9.83",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.23,
+            "range": "0.23",
             "unit": "ms"
           }
         ]
