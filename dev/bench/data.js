@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786869301298,
+  "lastUpdate": 1786869407550,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -515363,6 +515363,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.09,
             "range": "1.75",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b00396ad9045059916d34a75f2659d1955d57c29",
+          "message": "Mask docs badge rows whole\n\nshields.io renders the version, CI result, and coverage into the\nart, so each badge's width moves with its text. Masking the images\nindividually left the drift at their edges, failing the docs index\nand overview shots. The `.badges` wrapper is a full-width block, so\nits box holds still whatever the badges say.\n\nThis gives up the stacked-badge-row check the per-image boxes\nprovided; the row's height still changes if the images stop sitting\ninline, so a stacked row is not invisible to the diff.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-16T04:14:23-04:00",
+          "tree_id": "67d27d889b1cbed93ce466bcd6a8d520f5bc331b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b00396ad9045059916d34a75f2659d1955d57c29"
+        },
+        "date": 1786869363999,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.75,
+            "range": "10.85",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.9,
+            "range": "0.89",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.89,
+            "range": "0.88",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 180.5,
+            "range": "14.89",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 180.5,
+            "range": "14.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.5,
+            "range": "11.07",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.39,
+            "range": "0.35",
             "unit": "ms"
           }
         ]
