@@ -352,6 +352,56 @@ describe("getMarkdownPage", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getMarkdownPage: collected headings
+// ---------------------------------------------------------------------------
+
+describe("getMarkdownPage headings", () => {
+  it("collects every heading level, in document order", async () => {
+    readFileSyncSpy.mockReturnValue(
+      "---\ntitle: Test\n---\n# One\n\n## Two\n\n### Three\n\n#### Four\n\n##### Five\n\n###### Six",
+    );
+
+    const page = await getMarkdownPage("docs", "test");
+    expect(page.headings).toEqual([
+      { id: "one", text: "One", level: 1 },
+      { id: "two", text: "Two", level: 2 },
+      { id: "three", text: "Three", level: 3 },
+      { id: "four", text: "Four", level: 4 },
+      { id: "five", text: "Five", level: 5 },
+      { id: "six", text: "Six", level: 6 },
+    ]);
+  });
+
+  it("flattens inline markup in the heading text", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n## `sci-cream` **crate**");
+
+    const page = await getMarkdownPage("docs", "test");
+    expect(page.headings).toEqual([{ id: "sci-cream-crate", text: "sci-cream crate", level: 2 }]);
+  });
+
+  it("returns an empty array for a body with no headings", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\nJust a paragraph.");
+
+    const page = await getMarkdownPage("docs", "test");
+    expect(page.headings).toEqual([]);
+  });
+
+  // Pins the collector's pipeline slot from both sides: the ids must be the rendered ones, and the
+  // permalink `#` must not have been appended yet when the text is read.
+  it("collects the ids the HTML carries, without the permalink marker in the text", async () => {
+    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n## My Section");
+
+    const page = await getMarkdownPage("docs", "test");
+    // Ids match the rendered attributes, so collection runs after `rehype-slug`
+    expect(page.contentHtml).toContain('<h2 id="my-section">');
+    expect(page.headings).toEqual([{ id: "my-section", text: "My Section", level: 2 }]);
+    // The permalink is in the HTML, but its `#` never reached the text: collection ran first
+    expect(page.contentHtml).toContain('<a class="heading-permalink"');
+    expect(page.headings?.every((heading) => !heading.text.includes("#"))).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getListedPages
 // ---------------------------------------------------------------------------
 

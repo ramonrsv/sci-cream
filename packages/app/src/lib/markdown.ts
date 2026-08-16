@@ -24,10 +24,22 @@ export interface Frontmatter {
   [key: string]: unknown;
 }
 
+/** A heading a page renders, addressable on that page's route as `#{id}`. */
+export interface MarkdownHeading {
+  /** The `id` `rehype-slug` generated from the heading text. */
+  id: string;
+  /** Heading text, inline markup flattened and the permalink marker excluded. */
+  text: string;
+  /** Heading level: `1` for `h1` through `6` for `h6`. */
+  level: number;
+}
+
 export interface MarkdownPage {
   slug: string;
   frontmatter: Frontmatter;
   contentHtml?: string;
+  /** Headings in document order; present whenever `contentHtml` is. */
+  headings?: MarkdownHeading[];
 }
 
 /** Options for rendering a page that forms one section of a larger document. */
@@ -54,6 +66,8 @@ interface ContentNode {
   tagName?: string;
   properties?: Record<string, unknown>;
   children?: ContentNode[];
+  /** Text nodes carry their content here; element nodes leave it unset. */
+  value?: string;
 }
 
 const HEADING_TAGS = ["h1", "h2", "h3", "h4", "h5", "h6"];
@@ -74,6 +88,35 @@ function walkContentTree(node: ContentNode, visit: (node: ContentNode) => void):
 /** A slug as an HTML id: `other-resources/science` becomes `other-resources-science`. */
 export function slugToId(slug: string): string {
   return slug.replaceAll("/", "-");
+}
+
+/** Concatenated text of `node` and its descendants, flattening any inline markup. */
+function contentText(node: ContentNode): string {
+  let text = "";
+  walkContentTree(node, (child) => {
+    if (child.type === "text" && typeof child.value === "string") text += child.value;
+  });
+  return text;
+}
+
+/**
+ * Rehype plugin collecting every heading into `into`, in document order.
+ *
+ * Pipeline position is load-bearing: after id rewriting, so ids match the HTML; before
+ * `rehype-autolink-headings`, whose appended permalink would otherwise land in the text.
+ *
+ * `into` is an out-parameter because a unified transformer has no return channel to its caller.
+ */
+function rehypeCollectHeadings(into: MarkdownHeading[]) {
+  return (tree: ContentNode) => {
+    walkContentTree(tree, (node) => {
+      const level = HEADING_TAGS.indexOf(node.tagName ?? "") + 1;
+      const id = node.properties?.id;
+      if (level > 0 && typeof id === "string") {
+        into.push({ id, text: contentText(node), level });
+      }
+    });
+  };
 }
 
 /**
@@ -188,6 +231,7 @@ export async function getMarkdownPage(
   options: MarkdownRenderOptions = {},
 ): Promise<MarkdownPage> {
   const { data, content } = matter(readFileFromContentRoot(section, `${slug}.md`));
+  const headings: MarkdownHeading[] = [];
 
   // Autolinking runs after the ids are rewritten, so permalinks point at their final target
   const processed = await remark()
@@ -196,11 +240,12 @@ export async function getMarkdownPage(
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeSlug)
     .use(rehypeRenderOptions, section, options)
+    .use(rehypeCollectHeadings, headings)
     .use(rehypeAutolinkHeadings, HEADING_PERMALINK)
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(content);
 
-  return { slug, frontmatter: data as Frontmatter, contentHtml: processed.toString() };
+  return { slug, frontmatter: data as Frontmatter, contentHtml: processed.toString(), headings };
 }
 
 /**
