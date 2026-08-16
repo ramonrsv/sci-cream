@@ -1,12 +1,15 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import { getMarkdownComposite, getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
-import { MarkdownArticles } from "@/app/_elements/markdown-articles";
+import { getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
+import { MarkdownArticle } from "@/app/_elements/markdown-article";
 
 interface Props {
   params: Promise<{ slug: string[] }>;
 }
+
+/** Every docs route is prerendered from a file, so an unlisted slug is a 404, not a render. */
+export const dynamicParams = false;
 
 /** Returns all valid slugs for static generation, one path segment per array entry. */
 export async function generateStaticParams() {
@@ -24,14 +27,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-/** Renders `content/docs/{slug}.md` and the pages its frontmatter lists, as one composite. */
+/** Renders `content/docs/{slug}.md`. */
 export default async function DocsSlugPage({ params }: Props) {
   const { slug } = await params;
-  let pages;
+  let page;
   try {
-    pages = await getMarkdownComposite("docs", slug.join("/"));
+    page = await getMarkdownPage("docs", slug.join("/"));
   } catch {
     notFound();
   }
-  return <MarkdownArticles pages={pages} />;
+  return <MarkdownArticle page={page} />;
 }

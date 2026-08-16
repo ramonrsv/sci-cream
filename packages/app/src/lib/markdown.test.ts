@@ -2,14 +2,11 @@ import { describe, it, expect, vi, beforeEach, type MockInstance } from "vitest"
 import fs from "fs";
 
 import {
-  slugToId,
   getMarkdownSlugs,
   sortMarkdownPages,
   filterOutDrafts,
   getMarkdownSummaries,
   getMarkdownPage,
-  getListedPages,
-  getMarkdownComposite,
   type MarkdownPage,
 } from "./markdown";
 
@@ -19,21 +16,6 @@ const readFileSyncSpy = vi.spyOn(fs, "readFileSync");
 
 beforeEach(() => {
   vi.resetAllMocks();
-});
-
-// ---------------------------------------------------------------------------
-// slugToId
-// ---------------------------------------------------------------------------
-
-describe("slugToId", () => {
-  it("replaces every path separator with a dash", () => {
-    expect(slugToId("other-resources/science")).toBe("other-resources-science");
-    expect(slugToId("a/b/c")).toBe("a-b-c");
-  });
-
-  it("leaves a flat slug unchanged", () => {
-    expect(slugToId("getting-started")).toBe("getting-started");
-  });
 });
 
 // ---------------------------------------------------------------------------
@@ -252,71 +234,19 @@ describe("getMarkdownPage", () => {
     expect(page.contentHtml).toContain('<h3 id="sub-section">');
   });
 
-  it("leaves headings and links untouched when given no render options", async () => {
-    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n# Title\n\n[Other](/docs/other)");
+  it("leaves links untouched, every page being served on its own route", async () => {
+    readFileSyncSpy.mockReturnValue(
+      "---\ntitle: Test\n---\n# Title\n\n[Other](/docs/other) " +
+        "[Deep](/docs/other-resources/science#underbelly) [Blog](/blog/post) " +
+        "[Ext](https://example.com/docs/recipes)",
+    );
 
     const page = await getMarkdownPage("docs", "test");
     expect(page.contentHtml).toContain('<h1 id="title">');
     expect(page.contentHtml).toContain('href="/docs/other"');
-  });
-
-  it("demotes headings by the requested number of levels", async () => {
-    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n# Title\n\n## Section");
-
-    const page = await getMarkdownPage("docs", "test", { demoteHeadings: 1 });
-    expect(page.contentHtml).toContain('<h2 id="title">');
-    expect(page.contentHtml).toContain('<h3 id="section">');
-  });
-
-  it("clamps demoted headings at h6", async () => {
-    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n##### Deep\n\n###### Deeper");
-
-    const page = await getMarkdownPage("docs", "test", { demoteHeadings: 3 });
-    expect(page.contentHtml).toContain('<h6 id="deep">');
-    expect(page.contentHtml).toContain('<h6 id="deeper">');
-  });
-
-  it("prefixes heading ids, keeping anchors unique across concatenated pages", async () => {
-    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n## Underbelly");
-
-    const page = await getMarkdownPage("docs", "recipes", { idPrefix: "recipes" });
-    expect(page.contentHtml).toContain('<h2 id="recipes-underbelly">');
-  });
-
-  it("rewrites links to listed slugs into anchors, leaving every other link alone", async () => {
-    readFileSyncSpy.mockReturnValue(
-      "---\ntitle: Test\n---\n[Recipes](/docs/recipes) [Science](/docs/science) " +
-        "[Blog](/blog/post) [Ext](https://example.com/docs/recipes)",
-    );
-
-    const page = await getMarkdownPage("docs", "test", { anchorSlugs: ["recipes"] });
-    expect(page.contentHtml).toContain('href="#recipes"');
-    // Not listed, so it keeps pointing at its own route rather than dangling as an anchor
-    expect(page.contentHtml).toContain('href="/docs/science"');
-    // Only `/docs/{slug}` links are rewritten; everything else is left alone
+    expect(page.contentHtml).toContain('href="/docs/other-resources/science#underbelly"');
     expect(page.contentHtml).toContain('href="/blog/post"');
     expect(page.contentHtml).toContain('href="https://example.com/docs/recipes"');
-  });
-
-  it("rewrites a nested slug's link, dashing the separators", async () => {
-    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n[S](/docs/other-resources/science)");
-
-    const page = await getMarkdownPage("docs", "test", {
-      anchorSlugs: ["other-resources/science"],
-    });
-    expect(page.contentHtml).toContain('href="#other-resources-science"');
-  });
-
-  it("carries a fragment onto the listed page's prefixed ids", async () => {
-    readFileSyncSpy.mockReturnValue(
-      "---\ntitle: Test\n---\n[Deep](/docs/other/science#underbelly) " +
-        "[Absent](/docs/absent#underbelly)",
-    );
-
-    const page = await getMarkdownPage("docs", "test", { anchorSlugs: ["other/science"] });
-    expect(page.contentHtml).toContain('href="#other-science-underbelly"');
-    // Not listed, so its deep link still points at its own route
-    expect(page.contentHtml).toContain('href="/docs/absent#underbelly"');
   });
 
   it("appends a permalink to every heading", async () => {
@@ -326,21 +256,6 @@ describe("getMarkdownPage", () => {
     expect(page.contentHtml).toContain('<a class="heading-permalink"');
     expect(page.contentHtml).toContain('href="#my-section"');
     expect(page.contentHtml).toContain('href="#sub-section"');
-  });
-
-  it("points heading permalinks at the prefixed id, not the original", async () => {
-    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n## Underbelly");
-
-    const page = await getMarkdownPage("docs", "recipes", { idPrefix: "recipes" });
-    expect(page.contentHtml).toContain('href="#recipes-underbelly"');
-    expect(page.contentHtml).not.toContain('href="#underbelly"');
-  });
-
-  it("leaves same-section links alone when no slugs are listed", async () => {
-    readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n[Recipes](/docs/recipes)");
-
-    const page = await getMarkdownPage("docs", "test");
-    expect(page.contentHtml).toContain('href="/docs/recipes"');
   });
 
   it("rejects a slug that escapes the content root", async () => {
@@ -398,101 +313,5 @@ describe("getMarkdownPage headings", () => {
     // The permalink is in the HTML, but its `#` never reached the text: collection ran first
     expect(page.contentHtml).toContain('<a class="heading-permalink"');
     expect(page.headings?.every((heading) => !heading.text.includes("#"))).toBe(true);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// getListedPages
-// ---------------------------------------------------------------------------
-
-describe("getListedPages", () => {
-  it("returns the slugs listed in frontmatter, in order", () => {
-    readFileSyncSpy.mockReturnValue("---\ntitle: ToC\npages: [charlie, alpha]\n---\nBody");
-
-    expect(getListedPages("docs", "table-of-content")).toEqual(["charlie", "alpha"]);
-  });
-
-  it("returns an empty array when the page lists none", () => {
-    readFileSyncSpy.mockReturnValue("---\ntitle: Plain\n---\nBody");
-
-    expect(getListedPages("docs", "plain")).toEqual([]);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// getMarkdownComposite
-// ---------------------------------------------------------------------------
-
-describe("getMarkdownComposite", () => {
-  /** Serve each slug its own file, so composites can be assembled from the mocked fs. */
-  function mockSection(files: Record<string, string>) {
-    readFileSyncSpy.mockImplementation((filePath: unknown) => {
-      const slug = String(filePath)
-        .replace(/^.*\/docs\//, "")
-        .replace(/\.md$/, "");
-      return files[slug] ?? `---\ntitle: ${slug}\n---\n# ${slug}`;
-    });
-  }
-
-  it("returns the page first, then the pages it lists, in order", async () => {
-    mockSection({ index: "---\ntitle: Index\npages: [beta, alpha]\n---\n# Index" });
-
-    const pages = await getMarkdownComposite("docs", "index");
-    expect(pages.map((p) => p.slug)).toEqual(["index", "beta", "alpha"]);
-  });
-
-  it("returns just the page when it lists none", async () => {
-    mockSection({ solo: "---\ntitle: Solo\n---\n# Solo" });
-
-    const pages = await getMarkdownComposite("docs", "solo");
-    expect(pages.map((p) => p.slug)).toEqual(["solo"]);
-  });
-
-  it("demotes listed pages a level and prefixes their ids, not the first page", async () => {
-    mockSection({
-      index: "---\ntitle: Index\npages: [alpha]\n---\n# Index",
-      alpha: "---\ntitle: Alpha\n---\n# Alpha\n\n## Section",
-    });
-
-    const [index, alpha] = await getMarkdownComposite("docs", "index");
-    expect(index.contentHtml).toContain('<h1 id="index">');
-    expect(alpha.contentHtml).toContain('<h2 id="alpha-alpha">');
-    expect(alpha.contentHtml).toContain('<h3 id="alpha-section">');
-  });
-
-  it("turns links to listed pages into anchors, in every page of the composite", async () => {
-    mockSection({
-      index: "---\ntitle: Index\npages: [alpha]\n---\n[A](/docs/alpha) [B](/docs/beta)",
-      alpha: "---\ntitle: Alpha\n---\n[A](/docs/alpha) [B](/docs/beta)",
-    });
-
-    const [index, alpha] = await getMarkdownComposite("docs", "index");
-    for (const page of [index, alpha]) {
-      expect(page.contentHtml).toContain('href="#alpha"');
-      // `beta` is not part of this composite, so its link still points at its own route
-      expect(page.contentHtml).toContain('href="/docs/beta"');
-    }
-  });
-
-  it("prefixes a nested page's ids with its slash-free slug", async () => {
-    mockSection({
-      hub: "---\ntitle: Hub\npages: [other/science]\n---\n[S](/docs/other/science)",
-      "other/science": "---\ntitle: Science\n---\n# Science\n\n## Underbelly",
-    });
-
-    const [hub, science] = await getMarkdownComposite("docs", "hub");
-    expect(hub.contentHtml).toContain('href="#other-science"');
-    expect(science.contentHtml).toContain('<h2 id="other-science-science">');
-    expect(science.contentHtml).toContain('<h3 id="other-science-underbelly">');
-  });
-
-  it("expands one level: a listed page's own list belongs to its own route", async () => {
-    mockSection({
-      index: "---\ntitle: Index\npages: [alpha]\n---\n# Index",
-      alpha: "---\ntitle: Alpha\npages: [beta]\n---\n# Alpha",
-    });
-
-    const pages = await getMarkdownComposite("docs", "index");
-    expect(pages.map((p) => p.slug)).toEqual(["index", "alpha"]);
   });
 });

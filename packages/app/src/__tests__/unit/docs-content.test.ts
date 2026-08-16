@@ -1,26 +1,39 @@
 import { describe, it, expect } from "vitest";
 
-import { getListedPages, getMarkdownSlugs, TABLE_OF_CONTENT_SLUG } from "@/lib/markdown";
+import { buildDocsNav, readDocsNavOrder, type DocsNavNode } from "@/lib/docs-nav";
+import { getMarkdownSlugs } from "@/lib/markdown";
 
 // ---------------------------------------------------------------------------
-// Docs table of contents
+// Docs navigation manifest
 //
-// Reads the real `content/docs` files: a page is only reachable from `/docs` if the table of
-// contents lists it, or a page the table of contents reaches lists it.
+// Reads the real `content/docs` files: the manifest is the only record of which pages exist and in
+// what order, so a page added without listing it is invisible, and a listed page that was deleted
+// breaks the build.
 // ---------------------------------------------------------------------------
 
-/** Slugs reachable from `slug` by following frontmatter `pages` lists, including `slug` itself. */
-function reachableSlugs(slug: string, seen = new Set<string>()): Set<string> {
-  if (seen.has(slug)) return seen;
-  seen.add(slug);
-  for (const listed of getListedPages("docs", slug)) reachableSlugs(listed, seen);
-  return seen;
+/** Every slug in the tree, in document order. */
+function treeSlugs(nodes: DocsNavNode[]): string[] {
+  return nodes.flatMap((node) => [node.slug, ...treeSlugs(node.children)]);
 }
 
-describe("docs table of contents", () => {
-  it("reaches every page in content/docs, and lists only pages that exist", () => {
-    const reachable = [...reachableSlugs(TABLE_OF_CONTENT_SLUG)];
+describe("docs navigation manifest", () => {
+  it("lists exactly the pages in content/docs", () => {
+    expect([...readDocsNavOrder()].sort()).toEqual([...getMarkdownSlugs("docs")].sort());
+  });
 
-    expect(reachable.sort()).toEqual([...getMarkdownSlugs("docs")].sort());
+  it("builds a tree holding every page exactly once", async () => {
+    const slugs = treeSlugs(await buildDocsNav());
+
+    expect([...slugs].sort()).toEqual([...getMarkdownSlugs("docs")].sort());
+  });
+
+  it("nests the pages that live in a subdirectory", async () => {
+    const nav = await buildDocsNav();
+
+    const nested = nav.find((node) => node.children.length > 0);
+    expect(nested).toBeDefined();
+    for (const child of nested!.children) {
+      expect(child.slug.startsWith(`${nested!.slug}/`)).toBe(true);
+    }
   });
 });

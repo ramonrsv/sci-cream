@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
+import { MarkdownArticle } from "@/app/_elements/markdown-article";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -37,10 +38,7 @@ export default async function BlogSlugPage({ params }: Props) {
       {page.frontmatter.date && (
         <time className="text-txt-sec mb-2 block text-sm">{page.frontmatter.date}</time>
       )}
-      <article
-        className="prose dark:prose-invert max-w-5xl"
-        dangerouslySetInnerHTML={{ __html: page.contentHtml! }}
-      />
+      <MarkdownArticle page={page} />
     </div>
   );
 }

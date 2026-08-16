@@ -3,13 +3,7 @@ import path from "path";
 
 import { describe, it, expect } from "vitest";
 
-import {
-  getMarkdownComposite,
-  getMarkdownPage,
-  getMarkdownSlugs,
-  slugToId,
-  TABLE_OF_CONTENT_SLUG,
-} from "@/lib/markdown";
+import { getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
 
 // ---------------------------------------------------------------------------
 // Internal content links
@@ -33,28 +27,12 @@ function internalLinks(section: string, slug: string): string[] {
   ];
 }
 
-/** Add every `id` in a rendered fragment to `into`; headings are the only tagged elements. */
-function collectIds(contentHtml: string | undefined, into: Set<string>): Set<string> {
-  for (const match of (contentHtml ?? "").matchAll(/id="([^"]+)"/g)) into.add(match[1]);
-  return into;
-}
-
-/**
- * Ids a `/docs/{slug}` route renders.
- *
- * `MarkdownArticles` anchors each article by its slug, so a composite's listed pages are
- * addressable by slug id as well as by their own headings.
- */
-async function docsRouteIds(slug: string): Promise<Set<string>> {
-  const pages = await getMarkdownComposite("docs", slug);
-  const ids = new Set(pages.map((page) => slugToId(page.slug)));
-  for (const page of pages) collectIds(page.contentHtml, ids);
+/** Ids a route renders; each page is served alone, so its headings are the only tagged elements. */
+async function routeIds(section: string, slug: string): Promise<Set<string>> {
+  const { contentHtml } = await getMarkdownPage(section, slug);
+  const ids = new Set<string>();
+  for (const match of (contentHtml ?? "").matchAll(/id="([^"]+)"/g)) ids.add(match[1]);
   return ids;
-}
-
-/** Ids a `/blog/{slug}` route renders; its article wrapper carries no id of its own. */
-async function blogPostIds(slug: string): Promise<Set<string>> {
-  return collectIds((await getMarkdownPage("blog", slug)).contentHtml, new Set());
 }
 
 /** Top-level route segments the app serves; `_`-prefixed directories are not routes. */
@@ -74,10 +52,10 @@ interface Content {
 /** Render every route once, so each link resolves against a prepared id set. */
 async function readContent(): Promise<Content> {
   const docsIds = new Map<string, Set<string>>();
-  for (const slug of getMarkdownSlugs("docs")) docsIds.set(slug, await docsRouteIds(slug));
+  for (const slug of getMarkdownSlugs("docs")) docsIds.set(slug, await routeIds("docs", slug));
 
   const blogIds = new Map<string, Set<string>>();
-  for (const slug of getMarkdownSlugs("blog")) blogIds.set(slug, await blogPostIds(slug));
+  for (const slug of getMarkdownSlugs("blog")) blogIds.set(slug, await routeIds("blog", slug));
 
   return { docsIds, blogIds, routes: appRoutes() };
 }
@@ -98,9 +76,10 @@ function resolveLink(link: string, content: Content): string | undefined {
     return fs.existsSync(asset) ? undefined : "no such file under public/";
   }
 
+  // `/docs` and `/blog` are generated index routes, checked as routes rather than as pages
   let ids: Set<string> | undefined;
-  if (segment === "docs") {
-    ids = content.docsIds.get(slug === "" ? TABLE_OF_CONTENT_SLUG : slug);
+  if (segment === "docs" && slug !== "") {
+    ids = content.docsIds.get(slug);
     if (ids === undefined) return "no such page in content/docs";
   } else if (segment === "blog" && slug !== "") {
     ids = content.blogIds.get(slug);

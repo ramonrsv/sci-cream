@@ -1,7 +1,6 @@
 ---
 title: "Other Resources"
 description: "Ice cream calculators, science writings, reference recipes, books, communities, etc."
-pages: [other-resources/science, other-resources/recipes]
 ---
 
 <!-- markdownlint-disable no-inline-html -- required for images with width/style -->

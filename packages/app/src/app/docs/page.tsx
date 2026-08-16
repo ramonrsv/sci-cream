@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 
-import { getMarkdownComposite, getMarkdownPage, TABLE_OF_CONTENT_SLUG } from "@/lib/markdown";
-import { MarkdownArticles } from "@/app/_elements/markdown-articles";
+import { getDocsNav } from "@/lib/docs-nav";
+import { DocsIndex } from "@/app/_components/docs-index";
 
-/** Generates page metadata from the table of contents' frontmatter. */
-export async function generateMetadata(): Promise<Metadata> {
-  const { frontmatter } = await getMarkdownPage("docs", TABLE_OF_CONTENT_SLUG);
-  return { title: frontmatter.title, description: frontmatter.description };
-}
+/** Static, the landing page having no markdown file of its own to take frontmatter from. */
+export const metadata: Metadata = {
+  title: "Documentation",
+  description: "Index of the Sci-Cream documentation.",
+};
 
-/** Docs index: the table of contents, followed by the pages its frontmatter lists. */
+/** Docs landing page, generated from the nav manifest; every page is served at its own route. */
 export default async function DocsPage() {
-  return <MarkdownArticles pages={await getMarkdownComposite("docs", TABLE_OF_CONTENT_SLUG)} />;
+  return <DocsIndex nav={await getDocsNav()} />;
 }
