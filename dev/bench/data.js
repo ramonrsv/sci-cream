@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786869295821,
+  "lastUpdate": 1786869301298,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -466597,6 +466597,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b00396ad9045059916d34a75f2659d1955d57c29",
+          "message": "Mask docs badge rows whole\n\nshields.io renders the version, CI result, and coverage into the\nart, so each badge's width moves with its text. Masking the images\nindividually left the drift at their edges, failing the docs index\nand overview shots. The `.badges` wrapper is a full-width block, so\nits box holds still whatever the badges say.\n\nThis gives up the stacked-badge-row check the per-image boxes\nprovided; the row's height still changes if the images stop sitting\ninline, so a stacked row is not invisible to the diff.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-16T04:14:23-04:00",
+          "tree_id": "67d27d889b1cbed93ce466bcd6a8d520f5bc331b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b00396ad9045059916d34a75f2659d1955d57c29"
+        },
+        "date": 1786869259698,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 58935,
+            "range": "±0.89%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 497975,
+            "range": "±0.47%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 42461,
+            "range": "±1.46%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 385322,
+            "range": "±0.98%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
