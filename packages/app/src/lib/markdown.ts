@@ -10,7 +10,8 @@ import remarkGfm from "remark-gfm";
 import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkRehype from "remark-rehype";
 
-const contentRoot = path.join(process.cwd(), "content");
+/** Root of the authored content tree; `docs`/`blog` sections live directly beneath it. */
+export const CONTENT_ROOT = path.join(process.cwd(), "content");
 
 /** Slug of the hand-maintained docs index, rendered at `/docs` as well as at its own route. */
 export const TABLE_OF_CONTENT_SLUG = "table-of-content";
@@ -137,8 +138,8 @@ function anchorHrefFor(section: string, href: string, anchorSlugs: string[]): st
  * Slugs reach this from the URL, so a path escaping the content root is rejected, not read.
  */
 function readFileFromContentRoot(...segments: string[]): string {
-  const filePath = path.resolve(contentRoot, ...segments);
-  if (!filePath.startsWith(contentRoot + path.sep)) {
+  const filePath = path.resolve(CONTENT_ROOT, ...segments);
+  if (!filePath.startsWith(CONTENT_ROOT + path.sep)) {
     throw new Error(`Content path escapes the content root: ${segments.join("/")}`);
   }
   return fs.readFileSync(filePath, "utf8");
@@ -161,7 +162,7 @@ export function getListedPages(section: string, slug: string): string[] {
  * `other-resources/science`, served at `/docs/other-resources/science`.
  */
 export function getMarkdownSlugs(section: string): string[] {
-  const dir = path.join(contentRoot, section);
+  const dir = path.join(CONTENT_ROOT, section);
   if (!fs.existsSync(dir)) {
     throw new Error(`Content section not found: "${section}" (looked in ${dir})`);
   }
