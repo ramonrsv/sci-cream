@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786873977911,
+  "lastUpdate": 1786874043950,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -516388,6 +516388,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.39,
             "range": "0.35",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2abf29916675e771b7c73340405ffbad08994e12",
+          "message": "Collect heading anchors when rendering markdown\n\nThe docs table of contents needs each page's heading anchors, and\nscraping them from the rendered DOM would duplicate the id logic\n`rehype-slug` already performs. Collect them during the same hast\nwalk instead, and return them alongside the HTML.\n\nThe collector's pipeline slot is load-bearing on both sides: it runs\nafter the ids are rewritten, so the recorded ids are the ones the\nHTML carries, and before `rehype-autolink-headings`, whose appended\n`#` permalink would otherwise be folded into every heading's text. A\ntest pins both.\n\nPurely additive; the composite machinery is untouched.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-16T04:35:46-04:00",
+          "tree_id": "db2a5c1cd6fed7ec4f3751dcee4b7ab23605e644",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2abf29916675e771b7c73340405ffbad08994e12"
+        },
+        "date": 1786874002928,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.95,
+            "range": "9.04",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.16,
+            "range": "0.84",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.13,
+            "range": "0.81",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 172.5,
+            "range": "6.46",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.48,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 172.5,
+            "range": "6.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.68,
+            "range": "9.04",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.49,
+            "range": "0.38",
             "unit": "ms"
           }
         ]
