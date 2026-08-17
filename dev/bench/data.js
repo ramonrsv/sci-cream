@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786987705417,
+  "lastUpdate": 1786987766410,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -532928,6 +532928,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/10da7dbad56d3d3eb43a9ebf50a73414c066f59b"
         },
         "date": 1786987302846,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3d09b4029d705859d61a965a0292c9728a2af410",
+          "message": "Make CommentError an enum\n\nThe string union meant typing each variant out at every return, with\nno completion and nothing to grep for. `ShareErrorKind`,\n`PayloadErrorKind`, and `BatchErrorKind` all read as enums with\nPascalCase members over kebab-case values, paired with a\n`Record<…, string>` message map — this is the same shape, so it now\nmatches.\n\nThe values are untouched, being what a server action puts on the\nwire, and a test pins them written out: an enum makes the member\nname the thing you read, so a rename that changed the protocol would\notherwise be easy to miss.\n\nNamed `CommentError`, not `CommentErrorKind`. The suffix on the\nother three distinguishes the kind from the `Error` subclass beside\nit; nothing here throws, so it would be vestigial.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T12:44:55-04:00",
+          "tree_id": "bdb206ab228989151a92a621f2c6528c97267ecf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3d09b4029d705859d61a965a0292c9728a2af410"
+        },
+        "date": 1786987726907,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
