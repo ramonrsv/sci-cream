@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786988202949,
+  "lastUpdate": 1786988567367,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -439468,6 +439468,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 739.75,
             "range": "19.12",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3d09b4029d705859d61a965a0292c9728a2af410",
+          "message": "Make CommentError an enum\n\nThe string union meant typing each variant out at every return, with\nno completion and nothing to grep for. `ShareErrorKind`,\n`PayloadErrorKind`, and `BatchErrorKind` all read as enums with\nPascalCase members over kebab-case values, paired with a\n`Record<…, string>` message map — this is the same shape, so it now\nmatches.\n\nThe values are untouched, being what a server action puts on the\nwire, and a test pins them written out: an enum makes the member\nname the thing you read, so a rename that changed the protocol would\notherwise be easy to miss.\n\nNamed `CommentError`, not `CommentErrorKind`. The suffix on the\nother three distinguishes the kind from the `Error` subclass beside\nit; nothing here throws, so it would be vestigial.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T12:44:55-04:00",
+          "tree_id": "bdb206ab228989151a92a621f2c6528c97267ecf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3d09b4029d705859d61a965a0292c9728a2af410"
+        },
+        "date": 1786988523854,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 50.13,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 58.5,
+            "range": "6.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 62.88,
+            "range": "7.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2485.63,
+            "range": "36.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 336,
+            "range": "4.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 343.38,
+            "range": "3.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 365.63,
+            "range": "5.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17377.13,
+            "range": "92.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 16.31,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 928.5,
+            "range": "17.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.88,
+            "range": "1.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.25,
+            "range": "2.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.75,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.63,
+            "range": "3.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 134.38,
+            "range": "2.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 89.75,
+            "range": "2.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 59.89,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 45.49,
+            "range": "0.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 654.13,
+            "range": "9.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 722.25,
+            "range": "9.69",
             "unit": "ms"
           }
         ]
