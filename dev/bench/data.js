@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786986574512,
+  "lastUpdate": 1786986577762,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -526780,6 +526780,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/e6bb233af1ca8a8cdda02433ff007fc590d042a7"
         },
         "date": 1786986317695,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 266.95,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "aecc0eb4e5d871c99403894075c9665a7ebe0817",
+          "message": "Split data.test.ts by domain to match lib/data/\n\nThe 1040-line file outlived its subject: `data.ts` became a directory\nlast commit, leaving the only test in the repo whose sibling module\ndoes not exist. Three files, not four — `findUserByEmail` was never a\nsubject here, only a fixture helper, so `users.ts` comes out untested.\n\nThe test bodies moved verbatim. `getTestUserB` is duplicated rather\nthan shared, being five lines; the batches tests take the shared\nDrizzle client instead of opening a second pool of their own.\n\nBoth runners named the old path literally, CI and the local suite\nalike, and now name the directory — which also picks up new action\ntests without a third edit.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T11:43:02-04:00",
+          "tree_id": "45153a705282e535467c1e9b2d934184576566ee",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/aecc0eb4e5d871c99403894075c9665a7ebe0817"
+        },
+        "date": 1786986577011,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
