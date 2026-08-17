@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786939524177,
+  "lastUpdate": 1786939890226,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -434842,6 +434842,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 719.75,
             "range": "28.80",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "423897959f6d52e0e4e53aea393a7878088e4e81",
+          "message": "Serve one docs page per route\n\nPages were concatenated: a page plus every slug its frontmatter\n`pages` listed, with headings demoted, ids slug-prefixed, and links\nto those slugs rewritten into in-page anchors. That gave two ways to\nreach the same content, and made route-level analytics meaningless\nsince `/docs` served the entire section.\n\nRender one markdown file per route instead. All the de-collision\nmachinery goes with the concatenation: `getMarkdownComposite`,\n`rehypeRenderOptions`, `anchorHrefFor`, `MarkdownRenderOptions`,\n`slugToId`, and `getListedPages`. What remains is a plain renderer\nwith no knowledge of how the docs are organised.\n\n`/docs` is generated from the nav manifest and each page's\nfrontmatter, so it cannot drift from what the section holds, and the\nindex has no slug of its own to special-case anywhere.\n`table-of-content.md` goes; its route 404s rather than redirecting,\nthe old URL not being worth keeping.\n\nCross-page fragments already resolved unprefixed, so no content link\nneeded editing. `content-links.test.ts` shows that against the real\nfiles, and now resolves a fragment against the page that renders it\nrather than against a composite.\n\nBlog posts share the extracted `MarkdownArticle`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-16T23:41:02-04:00",
+          "tree_id": "bcefd11ea6d8275588c95bc5841c2f83a9658e6e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/423897959f6d52e0e4e53aea393a7878088e4e81"
+        },
+        "date": 1786939846531,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 42.13,
+            "range": "1.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52.75,
+            "range": "3.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 64,
+            "range": "5.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2343.38,
+            "range": "27.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 321.38,
+            "range": "8.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 331.38,
+            "range": "3.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 351.38,
+            "range": "6.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16515.63,
+            "range": "137.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 911.88,
+            "range": "15.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.13,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.38,
+            "range": "1.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.13,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 126.88,
+            "range": "5.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 80.38,
+            "range": "2.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.82,
+            "range": "0.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.04,
+            "range": "0.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 623,
+            "range": "4.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 664.75,
+            "range": "9.35",
             "unit": "ms"
           }
         ]
