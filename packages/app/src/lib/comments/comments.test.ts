@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 
 import {
   COMMENT_ERROR_MESSAGES,
+  CommentError,
   MAX_COMMENT_BODY_CHARS,
   formatRelativeTime,
   groupCommentThreads,
@@ -33,11 +34,11 @@ describe("validateCommentBody", () => {
   });
 
   it("rejects an empty body", () => {
-    expect(validateCommentBody("")).toEqual({ ok: false, error: "empty" });
+    expect(validateCommentBody("")).toEqual({ ok: false, error: CommentError.Empty });
   });
 
   it("rejects a whitespace-only body", () => {
-    expect(validateCommentBody("   \n\t ")).toEqual({ ok: false, error: "empty" });
+    expect(validateCommentBody("   \n\t ")).toEqual({ ok: false, error: CommentError.Empty });
   });
 
   it("accepts a body of exactly the maximum length", () => {
@@ -48,7 +49,7 @@ describe("validateCommentBody", () => {
   it("rejects a body one character over the maximum", () => {
     expect(validateCommentBody("x".repeat(MAX_COMMENT_BODY_CHARS + 1))).toEqual({
       ok: false,
-      error: "too-long",
+      error: CommentError.TooLong,
     });
   });
 
@@ -69,9 +70,32 @@ describe("isValidCommentBody", () => {
   });
 });
 
+describe("CommentError", () => {
+  // The member names are free to change; these strings are not, being what a server action puts
+  // on the wire. Written out rather than derived, so a rename has to be made deliberately here.
+  it("keeps its wire values", () => {
+    expect({ ...CommentError }).toEqual({
+      Unauthenticated: "unauthenticated",
+      Forbidden: "forbidden",
+      NotFound: "not-found",
+      Deleted: "deleted",
+      BadSubject: "bad-subject",
+      Empty: "empty",
+      TooLong: "too-long",
+      RateLimited: "rate-limited",
+    });
+  });
+});
+
 describe("COMMENT_ERROR_MESSAGES", () => {
   it("names the character cap in the too-long message", () => {
-    expect(COMMENT_ERROR_MESSAGES["too-long"]).toContain(String(MAX_COMMENT_BODY_CHARS));
+    expect(COMMENT_ERROR_MESSAGES[CommentError.TooLong]).toContain(String(MAX_COMMENT_BODY_CHARS));
+  });
+
+  it("carries a message for every error, so none can surface unexplained", () => {
+    for (const error of Object.values(CommentError)) {
+      expect(COMMENT_ERROR_MESSAGES[error]).toBeTruthy();
+    }
   });
 });
 

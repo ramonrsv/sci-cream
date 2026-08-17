@@ -31,7 +31,8 @@ const {
   resolveReport,
 } = await import("@/lib/data/comments");
 
-const { COMMENT_RATE_LIMIT, MAX_COMMENT_BODY_CHARS } = await import("@/lib/comments/comments");
+const { COMMENT_RATE_LIMIT, MAX_COMMENT_BODY_CHARS, CommentError } =
+  await import("@/lib/comments/comments");
 const { commentReportsTable, commentsTable, usersTable } = await import("@/lib/database/schema");
 const { db } = await import("@/lib/database/client");
 const { TEST_USER_A, TEST_USER_B } = await import("@/lib/database/assets");
@@ -210,18 +211,21 @@ describe("postComment", () => {
   });
 
   test("rejects an anonymous post", async () => {
-    expect(await postComment(SUBJECT, "sneaky")).toEqual({ ok: false, error: "unauthenticated" });
+    expect(await postComment(SUBJECT, "sneaky")).toEqual({
+      ok: false,
+      error: CommentError.Unauthenticated,
+    });
   });
 
   test("rejects an empty body", async () => {
     signInAs(TEST_USER_A.email);
-    expect(await postComment(SUBJECT, "   ")).toEqual({ ok: false, error: "empty" });
+    expect(await postComment(SUBJECT, "   ")).toEqual({ ok: false, error: CommentError.Empty });
   });
 
   test("rejects a body over the character cap", async () => {
     signInAs(TEST_USER_A.email);
     const result = await postComment(SUBJECT, "x".repeat(MAX_COMMENT_BODY_CHARS + 1));
-    expect(result).toEqual({ ok: false, error: "too-long" });
+    expect(result).toEqual({ ok: false, error: CommentError.TooLong });
   });
 
   test.each([
@@ -231,7 +235,7 @@ describe("postComment", () => {
     signInAs(TEST_USER_A.email);
     expect(await postComment(subject as CommentSubject, "hi")).toEqual({
       ok: false,
-      error: "bad-subject",
+      error: CommentError.BadSubject,
     });
   });
 
@@ -251,7 +255,7 @@ describe("postComment", () => {
     signInAs(TEST_USER_A.email);
     expect(await postComment(SUBJECT, "reply to a reply", reply)).toEqual({
       ok: false,
-      error: "not-found",
+      error: CommentError.NotFound,
     });
   });
 
@@ -261,7 +265,7 @@ describe("postComment", () => {
     signInAs(TEST_USER_B.email);
     expect(await postComment(SUBJECT, "smuggled", elsewhere)).toEqual({
       ok: false,
-      error: "not-found",
+      error: CommentError.NotFound,
     });
   });
 
@@ -269,7 +273,7 @@ describe("postComment", () => {
     signInAs(TEST_USER_A.email);
     expect(await postComment(SUBJECT, "orphan", 2_000_000_000)).toEqual({
       ok: false,
-      error: "not-found",
+      error: CommentError.NotFound,
     });
   });
 
@@ -281,7 +285,7 @@ describe("postComment", () => {
     }
     expect(await postComment(SUBJECT, "one too many")).toEqual({
       ok: false,
-      error: "rate-limited",
+      error: CommentError.RateLimited,
     });
   });
 
@@ -314,7 +318,10 @@ describe("editComment", () => {
 
   test("rejects an anonymous edit", async () => {
     const id = await insertComment(SUBJECT, TEST_USER_A.email, "before");
-    expect(await editComment(id, "after")).toEqual({ ok: false, error: "unauthenticated" });
+    expect(await editComment(id, "after")).toEqual({
+      ok: false,
+      error: CommentError.Unauthenticated,
+    });
     expect((await readComment(id)).body).toBe("before");
   });
 
@@ -322,7 +329,10 @@ describe("editComment", () => {
     const id = await insertComment(SUBJECT, TEST_USER_A.email, "A's words");
     signInAs(TEST_USER_B.email);
 
-    expect(await editComment(id, "B's words")).toEqual({ ok: false, error: "forbidden" });
+    expect(await editComment(id, "B's words")).toEqual({
+      ok: false,
+      error: CommentError.Forbidden,
+    });
     expect((await readComment(id)).body).toBe("A's words");
   });
 
@@ -330,14 +340,17 @@ describe("editComment", () => {
     const id = await insertComment(SUBJECT, TEST_USER_B.email, "B's words");
     signInAs(TEST_USER_A.email);
 
-    expect(await editComment(id, "rewritten")).toEqual({ ok: false, error: "forbidden" });
+    expect(await editComment(id, "rewritten")).toEqual({
+      ok: false,
+      error: CommentError.Forbidden,
+    });
   });
 
   test("rejects an edit that empties the body", async () => {
     const id = await insertComment(SUBJECT, TEST_USER_A.email, "before");
     signInAs(TEST_USER_A.email);
 
-    expect(await editComment(id, "  ")).toEqual({ ok: false, error: "empty" });
+    expect(await editComment(id, "  ")).toEqual({ ok: false, error: CommentError.Empty });
     expect((await readComment(id)).body).toBe("before");
   });
 
@@ -347,7 +360,7 @@ describe("editComment", () => {
 
     expect(await editComment(id, "x".repeat(MAX_COMMENT_BODY_CHARS + 1))).toEqual({
       ok: false,
-      error: "too-long",
+      error: CommentError.TooLong,
     });
   });
 
@@ -358,12 +371,18 @@ describe("editComment", () => {
     signInAs(TEST_USER_A.email);
     await deleteComment(root);
 
-    expect(await editComment(root, "back from the dead")).toEqual({ ok: false, error: "deleted" });
+    expect(await editComment(root, "back from the dead")).toEqual({
+      ok: false,
+      error: CommentError.Deleted,
+    });
   });
 
   test("rejects an edit to a comment that does not exist", async () => {
     signInAs(TEST_USER_A.email);
-    expect(await editComment(2_000_000_000, "hello")).toEqual({ ok: false, error: "not-found" });
+    expect(await editComment(2_000_000_000, "hello")).toEqual({
+      ok: false,
+      error: CommentError.NotFound,
+    });
   });
 });
 
@@ -435,7 +454,7 @@ describe("deleteComment", () => {
 
   test("rejects an anonymous delete", async () => {
     const id = await insertComment(SUBJECT, TEST_USER_A.email, "safe");
-    expect(await deleteComment(id)).toEqual({ ok: false, error: "unauthenticated" });
+    expect(await deleteComment(id)).toEqual({ ok: false, error: CommentError.Unauthenticated });
     expect(await readComment(id)).toBeDefined();
   });
 
@@ -443,7 +462,7 @@ describe("deleteComment", () => {
     const id = await insertComment(SUBJECT, TEST_USER_A.email, "A's words");
     signInAs(TEST_USER_B.email);
 
-    expect(await deleteComment(id)).toEqual({ ok: false, error: "forbidden" });
+    expect(await deleteComment(id)).toEqual({ ok: false, error: CommentError.Forbidden });
     expect(await readComment(id)).toBeDefined();
   });
 
@@ -457,7 +476,7 @@ describe("deleteComment", () => {
 
   test("rejects a delete of a comment that does not exist", async () => {
     signInAs(TEST_USER_A.email);
-    expect(await deleteComment(2_000_000_000)).toEqual({ ok: false, error: "not-found" });
+    expect(await deleteComment(2_000_000_000)).toEqual({ ok: false, error: CommentError.NotFound });
   });
 
   test("refuses a second delete and leaves the original timestamp alone", async () => {
@@ -467,7 +486,7 @@ describe("deleteComment", () => {
     await deleteComment(root);
     const firstStamp = (await readComment(root)).deletedAt;
 
-    expect(await deleteComment(root)).toEqual({ ok: false, error: "deleted" });
+    expect(await deleteComment(root)).toEqual({ ok: false, error: CommentError.Deleted });
     expect((await readComment(root)).deletedAt).toEqual(firstStamp);
   });
 
@@ -478,7 +497,7 @@ describe("deleteComment", () => {
     await deleteComment(root);
 
     signInAs(TEST_USER_A.email);
-    expect(await deleteComment(root)).toEqual({ ok: false, error: "deleted" });
+    expect(await deleteComment(root)).toEqual({ ok: false, error: CommentError.Deleted });
   });
 
   // No action reaches this: a root with replies always tombstones. Pinned at the schema level
@@ -499,7 +518,7 @@ describe("deleteComment", () => {
 describe("purgeComment", () => {
   test("rejects an anonymous purge", async () => {
     const id = await insertComment(SUBJECT, TEST_USER_A.email, "safe");
-    expect(await purgeComment(id)).toEqual({ ok: false, error: "forbidden" });
+    expect(await purgeComment(id)).toEqual({ ok: false, error: CommentError.Forbidden });
     expect(await readComment(id)).toBeDefined();
   });
 
@@ -507,7 +526,7 @@ describe("purgeComment", () => {
     const id = await insertComment(SUBJECT, TEST_USER_B.email, "B's words");
     signInAs(TEST_USER_B.email);
 
-    expect(await purgeComment(id)).toEqual({ ok: false, error: "forbidden" });
+    expect(await purgeComment(id)).toEqual({ ok: false, error: CommentError.Forbidden });
     expect(await readComment(id)).toBeDefined();
   });
 
@@ -533,7 +552,7 @@ describe("purgeComment", () => {
     await deleteComment(reply);
     signInAs(TEST_USER_A.email);
     await deleteComment(root);
-    expect(await deleteComment(root)).toEqual({ ok: false, error: "deleted" });
+    expect(await deleteComment(root)).toEqual({ ok: false, error: CommentError.Deleted });
 
     expect(await purgeComment(root)).toEqual({ ok: true, value: { purged: 2 } });
     expect(await fetchComments(SUBJECT)).toEqual([]);
@@ -561,7 +580,7 @@ describe("purgeComment", () => {
 
   test("rejects a purge of a comment that does not exist", async () => {
     signInAs(TEST_USER_A.email);
-    expect(await purgeComment(2_000_000_000)).toEqual({ ok: false, error: "not-found" });
+    expect(await purgeComment(2_000_000_000)).toEqual({ ok: false, error: CommentError.NotFound });
   });
 });
 
@@ -631,13 +650,13 @@ describe("reportComment", () => {
 
   test("rejects an anonymous report", async () => {
     const id = await insertComment(SUBJECT, TEST_USER_A.email, "questionable");
-    expect(await reportComment(id)).toEqual({ ok: false, error: "unauthenticated" });
+    expect(await reportComment(id)).toEqual({ ok: false, error: CommentError.Unauthenticated });
     expect(await reportsFor(id)).toHaveLength(0);
   });
 
   test("rejects a report against a comment that does not exist", async () => {
     signInAs(TEST_USER_B.email);
-    expect(await reportComment(2_000_000_000)).toEqual({ ok: false, error: "not-found" });
+    expect(await reportComment(2_000_000_000)).toEqual({ ok: false, error: CommentError.NotFound });
   });
 
   test("rejects a report against a tombstone, whose text is already gone", async () => {
@@ -647,7 +666,7 @@ describe("reportComment", () => {
     await deleteComment(root);
 
     signInAs(TEST_USER_B.email);
-    expect(await reportComment(root, "spam")).toEqual({ ok: false, error: "deleted" });
+    expect(await reportComment(root, "spam")).toEqual({ ok: false, error: CommentError.Deleted });
     expect(await reportsFor(root)).toHaveLength(0);
   });
 });
@@ -732,7 +751,7 @@ describe("resolveReport", () => {
     const reporter = await userId(TEST_USER_B.email);
 
     signInAs(undefined);
-    expect(await resolveReport(id, reporter)).toEqual({ ok: false, error: "forbidden" });
+    expect(await resolveReport(id, reporter)).toEqual({ ok: false, error: CommentError.Forbidden });
   });
 
   test("rejects a resolve by a non-admin", async () => {
@@ -742,13 +761,16 @@ describe("resolveReport", () => {
 
     expect(await resolveReport(id, await userId(TEST_USER_B.email))).toEqual({
       ok: false,
-      error: "forbidden",
+      error: CommentError.Forbidden,
     });
   });
 
   test("reports not-found for a report that does not exist", async () => {
     signInAs(TEST_USER_A.email);
-    expect(await resolveReport(2_000_000_000, 1)).toEqual({ ok: false, error: "not-found" });
+    expect(await resolveReport(2_000_000_000, 1)).toEqual({
+      ok: false,
+      error: CommentError.NotFound,
+    });
   });
 });
 
@@ -775,6 +797,9 @@ describe("unauthenticated requests", () => {
 
   test("a session for an email with no user row is not a session", async () => {
     signInAs("nobody@sci-cream.ca");
-    expect(await postComment(SUBJECT, "ghost")).toEqual({ ok: false, error: "unauthenticated" });
+    expect(await postComment(SUBJECT, "ghost")).toEqual({
+      ok: false,
+      error: CommentError.Unauthenticated,
+    });
   });
 });

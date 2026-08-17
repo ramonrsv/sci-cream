@@ -6,6 +6,7 @@ import { alias } from "drizzle-orm/pg-core";
 import {
   COMMENT_RATE_LIMIT,
   COMMENT_RATE_WINDOW_MINUTES,
+  CommentError,
   validateCommentBody,
   type CommentJson,
   type CommentResult,
@@ -155,17 +156,17 @@ export async function postComment(
   parentId?: number,
 ): Promise<CommentResult<CommentJson>> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: "unauthenticated" };
+  if (!user) return { ok: false, error: CommentError.Unauthenticated };
 
-  if (!isKnownSubject(subject)) return { ok: false, error: "bad-subject" };
+  if (!isKnownSubject(subject)) return { ok: false, error: CommentError.BadSubject };
 
   const validated = validateCommentBody(body);
   if (!validated.ok) return validated;
 
-  if (await isRateLimited(user.id)) return { ok: false, error: "rate-limited" };
+  if (await isRateLimited(user.id)) return { ok: false, error: CommentError.RateLimited };
 
   if (parentId !== undefined && !(await findRootComment(parentId, subject))) {
-    return { ok: false, error: "not-found" };
+    return { ok: false, error: CommentError.NotFound };
   }
 
   const [row] = await db
@@ -185,15 +186,15 @@ export async function postComment(
 /** Edit one's own comment. Admins have no special power here — moderation deletes, never edits. */
 export async function editComment(id: number, body: string): Promise<CommentResult<CommentJson>> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: "unauthenticated" };
+  if (!user) return { ok: false, error: CommentError.Unauthenticated };
 
   const validated = validateCommentBody(body);
   if (!validated.ok) return validated;
 
   const [existing] = await db.select().from(commentsTable).where(eq(commentsTable.id, id));
-  if (!existing) return { ok: false, error: "not-found" };
-  if (existing.deletedAt != null) return { ok: false, error: "deleted" };
-  if (existing.author !== user.id) return { ok: false, error: "forbidden" };
+  if (!existing) return { ok: false, error: CommentError.NotFound };
+  if (existing.deletedAt != null) return { ok: false, error: CommentError.Deleted };
+  if (existing.author !== user.id) return { ok: false, error: CommentError.Forbidden };
 
   const [row] = await db
     .update(commentsTable)
@@ -216,12 +217,13 @@ export async function editComment(id: number, body: string): Promise<CommentResu
  */
 export async function deleteComment(id: number): Promise<CommentResult<{ tombstoned: boolean }>> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: "unauthenticated" };
+  if (!user) return { ok: false, error: CommentError.Unauthenticated };
 
   const [existing] = await db.select().from(commentsTable).where(eq(commentsTable.id, id));
-  if (!existing) return { ok: false, error: "not-found" };
-  if (existing.deletedAt != null) return { ok: false, error: "deleted" };
-  if (existing.author !== user.id && !user.isAdmin) return { ok: false, error: "forbidden" };
+  if (!existing) return { ok: false, error: CommentError.NotFound };
+  if (existing.deletedAt != null) return { ok: false, error: CommentError.Deleted };
+  if (existing.author !== user.id && !user.isAdmin)
+    return { ok: false, error: CommentError.Forbidden };
 
   if (existing.parentId !== null || (await countReplies(id)) > 0) {
     await db
@@ -244,10 +246,10 @@ export async function deleteComment(id: number): Promise<CommentResult<{ tombsto
  */
 export async function purgeComment(id: number): Promise<CommentResult<{ purged: number }>> {
   const admin = await requireAdmin();
-  if (!admin) return { ok: false, error: "forbidden" };
+  if (!admin) return { ok: false, error: CommentError.Forbidden };
 
   const [existing] = await db.select().from(commentsTable).where(eq(commentsTable.id, id));
-  if (!existing) return { ok: false, error: "not-found" };
+  if (!existing) return { ok: false, error: CommentError.NotFound };
 
   // Counted first: `RETURNING` reports the row named, never the ones the cascade takes.
   // Only a root can have replies, threading being capped at one level, so a reply skips the query.
@@ -267,11 +269,11 @@ export async function reportComment(
   reason?: string,
 ): Promise<CommentResult<null>> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: "unauthenticated" };
+  if (!user) return { ok: false, error: CommentError.Unauthenticated };
 
   const [existing] = await db.select().from(commentsTable).where(eq(commentsTable.id, commentId));
-  if (!existing) return { ok: false, error: "not-found" };
-  if (existing.deletedAt != null) return { ok: false, error: "deleted" };
+  if (!existing) return { ok: false, error: CommentError.NotFound };
+  if (existing.deletedAt != null) return { ok: false, error: CommentError.Deleted };
 
   const trimmed = reason?.trim();
   await db
@@ -333,7 +335,7 @@ export async function resolveReport(
   reporter: number,
 ): Promise<CommentResult<null>> {
   const admin = await requireAdmin();
-  if (!admin) return { ok: false, error: "forbidden" };
+  if (!admin) return { ok: false, error: CommentError.Forbidden };
 
   const [row] = await db
     .update(commentReportsTable)
@@ -343,5 +345,5 @@ export async function resolveReport(
     )
     .returning();
 
-  return row ? { ok: true, value: null } : { ok: false, error: "not-found" };
+  return row ? { ok: true, value: null } : { ok: false, error: CommentError.NotFound };
 }

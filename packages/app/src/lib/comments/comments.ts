@@ -40,16 +40,24 @@ export interface CommentThreadJson {
   replies: CommentJson[];
 }
 
-/** Why a mutating action refused. Every value is something the composer can explain to the user. */
-export type CommentError =
-  | "unauthenticated"
-  | "forbidden"
-  | "not-found"
-  | "deleted"
-  | "bad-subject"
-  | "empty"
-  | "too-long"
-  | "rate-limited";
+/**
+ * Why a mutating action refused. Every value is something the composer can explain to the user.
+ *
+ * The string values cross the server-action boundary, so they are the wire format and renaming one
+ * is a protocol change; the member names are free to read however they read best.
+ */
+export enum CommentError {
+  Unauthenticated = "unauthenticated",
+  Forbidden = "forbidden",
+  /** No such comment: a forged id, or one from a page stale enough that the row has been purged. */
+  NotFound = "not-found",
+  /** The comment is a tombstone, which refuses edits, further deletes, and reports alike. */
+  Deleted = "deleted",
+  BadSubject = "bad-subject",
+  Empty = "empty",
+  TooLong = "too-long",
+  RateLimited = "rate-limited",
+}
 
 /**
  * Result of a mutating comment action.
@@ -62,14 +70,14 @@ export type CommentResult<T> = { ok: true; value: T } | { ok: false; error: Comm
 
 /** Human-readable text for a {@link CommentError}, shown next to the composer. */
 export const COMMENT_ERROR_MESSAGES: Record<CommentError, string> = {
-  unauthenticated: "Sign in to post a comment.",
-  forbidden: "You can't do that.",
-  "not-found": "That comment doesn't exist.",
-  deleted: "That comment was deleted.",
-  "bad-subject": "Comments aren't available for this page.",
-  empty: "Write something first.",
-  "too-long": `Comments are limited to ${MAX_COMMENT_BODY_CHARS} characters.`,
-  "rate-limited": `Too many comments — wait a few minutes before posting again.`,
+  [CommentError.Unauthenticated]: "Sign in to post a comment.",
+  [CommentError.Forbidden]: "You can't do that.",
+  [CommentError.NotFound]: "That comment doesn't exist.",
+  [CommentError.Deleted]: "That comment was deleted.",
+  [CommentError.BadSubject]: "Comments aren't available for this page.",
+  [CommentError.Empty]: "Write something first.",
+  [CommentError.TooLong]: `Comments are limited to ${MAX_COMMENT_BODY_CHARS} characters.`,
+  [CommentError.RateLimited]: `Too many comments — wait a few minutes before posting again.`,
 };
 
 /**
@@ -79,8 +87,8 @@ export const COMMENT_ERROR_MESSAGES: Record<CommentError, string> = {
  */
 export function validateCommentBody(body: string): CommentResult<string> {
   const trimmed = body.trim();
-  if (trimmed.length === 0) return { ok: false, error: "empty" };
-  if (trimmed.length > MAX_COMMENT_BODY_CHARS) return { ok: false, error: "too-long" };
+  if (trimmed.length === 0) return { ok: false, error: CommentError.Empty };
+  if (trimmed.length > MAX_COMMENT_BODY_CHARS) return { ok: false, error: CommentError.TooLong };
   return { ok: true, value: trimmed };
 }
 
