@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786988168465,
+  "lastUpdate": 1786988202949,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -439324,6 +439324,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 662.13,
             "range": "16.80",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "10da7dbad56d3d3eb43a9ebf50a73414c066f59b",
+          "message": "Add server actions for comment threads\n\nEight actions over the comments tables. Identity comes from\n`requireUser()` and no action takes a user identifier from the\ncaller, which is what a server action being an HTTP endpoint\ndemands. Subjects are checked against the content tree on every\ncall, the enum constraining a subject's type but never its key.\n\nDeleting is thread-preserving and final. Only a childless root is\nremoved outright; a root with replies, or any reply, is tombstoned\nwith its body blanked in the same statement, so the text leaves the\ndatabase while the position keeping the surrounding sequence\nreadable stays. A tombstone then refuses edits, further deletes, and\nreports alike — `deletedAt` records when the text went, not when\nsomeone last pressed a button, and there is nothing left to\nmoderate. That makes `deleted` a distinct `CommentError`: a\ntombstone is a state the wire type already exposes, so calling it\n`not-found` contradicted the payload that carries it.\n\n`purgeComment` is the way back out, admin only. Tombstones being\npermanent, a thread anyone replied to cannot be cleared by its\nparticipants; deleting the row lets the cascade take the replies and\ntheir reports with it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T12:37:38-04:00",
+          "tree_id": "a6303ee9713a3dcb42c2f915dfae9776803ca843",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/10da7dbad56d3d3eb43a9ebf50a73414c066f59b"
+        },
+        "date": 1786988148411,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 52.63,
+            "range": "4.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 53.5,
+            "range": "2.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 61.88,
+            "range": "4.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2667.88,
+            "range": "71.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 306.13,
+            "range": "4.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 321.88,
+            "range": "5.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 347.13,
+            "range": "11.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16079,
+            "range": "44.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 955.75,
+            "range": "4.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 58.75,
+            "range": "4.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 62.5,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 44.88,
+            "range": "1.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 47.63,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 141.25,
+            "range": "4.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 104.38,
+            "range": "3.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 67.36,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 49.1,
+            "range": "0.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 669.88,
+            "range": "9.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 739.75,
+            "range": "19.12",
             "unit": "ms"
           }
         ]
