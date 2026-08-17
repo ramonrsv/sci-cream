@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786939151169,
+  "lastUpdate": 1786939154809,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -523255,6 +523255,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/2de10e6c6baa20b644075d14a763ac40b6801810"
         },
         "date": 1786874162638,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 266.95,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "423897959f6d52e0e4e53aea393a7878088e4e81",
+          "message": "Serve one docs page per route\n\nPages were concatenated: a page plus every slug its frontmatter\n`pages` listed, with headings demoted, ids slug-prefixed, and links\nto those slugs rewritten into in-page anchors. That gave two ways to\nreach the same content, and made route-level analytics meaningless\nsince `/docs` served the entire section.\n\nRender one markdown file per route instead. All the de-collision\nmachinery goes with the concatenation: `getMarkdownComposite`,\n`rehypeRenderOptions`, `anchorHrefFor`, `MarkdownRenderOptions`,\n`slugToId`, and `getListedPages`. What remains is a plain renderer\nwith no knowledge of how the docs are organised.\n\n`/docs` is generated from the nav manifest and each page's\nfrontmatter, so it cannot drift from what the section holds, and the\nindex has no slug of its own to special-case anywhere.\n`table-of-content.md` goes; its route 404s rather than redirecting,\nthe old URL not being worth keeping.\n\nCross-page fragments already resolved unprefixed, so no content link\nneeded editing. `content-links.test.ts` shows that against the real\nfiles, and now resolves a fragment against the page that renders it\nrather than against a composite.\n\nBlog posts share the extracted `MarkdownArticle`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-16T23:41:02-04:00",
+          "tree_id": "bcefd11ea6d8275588c95bc5841c2f83a9658e6e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/423897959f6d52e0e4e53aea393a7878088e4e81"
+        },
+        "date": 1786939153917,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
