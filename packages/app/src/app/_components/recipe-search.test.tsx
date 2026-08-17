@@ -13,7 +13,7 @@ import {
   recipeMatchesQuery,
   type GroupedRecipe,
 } from "./recipe-search";
-import type { SavedRecipeJson } from "@/lib/data";
+import type { SavedRecipeJson } from "@/lib/data/recipes";
 import { RATING_GLYPHS, Rating } from "@/lib/rating";
 import {
   getSelectOptionLabelsByLabel,
@@ -37,7 +37,9 @@ vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
 
-vi.mock("@/lib/data", () => ({ fetchAllUserIngredientSpecs: vi.fn().mockResolvedValue([]) }));
+vi.mock("@/lib/data/ingredients", () => ({
+  fetchAllUserIngredientSpecs: vi.fn().mockResolvedValue([]),
+}));
 
 const MOCK_EMBEDDED_ENTRIES = vi.hoisted((): RecipeEntryJson[] => [
   {

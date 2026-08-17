@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
 import { getDatabaseUrl } from "@/lib/database/util";
-import { findUserByEmail } from "@/lib/data";
+import { findUserByEmail } from "@/lib/data/users";
 import { ingredientsTable, SchemaCategory } from "@/lib/database/schema";
 import * as schema from "./schema";
 

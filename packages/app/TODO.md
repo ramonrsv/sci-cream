@@ -97,8 +97,12 @@
 - [ ] Add a "Tools" navbar item with tools like sweeteners lookup, ingredient replacement, etc.
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
-- [ ] Look into splitting `data.ts` and/or `data.test.ts` by domain (users, ingredients, recipes,
-      batches); both are growing large and mix several concerns in a single file.
+- [ ] Split `data.test.ts` by domain to match `lib/data/`; at ~1000 lines it still mixes users,
+      ingredients, recipes, and batches. The `db_migration` job in `app.yml` names the file
+      literally, so that path becomes a directory or glob.
+- [ ] Migrate every action in `lib/data/` off its `userEmail` argument onto `requireUser()` from
+      `lib/data/session.ts` — a caller-supplied email is a claim the client makes about itself, so
+      today any user can read or modify another's recipes, ingredients, and batches.
 - [ ] Stop `users.name` falling back to the email address: `lib/auth.ts` inserts OAuth users as
       `{ name: user.name ?? user.email }`, and comment threads render that publicly as the byline.
       Add a user-chosen display name, resolved for every payload by one `displayNameFor(user)`.
@@ -128,6 +132,8 @@
 
 ## Completed
 
+- [x] Look into splitting `data.ts` and/or `data.test.ts` by domain (users, ingredients, recipes,
+      batches); both are growing large and mix several concerns in a single file.
 - [x] Add a recipe version quality signal and/or favorites; one/two thumbs up, thumb down, star?
 - [x] Add a reset option to the key selection when `KeySelect.Custom`, to reset to default custom.
 - [x] Trigger `Deploy` from `workflow_run` on App CI rather than `push`, so `verify` stops holding a

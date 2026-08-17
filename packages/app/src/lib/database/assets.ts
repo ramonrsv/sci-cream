@@ -1,6 +1,6 @@
 import type { LightRecipe } from "@workspace/sci-cream";
 
-import type { BatchInput } from "@/lib/data";
+import type { BatchInput } from "@/lib/data/batches";
 import { Rating } from "@/lib/rating";
 import { getLightRecipe, RecipeID } from "@/__tests__/assets";
 

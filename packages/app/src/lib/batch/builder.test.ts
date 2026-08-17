@@ -15,7 +15,8 @@ import {
   selectionFromSavedBatch,
 } from "./builder";
 import { type Batch, displayVersion } from "@/lib/batch/batch";
-import type { SavedBatchJson, SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
+import type { SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data/recipes";
+import type { SavedBatchJson } from "@/lib/data/batches";
 import { Rating } from "@/lib/rating";
 import { CategoryColor } from "@/lib/styles/colors";
 

@@ -44,7 +44,11 @@ import {
   EditVersionDetailsAction,
   LoadAction,
 } from "@/app/_components/detail-panel";
-import type { RecipeVersionMeta, SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
+import type {
+  RecipeVersionMeta,
+  SavedRecipeJson,
+  SavedRecipeVersionJson,
+} from "@/lib/data/recipes";
 
 /** Wrapper id, and the root of the persisted keys for this search's filter state. */
 const RECIPE_SEARCH_ID = "recipe-search";

@@ -4,12 +4,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, waitFor, fireEvent } from "@testing-library/react";
 
 import { useSession } from "next-auth/react";
-import {
-  fetchAllUserSavedRecipes,
-  fetchAllUserIngredientSpecs,
-  fetchAllUserBatches,
-  type SavedRecipeJson,
-} from "@/lib/data";
+import { fetchAllUserIngredientSpecs } from "@/lib/data/ingredients";
+import { fetchAllUserSavedRecipes, type SavedRecipeJson } from "@/lib/data/recipes";
+import { fetchAllUserBatches } from "@/lib/data/batches";
 
 import { SessionResourcesProvider } from "./session-resources-provider";
 import { useSessionResources } from "@/lib/resources/session";
@@ -19,11 +16,11 @@ import { useSessionResources } from "@/lib/resources/session";
 // ---------------------------------------------------------------------------
 
 vi.mock("next-auth/react", () => ({ useSession: vi.fn() }));
-vi.mock("@/lib/data", () => ({
-  fetchAllUserSavedRecipes: vi.fn().mockResolvedValue([]),
+vi.mock("@/lib/data/recipes", () => ({ fetchAllUserSavedRecipes: vi.fn().mockResolvedValue([]) }));
+vi.mock("@/lib/data/ingredients", () => ({
   fetchAllUserIngredientSpecs: vi.fn().mockResolvedValue([]),
-  fetchAllUserBatches: vi.fn().mockResolvedValue([]),
 }));
+vi.mock("@/lib/data/batches", () => ({ fetchAllUserBatches: vi.fn().mockResolvedValue([]) }));
 
 // Spy on the embedded-data seeder (wrapping the real one) so we can assert the provider seeds the
 // shared bridge specifically from embedded data — not via some other seeding path.

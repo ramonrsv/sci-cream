@@ -180,8 +180,8 @@ Each kind of file has a consistent home:
 - **`src/lib/`** — JSX-free `.ts` only: pure logic, types, data helpers, and React hooks/contexts
   with no JSX (e.g. the `hooks/use-*.ts`, and the `group-by` / `resources/session`
   context + hooks). No `.tsx` files belong here. Related modules are grouped into subdirs —
-  `hooks/`, `batch/`, `recipe/`, `resources/`, plus `database/`, `deprecated/`, `sci-cream/`,
-  `styles/` — with generic helpers (`data`, `local-storage`, `url-payload`, `util`, …) at the
+  `hooks/`, `batch/`, `recipe/`, `resources/`, plus `data/`, `database/`, `deprecated/`,
+  `sci-cream/`, `styles/` — with generic helpers (`local-storage`, `url-payload`, `util`, …) at the
   top level.
 - **`src/app/`** — `.tsx` components and pages, plus route-special files.
 - **`src/app/_components/`** — major/composite components a page renders (calculator panels, the
@@ -245,8 +245,10 @@ to keep the word. Each file drops only its own directory's word: the batch-build
   `batch_recipes` (keyed `(batch_id, position)`, holding a composite FK to `recipe_versions` for
   provenance only). The `categoryEnum` is sourced from the Rust-defined `SchemaCategory` via
   `@workspace/sci-cream/schema-category`.
-- **`lib/data.ts`** — `"use server"` actions for ingredient lookups; converts stored JSON to Rust
-  types via `into_ingredient_from_spec_js()`.
+- **`lib/data/`** — every `"use server"` action, one module per domain (`users`, `ingredients`,
+  `recipes`, `batches`); each export is an endpoint a browser can POST to, so one directory keeps
+  that surface enumerable. Pure logic stays in `lib/<domain>/`. Derive identity with `requireUser()`
+  from `session.ts`, which — like `util.ts` — is not `"use server"`, so its helpers stay internal.
 - **`lib/auth.ts`** — NextAuth v5 (beta) with GitHub + Google OAuth providers.
 - **`app/blog/`**, **`app/docs/`** — markdown-rendered content.
 

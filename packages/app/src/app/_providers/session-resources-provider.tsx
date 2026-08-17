@@ -5,14 +5,9 @@ import type { ReactNode } from "react";
 import { useSession } from "next-auth/react";
 import { OnConflict } from "@workspace/sci-cream";
 
-import {
-  fetchAllUserBatches,
-  fetchAllUserIngredientSpecs,
-  fetchAllUserSavedRecipes,
-  type IngredientTransfer,
-  type SavedBatchJson,
-  type SavedRecipeJson,
-} from "@/lib/data";
+import { fetchAllUserIngredientSpecs, type IngredientTransfer } from "@/lib/data/ingredients";
+import { fetchAllUserSavedRecipes, type SavedRecipeJson } from "@/lib/data/recipes";
+import { fetchAllUserBatches, type SavedBatchJson } from "@/lib/data/batches";
 import { makeWasmResources, makeWasmResourcesFromEmbeddedData } from "@/lib/resources/wasm";
 import { SessionResourcesContext, type SessionResources } from "@/lib/resources/session";
 

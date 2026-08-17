@@ -5,7 +5,7 @@ import { render, cleanup } from "@testing-library/react";
 
 import { IngredientSearch, type IngredientSearchProps } from "@/app/_components/ingredient-search";
 import { useSessionResources, type SessionResources } from "@/lib/resources/session";
-import type { IngredientTransfer } from "@/lib/data";
+import type { IngredientTransfer } from "@/lib/data/ingredients";
 import type { WasmResourcesState } from "@/lib/resources/wasm";
 
 import IngredientsPage from "./page";

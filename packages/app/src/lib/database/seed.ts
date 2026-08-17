@@ -3,7 +3,8 @@ import { eq } from "drizzle-orm";
 import { hash } from "bcryptjs";
 
 import { getDatabaseUrl } from "@/lib/database/util";
-import { createUserBatch, findUserByEmail, setUserBatchFavourite } from "@/lib/data";
+import { findUserByEmail } from "@/lib/data/users";
+import { createUserBatch, setUserBatchFavourite } from "@/lib/data/batches";
 import {
   UserInsert,
   usersTable,

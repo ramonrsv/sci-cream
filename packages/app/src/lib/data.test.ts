@@ -2,10 +2,13 @@ import { expect, test, describe } from "vitest";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, sql } from "drizzle-orm";
 
+import { findUserByEmail } from "@/lib/data/users";
 import {
-  findUserByEmail,
   fetchUserIngredientSpecByName,
   fetchAllUserIngredientSpecs,
+  IngredientTransfer,
+} from "@/lib/data/ingredients";
+import {
   fetchAllUserSavedRecipes,
   createUserRecipe,
   createUserRecipeVersion,
@@ -14,16 +17,17 @@ import {
   deleteUserRecipe,
   deleteUserRecipeVersion,
   setUserRecipeFavourite,
+  SavedRecipeJson,
+} from "@/lib/data/recipes";
+import {
   createUserBatch,
   fetchAllUserBatches,
   updateUserBatch,
   setUserBatchFavourite,
   deleteUserBatch,
-  IngredientTransfer,
-  SavedRecipeJson,
   BatchInput,
   SavedBatchJson,
-} from "@/lib/data";
+} from "@/lib/data/batches";
 
 import { Rating } from "@/lib/rating";
 import { UserSelect, batchRecipesTable } from "@/lib/database/schema";

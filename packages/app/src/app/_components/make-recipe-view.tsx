@@ -26,7 +26,7 @@ import {
   makeBatchFromPayload,
 } from "@/lib/batch/share";
 import { type Batch, batchChecklistKey, todayIsoDate, touchChecklist } from "@/lib/batch/batch";
-import { deleteUserBatch, setUserBatchFavourite, type SavedBatchJson } from "@/lib/data";
+import { deleteUserBatch, setUserBatchFavourite, type SavedBatchJson } from "@/lib/data/batches";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { useSessionResources } from "@/lib/resources/session";

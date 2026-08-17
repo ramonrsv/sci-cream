@@ -20,7 +20,7 @@ import {
   createUserRecipeVersion,
   renameUserRecipe,
   updateUserRecipeVersion,
-} from "@/lib/data";
+} from "@/lib/data/recipes";
 import { RecipeEditor, RecipeTable } from "@/app/_elements/tables/recipe";
 
 import {
@@ -66,7 +66,7 @@ function paneFitting(rows: number): number {
   return TABLE_COL_HEADER_H_PX + TABLE_BODY_ROW_H_PX + rows * TABLE_BODY_ROW_H_PX;
 }
 
-vi.mock("@/lib/data", () => ({
+vi.mock("@/lib/data/recipes", () => ({
   createUserRecipe: vi
     .fn()
     .mockResolvedValue({

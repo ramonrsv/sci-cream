@@ -5,7 +5,7 @@ import { Star } from "lucide-react";
 import { BatchLegend } from "@/app/_elements/tables/batch-checklist";
 import { savedBatchToBatch } from "@/lib/batch/builder";
 import { LIST_ITEM_MARKER_ICON_SIZE } from "@/lib/styles/sizes";
-import type { SavedBatchJson } from "@/lib/data";
+import type { SavedBatchJson } from "@/lib/data/batches";
 
 /** Plural noun for a recipe count, so "1 recipe" reads right alongside "3 recipes". */
 function recipeCountLabel(count: number): string {

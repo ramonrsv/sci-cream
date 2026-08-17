@@ -22,7 +22,7 @@ vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
 
-vi.mock("@/lib/data", () => ({ upsertUserRecipe: vi.fn() }));
+vi.mock("@/lib/data/recipes", () => ({ upsertUserRecipe: vi.fn() }));
 
 vi.mock("@/lib/resources/session", () => ({ useSessionResources: vi.fn() }));
 

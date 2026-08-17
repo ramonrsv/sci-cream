@@ -16,7 +16,7 @@ import {
   updateUserRecipeVersion,
   type SavedRecipeJson,
   type SavedRecipeVersionJson,
-} from "@/lib/data";
+} from "@/lib/data/recipes";
 import { useSessionResources, type SessionResources } from "@/lib/resources/session";
 import type { WasmResourcesState } from "@/lib/resources/wasm";
 
@@ -33,7 +33,7 @@ vi.mock("next/navigation", () => ({ useRouter: vi.fn(() => ({ push: mockPush }))
 vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
-vi.mock("@/lib/data", () => ({
+vi.mock("@/lib/data/recipes", () => ({
   deleteUserRecipe: vi.fn().mockResolvedValue(undefined),
   deleteUserRecipeVersion: vi.fn().mockResolvedValue(undefined),
   updateUserRecipeVersion: vi.fn().mockResolvedValue(undefined),

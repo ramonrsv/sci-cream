@@ -2,12 +2,12 @@ import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/lib/data", () => ({ findUserByEmail: vi.fn(), insertUser: vi.fn() }));
+vi.mock("@/lib/data/users", () => ({ findUserByEmail: vi.fn(), insertUser: vi.fn() }));
 
 vi.mock("bcryptjs", () => ({ hash: vi.fn().mockResolvedValue("hashed-password") }));
 
 import { POST } from "./route";
-import { findUserByEmail, insertUser } from "@/lib/data";
+import { findUserByEmail, insertUser } from "@/lib/data/users";
 import { hash } from "bcryptjs";
 
 const mockFindUser = vi.mocked(findUserByEmail);

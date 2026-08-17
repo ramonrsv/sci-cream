@@ -21,7 +21,7 @@ import {
   updateUserRecipeVersion,
   type RecipeVersionMeta,
   type SavedRecipeVersionJson,
-} from "@/lib/data";
+} from "@/lib/data/recipes";
 
 /** Recipes page: browse and load recipes from embedded data and the user's saved versions */
 export default function RecipesPage() {

@@ -4,7 +4,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 
 import { BatchList } from "@/app/_elements/batch-list";
-import type { SavedBatchJson } from "@/lib/data";
+import type { SavedBatchJson } from "@/lib/data/batches";
 
 afterEach(() => {
   cleanup();

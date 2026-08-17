@@ -2,7 +2,9 @@
 
 import { createContext, useContext } from "react";
 
-import type { IngredientTransfer, SavedBatchJson, SavedRecipeJson } from "@/lib/data";
+import type { IngredientTransfer } from "@/lib/data/ingredients";
+import type { SavedRecipeJson } from "@/lib/data/recipes";
+import type { SavedBatchJson } from "@/lib/data/batches";
 import { makeWasmResourcesFromEmbeddedData, type WasmResourcesState } from "@/lib/resources/wasm";
 
 /**

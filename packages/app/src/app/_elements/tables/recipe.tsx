@@ -48,10 +48,10 @@ import {
   createUserRecipeVersion,
   renameUserRecipe,
   updateUserRecipeVersion,
-} from "@/lib/data";
+} from "@/lib/data/recipes";
 
 import { useSessionResources } from "@/lib/resources/session";
-import type { SavedRecipeVersionJson } from "@/lib/data";
+import type { SavedRecipeVersionJson } from "@/lib/data/recipes";
 import { displayVersionName, nextVersionName, validateVersionName } from "@/lib/recipe/version";
 import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";

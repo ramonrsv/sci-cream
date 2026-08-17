@@ -13,14 +13,14 @@ import {
   makeBatchPayload,
   type BatchPayload,
 } from "@/lib/batch/share";
+import { type SavedRecipeJson } from "@/lib/data/recipes";
 import {
   createUserBatch,
   updateUserBatch,
   deleteUserBatch,
   setUserBatchFavourite,
   type SavedBatchJson,
-  type SavedRecipeJson,
-} from "@/lib/data";
+} from "@/lib/data/batches";
 import { useSessionResources, type SessionResources } from "@/lib/resources/session";
 import {
   getSelectOptionLabelsByLabel,
@@ -32,7 +32,7 @@ import { CategoryColor } from "@/lib/styles/colors";
 
 vi.mock("next-auth/react", () => ({ useSession: vi.fn() }));
 vi.mock("@/lib/resources/session", () => ({ useSessionResources: vi.fn() }));
-vi.mock("@/lib/data", () => ({
+vi.mock("@/lib/data/batches", () => ({
   createUserBatch: vi.fn(),
   updateUserBatch: vi.fn(),
   deleteUserBatch: vi.fn(),

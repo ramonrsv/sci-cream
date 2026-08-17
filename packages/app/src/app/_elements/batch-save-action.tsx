@@ -5,7 +5,7 @@ import { CopyPlus, Save } from "lucide-react";
 
 import type { Batch } from "@/lib/batch/batch";
 import { batchToInput } from "@/lib/batch/builder";
-import { createUserBatch, updateUserBatch } from "@/lib/data";
+import { createUserBatch, updateUserBatch } from "@/lib/data/batches";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 /**

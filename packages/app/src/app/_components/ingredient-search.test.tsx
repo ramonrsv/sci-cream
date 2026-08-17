@@ -21,7 +21,9 @@ vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
 
-vi.mock("@/lib/data", () => ({ fetchAllUserIngredientSpecs: vi.fn().mockResolvedValue([]) }));
+vi.mock("@/lib/data/ingredients", () => ({
+  fetchAllUserIngredientSpecs: vi.fn().mockResolvedValue([]),
+}));
 
 const MOCK_EMBEDDED_ENTRIES = vi.hoisted((): SpecEntryJson[] => [
   { name: "1% Milk", category: "Dairy", DairySimpleSpec: { fat: 1 } },

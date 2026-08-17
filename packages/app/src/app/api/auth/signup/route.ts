@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 
-import { findUserByEmail, insertUser } from "@/lib/data";
+import { findUserByEmail, insertUser } from "@/lib/data/users";
 
 /**
  * POST /api/auth/signup

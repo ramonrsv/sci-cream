@@ -39,7 +39,7 @@ vi.mock("@workspace/sci-cream", async () => {
   };
 });
 
-vi.mock("@/lib/data", () => ({
+vi.mock("@/lib/data/ingredients", () => ({
   fetchUserIngredientSpecByName: vi.fn(() => Promise.resolve(undefined)),
   fetchAllUserIngredientSpecs: vi.fn(() => Promise.resolve([])),
 }));
