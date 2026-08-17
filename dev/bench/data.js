@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786986913203,
+  "lastUpdate": 1786987044212,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -437878,6 +437878,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 670.5,
             "range": "38.97",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e6bb233af1ca8a8cdda02433ff007fc590d042a7",
+          "message": "Split data.ts by domain into lib/data/\n\nOne `\"use server\"` module per domain — users, ingredients, recipes,\nbatches — in place of a single 917-line file. They share one Drizzle\nclient through `lib/database/client.ts`, since such a module may only\nexport async functions and so cannot hand one to its siblings.\nKeeping them in one directory makes the trust boundary enumerable:\neach export is an endpoint a browser can POST to.\n\nThe actions moved verbatim; only `FetchCounter` changed, gaining an\nexport so the modules can share it. `session.ts` is new, adding the\n`requireUser()` that new actions use in place of trusting a\ncaller-supplied email.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T10:31:58-04:00",
+          "tree_id": "1bbcb4e734c20e9cd61d6ae4d5aeb39d32faca84",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e6bb233af1ca8a8cdda02433ff007fc590d042a7"
+        },
+        "date": 1786987001337,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 43.5,
+            "range": "3.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 50.38,
+            "range": "2.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 56.13,
+            "range": "3.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2343.38,
+            "range": "49.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 330.5,
+            "range": "3.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 342,
+            "range": "4.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 366.5,
+            "range": "13.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17147.25,
+            "range": "74.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 891,
+            "range": "35.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.75,
+            "range": "1.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 53.63,
+            "range": "2.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.25,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.75,
+            "range": "2.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 125.25,
+            "range": "4.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 81.13,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.21,
+            "range": "0.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.45,
+            "range": "0.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 604.25,
+            "range": "8.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 662.13,
+            "range": "16.80",
             "unit": "ms"
           }
         ]
