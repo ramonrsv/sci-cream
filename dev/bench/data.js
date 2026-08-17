@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786979500203,
+  "lastUpdate": 1786979940733,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -435967,6 +435967,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 682.88,
             "range": "10.23",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "96e0769324dcd74f5273c360f0dfeed886045d85",
+          "message": "Add pure helpers for comment threads\n\nWire types, body validation, thread grouping, and relative-time\nformatting. No imports at all, so the server actions and the client\ncomponents can both take what they need; the length and rate-limit\nconstants live here because the composer enforces the same caps to\ndisable its own button.\n\n`authorDisplayName` rather than a name column: the byline is\nresolved per fetch and stored nowhere, so a public username later is\na change to the query, not a migration. Writing it surfaced two\nproblems worth their own TODOs — `users.name` falls back to the\nemail address for OAuth users, which a public byline would expose,\nand date handling is split across three conventions.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T02:16:32-04:00",
+          "tree_id": "637308e83b91af5eaf7b450616e64236f21c8303",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/96e0769324dcd74f5273c360f0dfeed886045d85"
+        },
+        "date": 1786979896269,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.25,
+            "range": "2.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 51.25,
+            "range": "2.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 60.88,
+            "range": "7.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2382.88,
+            "range": "82.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 317,
+            "range": "4.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 327.38,
+            "range": "4.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 347.88,
+            "range": "8.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16699.63,
+            "range": "107.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 934.88,
+            "range": "18.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.88,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.13,
+            "range": "2.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.88,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43.88,
+            "range": "2.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 133.25,
+            "range": "3.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 85,
+            "range": "2.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 56.05,
+            "range": "2.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.89,
+            "range": "2.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 638.25,
+            "range": "15.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 670.5,
+            "range": "38.97",
             "unit": "ms"
           }
         ]
