@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786986710320,
+  "lastUpdate": 1786986716191,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -522446,6 +522446,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.26,
             "range": "0.30",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "aecc0eb4e5d871c99403894075c9665a7ebe0817",
+          "message": "Split data.test.ts by domain to match lib/data/\n\nThe 1040-line file outlived its subject: `data.ts` became a directory\nlast commit, leaving the only test in the repo whose sibling module\ndoes not exist. Three files, not four — `findUserByEmail` was never a\nsubject here, only a fixture helper, so `users.ts` comes out untested.\n\nThe test bodies moved verbatim. `getTestUserB` is duplicated rather\nthan shared, being five lines; the batches tests take the shared\nDrizzle client instead of opening a second pool of their own.\n\nBoth runners named the old path literally, CI and the local suite\nalike, and now name the directory — which also picks up new action\ntests without a third edit.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T11:43:02-04:00",
+          "tree_id": "45153a705282e535467c1e9b2d934184576566ee",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/aecc0eb4e5d871c99403894075c9665a7ebe0817"
+        },
+        "date": 1786986669686,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.66,
+            "range": "9.19",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.21,
+            "range": "0.53",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.17,
+            "range": "0.52",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 176,
+            "range": "9.80",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.41,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 176,
+            "range": "9.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.62,
+            "range": "9.07",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.24,
+            "range": "0.27",
             "unit": "ms"
           }
         ]
