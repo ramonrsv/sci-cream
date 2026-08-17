@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786987858986,
+  "lastUpdate": 1786987946713,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -524352,6 +524352,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.6,
             "range": "0.65",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3d09b4029d705859d61a965a0292c9728a2af410",
+          "message": "Make CommentError an enum\n\nThe string union meant typing each variant out at every return, with\nno completion and nothing to grep for. `ShareErrorKind`,\n`PayloadErrorKind`, and `BatchErrorKind` all read as enums with\nPascalCase members over kebab-case values, paired with a\n`Record<…, string>` message map — this is the same shape, so it now\nmatches.\n\nThe values are untouched, being what a server action puts on the\nwire, and a test pins them written out: an enum makes the member\nname the thing you read, so a rename that changed the protocol would\notherwise be easy to miss.\n\nNamed `CommentError`, not `CommentErrorKind`. The suffix on the\nother three distinguishes the kind from the `Error` subclass beside\nit; nothing here throws, so it would be vestigial.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T12:44:55-04:00",
+          "tree_id": "bdb206ab228989151a92a621f2c6528c97267ecf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3d09b4029d705859d61a965a0292c9728a2af410"
+        },
+        "date": 1786987903778,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.71,
+            "range": "9.85",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.21,
+            "range": "0.81",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.16,
+            "range": "0.84",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 179,
+            "range": "14.80",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.43,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 179,
+            "range": "14.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.4,
+            "range": "8.76",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.41,
+            "range": "0.40",
             "unit": "ms"
           }
         ]
