@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786941892179,
+  "lastUpdate": 1786941930511,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -519463,6 +519463,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.69,
             "range": "0.47",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d0b77b506fc8764f4867d6291bbcd6ef2d32f83d",
+          "message": "Add comments schema and migration\n\nTwo tables for public comments on blog posts and docs pages, plus\n`users.is_admin` for moderation. Additive only, so migrate before\ndeploying.\n\nThe `subject_type` enum is sourced from `lib/comments/subject.ts`,\nas `categoryEnum` is from the crate's `SchemaCategory`, so the TS\nunion and the Postgres type cannot drift. Threading depth and the\ntombstone rule are left to the action layer — `CHECK` cannot inspect\nanother row.\n\nThe fixture is regenerated at 0003.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T00:31:42-04:00",
+          "tree_id": "1d1763df053daa6bdcb6e69b4495685383cc9f99",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d0b77b506fc8764f4867d6291bbcd6ef2d32f83d"
+        },
+        "date": 1786941885713,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.93,
+            "range": "10.32",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.78,
+            "range": "1.10",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.73,
+            "range": "1.10",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 172,
+            "range": "10.77",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 172,
+            "range": "10.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.96,
+            "range": "10.17",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.35,
+            "range": "0.57",
             "unit": "ms"
           }
         ]
