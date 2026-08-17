@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786939179105,
+  "lastUpdate": 1786939274588,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -518438,6 +518438,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.23,
             "range": "0.23",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "423897959f6d52e0e4e53aea393a7878088e4e81",
+          "message": "Serve one docs page per route\n\nPages were concatenated: a page plus every slug its frontmatter\n`pages` listed, with headings demoted, ids slug-prefixed, and links\nto those slugs rewritten into in-page anchors. That gave two ways to\nreach the same content, and made route-level analytics meaningless\nsince `/docs` served the entire section.\n\nRender one markdown file per route instead. All the de-collision\nmachinery goes with the concatenation: `getMarkdownComposite`,\n`rehypeRenderOptions`, `anchorHrefFor`, `MarkdownRenderOptions`,\n`slugToId`, and `getListedPages`. What remains is a plain renderer\nwith no knowledge of how the docs are organised.\n\n`/docs` is generated from the nav manifest and each page's\nfrontmatter, so it cannot drift from what the section holds, and the\nindex has no slug of its own to special-case anywhere.\n`table-of-content.md` goes; its route 404s rather than redirecting,\nthe old URL not being worth keeping.\n\nCross-page fragments already resolved unprefixed, so no content link\nneeded editing. `content-links.test.ts` shows that against the real\nfiles, and now resolves a fragment against the page that renders it\nrather than against a composite.\n\nBlog posts share the extracted `MarkdownArticle`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-16T23:41:02-04:00",
+          "tree_id": "bcefd11ea6d8275588c95bc5841c2f83a9658e6e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/423897959f6d52e0e4e53aea393a7878088e4e81"
+        },
+        "date": 1786939231344,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.43,
+            "range": "9.19",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.85,
+            "range": "1.67",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.79,
+            "range": "1.67",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 167.5,
+            "range": "9.47",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 167.5,
+            "range": "9.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.64,
+            "range": "9.00",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.69,
+            "range": "0.47",
             "unit": "ms"
           }
         ]
