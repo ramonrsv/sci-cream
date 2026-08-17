@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786986103349,
+  "lastUpdate": 1786986251479,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -529862,6 +529862,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/96e0769324dcd74f5273c360f0dfeed886045d85"
         },
         "date": 1786979162941,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e6bb233af1ca8a8cdda02433ff007fc590d042a7",
+          "message": "Split data.ts by domain into lib/data/\n\nOne `\"use server\"` module per domain — users, ingredients, recipes,\nbatches — in place of a single 917-line file. They share one Drizzle\nclient through `lib/database/client.ts`, since such a module may only\nexport async functions and so cannot hand one to its siblings.\nKeeping them in one directory makes the trust boundary enumerable:\neach export is an endpoint a browser can POST to.\n\nThe actions moved verbatim; only `FetchCounter` changed, gaining an\nexport so the modules can share it. `session.ts` is new, adding the\n`requireUser()` that new actions use in place of trusting a\ncaller-supplied email.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T10:31:58-04:00",
+          "tree_id": "1bbcb4e734c20e9cd61d6ae4d5aeb39d32faca84",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e6bb233af1ca8a8cdda02433ff007fc590d042a7"
+        },
+        "date": 1786986227342,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
