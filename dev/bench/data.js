@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786939494862,
+  "lastUpdate": 1786939524177,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -70462,6 +70462,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_start)",
             "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "423897959f6d52e0e4e53aea393a7878088e4e81",
+          "message": "Serve one docs page per route\n\nPages were concatenated: a page plus every slug its frontmatter\n`pages` listed, with headings demoted, ids slug-prefixed, and links\nto those slugs rewritten into in-page anchors. That gave two ways to\nreach the same content, and made route-level analytics meaningless\nsince `/docs` served the entire section.\n\nRender one markdown file per route instead. All the de-collision\nmachinery goes with the concatenation: `getMarkdownComposite`,\n`rehypeRenderOptions`, `anchorHrefFor`, `MarkdownRenderOptions`,\n`slugToId`, and `getListedPages`. What remains is a plain renderer\nwith no knowledge of how the docs are organised.\n\n`/docs` is generated from the nav manifest and each page's\nfrontmatter, so it cannot drift from what the section holds, and the\nindex has no slug of its own to special-case anywhere.\n`table-of-content.md` goes; its route 404s rather than redirecting,\nthe old URL not being worth keeping.\n\nCross-page fragments already resolved unprefixed, so no content link\nneeded editing. `content-links.test.ts` shows that against the real\nfiles, and now resolves a fragment against the page that renders it\nrather than against a composite.\n\nBlog posts share the extracted `MarkdownArticle`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-16T23:41:02-04:00",
+          "tree_id": "bcefd11ea6d8275588c95bc5841c2f83a9658e6e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/423897959f6d52e0e4e53aea393a7878088e4e81"
+        },
+        "date": 1786939480751,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3697,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 115989,
+            "range": "± 759",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2073,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 114281,
+            "range": "± 808",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 3290,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 3216,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 3297,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 3332,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 3294,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 3455,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 84672,
+            "range": "± 1328",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 85119,
+            "range": "± 1211",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 170570718,
+            "range": "± 493402",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 585372,
+            "range": "± 6694",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 4882,
+            "range": "± 307",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 47,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 5171,
+            "range": "± 118",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 70168,
+            "range": "± 512",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 66871,
+            "range": "± 410",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 110762,
+            "range": "± 646",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 108826,
+            "range": "± 839",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 341428,
+            "range": "± 2499",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14881,
+            "range": "± 123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 662,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
             "range": "± 0",
             "unit": "ns/iter"
           },
