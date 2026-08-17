@@ -24,13 +24,13 @@ export interface CommentJson {
   authorId: number;
   /** The byline to render; resolved per fetch, so its source can change without a migration. */
   authorDisplayName: string;
-  /** Empty for a tombstoned root, which is kept only so its replies survive. */
+  /** Empty for a tombstone, a comment kept only to hold its place in the thread. */
   body: string;
   /** ISO 8601, stringified server-side so the payload stays serializable. */
   createdAt: string;
   /** Present only once edited; its presence is what renders the edited marker. */
   updatedAt?: string;
-  /** True for a tombstoned root: render `[deleted]`, keep the replies. */
+  /** True for a tombstone: render `[deleted]` in place rather than dropping the row. */
   deleted: boolean;
 }
 
@@ -45,6 +45,7 @@ export type CommentError =
   | "unauthenticated"
   | "forbidden"
   | "not-found"
+  | "deleted"
   | "bad-subject"
   | "empty"
   | "too-long"
@@ -63,7 +64,8 @@ export type CommentResult<T> = { ok: true; value: T } | { ok: false; error: Comm
 export const COMMENT_ERROR_MESSAGES: Record<CommentError, string> = {
   unauthenticated: "Sign in to post a comment.",
   forbidden: "You can't do that.",
-  "not-found": "That comment no longer exists.",
+  "not-found": "That comment doesn't exist.",
+  deleted: "That comment was deleted.",
   "bad-subject": "Comments aren't available for this page.",
   empty: "Write something first.",
   "too-long": `Comments are limited to ${MAX_COMMENT_BODY_CHARS} characters.`,
