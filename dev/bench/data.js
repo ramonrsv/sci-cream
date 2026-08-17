@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786939890226,
+  "lastUpdate": 1786941823306,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -469985,6 +469985,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.08%",
             "unit": "ops/sec",
             "extra": "88 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d0b77b506fc8764f4867d6291bbcd6ef2d32f83d",
+          "message": "Add comments schema and migration\n\nTwo tables for public comments on blog posts and docs pages, plus\n`users.is_admin` for moderation. Additive only, so migrate before\ndeploying.\n\nThe `subject_type` enum is sourced from `lib/comments/subject.ts`,\nas `categoryEnum` is from the crate's `SchemaCategory`, so the TS\nunion and the Postgres type cannot drift. Threading depth and the\ntombstone rule are left to the action layer — `CHECK` cannot inspect\nanother row.\n\nThe fixture is regenerated at 0003.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T00:31:42-04:00",
+          "tree_id": "1d1763df053daa6bdcb6e69b4495685383cc9f99",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d0b77b506fc8764f4867d6291bbcd6ef2d32f83d"
+        },
+        "date": 1786941797849,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 101314,
+            "range": "±1.49%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 798432,
+            "range": "±0.53%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 69867,
+            "range": "±2.09%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 505003,
+            "range": "±1.79%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
