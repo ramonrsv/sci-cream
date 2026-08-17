@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786986318913,
+  "lastUpdate": 1786986390226,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -521565,6 +521565,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.3,
             "range": "0.41",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e6bb233af1ca8a8cdda02433ff007fc590d042a7",
+          "message": "Split data.ts by domain into lib/data/\n\nOne `\"use server\"` module per domain — users, ingredients, recipes,\nbatches — in place of a single 917-line file. They share one Drizzle\nclient through `lib/database/client.ts`, since such a module may only\nexport async functions and so cannot hand one to its siblings.\nKeeping them in one directory makes the trust boundary enumerable:\neach export is an endpoint a browser can POST to.\n\nThe actions moved verbatim; only `FetchCounter` changed, gaining an\nexport so the modules can share it. `session.ts` is new, adding the\n`requireUser()` that new actions use in place of trusting a\ncaller-supplied email.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T10:31:58-04:00",
+          "tree_id": "1bbcb4e734c20e9cd61d6ae4d5aeb39d32faca84",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e6bb233af1ca8a8cdda02433ff007fc590d042a7"
+        },
+        "date": 1786986347802,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.18,
+            "range": "7.92",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.81,
+            "range": "0.98",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.75,
+            "range": "0.95",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 169,
+            "range": "6.86",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 169,
+            "range": "6.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.16,
+            "range": "8.09",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.26,
+            "range": "0.30",
             "unit": "ms"
           }
         ]
