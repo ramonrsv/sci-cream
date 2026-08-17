@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786985204036,
+  "lastUpdate": 1786985758604,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -471214,6 +471214,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.00%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "96e0769324dcd74f5273c360f0dfeed886045d85",
+          "message": "Add pure helpers for comment threads\n\nWire types, body validation, thread grouping, and relative-time\nformatting. No imports at all, so the server actions and the client\ncomponents can both take what they need; the length and rate-limit\nconstants live here because the composer enforces the same caps to\ndisable its own button.\n\n`authorDisplayName` rather than a name column: the byline is\nresolved per fetch and stored nowhere, so a public username later is\na change to the query, not a migration. Writing it surfaced two\nproblems worth their own TODOs — `users.name` falls back to the\nemail address for OAuth users, which a public byline would expose,\nand date handling is split across three conventions.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T02:16:32-04:00",
+          "tree_id": "637308e83b91af5eaf7b450616e64236f21c8303",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/96e0769324dcd74f5273c360f0dfeed886045d85"
+        },
+        "date": 1786985716535,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 58676,
+            "range": "±1.32%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 491836,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 39379,
+            "range": "±0.84%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 380311,
+            "range": "±0.92%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
