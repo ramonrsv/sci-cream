@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786987312332,
+  "lastUpdate": 1786987316129,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -528433,6 +528433,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/aecc0eb4e5d871c99403894075c9665a7ebe0817"
         },
         "date": 1786986577011,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 266.95,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "10da7dbad56d3d3eb43a9ebf50a73414c066f59b",
+          "message": "Add server actions for comment threads\n\nEight actions over the comments tables. Identity comes from\n`requireUser()` and no action takes a user identifier from the\ncaller, which is what a server action being an HTTP endpoint\ndemands. Subjects are checked against the content tree on every\ncall, the enum constraining a subject's type but never its key.\n\nDeleting is thread-preserving and final. Only a childless root is\nremoved outright; a root with replies, or any reply, is tombstoned\nwith its body blanked in the same statement, so the text leaves the\ndatabase while the position keeping the surrounding sequence\nreadable stays. A tombstone then refuses edits, further deletes, and\nreports alike — `deletedAt` records when the text went, not when\nsomeone last pressed a button, and there is nothing left to\nmoderate. That makes `deleted` a distinct `CommentError`: a\ntombstone is a state the wire type already exposes, so calling it\n`not-found` contradicted the payload that carries it.\n\n`purgeComment` is the way back out, admin only. Tombstones being\npermanent, a thread anyone replied to cannot be cleared by its\nparticipants; deleting the row lets the cascade take the replies and\ntheir reports with it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T12:37:38-04:00",
+          "tree_id": "a6303ee9713a3dcb42c2f915dfae9776803ca843",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/10da7dbad56d3d3eb43a9ebf50a73414c066f59b"
+        },
+        "date": 1786987315113,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
