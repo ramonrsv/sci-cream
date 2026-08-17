@@ -56,7 +56,7 @@ execute pnpm test:unit
 MIGRATION_URL="${POSTGRES_URL%/*}/sci_cream_migration_test"
 execute env POSTGRES_URL="$MIGRATION_URL" ./scripts/build-migration-test-db.sh
 execute env POSTGRES_URL="$MIGRATION_URL" npx drizzle-kit migrate
-execute env POSTGRES_URL="$MIGRATION_URL" pnpm test:unit src/lib/data.test.ts
+execute env POSTGRES_URL="$MIGRATION_URL" pnpm test:unit src/lib/data/
 
 if [[ "$CHROMIUM_ONLY" == true ]]; then
     execute env CI=true pnpm test:e2e:chromium

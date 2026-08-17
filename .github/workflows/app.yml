@@ -379,4 +379,4 @@ jobs:
         run: npx drizzle-kit migrate
 
       - name: Run database integration tests against the migrated schema
-        run: pnpm test:unit src/lib/data.test.ts
+        run: pnpm test:unit src/lib/data/
