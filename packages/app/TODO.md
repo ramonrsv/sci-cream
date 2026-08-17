@@ -99,6 +99,12 @@
 - [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
 - [ ] Look into splitting `data.ts` and/or `data.test.ts` by domain (users, ingredients, recipes,
       batches); both are growing large and mix several concerns in a single file.
+- [ ] Stop `users.name` falling back to the email address: `lib/auth.ts` inserts OAuth users as
+      `{ name: user.name ?? user.email }`, and comment threads render that publicly as the byline.
+      Add a user-chosen display name, resolved for every payload by one `displayNameFor(user)`.
+- [ ] Unify date handling: `batches.date` is `text` `YYYY-MM-DD` while nine `timestamp` columns
+      carry no zone, and three sites convert differently (UTC midnight in `batch/share.ts`, local
+      today in `batch/batch.ts`, `Z` in `comments/comments.ts`). Centralize and format via `Intl`.
 - [ ] Find a proper fix for the placeholder `POSTGRES_URL` in the `bundle_benchmark` workflow.
 - [ ] Refine performance benchmarks; some of them may not be measuring what they claim to measure.
 - [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
