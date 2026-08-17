@@ -27,7 +27,6 @@
       in `/recipes`. Comparing ingredient lines may be tricky, similar to a git diff.
 - [ ] Add support for starring built-in recipes, stored per user. They are embedded crate data
       rather than `recipes` rows, so it needs a join table keyed by the entry id, not a column.
-- [ ] Add support for comments in blog posts, maybe also in documentation posts.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
@@ -51,6 +50,12 @@
       the `production` secrets go live — `codecov-action@v6` already resolves to v7.0.0, tag moved.
 - [ ] Lint the shell scripts with `shellcheck`, as a `lint:sh` script and a CI job beside
       `lint:sql`; they drop and recreate databases now, so its `set -e` and quoting checks pay off.
+- [ ] Review the implicit memoization contract `entity-search` imposes: its results `useMemo` lists
+      the `matchesQuery` / `matchesFilters` props, so a fresh callback re-filters the whole pool
+      every render. Document it on the props, or restructure so identity stops mattering.
+- [ ] Explore enabling React Compiler (`reactCompiler: true` in `next.config.ts`): memoizing from
+      the graph it infers would subsume every `useCallback` still load-bearing today — `refresh` in
+      `comment-thread` / `report-queue`, `refreshUser*`, `matchesFilters`. Check the build cost.
 - [ ] Vendor self-subsetted fonts instead of whole families: `@fontsource/noto-emoji` pulls ~117KB
       to draw three rating glyphs that a 3-glyph cut does in 2.3KB, and Geist ships 728 and 889
       codepoints for Latin text. One subsetting step for all; vendored bytes pin snapshot glyphs.
@@ -129,6 +134,7 @@
 
 ## Completed
 
+- [x] Add support for comments in blog posts, maybe also in documentation posts.
 - [x] Split `data.test.ts` by domain to match `lib/data/`; at ~1000 lines it still mixes users,
       ingredients, recipes, and batches. The `db_migration` job in `app.yml` names the file
       literally, so that path becomes a directory or glob.

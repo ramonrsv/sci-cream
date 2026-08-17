@@ -548,6 +548,29 @@ tbody tr:hover > .table-emphasis {
   }
 }
 
+/* Public comment threads, mounted under a blog post or docs page. */
+.comments {
+  @apply border-brd mt-10 border-t px-2 py-6 sm:px-6;
+}
+
+.comment-card {
+  @apply border-brd bg-surface mb-2 rounded-lg border px-3 py-2;
+}
+
+/* Author, timestamp, and the edited marker: one muted row above the body. */
+.comment-meta {
+  @apply text-txt-sec flex flex-wrap items-baseline gap-2 text-xs;
+}
+
+/* Replies sit indented under their root, joined to it by the left rule. */
+.comment-replies {
+  @apply border-brd ml-4 border-l pl-3 sm:ml-8;
+}
+
+.comment-action {
+  @apply text-txt-sec hover:text-txt-prim cursor-pointer hover:underline;
+}
+
 /* Search Components */
 .search-list-item {
   @apply w-full rounded-lg border px-3 py-2 text-left transition-colors;

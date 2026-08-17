@@ -15,6 +15,14 @@ vi.mock("@/lib/markdown", async (importOriginal) => ({
   getMarkdownSlugs: vi.fn(),
 }));
 
+// The thread is a client island that reaches for the session and the database; these tests cover
+// the page's markdown rendering, so it is stubbed down to the subject it was handed.
+vi.mock("@/app/_components/comment-thread", () => ({
+  CommentThread: ({ subject }: { subject: { type: string; key: string } }) => (
+    <div data-testid="comment-thread" data-subject={`${subject.type}/${subject.key}`} />
+  ),
+}));
+
 const { default: DocsSlugPage, generateStaticParams, generateMetadata } = await import("./page");
 const { getMarkdownPage, getMarkdownSlugs } = await import("@/lib/markdown");
 
@@ -95,6 +103,21 @@ describe("DocsSlugPage", () => {
       await DocsSlugPage({ params: Promise.resolve({ slug: ["other-resources", "science"] }) }),
     );
     expect(getMarkdownPage).toHaveBeenCalledWith("docs", "other-resources/science");
+  });
+
+  it("mounts the comment thread keyed on the route's own joined slug", async () => {
+    vi.mocked(getMarkdownPage).mockResolvedValue({
+      slug: "other-resources/science",
+      frontmatter: { title: "Science" },
+      contentHtml: "<p>S</p>",
+    });
+    render(
+      await DocsSlugPage({ params: Promise.resolve({ slug: ["other-resources", "science"] }) }),
+    );
+    expect(screen.getByTestId("comment-thread")).toHaveAttribute(
+      "data-subject",
+      "docs/other-resources/science",
+    );
   });
 
   it("calls notFound when the page does not exist", async () => {

@@ -13,6 +13,8 @@ import {
   recipesTable,
   recipeVersionsTable,
   batchesTable,
+  commentsTable,
+  commentReportsTable,
 } from "@/lib/database/schema";
 import { verifyDefined } from "@/lib/util";
 import * as schema from "@/lib/database/schema";
@@ -30,7 +32,9 @@ import {
   USER_DEFINED_FRUCTOSE_SPEC,
   TEST_USER_B_RECIPES,
   TEST_USER_B_BATCHES,
+  SEED_COMMENTS,
   type SeedBatchAsset,
+  type SeedCommentAsset,
   type SeedRecipeAsset,
 } from "@/lib/database/assets";
 
@@ -168,9 +172,80 @@ async function seedUserBatches(userEmail: string, batches: SeedBatchAsset[]) {
   console.log(`Seeded ${batches.length} batches for user `, user);
 }
 
+/**
+ * Grant the moderation surface to one user, and clear it from everyone else.
+ *
+ * In production the flag is set by hand on a single row; the seed sets it so the admin-only paths
+ * (`/admin/reports`, `fetchOpenReports`) are reachable in tests and local development.
+ */
+async function seedAdmin(adminEmail: string) {
+  console.log("==========");
+  console.log("Granting admin to:", adminEmail);
+
+  await db.update(usersTable).set({ isAdmin: false });
+  await db.update(usersTable).set({ isAdmin: true }).where(eq(usersTable.email, adminEmail));
+}
+
+/**
+ * Replace every public comment with the given list.
+ *
+ * All comments are deleted first (cascading to replies and reports), so the seeded set is
+ * deterministic. Timestamps come from the asset, not `now()`, keeping relative times stable.
+ */
+async function seedComments(comments: SeedCommentAsset[]) {
+  console.log("==========");
+  console.log("Seeding comments");
+
+  await db.delete(commentsTable);
+
+  /** Resolve a test user's id from their email, failing loudly rather than seeding an orphan. */
+  async function userId(email: string): Promise<number> {
+    const user = await findUserByEmail(email);
+    verifyDefined(user, `User with email ${email} not found, cannot seed comments`);
+    return user.id;
+  }
+
+  for (const entry of comments) {
+    const [root] = await db
+      .insert(commentsTable)
+      .values({
+        subjectType: entry.subject.type,
+        subjectKey: entry.subject.key,
+        author: await userId(entry.author),
+        body: entry.body,
+        createdAt: new Date(entry.createdAt),
+        updatedAt: entry.updatedAt ? new Date(entry.updatedAt) : null,
+      })
+      .returning();
+
+    for (const reply of entry.replies ?? []) {
+      await db
+        .insert(commentsTable)
+        .values({
+          subjectType: entry.subject.type,
+          subjectKey: entry.subject.key,
+          author: await userId(reply.author),
+          parentId: root.id,
+          body: reply.body,
+          createdAt: new Date(reply.createdAt),
+          updatedAt: reply.updatedAt ? new Date(reply.updatedAt) : null,
+        });
+    }
+
+    for (const { reporter, reason } of entry.reportedBy ?? []) {
+      await db
+        .insert(commentReportsTable)
+        .values({ commentId: root.id, reporter: await userId(reporter), reason: reason ?? null });
+    }
+  }
+
+  console.log(`Seeded ${comments.length} comment threads`);
+}
+
 /** Entry point: seed test users and their ingredient libraries */
 async function main() {
   await seedUsers([TEST_USER_A, TEST_USER_B]);
+  await seedAdmin(TEST_USER_A.email);
 
   // Seed only non-alias ingredient specs, since aliases are not supported in the database.
   // Both of A's sets go in one call, as seeding replaces the user's ingredients wholesale.
@@ -184,6 +259,8 @@ async function main() {
   await seedUserRecipes(TEST_USER_B.email, TEST_USER_B_RECIPES);
 
   await seedUserBatches(TEST_USER_B.email, TEST_USER_B_BATCHES);
+
+  await seedComments(SEED_COMMENTS);
 }
 
 main();

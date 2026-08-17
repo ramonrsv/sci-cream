@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
 import { MarkdownArticle } from "@/app/_elements/markdown-article";
+import { CommentThread } from "@/app/_components/comment-thread";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -39,6 +40,7 @@ export default async function BlogSlugPage({ params }: Props) {
         <time className="text-txt-sec mb-2 block text-sm">{page.frontmatter.date}</time>
       )}
       <MarkdownArticle page={page} />
+      <CommentThread subject={{ type: "blog", key: slug }} />
     </div>
   );
 }

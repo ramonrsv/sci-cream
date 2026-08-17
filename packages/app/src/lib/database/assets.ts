@@ -174,3 +174,53 @@ export const TEST_USER_B_BATCHES: SeedBatchAsset[] = [
     ],
   },
 ];
+
+/**
+ * A seeded comment. Users are named by email, which the seed resolves to ids once they exist;
+ * timestamps are fixed and in the past, so rendered relative times do not drift between runs.
+ */
+export type SeedCommentAsset = {
+  subject: { type: "blog" | "docs"; key: string };
+  author: string;
+  body: string;
+  createdAt: string;
+  /** Set to mark the comment as edited; renders the `(edited)` marker. */
+  updatedAt?: string;
+  /** Emails of users who have reported this comment, each with an optional reason. */
+  reportedBy?: { reporter: string; reason?: string }[];
+  replies?: Omit<SeedCommentAsset, "subject" | "replies">[];
+};
+
+/**
+ * Seeded public comments, so the blog and docs threads render something. The one report is filed by
+ * `TEST_USER_B` against the admin `TEST_USER_A`, in whose queue it is the only way to see one.
+ */
+export const SEED_COMMENTS: SeedCommentAsset[] = [
+  {
+    subject: { type: "blog", key: "2026-04-27-welcome" },
+    author: TEST_USER_A.email,
+    body: "Good to see this land. The FPD curve is the part I keep coming back to.",
+    createdAt: "2026-07-02T14:30:00Z",
+    reportedBy: [{ reporter: TEST_USER_B.email, reason: "Testing the report queue." }],
+    replies: [
+      {
+        author: TEST_USER_B.email,
+        body: "Agreed — plotting hardness against serving temperature made it click for me.",
+        createdAt: "2026-07-02T16:05:00Z",
+      },
+    ],
+  },
+  {
+    subject: { type: "blog", key: "2026-04-27-welcome" },
+    author: TEST_USER_B.email,
+    body: "One request: a worked example for **sorbet**, where there is no MSNF to lean on.",
+    createdAt: "2026-07-03T09:15:00Z",
+    updatedAt: "2026-07-03T09:22:00Z",
+  },
+  {
+    subject: { type: "docs", key: "getting-started" },
+    author: TEST_USER_A.email,
+    body: "The paste-a-recipe shortcut is worth calling out earlier on this page.",
+    createdAt: "2026-07-05T11:00:00Z",
+  },
+];

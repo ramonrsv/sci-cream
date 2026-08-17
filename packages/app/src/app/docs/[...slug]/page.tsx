@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
 import { MarkdownArticle } from "@/app/_elements/markdown-article";
+import { CommentThread } from "@/app/_components/comment-thread";
 
 interface Props {
   params: Promise<{ slug: string[] }>;
@@ -30,11 +31,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /** Renders `content/docs/{slug}.md`. */
 export default async function DocsSlugPage({ params }: Props) {
   const { slug } = await params;
+  const key = slug.join("/");
   let page;
   try {
-    page = await getMarkdownPage("docs", slug.join("/"));
+    page = await getMarkdownPage("docs", key);
   } catch {
     notFound();
   }
-  return <MarkdownArticle page={page} />;
+  return (
+    <>
+      <MarkdownArticle page={page} />
+      <CommentThread subject={{ type: "docs", key }} />
+    </>
+  );
 }

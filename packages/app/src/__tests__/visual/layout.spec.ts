@@ -11,8 +11,10 @@ import { RecipeID } from "@/__tests__/assets";
 import { VIEWPORTS, type ViewportAsset } from "@/__tests__/visual/assets";
 import {
   captureFullContent,
+  commentMetaMask,
   getOverflow,
   setViewportHeightForAllAppContentScreenshot,
+  waitForCommentThread,
 } from "@/__tests__/visual/util";
 
 /** Waits a short period to let the grid layout settle (width measurement, breakpoint changes). */
@@ -43,7 +45,10 @@ async function takeViewportAndFullContentScreenshots(
 
   await pageSetup(page);
   await waitForLayoutStability();
-  await expect(page).toHaveScreenshot(`${screenshot}.png`);
+
+  // Unconditional: it resolves to nothing without a thread, and covers any page that grows one.
+  const mask = commentMetaMask(page);
+  await expect(page).toHaveScreenshot(`${screenshot}.png`, { mask });
 
   const appContentTestId = "app-content";
 
@@ -60,7 +65,7 @@ async function takeViewportAndFullContentScreenshots(
     await setViewportHeightForAllAppContentScreenshot(page);
     await waitForLayoutStability();
 
-    await expect(page).toHaveScreenshot(`${screenshot}-all-content.png`);
+    await expect(page).toHaveScreenshot(`${screenshot}-all-content.png`, { mask });
   }
 }
 
@@ -138,7 +143,11 @@ test.describe("Visual Regression: Responsive Layout, blog post", () => {
     testViewportLayout(
       asset,
       "blog-post",
-      async (page) => await goToPageAndWaitFor(page, "/blog/2026-04-27-welcome"),
+      // The all-content shot is sized to content height, and the thread mounts empty then grows.
+      async (page) => {
+        await goToPageAndWaitFor(page, "/blog/2026-04-27-welcome");
+        await waitForCommentThread(page);
+      },
     );
   }
 });

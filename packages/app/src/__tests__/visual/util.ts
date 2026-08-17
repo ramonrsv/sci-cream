@@ -17,6 +17,27 @@ export async function parkCursor(page: Page) {
   await page.mouse.move((page.viewportSize()?.width ?? 1) - 1, 0);
 }
 
+/**
+ * Wait for a page's comment thread to finish loading.
+ *
+ * It fetches on mount, so the page reaches network idle with the placeholder still up. Anything
+ * measuring content height must wait, or it sizes the viewport to a page about to grow.
+ */
+export async function waitForCommentThread(page: Page) {
+  await page.locator(".comments").waitFor();
+  await page.getByText("Loading comments…").waitFor({ state: "detached" });
+}
+
+/**
+ * Comment metadata rows, masked in page screenshots.
+ *
+ * They carry a relative timestamp, which rolls over as the seeded dates age. The row is a
+ * full-width block, so masking it leaves a stable box — as `.badges` is masked whole.
+ */
+export function commentMetaMask(page: Page): Locator[] {
+  return [page.locator(".comment-meta")];
+}
+
 /** Vertical overflow (hidden scrollable height, `scrollHeight - clientHeight`) of `locator`. */
 export async function getOverflow(locator: Locator): Promise<number> {
   return locator.evaluate((el) => el.scrollHeight - el.clientHeight);

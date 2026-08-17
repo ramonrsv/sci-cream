@@ -11,6 +11,14 @@ vi.mock("next/navigation", () => ({ notFound: () => mockNotFound() }));
 
 vi.mock("@/lib/markdown", () => ({ getMarkdownPage: vi.fn(), getMarkdownSlugs: vi.fn() }));
 
+// The thread is a client island that reaches for the session and the database; these tests cover
+// the page's markdown rendering, so it is stubbed down to the subject it was handed.
+vi.mock("@/app/_components/comment-thread", () => ({
+  CommentThread: ({ subject }: { subject: { type: string; key: string } }) => (
+    <div data-testid="comment-thread" data-subject={`${subject.type}/${subject.key}`} />
+  ),
+}));
+
 const { default: BlogSlugPage, generateStaticParams, generateMetadata } = await import("./page");
 const { getMarkdownPage, getMarkdownSlugs } = await import("@/lib/markdown");
 
@@ -82,6 +90,16 @@ describe("BlogSlugPage", () => {
     });
     render(await BlogSlugPage({ params: Promise.resolve({ slug: "no-date" }) }));
     expect(screen.queryByRole("time")).not.toBeInTheDocument();
+  });
+
+  it("mounts the comment thread keyed on the post's slug", async () => {
+    vi.mocked(getMarkdownPage).mockResolvedValue({
+      slug: "hello",
+      frontmatter: { title: "Hello" },
+      contentHtml: "<p>Hello world</p>",
+    });
+    render(await BlogSlugPage({ params: Promise.resolve({ slug: "hello" }) }));
+    expect(screen.getByTestId("comment-thread")).toHaveAttribute("data-subject", "blog/hello");
   });
 
   it("calls notFound when getMarkdownPage throws", async () => {

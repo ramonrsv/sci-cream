@@ -61,6 +61,9 @@ function toCommentJson(row: CommentSelect, authorDisplayName: string): CommentJs
  *
  * The enum constrains the type but not the key, so without this a client could open a thread on
  * any key. A forged type fails twice: `isCommentSubject` rejects it, `getMarkdownSlugs` throws.
+ *
+ * Alone in reading `content/` at runtime; every other caller runs at build. Output tracing ships
+ * the directory with the routes reaching here — were it to miss, every subject would read unknown.
  */
 function isKnownSubject(subject: unknown): subject is CommentSubject {
   if (!isCommentSubject(subject)) return false;

@@ -9,6 +9,10 @@ import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
  * Read-only markdown renderer for comments and notes. Supports GFM (tables, task lists, footnotes,
  * autolinks) via `remark-gfm`. Raw HTML is not rendered (react-markdown's safe default), so user
  * text can't inject markup. External links open in a new tab; internal ones stay in place.
+ *
+ * Outbound links carry `ugc nofollow` alongside `noopener noreferrer`: this renders public comment
+ * threads as well as private notes, and untrusted text must not pass link equity to whatever it
+ * points at. Applied to every caller rather than via props, so new public surface cannot forget it.
  */
 export function Markdown({ text, className }: { text: string; className?: string }) {
   return (
@@ -23,7 +27,7 @@ export function Markdown({ text, className }: { text: string; className?: string
             return (
               <a
                 href={href}
-                {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                {...(external ? { target: "_blank", rel: "noopener noreferrer ugc nofollow" } : {})}
                 className="text-blue-500 hover:underline dark:text-blue-400"
               >
                 {children}
