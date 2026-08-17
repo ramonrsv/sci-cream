@@ -4,6 +4,7 @@ import {
   primaryKey,
   unique,
   uniqueIndex,
+  index,
   check,
   foreignKey,
   boolean,
@@ -15,6 +16,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
+import { COMMENT_SUBJECT_TYPES } from "@/lib/comments/subject";
 import { Rating } from "@/lib/rating";
 
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
@@ -32,6 +34,8 @@ export const usersTable = pgTable("users", {
   name: text().notNull(),
   email: text().notNull().unique(),
   passwordHash: text("password_hash"),
+  /** Grants the comment-moderation surface at `/admin/reports`; set by hand, never by the app. */
+  isAdmin: boolean("is_admin").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -187,3 +191,80 @@ export const batchRecipesTable = pgTable(
 
 export type BatchRecipeInsert = typeof batchRecipesTable.$inferInsert;
 export type BatchRecipeSelect = typeof batchRecipesTable.$inferSelect;
+
+/** PostgreSQL enum type for what a comment thread hangs off, from `COMMENT_SUBJECT_TYPES`. */
+export const commentSubjectTypeEnum = pgEnum("comment_subject_type", COMMENT_SUBJECT_TYPES);
+
+/**
+ * Drizzle ORM table definition for a public comment on a blog post or docs page.
+ *
+ * Threading is one level deep: `parentId` null marks a root, and a reply's parent must itself be a
+ * root. Postgres `CHECK` cannot inspect another row, so that rule is a validated precondition in
+ * the action layer rather than a constraint here.
+ *
+ * `updatedAt` is null until the first edit, so it doubles as the "edited" marker without a second
+ * column. `deletedAt` marks a tombstone — a comment whose body was blanked rather than removed;
+ * when to tombstone instead of deleting is the action layer's policy, not a schema rule. Removing
+ * a row takes its replies with it, through the self-referencing cascade.
+ */
+export const commentsTable = pgTable(
+  "comments",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    subjectType: commentSubjectTypeEnum("subject_type").notNull(),
+    subjectKey: text("subject_key").notNull(),
+    author: integer()
+      .notNull()
+      .references(() => usersTable.id),
+    parentId: integer("parent_id"),
+    body: text().notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    /** Null until the comment is first edited; its presence is what renders the edited marker. */
+    updatedAt: timestamp("updated_at"),
+    /** Set on a root kept only to hold its replies; the body is emptied in the same statement. */
+    deletedAt: timestamp("deleted_at"),
+  },
+  (table) => [
+    foreignKey({
+      name: "comments_parent_id_fk",
+      columns: [table.parentId],
+      foreignColumns: [table.id],
+    }).onDelete("cascade"),
+    index("comments_subject_idx").on(table.subjectType, table.subjectKey, table.createdAt),
+    check("comments_body_len", sql`char_length(${table.body}) <= 2000`),
+  ],
+);
+
+export type CommentInsert = typeof commentsTable.$inferInsert;
+export type CommentSelect = typeof commentsTable.$inferSelect;
+
+/**
+ * Drizzle ORM table definition for a user's report of a comment.
+ *
+ * Keyed by `(comment_id, reporter)`, which makes "one report per user per comment" a property of
+ * the key rather than something the action has to check. `resolvedAt` closes a report; the partial
+ * index carries the open-report queue `/admin/reports` reads.
+ */
+export const commentReportsTable = pgTable(
+  "comment_reports",
+  {
+    commentId: integer("comment_id")
+      .notNull()
+      .references(() => commentsTable.id, { onDelete: "cascade" }),
+    reporter: integer()
+      .notNull()
+      .references(() => usersTable.id),
+    reason: text(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    resolvedAt: timestamp("resolved_at"),
+  },
+  (table) => [
+    primaryKey({ columns: [table.commentId, table.reporter] }),
+    index("comment_reports_open_idx")
+      .on(table.createdAt)
+      .where(sql`${table.resolvedAt} IS NULL`),
+  ],
+);
+
+export type CommentReportInsert = typeof commentReportsTable.$inferInsert;
+export type CommentReportSelect = typeof commentReportsTable.$inferSelect;

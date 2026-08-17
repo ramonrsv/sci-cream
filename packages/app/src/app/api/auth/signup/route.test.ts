@@ -72,6 +72,7 @@ describe("POST /api/auth/signup", () => {
       name: "Existing",
       email: "a@b.com",
       passwordHash: null,
+      isAdmin: false,
       createdAt: new Date(),
     });
 
@@ -89,6 +90,7 @@ describe("POST /api/auth/signup", () => {
       name: "Existing",
       email: "a@b.com",
       passwordHash: null,
+      isAdmin: false,
       createdAt: new Date(),
     });
 

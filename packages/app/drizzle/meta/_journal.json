@@ -22,6 +22,13 @@
       "when": 1786075062675,
       "tag": "0002_add_quality_signals",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786869371951,
+      "tag": "0003_add_comments",
+      "breakpoints": true
     }
   ]
 }
