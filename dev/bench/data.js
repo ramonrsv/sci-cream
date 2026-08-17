@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786942238311,
+  "lastUpdate": 1786942603344,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -435637,6 +435637,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 664.75,
             "range": "9.35",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d0b77b506fc8764f4867d6291bbcd6ef2d32f83d",
+          "message": "Add comments schema and migration\n\nTwo tables for public comments on blog posts and docs pages, plus\n`users.is_admin` for moderation. Additive only, so migrate before\ndeploying.\n\nThe `subject_type` enum is sourced from `lib/comments/subject.ts`,\nas `categoryEnum` is from the crate's `SchemaCategory`, so the TS\nunion and the Postgres type cannot drift. Threading depth and the\ntombstone rule are left to the action layer — `CHECK` cannot inspect\nanother row.\n\nThe fixture is regenerated at 0003.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-17T00:31:42-04:00",
+          "tree_id": "1d1763df053daa6bdcb6e69b4495685383cc9f99",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d0b77b506fc8764f4867d6291bbcd6ef2d32f83d"
+        },
+        "date": 1786942559022,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.5,
+            "range": "3.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 57.5,
+            "range": "6.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 62.13,
+            "range": "2.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2451.75,
+            "range": "45.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 326.25,
+            "range": "3.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 340.63,
+            "range": "6.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 353.25,
+            "range": "4.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16685.63,
+            "range": "74.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 923.88,
+            "range": "16.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.75,
+            "range": "1.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.5,
+            "range": "3.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.5,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.75,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 129,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 86.25,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.88,
+            "range": "0.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.92,
+            "range": "0.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 641.25,
+            "range": "23.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 682.88,
+            "range": "10.23",
             "unit": "ms"
           }
         ]
