@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787071082571,
+  "lastUpdate": 1787093916376,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -508921,6 +508921,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 14.47,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "27183f6e0a2956577a6e07913b00f33d05947ab4",
+          "message": "Add an always-on docs table of contents\n\nEvery docs page now renders beside a contents rail listing every page\nand, for the page being read, its h2/h3 anchors. Below `md` the rail\ncollapses into a sticky \"Contents\" bar disclosing the same list.\n\nSplit `lib/docs.ts` out of `lib/docs-nav.ts`. The table of contents is\na client component, so importing `docsHref` from the manifest reader\npulled `fs` and `gray-matter` into the browser bundle.\n\nThe shell's vertical padding sits on its children rather than on\n`.doc-shell`, so the sticky box rests exactly where `top-0` pins it\ninstead of jumping on first scroll.\n\n`#app-content` on the scroller carries a `scroll-padding-top` below\n`md`, so a fragment target, or the new page when Next leaves a\n`#fragment` URL, lands clear of the pinned bar rather than under it.\n\n`docs/[...slug]` gains its first client component, so its first-load\nJS in the bundle bench is expected to move.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-18T18:45:05-04:00",
+          "tree_id": "6732af6c4d193f8b62d668ed4f4c647d12226bd3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/27183f6e0a2956577a6e07913b00f33d05947ab4"
+        },
+        "date": 1787093881455,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 704.47,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 872.92,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 641.63,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 810.08,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 651.74,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 820.19,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 624.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 792.77,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 625.35,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 793.8,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1029.96,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 14.72,
             "unit": "KB"
           },
           {
