@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 
-import { buildDocsNav, readDocsNavOrder, type DocsNavNode } from "@/lib/docs-nav";
+import { buildDocsNav, readDocsNavOrder } from "@/lib/docs-nav";
+import type { DocsNavNode } from "@/lib/docs";
 import { getMarkdownSlugs } from "@/lib/markdown";
 
 // ---------------------------------------------------------------------------

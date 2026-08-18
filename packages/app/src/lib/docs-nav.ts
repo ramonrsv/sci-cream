@@ -2,32 +2,11 @@ import fs from "fs";
 import path from "path";
 import { cache } from "react";
 
-import { CONTENT_ROOT, getMarkdownPage, type MarkdownHeading } from "@/lib/markdown";
-
-/** Content section the docs navigation is built from. */
-const DOCS_SECTION = "docs";
+import { DOCS_SECTION, type DocsNavNode } from "@/lib/docs";
+import { CONTENT_ROOT, getMarkdownPage } from "@/lib/markdown";
 
 /** Manifest naming every docs page, in table-of-contents order; `_` sorts it above them. */
 const NAV_MANIFEST = "_nav.json";
-
-/** One entry in the docs table of contents: a page and the pages nested under it. */
-export interface DocsNavNode {
-  /** Content slug, e.g. `other-resources/science`; every page is served at `/docs/{slug}`. */
-  slug: string;
-  /** Frontmatter `title`, the entry's label. */
-  title: string;
-  /** Frontmatter `description`, the index page's blurb for this entry. */
-  description?: string;
-  /** The page's own headings, in document order; the caller picks which levels to list. */
-  headings: MarkdownHeading[];
-  /** Pages nested under this one; see {@link buildDocsNav}. */
-  children: DocsNavNode[];
-}
-
-/** Route a docs slug is served at. */
-export function docsHref(slug: string): string {
-  return `/${DOCS_SECTION}/${slug}`;
-}
 
 /** Slugs the manifest lists, in order. */
 export function readDocsNavOrder(): string[] {

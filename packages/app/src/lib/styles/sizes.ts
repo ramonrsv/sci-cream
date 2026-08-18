@@ -16,6 +16,8 @@ export const DETAIL_PANEL_ACTION_ICON_SIZE = 14;
 export const LIST_ITEM_MARKER_ICON_SIZE = 12;
 /** Icon size (px) for the mark naming a toolbar select, sized under its `text-sm` label. */
 export const SELECT_ICON_SIZE = 14;
+/** Icon size (px) for the docs table-of-contents disclosure chevron, under its `text-sm` label. */
+export const DOCS_TOC_ICON_SIZE = 14;
 
 /** Icon size (px) used in the header. */
 export const HEADER_ICON_SIZE = 20;

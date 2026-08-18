@@ -160,7 +160,11 @@ export function Navbar({ children }: { children: React.ReactNode }) {
           {/* `scrollbar-gutter:stable` keeps content width fixed when the scrollbar toggles,
               so `react-grid-layout` on the calculator page can't flip breakpoints at viewport
               widths where the container straddles one (e.g. Pixel 5 landscape at 802px). */}
-          <div data-testid="app-content" className="flex-1 scrollbar-gutter-stable overflow-auto">
+          <div
+            id="app-content"
+            data-testid="app-content"
+            className="flex-1 scrollbar-gutter-stable overflow-auto"
+          >
             {children}
           </div>
         </div>
@@ -289,7 +293,7 @@ export function Sidebar() {
         {...hoverProps}
       >
         {/* Nav links */}
-        <nav className="mt-1 flex flex-1 flex-col gap-1 px-2">
+        <nav aria-label="Main" className="mt-1 flex flex-1 flex-col gap-1 px-2">
           {navItems.map(({ href, label, icon: Icon }) => {
             const active = isNavActive(pathname, href);
             return (

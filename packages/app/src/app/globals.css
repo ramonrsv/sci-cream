@@ -500,9 +500,33 @@ tbody tr:hover > .table-emphasis {
   @apply mx-auto max-w-5xl py-2 pr-2 sm:px-6 sm:py-10;
 }
 
-/* Prose zeroes each article's outer margins, so the gap supplies the space between listed pages. */
-.doc-page {
-  @apply mx-auto flex max-w-5xl flex-col gap-12 py-2 pr-2 sm:px-6 sm:py-10;
+/* `pr-2` only: the app sidebar's in-flow spacer is the left gutter. Vertical padding belongs to
+   the children, so the sticky rail rests exactly where `top-0` pins it. */
+.doc-shell {
+  @apply mx-auto flex w-full max-w-6xl flex-col gap-3 pr-2 sm:px-6 md:flex-row md:gap-8;
+}
+
+/* `min-w-0` so wide content shrinks here rather than squeezing the rail; a flex item otherwise
+   floors at its intrinsic width. Top padding only at `md+`, where the rail sits beside it. */
+.doc-content {
+  @apply min-w-0 flex-1 pb-2 sm:pb-10 md:pt-10;
+}
+
+/* `md:self-start` is load-bearing: stretched to the row, sticky has no travel. Padding rides
+   inside the box, so scrolling never shifts it; compact below `md` for the 4rem scroll-padding. */
+.doc-toc {
+  @apply border-brd bg-page sticky top-0 z-10 shrink-0 border-b py-2 md:pt-10;
+  @apply md:z-auto md:w-60 md:self-start md:overflow-y-auto md:border-b-0 md:pb-0;
+  /* Viewport less the `h-12` header and a bottom gap matching the top padding. */
+  @apply md:max-h-[calc(100vh-3rem-2.5rem)];
+}
+
+/* The pinned bar would cover what the browser scrolls to: a fragment, or the new page when Next
+   leaves a `#fragment` URL. That targets the article, so `scroll-margin` on headings misses it. */
+@media (width < 48rem) {
+  #app-content:has(.doc-shell) {
+    scroll-padding-top: 4rem;
+  }
 }
 
 /* Badge rows: preflight makes every image a block, so a paragraph of badges would stack. */

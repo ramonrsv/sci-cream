@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import fs from "fs";
 
-import { buildDocsNav, docsHref, readDocsNavOrder } from "./docs-nav";
+import { buildDocsNav, readDocsNavOrder } from "./docs-nav";
 
 const readFileSyncSpy = vi.spyOn(fs, "readFileSync");
 
@@ -31,17 +31,6 @@ function mockDocs(order: string[], pages: Record<string, string>) {
 function page(title: string, description = "") {
   return `---\ntitle: ${title}\ndescription: ${description}\n---\n# ${title}`;
 }
-
-// ---------------------------------------------------------------------------
-// docsHref
-// ---------------------------------------------------------------------------
-
-describe("docsHref", () => {
-  it("serves every page at its slug, nested ones included", () => {
-    expect(docsHref("overview")).toBe("/docs/overview");
-    expect(docsHref("other-resources/science")).toBe("/docs/other-resources/science");
-  });
-});
 
 // ---------------------------------------------------------------------------
 // readDocsNavOrder

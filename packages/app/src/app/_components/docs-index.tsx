@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { docsHref, type DocsNavNode } from "@/lib/docs-nav";
+import { docsHref, type DocsNavNode } from "@/lib/docs";
 
 interface EntryProps {
   node: DocsNavNode;

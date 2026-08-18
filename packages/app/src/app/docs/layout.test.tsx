@@ -10,33 +10,27 @@ vi.mock("@/lib/docs-nav", async (importOriginal) => ({
   getDocsNav: vi.fn(),
 }));
 
-vi.mock("@/app/_components/docs-index", () => ({
-  DocsIndex: ({ nav }: { nav: DocsNavNode[] }) => (
-    <div data-testid="docs-index">{nav.map((node) => node.slug).join(",")}</div>
+vi.mock("@/app/_components/docs-toc", () => ({
+  DocsToc: ({ nav }: { nav: DocsNavNode[] }) => (
+    <div data-testid="docs-toc">{nav.map((node) => node.slug).join(",")}</div>
   ),
 }));
 
-const { default: DocsPage, metadata } = await import("./page");
+const { default: DocsLayout } = await import("./layout");
 const { getDocsNav } = await import("@/lib/docs-nav");
 
 afterEach(() => cleanup());
 
-describe("metadata", () => {
-  it("names the section, there being no markdown frontmatter to take it from", () => {
-    expect(metadata.title).toBe("Documentation");
-    expect(metadata.description).toBeDefined();
-  });
-});
-
-describe("DocsPage", () => {
-  it("renders the index from the nav tree", async () => {
+describe("DocsLayout", () => {
+  it("renders the page beside a table of contents built from the nav tree", async () => {
     vi.mocked(getDocsNav).mockResolvedValue([
       { slug: "background", title: "Background", headings: [], children: [] },
       { slug: "overview", title: "Overview", headings: [], children: [] },
     ]);
 
-    render(await DocsPage());
+    render(await DocsLayout({ children: <p>page body</p> }));
 
-    expect(screen.getByTestId("docs-index")).toHaveTextContent("background,overview");
+    expect(screen.getByTestId("docs-toc")).toHaveTextContent("background,overview");
+    expect(screen.getByText("page body")).toBeInTheDocument();
   });
 });
