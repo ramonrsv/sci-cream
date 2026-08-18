@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787068402693,
+  "lastUpdate": 1787069834361,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -440263,6 +440263,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 722.25,
             "range": "9.69",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e564abde6fa85f4446480e88967187423674399f",
+          "message": "Add comment threads to blog posts and docs pages\n\nThe thread is a client island: both `[slug]` routes are statically\ngenerated, and mounting it on the server would end that. It fetches\non mount instead, so comments are absent from the initial HTML and\ngo unindexed — the trade for keeping the pages static.\n\nOne level of replies, matching what the actions permit. A tombstone\nrenders `[deleted]` and offers nothing to act on, so a thread anyone\nreplied to can only be cleared by an admin: the report queue gets\n`Purge comment` alongside `Delete comment`, offered on tombstones\ntoo, since clearing those is what purging is for.\n\n`Markdown` now marks outbound links `ugc nofollow`. It renders\npublic comments as well as private notes, and applying this to every\ncaller rather than a prop means a later public surface cannot forget\nit.\n\nValidating a subject reads `content/` per request, the only runtime\nread of it — every other caller runs during the build. Output\ntracing already ships the directory with the routes that reach it,\nresolving the path far enough to take the whole of it, so this needs\nno configuration. `isKnownSubject` carries the note, its `catch`\nbeing what would turn a miss into every subject reading unknown\nrather than into an error.\n\nA full e2e run leaves two rows behind by design, no participant\nbeing able to clear a thread. The seed truncates, so reseeding\nresets it; CI gives each job its own database.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-18T11:33:47-04:00",
+          "tree_id": "dbe690e45f3212bc47a5fa4ccbf7665e94c6b43d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e564abde6fa85f4446480e88967187423674399f"
+        },
+        "date": 1787069787940,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 47.38,
+            "range": "3.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 59.88,
+            "range": "4.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 68,
+            "range": "8.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2502,
+            "range": "51.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 322.75,
+            "range": "3.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 333.75,
+            "range": "5.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 352.63,
+            "range": "8.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16946.63,
+            "range": "123.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 945.75,
+            "range": "21.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 56,
+            "range": "2.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59.25,
+            "range": "2.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.38,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.75,
+            "range": "2.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 138,
+            "range": "2.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 97.75,
+            "range": "3.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 61.08,
+            "range": "1.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 47.88,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 666.25,
+            "range": "12.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 702.75,
+            "range": "18.21",
             "unit": "ms"
           }
         ]
