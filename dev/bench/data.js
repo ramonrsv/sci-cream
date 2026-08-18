@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786988567367,
+  "lastUpdate": 1787068009232,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -534190,6 +534190,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/3d09b4029d705859d61a965a0292c9728a2af410"
         },
         "date": 1786987726907,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e564abde6fa85f4446480e88967187423674399f",
+          "message": "Add comment threads to blog posts and docs pages\n\nThe thread is a client island: both `[slug]` routes are statically\ngenerated, and mounting it on the server would end that. It fetches\non mount instead, so comments are absent from the initial HTML and\ngo unindexed — the trade for keeping the pages static.\n\nOne level of replies, matching what the actions permit. A tombstone\nrenders `[deleted]` and offers nothing to act on, so a thread anyone\nreplied to can only be cleared by an admin: the report queue gets\n`Purge comment` alongside `Delete comment`, offered on tombstones\ntoo, since clearing those is what purging is for.\n\n`Markdown` now marks outbound links `ugc nofollow`. It renders\npublic comments as well as private notes, and applying this to every\ncaller rather than a prop means a later public surface cannot forget\nit.\n\nValidating a subject reads `content/` per request, the only runtime\nread of it — every other caller runs during the build. Output\ntracing already ships the directory with the routes that reach it,\nresolving the path far enough to take the whole of it, so this needs\nno configuration. `isKnownSubject` carries the note, its `catch`\nbeing what would turn a miss into every subject reading unknown\nrather than into an error.\n\nA full e2e run leaves two rows behind by design, no participant\nbeing able to clear a thread. The seed truncates, so reseeding\nresets it; CI gives each job its own database.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-18T11:33:47-04:00",
+          "tree_id": "dbe690e45f3212bc47a5fa4ccbf7665e94c6b43d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e564abde6fa85f4446480e88967187423674399f"
+        },
+        "date": 1787067970628,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
