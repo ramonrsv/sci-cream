@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787093950148,
+  "lastUpdate": 1787094079731,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -526546,6 +526546,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.6,
             "range": "0.60",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "27183f6e0a2956577a6e07913b00f33d05947ab4",
+          "message": "Add an always-on docs table of contents\n\nEvery docs page now renders beside a contents rail listing every page\nand, for the page being read, its h2/h3 anchors. Below `md` the rail\ncollapses into a sticky \"Contents\" bar disclosing the same list.\n\nSplit `lib/docs.ts` out of `lib/docs-nav.ts`. The table of contents is\na client component, so importing `docsHref` from the manifest reader\npulled `fs` and `gray-matter` into the browser bundle.\n\nThe shell's vertical padding sits on its children rather than on\n`.doc-shell`, so the sticky box rests exactly where `top-0` pins it\ninstead of jumping on first scroll.\n\n`#app-content` on the scroller carries a `scroll-padding-top` below\n`md`, so a fragment target, or the new page when Next leaves a\n`#fragment` URL, lands clear of the pinned bar rather than under it.\n\n`docs/[...slug]` gains its first client component, so its first-load\nJS in the bundle bench is expected to move.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-18T18:45:05-04:00",
+          "tree_id": "6732af6c4d193f8b62d668ed4f4c647d12226bd3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/27183f6e0a2956577a6e07913b00f33d05947ab4"
+        },
+        "date": 1787094036179,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.7,
+            "range": "12.15",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.59,
+            "range": "1.23",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.55,
+            "range": "1.19",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 174,
+            "range": "21.73",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.46,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 38,
+            "range": "7.75",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 174,
+            "range": "21.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.7,
+            "range": "12.28",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.72,
+            "range": "0.61",
             "unit": "ms"
           }
         ]
