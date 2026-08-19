@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787107616809,
+  "lastUpdate": 1787107707668,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -527571,6 +527571,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.72,
             "range": "0.61",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7711cffb155bbc3ce15d6f32b08d99fee922b995",
+          "message": "Test the docs table of contents\n\nSix e2e cases, written viewport-agnostically: each opens the list only\nwhen the disclosure is showing, so the rail and the collapsed bar are\ncovered by one run each rather than by two specs.\n\nTwo of them assert what only the narrow shape has, that a heading lands\nclear of the pinned bar and that picking a page closes the list, and\nskip where the rail sits beside the article and covers nothing.\n\n`waitForHydration` waits on the mark `WebVitals` sets from its root\neffect. `networkidle` is reached while React may still be attaching\nhandlers, and a click landing in that window hits static markup and\ngoes nowhere.\n\nVisually, the contents bar is shot collapsed and expanded at a mobile\nviewport, and the layout matrix gains `/docs/other-resources` — the one\npage carrying both nested children and headings of its own, so the\ncontents shows every kind of entry.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-18T22:43:58-04:00",
+          "tree_id": "589bf7b24d41c16ece3875f3760ba3f27b3da005",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7711cffb155bbc3ce15d6f32b08d99fee922b995"
+        },
+        "date": 1787107663927,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.55,
+            "range": "9.17",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.76,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.7,
+            "range": "1.86",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 167.5,
+            "range": "7.60",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.42,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 167.5,
+            "range": "7.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.61,
+            "range": "9.00",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.67,
+            "range": "0.69",
             "unit": "ms"
           }
         ]
