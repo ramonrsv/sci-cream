@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787177517748,
+  "lastUpdate": 1787177521853,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -535460,6 +535460,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/cfe45c65af7cb766675351b6f812d3d56ebf0d0d"
         },
         "date": 1787157875483,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "046f03a1cacbd32e8c23d250e323380efb46b415",
+          "message": "Close comment's reports when moderator removes it\n\nActing on a reported comment is what its reports asked for, so the\nqueue should stop listing one an admin has already blanked. The\nresolve rides in the same transaction as the tombstone, and a hard\ndelete needs none — the cascade takes the reports with the row.\n\nA withdrawal is left alone. Nobody with authority has judged it, the\nreplies it was holding up are still there, and purging those is a\ndecision only an admin can take.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T16:53:15-04:00",
+          "tree_id": "4e50d298175bcd216ed6379ceb44a06d59770bdf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/046f03a1cacbd32e8c23d250e323380efb46b415"
+        },
+        "date": 1787177520743,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
