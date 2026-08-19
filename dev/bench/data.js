@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787177521853,
+  "lastUpdate": 1787177616701,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -530272,6 +530272,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.65,
             "range": "0.54",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "046f03a1cacbd32e8c23d250e323380efb46b415",
+          "message": "Close comment's reports when moderator removes it\n\nActing on a reported comment is what its reports asked for, so the\nqueue should stop listing one an admin has already blanked. The\nresolve rides in the same transaction as the tombstone, and a hard\ndelete needs none — the cascade takes the reports with the row.\n\nA withdrawal is left alone. Nobody with authority has judged it, the\nreplies it was holding up are still there, and purging those is a\ndecision only an admin can take.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T16:53:15-04:00",
+          "tree_id": "4e50d298175bcd216ed6379ceb44a06d59770bdf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/046f03a1cacbd32e8c23d250e323380efb46b415"
+        },
+        "date": 1787177571935,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.95,
+            "range": "9.13",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.74,
+            "range": "0.74",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.68,
+            "range": "0.76",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 165,
+            "range": "11.62",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.39,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 165,
+            "range": "11.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.18,
+            "range": "8.98",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.3,
+            "range": "0.37",
             "unit": "ms"
           }
         ]
