@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787107588888,
+  "lastUpdate": 1787107592671,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -536549,6 +536549,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/27183f6e0a2956577a6e07913b00f33d05947ab4"
         },
         "date": 1787093889077,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7711cffb155bbc3ce15d6f32b08d99fee922b995",
+          "message": "Test the docs table of contents\n\nSix e2e cases, written viewport-agnostically: each opens the list only\nwhen the disclosure is showing, so the rail and the collapsed bar are\ncovered by one run each rather than by two specs.\n\nTwo of them assert what only the narrow shape has, that a heading lands\nclear of the pinned bar and that picking a page closes the list, and\nskip where the rail sits beside the article and covers nothing.\n\n`waitForHydration` waits on the mark `WebVitals` sets from its root\neffect. `networkidle` is reached while React may still be attaching\nhandlers, and a click landing in that window hits static markup and\ngoes nowhere.\n\nVisually, the contents bar is shot collapsed and expanded at a mobile\nviewport, and the layout matrix gains `/docs/other-resources` — the one\npage carrying both nested children and headings of its own, so the\ncontents shows every kind of entry.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-18T22:43:58-04:00",
+          "tree_id": "589bf7b24d41c16ece3875f3760ba3f27b3da005",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7711cffb155bbc3ce15d6f32b08d99fee922b995"
+        },
+        "date": 1787107543873,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
