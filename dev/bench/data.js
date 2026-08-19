@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787180070522,
+  "lastUpdate": 1787180164611,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -532322,6 +532322,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.59,
             "range": "0.40",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "109edd95fbab3e298a763c311bae3ea8092a9e9c",
+          "message": "Seed a moderator-removed comment for tests\n\n`[removed]` had unit tests but rendered nowhere a snapshot or an e2e\nrun could see it. The seed now carries one, as a reply: a childless\nroot is deleted outright rather than blanked, so a removed root would\nbe a state the app cannot reach.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T18:47:17-04:00",
+          "tree_id": "80a30875127ed941a2cc4ee36eaa67ec0ac4c226",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/109edd95fbab3e298a763c311bae3ea8092a9e9c"
+        },
+        "date": 1787180128564,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 52.36,
+            "range": "7.44",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 12.21,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 12.19,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 144.5,
+            "range": "6.76",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.41,
+            "range": "0.03",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 144.5,
+            "range": "6.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 49.4,
+            "range": "7.26",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.83,
+            "range": "0.19",
             "unit": "ms"
           }
         ]
