@@ -117,14 +117,27 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       # Explicit ref: on `workflow_run` the default would be the branch head, not this commit.
+      # Without `lfs: true` the deploy ships pointer files in place of the `public/images` bytes.
       - uses: actions/checkout@v5
         with:
           ref: ${{ env.DEPLOY_SHA }}
+          lfs: true
       - uses: ./.github/actions/setup-rust
         with:
           cargo-installs: wasm-pack
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/sci-cream-package
+
+      # `-I` skips binaries, so only pointer files — text where an image belongs — can match.
+      - name: Check that LFS assets were fetched
+        working-directory: .
+        run: |
+          pointers=$(grep -rlI 'https://git-lfs.github.com/spec/v1' packages/app/public || true)
+          if [ -n "$pointers" ]; then
+            echo "::error::Unfetched LFS pointers under packages/app/public:"
+            echo "$pointers"
+            exit 1
+          fi
 
       # The Vercel CLI runs from the repository root and honors the project's own Root Directory
       # setting, so the build reproduces what Vercel's Git integration would have run.
