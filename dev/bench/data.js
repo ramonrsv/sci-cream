@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787109602852,
+  "lastUpdate": 1787112705659,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -537544,6 +537544,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/7711cffb155bbc3ce15d6f32b08d99fee922b995"
         },
         "date": 1787107543873,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f25001c0cac9cbd317db972b53536c0dab78a9d5",
+          "message": "Record who deleted a comment\n\nA tombstone now reads `[deleted]` where the author withdrew it and\n`[removed]` where a moderator took it down, which are different\nthings to a reader.\n\n`comments.deleted_by` holds the id rather than a flag, so the acting\nmoderator stays recoverable; only the derived `deleted_by <> author`\ncrosses the wire. It pairs with `deleted_at` under a check, so the\nmigration attributes existing tombstones to their author before\nadding it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-18T23:48:03-04:00",
+          "tree_id": "d147af5952b07e817d4b9367cf5b2ec0d11822ce",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f25001c0cac9cbd317db972b53536c0dab78a9d5"
+        },
+        "date": 1787112675084,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
