@@ -37,6 +37,7 @@ import {
   HEADER_W_PINNED,
   HEADER_W_PEEK,
 } from "@/lib/styles/sizes";
+import { Logo } from "@/app/_elements/logo";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
 import { GroupBySelect } from "@/app/_elements/selects/group-by-select";
 import { STORAGE_KEYS } from "@/lib/local-storage";
@@ -209,13 +210,7 @@ export function Header() {
           {/* Fixed width keeps the controls positioned; the clipper above reveals them. */}
           <div className={`flex h-full items-center ${HEADER_W_PEEK}`}>
             {canHover ? (
-              <Image
-                src="/favicon.ico"
-                alt="Sci-Cream"
-                width={logoSize}
-                height={logoSize}
-                className="mr-auto ml-4 sm:ml-6"
-              />
+              <Logo size={logoSize} className="mr-auto ml-4 sm:ml-6" />
             ) : (
               <button
                 title={peek ? "Un-peek sidebar" : "Peek sidebar"}

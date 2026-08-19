@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Logo } from "@/app/_elements/logo";
 
 /** Sign-up page with a name, email, password, and confirm form that posts to `/api/auth/signup` */
 export default function SignUpPage() {
@@ -48,7 +48,7 @@ export default function SignUpPage() {
     <div id="signup" className="flex min-h-screen items-center justify-center">
       <div className="signin-container w-full max-w-sm p-8">
         <div className="mb-6 flex flex-col items-center gap-3">
-          <Image src="/favicon.ico" alt="Sci-Cream" width={40} height={40} />
+          <Logo size={40} />
           <h1 className="text-primary text-xl font-bold">Create an account</h1>
           <p className="text-secondary text-sm">Sign up with email and password</p>
         </div>

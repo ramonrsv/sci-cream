@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { Logo } from "@/app/_elements/logo";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
@@ -26,7 +27,7 @@ function SignInForm() {
     <div id="signin" className="flex min-h-screen items-center justify-center">
       <div className="signin-container w-full max-w-sm p-8">
         <div className="mb-6 flex flex-col items-center gap-3">
-          <Image src="/favicon.ico" alt="Sci-Cream" width={40} height={40} />
+          <Logo size={40} />
           <h1 className="text-primary text-xl font-bold">Sign in to Sci-Cream</h1>
           <p className="text-secondary text-sm">Choose a provider to continue</p>
         </div>

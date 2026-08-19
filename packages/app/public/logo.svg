@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="sci-cream logo">
+  <title>sci-cream</title>
+  <!-- Colors mirror the app's theme tokens in src/app/globals.css, so this file matches the
+       inlined Logo component: fill = the color-graph-blue token, stroke = color-text-primary.
+       Standalone consumers (favicon, OG images, README) have no `.dark` class to read, so the
+       light/dark split falls back to the OS preference here. Keep in sync with globals.css. -->
+  <style>
+    .hex-outline { stroke: rgb(33, 32, 28); }
+    @media (prefers-color-scheme: dark) {
+      .hex-outline { stroke: rgb(255, 255, 255); }
+    }
+  </style>
+
+  <!-- Filled region: upper-left vertex, 60° arc through the hexagon centre, landing on the
+       midpoint of the lower-right edge, then back along the lower-left and left edges. -->
+  <path d="M 34.47 74
+           A 194.7 194.7 0 0 1 174.77 209
+           L 128 236
+           L 34.47 182
+           Z"
+        fill="rgb(0, 162, 200)"/>
+
+  <!-- Regular pointy-top hexagon, circumradius 108, centred at (128,128). -->
+  <path class="hex-outline"
+        d="M 128 20
+           L 221.53 74
+           L 221.53 182
+           L 128 236
+           L 34.47 182
+           L 34.47 74
+           Z"
+        fill="none" stroke-width="7" stroke-linejoin="round"/>
+</svg>

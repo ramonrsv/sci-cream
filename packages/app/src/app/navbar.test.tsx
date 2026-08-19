@@ -267,7 +267,7 @@ describe("Header / Sidebar — pin and peek", () => {
     );
 
     // Wait for the desktop layout (logo, not hamburger) to resolve, then hover to peek.
-    await screen.findByAltText("Sci-Cream");
+    await screen.findByRole("img", { name: "Sci-Cream" });
     const sidebar = screen.getByRole("complementary");
     fireEvent.mouseEnter(sidebar);
     expect(sidebar).toHaveClass("w-54");
@@ -292,7 +292,7 @@ describe("Header / Sidebar — pin and peek", () => {
     );
 
     // Desktop shows the logo, not the hamburger.
-    expect(await screen.findByAltText("Sci-Cream")).toBeInTheDocument();
+    expect(await screen.findByRole("img", { name: "Sci-Cream" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Peek sidebar" })).toBeNull();
 
     const sidebar = screen.getByRole("complementary");
@@ -312,7 +312,7 @@ describe("Header / Sidebar — pin and peek", () => {
 
     // Wide but touch (landscape phone): the peek affordance is the hamburger, not the logo.
     expect(await screen.findByRole("button", { name: "Peek sidebar" })).toBeInTheDocument();
-    expect(screen.queryByAltText("Sci-Cream")).toBeNull();
+    expect(screen.queryByRole("img", { name: "Sci-Cream" })).toBeNull();
   });
 
   it("dismisses the peek drawer when navigating on a wide touch device", async () => {
@@ -364,7 +364,7 @@ describe("Header / Sidebar — pin and peek", () => {
     );
 
     // Narrow yet mouse-driven: logo (not hamburger), and hover opens the peek.
-    expect(await screen.findByAltText("Sci-Cream")).toBeInTheDocument();
+    expect(await screen.findByRole("img", { name: "Sci-Cream" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Peek sidebar" })).toBeNull();
 
     const sidebar = screen.getByRole("complementary");
