@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787180692244,
+  "lastUpdate": 1787180760067,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -533203,6 +533203,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.83,
             "range": "0.19",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "13eb8b9e92ea5da84e5ab0dfe745546f7ebc1f3a",
+          "message": "Add white background to 'Ice Cream Science' banner\n\n* Add `background: white` to the 'Ice Cream Science' banner in\n  `other-resources`; it was difficult to see in dark color theme.",
+          "timestamp": "2026-08-19T19:01:31-04:00",
+          "tree_id": "126ae1e5d8096273001e96dbf998f39d334b3a6f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/13eb8b9e92ea5da84e5ab0dfe745546f7ebc1f3a"
+        },
+        "date": 1787180713902,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.32,
+            "range": "8.23",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.46,
+            "range": "0.76",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.45,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 169,
+            "range": "10.72",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.41,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 38,
+            "range": "7.75",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 169,
+            "range": "10.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.66,
+            "range": "5.96",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.26,
+            "range": "0.31",
             "unit": "ms"
           }
         ]
