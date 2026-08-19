@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787180648436,
+  "lastUpdate": 1787180651494,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -538426,6 +538426,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/109edd95fbab3e298a763c311bae3ea8092a9e9c"
         },
         "date": 1787180069428,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "13eb8b9e92ea5da84e5ab0dfe745546f7ebc1f3a",
+          "message": "Add white background to 'Ice Cream Science' banner\n\n* Add `background: white` to the 'Ice Cream Science' banner in\n  `other-resources`; it was difficult to see in dark color theme.",
+          "timestamp": "2026-08-19T19:01:31-04:00",
+          "tree_id": "126ae1e5d8096273001e96dbf998f39d334b3a6f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/13eb8b9e92ea5da84e5ab0dfe745546f7ebc1f3a"
+        },
+        "date": 1787180650674,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
