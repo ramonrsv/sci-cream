@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787158266900,
+  "lastUpdate": 1787161272174,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -443299,6 +443299,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 562.13,
             "range": "7.15",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cfe45c65af7cb766675351b6f812d3d56ebf0d0d",
+          "message": "Draw the logo as a vector mark that tracks theme\n\n`Logo` renders inline rather than through `<img src=\"/logo.svg\">`. An\n`<img>` is its own document, where the `.dark` class and the theme\ntokens are both out of reach, so a file can only follow\n`prefers-color-scheme` — the OS, not `ThemeSelect`. Inline, the colours\ncome from `fill-graph-blue` and `stroke-txt-prim` through the cascade,\nwhich keeps `useTheme` out of it and avoids a hydration mismatch.\n\nStroke width defaults to 14 below 32px. A stroke under a device pixel\ndoes not vanish, it anti-aliases to grey, discarding the token colour\nthe rest of the file is careful to match — the navbar renders at 22px,\nwhere 7 comes to 0.6px. A test pins the threshold.\n\n`icon.svg` replaces `favicon.ico`, a committed binary carried since the\ninitial commit with nothing in the repo to regenerate it. The SVG is its\nown source and carries the light/dark split a raster favicon cannot.\n\nThat leaves the mark in three files, the two `.svg` copies hard-coding\nvalues the component only names. A further test holds them to the\ncomponent's geometry and to the `globals.css` tokens, since a drifted\ncolour still renders — just off-brand.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T12:28:21-04:00",
+          "tree_id": "3d13e0960c7c52a30c1d50e024023e06cb5ce4b5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cfe45c65af7cb766675351b6f812d3d56ebf0d0d"
+        },
+        "date": 1787161227506,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 50.5,
+            "range": "2.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 56.75,
+            "range": "3.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 60,
+            "range": "2.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2473.25,
+            "range": "36.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 337.63,
+            "range": "4.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 344.63,
+            "range": "4.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 361.38,
+            "range": "6.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17310.88,
+            "range": "70.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 916.38,
+            "range": "21.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.5,
+            "range": "2.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.25,
+            "range": "1.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.88,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.38,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 125.5,
+            "range": "5.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 83.13,
+            "range": "0.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.17,
+            "range": "0.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 43.1,
+            "range": "0.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 620.75,
+            "range": "9.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 676.63,
+            "range": "23.11",
             "unit": "ms"
           }
         ]
