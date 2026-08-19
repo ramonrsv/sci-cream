@@ -31,7 +31,7 @@ const {
   resolveReport,
 } = await import("@/lib/data/comments");
 
-const { COMMENT_RATE_LIMIT, MAX_COMMENT_BODY_CHARS, CommentError } =
+const { COMMENT_RATE_LIMIT, MAX_COMMENT_BODY_CHARS, CommentDeletion, CommentError } =
   await import("@/lib/comments/comments");
 const { commentReportsTable, commentsTable, usersTable } = await import("@/lib/database/schema");
 const { db } = await import("@/lib/database/client");
@@ -163,7 +163,7 @@ describe("fetchComments", () => {
     expect(comments!.map((c) => c.body)).toEqual(["on overview"]);
   });
 
-  test("returns a tombstoned root with an empty body and the deleted flag", async () => {
+  test("returns a tombstoned root with an empty body and its deletion named", async () => {
     const root = await insertComment(SUBJECT, TEST_USER_A.email, "to be deleted");
     await insertComment(SUBJECT, TEST_USER_B.email, "keeps it alive", root);
 
@@ -172,7 +172,7 @@ describe("fetchComments", () => {
 
     const comments = await fetchComments(SUBJECT);
     const tombstone = comments!.find((c) => c.id === root);
-    expect(tombstone).toMatchObject({ body: "", deleted: true });
+    expect(tombstone).toMatchObject({ body: "", deletion: CommentDeletion.Author });
   });
 
   test.each([
@@ -436,7 +436,11 @@ describe("deleteComment", () => {
     // The middle of a thread reads correctly only if the removed reply still occupies its slot.
     const comments = await fetchComments(SUBJECT);
     expect(comments!.map((c) => c.body)).toEqual(["root", "", "second"]);
-    expect(comments!.map((c) => c.deleted)).toEqual([false, true, false]);
+    expect(comments!.map((c) => c.deletion)).toEqual([
+      undefined,
+      CommentDeletion.Author,
+      undefined,
+    ]);
   });
 
   test("keeps a root tombstoned while a tombstoned reply still hangs off it", async () => {
@@ -472,6 +476,33 @@ describe("deleteComment", () => {
 
     expect(await deleteComment(id)).toEqual({ ok: true, value: { tombstoned: false } });
     expect(await readComment(id)).toBeUndefined();
+  });
+
+  test("marks an admin's delete of another's comment as a moderator removal", async () => {
+    const root = await insertComment(SUBJECT, TEST_USER_B.email, "root");
+    await insertComment(SUBJECT, TEST_USER_B.email, "reply", root);
+    signInAs(TEST_USER_A.email);
+
+    await deleteComment(root);
+
+    const comments = await fetchComments(SUBJECT);
+    expect(comments!.find((c) => c.id === root)).toMatchObject({
+      deletion: CommentDeletion.Moderator,
+    });
+  });
+
+  // Admin-ness is not what makes a removal moderation; acting on someone else's comment is.
+  test("marks an admin's delete of their own comment as a withdrawal", async () => {
+    const root = await insertComment(SUBJECT, TEST_USER_A.email, "root");
+    await insertComment(SUBJECT, TEST_USER_B.email, "reply", root);
+    signInAs(TEST_USER_A.email);
+
+    await deleteComment(root);
+
+    const comments = await fetchComments(SUBJECT);
+    expect(comments!.find((c) => c.id === root)).toMatchObject({
+      deletion: CommentDeletion.Author,
+    });
   });
 
   test("rejects a delete of a comment that does not exist", async () => {

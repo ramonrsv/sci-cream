@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 
 import {
   COMMENT_ERROR_MESSAGES,
+  CommentDeletion,
   CommentError,
   MAX_COMMENT_BODY_CHARS,
   formatRelativeTime,
@@ -20,7 +21,6 @@ function makeComment(id: number, parentId: number | null = null): CommentJson {
     authorDisplayName: "Tester",
     body: `body ${id}`,
     createdAt: "2026-08-01T12:00:00.000Z",
-    deleted: false,
   };
 }
 
@@ -149,9 +149,9 @@ describe("groupCommentThreads", () => {
   });
 
   it("keeps a tombstoned root so its replies survive", () => {
-    const tombstone = { ...makeComment(1), body: "", deleted: true };
+    const tombstone = { ...makeComment(1), body: "", deletion: CommentDeletion.Author };
     const threads = groupCommentThreads([tombstone, makeComment(2, 1)]);
-    expect(threads[0].root.deleted).toBe(true);
+    expect(threads[0].root.deletion).toBe(CommentDeletion.Author);
     expect(threads[0].replies.map((r) => r.id)).toEqual([2]);
   });
 });

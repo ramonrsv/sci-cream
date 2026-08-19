@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, waitFor, within } from "@testing-library/react";
 
 import { CommentThread } from "@/app/_components/comment-thread";
-import { CommentError, type CommentJson } from "@/lib/comments/comments";
+import { CommentDeletion, CommentError, type CommentJson } from "@/lib/comments/comments";
 import type { CommentSubject } from "@/lib/comments/subject";
 
 // ---------------------------------------------------------------------------
@@ -40,7 +40,6 @@ function makeComment(overrides: Partial<CommentJson> = {}): CommentJson {
     authorDisplayName: "Tester A",
     body: "First!",
     createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-    deleted: false,
     ...overrides,
   };
 }
@@ -308,7 +307,7 @@ describe("CommentThread per-comment actions", () => {
 
   it("offers no actions on a tombstoned root", async () => {
     vi.mocked(fetchComments).mockResolvedValue([
-      makeComment({ id: 1, body: "", deleted: true, authorId: OTHER_ID }),
+      makeComment({ id: 1, body: "", deletion: CommentDeletion.Author, authorId: OTHER_ID }),
       makeComment({ id: 2, parentId: 1, body: "reply", authorId: OTHER_ID }),
     ]);
     await renderThread();

@@ -206,6 +206,9 @@ export const commentSubjectTypeEnum = pgEnum("comment_subject_type", COMMENT_SUB
  * column. `deletedAt` marks a tombstone — a comment whose body was blanked rather than removed;
  * when to tombstone instead of deleting is the action layer's policy, not a schema rule. Removing
  * a row takes its replies with it, through the self-referencing cascade.
+ *
+ * `deletedBy` records who deleted it, `deletedBy <> author` separating a moderator's removal from
+ * a withdrawal. It holds the id rather than a flag so the acting moderator stays recoverable.
  */
 export const commentsTable = pgTable(
   "comments",
@@ -223,6 +226,8 @@ export const commentsTable = pgTable(
     updatedAt: timestamp("updated_at"),
     /** Set on a root kept only to hold its replies; the body is emptied in the same statement. */
     deletedAt: timestamp("deleted_at"),
+    /** Who deleted it: the author for a withdrawal, an admin for a moderator removal. */
+    deletedBy: integer("deleted_by").references(() => usersTable.id),
   },
   (table) => [
     foreignKey({
@@ -232,6 +237,10 @@ export const commentsTable = pgTable(
     }).onDelete("cascade"),
     index("comments_subject_idx").on(table.subjectType, table.subjectKey, table.createdAt),
     check("comments_body_len", sql`char_length(${table.body}) <= 2000`),
+    check(
+      "comments_deleted_both_or_neither",
+      sql`(${table.deletedAt} IS NULL) = (${table.deletedBy} IS NULL)`,
+    ),
   ],
 );
 

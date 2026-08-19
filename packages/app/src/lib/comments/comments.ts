@@ -15,6 +15,23 @@ export const COMMENT_RATE_LIMIT = 5;
 /** Width of the rate-limit window, in minutes. */
 export const COMMENT_RATE_WINDOW_MINUTES = 10;
 
+/**
+ * Who deleted a comment, which decides what its tombstone says.
+ * Derived server-side from `deleted_by`: the wire carries that a moderator acted, never which one.
+ */
+export enum CommentDeletion {
+  /** The author withdrew it. */
+  Author = "author",
+  /** An admin removed it, which is corrective action rather than a withdrawal. */
+  Moderator = "moderator",
+}
+
+/** What a tombstone renders in place of its body. */
+export const COMMENT_DELETION_LABELS: Record<CommentDeletion, string> = {
+  [CommentDeletion.Author]: "[deleted]",
+  [CommentDeletion.Moderator]: "[removed]",
+};
+
 /** A comment as sent to the client. The author's email never leaves the server. */
 export interface CommentJson {
   id: number;
@@ -30,8 +47,8 @@ export interface CommentJson {
   createdAt: string;
   /** Present only once edited; its presence is what renders the edited marker. */
   updatedAt?: string;
-  /** True for a tombstone: render `[deleted]` in place rather than dropping the row. */
-  deleted: boolean;
+  /** Present only for a tombstone, naming who deleted it; a row with one renders in place. */
+  deletion?: CommentDeletion;
 }
 
 /** A root comment together with its replies, oldest first. */

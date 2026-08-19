@@ -6,6 +6,7 @@ import { alias } from "drizzle-orm/pg-core";
 import {
   COMMENT_RATE_LIMIT,
   COMMENT_RATE_WINDOW_MINUTES,
+  CommentDeletion,
   CommentError,
   validateCommentBody,
   type CommentJson,
@@ -52,7 +53,10 @@ function toCommentJson(row: CommentSelect, authorDisplayName: string): CommentJs
     body: row.body,
     createdAt: row.createdAt.toISOString(),
     ...(row.updatedAt != null && { updatedAt: row.updatedAt.toISOString() }),
-    deleted: row.deletedAt != null,
+    // Anyone but the author is an admin, deletion being open to no one else.
+    ...(row.deletedAt != null && {
+      deletion: row.deletedBy === row.author ? CommentDeletion.Author : CommentDeletion.Moderator,
+    }),
   };
 }
 
@@ -127,7 +131,7 @@ async function isRateLimited(userId: number): Promise<boolean> {
  *
  * Public: no session required, and none consulted. Returns `undefined` for an unknown subject,
  * following the read convention in the sibling modules. Tombstones come back with an empty body
- * and `deleted: true` — their text was blanked at deletion, so there is nothing to withhold.
+ * and a `deletion` — their text was blanked at deletion, so there is nothing to withhold.
  */
 export async function fetchComments(subject: CommentSubject): Promise<CommentJson[] | undefined> {
   if (!isKnownSubject(subject)) {
@@ -216,7 +220,8 @@ export async function editComment(id: number, body: string): Promise<CommentResu
  * text leaves the database while the position that keeps the surrounding sequence readable stays.
  *
  * Final either way: a tombstone refuses a second delete as it refuses an edit, so `deletedAt`
- * records when the text went rather than when someone last pressed the button.
+ * records when the text went rather than when someone last pressed the button. `deletedBy` records
+ * who took it, which is what lets an admin's removal read differently from a withdrawal.
  */
 export async function deleteComment(id: number): Promise<CommentResult<{ tombstoned: boolean }>> {
   const user = await requireUser();
@@ -231,7 +236,7 @@ export async function deleteComment(id: number): Promise<CommentResult<{ tombsto
   if (existing.parentId !== null || (await countReplies(id)) > 0) {
     await db
       .update(commentsTable)
-      .set({ body: "", deletedAt: sql`now()` })
+      .set({ body: "", deletedAt: sql`now()`, deletedBy: user.id })
       .where(eq(commentsTable.id, id));
     return { ok: true, value: { tombstoned: true } };
   }

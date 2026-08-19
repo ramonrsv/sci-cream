@@ -1,7 +1,11 @@
 "use client";
 
 import { Markdown } from "@/app/_elements/markdown";
-import { formatRelativeTime, type CommentJson } from "@/lib/comments/comments";
+import {
+  COMMENT_DELETION_LABELS,
+  formatRelativeTime,
+  type CommentJson,
+} from "@/lib/comments/comments";
 
 /** Which actions to offer on a comment; the thread decides, this element only renders. */
 export interface CommentActions {
@@ -16,8 +20,8 @@ export interface CommentActions {
  * actions the thread passed. Purely presentational — every decision about who may do what is made
  * upstream (and again on the server, which is what actually enforces it).
  *
- * A tombstone renders `[deleted]` and offers no actions: its body was blanked in the database when
- * it was deleted, and it is kept only to hold its place in the thread.
+ * A tombstone offers no actions and has no body to render, that text having been blanked at
+ * deletion. It reads `[deleted]` where the author withdrew it, `[removed]` where a moderator did.
  */
 export function CommentItem({
   comment,
@@ -29,7 +33,7 @@ export function CommentItem({
   /** Slot under the comment for the thread's reply or edit composer. */
   children?: React.ReactNode;
 }) {
-  const { onReply, onEdit, onDelete, onReport } = comment.deleted ? {} : actions;
+  const { onReply, onEdit, onDelete, onReport } = comment.deletion === undefined ? actions : {};
   const hasActions = onReply ?? onEdit ?? onDelete ?? onReport;
 
   return (
@@ -40,10 +44,10 @@ export function CommentItem({
         {comment.updatedAt !== undefined && <span title={comment.updatedAt}>(edited)</span>}
       </div>
 
-      {comment.deleted ? (
-        <p className="text-secondary text-sm italic">[deleted]</p>
-      ) : (
+      {comment.deletion === undefined ? (
         <Markdown text={comment.body} />
+      ) : (
+        <p className="text-secondary text-sm italic">{COMMENT_DELETION_LABELS[comment.deletion]}</p>
       )}
 
       {hasActions && (

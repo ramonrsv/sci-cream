@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import { Markdown } from "@/app/_elements/markdown";
-import { formatRelativeTime } from "@/lib/comments/comments";
+import { COMMENT_DELETION_LABELS, formatRelativeTime } from "@/lib/comments/comments";
 import { deleteComment, fetchOpenReports, purgeComment, resolveReport } from "@/lib/data/comments";
 import type { OpenReportJson } from "@/lib/data/comments";
 
@@ -96,10 +96,12 @@ export function ReportQueue() {
                   {report.comment.subjectType}/{report.comment.subjectKey}
                 </Link>
               </div>
-              {report.comment.deleted ? (
-                <p className="text-secondary text-sm italic">[deleted]</p>
-              ) : (
+              {report.comment.deletion === undefined ? (
                 <Markdown text={report.comment.body} />
+              ) : (
+                <p className="text-secondary text-sm italic">
+                  {COMMENT_DELETION_LABELS[report.comment.deletion]}
+                </p>
               )}
             </div>
           )}
@@ -113,7 +115,7 @@ export function ReportQueue() {
             >
               Resolve
             </button>
-            {report.comment !== undefined && !report.comment.deleted && (
+            {report.comment !== undefined && report.comment.deletion === undefined && (
               <button
                 type="button"
                 onClick={() => void handleDelete(report.commentId)}

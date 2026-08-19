@@ -4,7 +4,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 
 import { CommentItem } from "@/app/_elements/comment";
-import type { CommentJson } from "@/lib/comments/comments";
+import { CommentDeletion, type CommentJson } from "@/lib/comments/comments";
 
 /** A comment with the fields a test cares about overridden. */
 function makeComment(overrides: Partial<CommentJson> = {}): CommentJson {
@@ -15,7 +15,6 @@ function makeComment(overrides: Partial<CommentJson> = {}): CommentJson {
     authorDisplayName: "Tester A",
     body: "A **bold** remark",
     createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-    deleted: false,
     ...overrides,
   };
 }
@@ -79,15 +78,23 @@ describe("CommentItem", () => {
     expect(spy).toHaveBeenCalledOnce();
   });
 
-  it("renders [deleted] instead of the body for a tombstone", () => {
-    render(<CommentItem comment={makeComment({ body: "", deleted: true })} />);
+  it("renders [deleted] instead of the body where the author withdrew it", () => {
+    render(<CommentItem comment={makeComment({ body: "", deletion: CommentDeletion.Author })} />);
     expect(screen.getByText("[deleted]")).toBeInTheDocument();
+  });
+
+  it("renders [removed] instead, where a moderator took it down", () => {
+    render(
+      <CommentItem comment={makeComment({ body: "", deletion: CommentDeletion.Moderator })} />,
+    );
+    expect(screen.getByText("[removed]")).toBeInTheDocument();
+    expect(screen.queryByText("[deleted]")).not.toBeInTheDocument();
   });
 
   it("offers no actions on a tombstone, whatever it is passed", () => {
     render(
       <CommentItem
-        comment={makeComment({ body: "", deleted: true })}
+        comment={makeComment({ body: "", deletion: CommentDeletion.Author })}
         actions={{ onReply: vi.fn(), onEdit: vi.fn(), onDelete: vi.fn(), onReport: vi.fn() }}
       />,
     );
@@ -95,7 +102,7 @@ describe("CommentItem", () => {
   });
 
   it("still shows the author and timestamp on a tombstone", () => {
-    render(<CommentItem comment={makeComment({ body: "", deleted: true })} />);
+    render(<CommentItem comment={makeComment({ body: "", deletion: CommentDeletion.Author })} />);
     expect(screen.getByText("Tester A")).toBeInTheDocument();
     expect(screen.getByText("3 hours ago")).toBeInTheDocument();
   });
