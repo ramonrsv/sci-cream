@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeAll, beforeEach, afterEach, vi } from "vitest";
-import { and, eq, gt, sql } from "drizzle-orm";
+import { and, eq, gt, isNull, sql } from "drizzle-orm";
 
 /**
  * Integration tests for the comment actions, against a real Postgres.
@@ -92,6 +92,16 @@ async function insertComment(
 async function readComment(id: number) {
   const [row] = await db.select().from(commentsTable).where(eq(commentsTable.id, id));
   return row;
+}
+
+/** The still-open reports filed against a comment. */
+async function openReportsFor(commentId: number) {
+  return db
+    .select()
+    .from(commentReportsTable)
+    .where(
+      and(eq(commentReportsTable.commentId, commentId), isNull(commentReportsTable.resolvedAt)),
+    );
 }
 
 let watermark = 0;
@@ -503,6 +513,32 @@ describe("deleteComment", () => {
     expect(comments!.find((c) => c.id === root)).toMatchObject({
       deletion: CommentDeletion.Author,
     });
+  });
+
+  test("closes the open reports on a comment a moderator removes", async () => {
+    const root = await insertComment(SUBJECT, TEST_USER_B.email, "root");
+    await insertComment(SUBJECT, TEST_USER_B.email, "reply", root);
+    signInAs(TEST_USER_A.email);
+    await reportComment(root, "spam");
+
+    await deleteComment(root);
+
+    const [report] = await openReportsFor(root);
+    expect(report).toBeUndefined();
+  });
+
+  // A withdrawal is not moderation, so the report stays open for an admin to judge — the replies
+  // it was holding up are still there, and purging them is a decision only they can take.
+  test("leaves the reports open when the author withdraws the comment", async () => {
+    const root = await insertComment(SUBJECT, TEST_USER_B.email, "root");
+    await insertComment(SUBJECT, TEST_USER_A.email, "reply", root);
+    signInAs(TEST_USER_A.email);
+    await reportComment(root, "spam");
+
+    signInAs(TEST_USER_B.email);
+    await deleteComment(root);
+
+    expect(await openReportsFor(root)).toHaveLength(1);
   });
 
   test("rejects a delete of a comment that does not exist", async () => {

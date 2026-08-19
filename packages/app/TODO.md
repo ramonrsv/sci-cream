@@ -15,9 +15,6 @@
 - [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
 - [ ] In the `PropertiesChart` tooltip, move the numeric value to the left so it does not overflow.
 - [ ] Make the reference and target ticks in `PropertiesBarChart` more visible. Also in watchers?
-- [ ] Have a moderator's delete resolve the open reports on that comment: `deleteComment` never
-      touches `comment_reports`, so the queue keeps listing a comment it has already blanked, with
-      `[removed]` where the body was. Resolve in the same transaction as the tombstone.
 - [ ] Seed a moderator-removed comment so `[removed]` gets visual coverage; it has unit tests only.
       Adding one changes the blog thread snapshots, so it needs a baseline update in the same pass.
 - [ ] Move the remaining inline icon `size={…}` literals (12, 13, 14 in `batch-builder`,
@@ -145,6 +142,9 @@
 
 ## Completed
 
+- [x] Have a moderator's delete resolve the open reports on that comment: `deleteComment` never
+      touches `comment_reports`, so the queue keeps listing a comment it has already blanked, with
+      `[removed]` where the body was. Resolve in the same transaction as the tombstone.
 - [x] Add support for comments in blog posts, maybe also in documentation posts.
 - [x] Split `data.test.ts` by domain to match `lib/data/`; at ~1000 lines it still mixes users,
       ingredients, recipes, and batches. The `db_migration` job in `app.yml` names the file

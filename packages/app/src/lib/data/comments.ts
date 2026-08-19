@@ -222,6 +222,10 @@ export async function editComment(id: number, body: string): Promise<CommentResu
  * Final either way: a tombstone refuses a second delete as it refuses an edit, so `deletedAt`
  * records when the text went rather than when someone last pressed the button. `deletedBy` records
  * who took it, which is what lets an admin's removal read differently from a withdrawal.
+ *
+ * A moderator's removal closes the open reports on the comment in the same transaction: acting on
+ * one is what those reports asked for, and the queue would otherwise keep listing a blanked row.
+ * A hard delete needs no such step — the cascade takes the reports with the row.
  */
 export async function deleteComment(id: number): Promise<CommentResult<{ tombstoned: boolean }>> {
   const user = await requireUser();
@@ -234,10 +238,18 @@ export async function deleteComment(id: number): Promise<CommentResult<{ tombsto
     return { ok: false, error: CommentError.Forbidden };
 
   if (existing.parentId !== null || (await countReplies(id)) > 0) {
-    await db
-      .update(commentsTable)
-      .set({ body: "", deletedAt: sql`now()`, deletedBy: user.id })
-      .where(eq(commentsTable.id, id));
+    await db.transaction(async (tx) => {
+      await tx
+        .update(commentsTable)
+        .set({ body: "", deletedAt: sql`now()`, deletedBy: user.id })
+        .where(eq(commentsTable.id, id));
+
+      if (existing.author === user.id) return;
+      await tx
+        .update(commentReportsTable)
+        .set({ resolvedAt: sql`now()` })
+        .where(and(eq(commentReportsTable.commentId, id), isNull(commentReportsTable.resolvedAt)));
+    });
     return { ok: true, value: { tombstoned: true } };
   }
 
