@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787177898941,
+  "lastUpdate": 1787178139461,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -444094,6 +444094,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 676.63,
             "range": "23.11",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "046f03a1cacbd32e8c23d250e323380efb46b415",
+          "message": "Close comment's reports when moderator removes it\n\nActing on a reported comment is what its reports asked for, so the\nqueue should stop listing one an admin has already blanked. The\nresolve rides in the same transaction as the tombstone, and a hard\ndelete needs none — the cascade takes the reports with the row.\n\nA withdrawal is left alone. Nobody with authority has judged it, the\nreplies it was holding up are still there, and purging those is a\ndecision only an admin can take.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T16:53:15-04:00",
+          "tree_id": "4e50d298175bcd216ed6379ceb44a06d59770bdf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/046f03a1cacbd32e8c23d250e323380efb46b415"
+        },
+        "date": 1787178099467,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 34.13,
+            "range": "3.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 40.38,
+            "range": "2.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 47.38,
+            "range": "3.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1735,
+            "range": "17.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 243.13,
+            "range": "5.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 254.63,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 261.88,
+            "range": "4.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 12588.25,
+            "range": "41.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 797.75,
+            "range": "20.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 43.13,
+            "range": "1.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 44.13,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 32.63,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 34,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 107.38,
+            "range": "2.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 59.13,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 39.73,
+            "range": "0.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.09,
+            "range": "0.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 512.63,
+            "range": "6.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 543.75,
+            "range": "11.62",
             "unit": "ms"
           }
         ]
