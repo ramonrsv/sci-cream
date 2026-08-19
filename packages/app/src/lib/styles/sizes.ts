@@ -66,6 +66,9 @@ export const HEADER_W_PINNED = SIDEBAR_W_PINNED;
 /** Peek header-left: matches the peek sidebar width. */
 export const HEADER_W_PEEK = SIDEBAR_W_PEEK;
 
+/** Header height, and the in-flow spacer that has to match it. Reads the `--header-h` metric. */
+export const HEADER_H = "h-(--header-h)";
+
 // ----  Fixed sizes for react-grid-layout components ----------------------------------------------
 
 // These values are carefully chosen so that the fixed height components (RecipeGrid, IngCompGrid)

@@ -126,6 +126,19 @@
   --color-alert-caution-brd: #cf222e;
 }
 
+/* Layout metrics read across files. Plain `:root`, since `@theme` drops unreferenced tokens. */
+:root {
+  /* App header height: the header and spacer in `navbar.tsx`, and the docs rail's max-height. */
+  --header-h: 3rem;
+
+  /* Top padding of the docs rail, and the equal gap left beneath it. */
+  --doc-rail-pad: 2.5rem;
+
+  /* Room the docs scrollport leaves for the pinned contents bar below `md`.
+     Has to exceed the bar's height, which is emergent rather than set: 53px as it stands. */
+  --doc-bar-clearance: 4rem;
+}
+
 .dark {
   --color-bg-page: rgb(25, 25, 23);
   --color-surface: rgb(34, 34, 32);
@@ -520,19 +533,18 @@ tbody tr:hover > .table-emphasis {
 }
 
 /* `md:self-start` is load-bearing: stretched to the row, sticky has no travel. Padding rides
-   inside the box, so scrolling never shifts it; compact below `md` for the 4rem scroll-padding. */
+   inside the box, so scrolling never shifts it; compact below `md` to fit `--doc-bar-clearance`. */
 .doc-toc {
-  @apply border-brd bg-page sticky top-0 z-10 shrink-0 border-b py-2 md:pt-10;
+  @apply border-brd bg-page sticky top-0 z-10 shrink-0 border-b py-2 md:pt-(--doc-rail-pad);
   @apply md:z-auto md:w-60 md:self-start md:overflow-y-auto md:border-b-0 md:pb-0;
-  /* Viewport less the `h-12` header and a bottom gap matching the top padding. */
-  @apply md:max-h-[calc(100vh-3rem-2.5rem)];
+  @apply md:max-h-[calc(100vh-var(--header-h)-var(--doc-rail-pad))];
 }
 
 /* The pinned bar would cover what the browser scrolls to: a fragment, or the new page when Next
    leaves a `#fragment` URL. That targets the article, so `scroll-margin` on headings misses it. */
 @media (width < 48rem) {
   #app-content:has(.doc-shell) {
-    scroll-padding-top: 4rem;
+    scroll-padding-top: var(--doc-bar-clearance);
   }
 }
 

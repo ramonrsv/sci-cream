@@ -36,6 +36,7 @@ import {
   SIDEBAR_W_SPACER_PINNED,
   HEADER_W_PINNED,
   HEADER_W_PEEK,
+  HEADER_H,
 } from "@/lib/styles/sizes";
 import { Logo } from "@/app/_elements/logo";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
@@ -184,7 +185,7 @@ export function Header() {
   const iconSize = HEADER_ICON_SIZE;
   const logoSize = iconSize + 2;
 
-  if (!mounted) return <header id="header" className="navbar h-12 shrink-0" />;
+  if (!mounted) return <header id="header" className={`navbar ${HEADER_H} shrink-0`} />;
 
   const onCalculator = pathname === "/calculator";
   const showGroupBy = GROUP_BY_ROUTES.some((route) => pathname.startsWith(route));
@@ -200,9 +201,12 @@ export function Header() {
   };
 
   return (
-    <header id="header" className="navbar flex h-12 shrink-0 items-center justify-between">
+    <header id="header" className={`navbar flex ${HEADER_H} shrink-0 items-center justify-between`}>
       {/* Logo and header controls: reserves spacer width in flow, overlays title when peeking */}
-      <div className={`navbar-trans-width relative h-12 shrink-0 ${spacerWidth}`} {...hoverProps}>
+      <div
+        className={`navbar-trans-width relative ${HEADER_H} shrink-0 ${spacerWidth}`}
+        {...hoverProps}
+      >
         {/* Clipper: animates the revealed width and overlays the title when peeking. */}
         <div
           className={`navbar navbar-trans-width absolute inset-y-0 left-0 z-40 overflow-hidden ${headerWidth}`}
