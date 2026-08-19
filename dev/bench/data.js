@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787180651494,
+  "lastUpdate": 1787180692244,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -481411,6 +481411,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.95%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "13eb8b9e92ea5da84e5ab0dfe745546f7ebc1f3a",
+          "message": "Add white background to 'Ice Cream Science' banner\n\n* Add `background: white` to the 'Ice Cream Science' banner in\n  `other-resources`; it was difficult to see in dark color theme.",
+          "timestamp": "2026-08-19T19:01:31-04:00",
+          "tree_id": "126ae1e5d8096273001e96dbf998f39d334b3a6f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/13eb8b9e92ea5da84e5ab0dfe745546f7ebc1f3a"
+        },
+        "date": 1787180647669,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 51230,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 508354,
+            "range": "±0.45%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33780,
+            "range": "±0.92%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 383251,
+            "range": "±1.15%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
