@@ -13,6 +13,7 @@ import {
 } from "@workspace/sci-cream";
 
 import { Metric } from "@/app/_elements/web-vitals";
+import { HYDRATION_MARK } from "@/lib/web-vitals-mark";
 import { formatCompositionValue, applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
@@ -656,6 +657,19 @@ export async function goToPageAndWaitFor(
 ) {
   await page.goto(url);
   await page.waitForLoadState(loadState);
+}
+
+/**
+ * Wait until the root client tree has hydrated.
+ *
+ * `networkidle` can be reached before React attaches its handlers, and a click in that window is
+ * swallowed. `WebVitals` sets `HYDRATION_MARK` from a root effect, so the mark means it is safe.
+ */
+export async function waitForHydration(page: Page) {
+  await page.waitForFunction(
+    (mark) => performance.getEntriesByName(mark).length > 0,
+    HYDRATION_MARK,
+  );
 }
 
 /** Escape any regex metacharacters in `s` so it can be embedded in a `RegExp` literal */

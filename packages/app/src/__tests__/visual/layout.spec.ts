@@ -151,3 +151,18 @@ test.describe("Visual Regression: Responsive Layout, blog post", () => {
     );
   }
 });
+
+test.describe("Visual Regression: Responsive Layout, docs page", () => {
+  for (const asset of VIEWPORTS) {
+    testViewportLayout(
+      asset,
+      "docs-page",
+      // The one docs page with both nested children and headings of its own, so the contents shows
+      // every kind of entry. Waiting for the thread as the blog case does, and for the same reason.
+      async (page) => {
+        await goToPageAndWaitFor(page, "/docs/other-resources");
+        await waitForCommentThread(page);
+      },
+    );
+  }
+});

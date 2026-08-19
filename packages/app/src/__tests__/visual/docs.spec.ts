@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
-import { goToPageAndWaitFor } from "../e2e/util";
+import { goToPageAndWaitFor, waitForHydration } from "../e2e/util";
+import { VIEWPORT_MOBILE_SMALL_PORTRAIT } from "./assets";
 import {
   commentMetaMask,
   parkCursor,
@@ -70,4 +71,46 @@ test.describe("Visual Regression: Documentation", () => {
       });
     }
   }
+
+  /**
+   * The contents bar that replaces the desktop rail below `md`.
+   * Viewport shots rather than full-content ones: the subject is the pinned bar, not the article.
+   */
+  test.describe("mobile", () => {
+    test.use({ hasTouch: VIEWPORT_MOBILE_SMALL_PORTRAIT.hasTouch });
+
+    /** Nested children and headings of its own, so the open list shows every kind of entry. */
+    const MOBILE_DOC = "/docs/other-resources";
+
+    /**
+     * Load `url` at the mobile viewport, hydrated and free of hover artifacts.
+     * A tap before hydration lands on static markup, so the toggle has to be live first.
+     */
+    async function goToMobileDoc(page: Page, url: string) {
+      await page.setViewportSize(VIEWPORT_MOBILE_SMALL_PORTRAIT.viewport);
+      await goToPageAndWaitFor(page, url);
+      await waitForHydration(page);
+      await parkCursor(page);
+    }
+
+    test("contents collapsed", async ({ page }) => {
+      await goToMobileDoc(page, MOBILE_DOC);
+
+      await expect(page).toHaveScreenshot("docs-contents-collapsed-mobile.png");
+    });
+
+    test("contents expanded", async ({ page }) => {
+      await goToMobileDoc(page, MOBILE_DOC);
+      await page.getByRole("button", { name: "Contents" }).click();
+      await parkCursor(page);
+
+      await expect(page).toHaveScreenshot("docs-contents-expanded-mobile.png");
+    });
+
+    test("docs index", async ({ page }) => {
+      await goToMobileDoc(page, DOCS_INDEX);
+
+      await expect(page).toHaveScreenshot("docs-index-mobile.png");
+    });
+  });
 });
