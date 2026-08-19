@@ -44,7 +44,7 @@ cream science information that I still visit often. I could not recommend this s
 ### Ice Cream Science
 
 <img src="/images/docs/ice_cream_science_logo.webp" alt="Ice Cream Science Logo" width="400"
-style="display: block; margin: 0 auto">
+style="display: block; margin: 0 auto; background: white">
 
 [icecreamscience.com](https://www.icecreamscience.com/)'s blog has a lot of informative, seemingly
 well researched, and very well cited ice cream science knowledge articles. I have discovered many of
