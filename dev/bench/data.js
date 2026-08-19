@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787178139461,
+  "lastUpdate": 1787178357277,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -540495,6 +540495,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/046f03a1cacbd32e8c23d250e323380efb46b415"
         },
         "date": 1787177452831,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fa00ddcd6d8fa0af67296c8c9158c2c3144170b7",
+          "message": "Fetch LFS objects when deploying\n\nThe deploy job's checkout did not pass `lfs: true`, so every file under\n`packages/app/public/images` reached the Vercel build as a ~130-byte LFS\npointer. The CDN served those with an extension-derived `image/*` type,\nwhich is why the blog and docs images render broken on preview and on\nproduction alike.\n\nApp CI's visual-regression job does pass `lfs: true`, so snapshot tests\nsaw real bytes and the deploy path was the only one left uncovered. Add\na step that fails the deploy on any pointer left under `public`, so the\nnext such gap surfaces in CI rather than on the live site.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T18:22:32-04:00",
+          "tree_id": "28296716bd703cc9d9b783615def9bec8bc8218d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fa00ddcd6d8fa0af67296c8c9158c2c3144170b7"
+        },
+        "date": 1787178305179,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
