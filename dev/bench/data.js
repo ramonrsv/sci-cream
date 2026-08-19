@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787178394543,
+  "lastUpdate": 1787178473090,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -531297,6 +531297,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.3,
             "range": "0.37",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fa00ddcd6d8fa0af67296c8c9158c2c3144170b7",
+          "message": "Fetch LFS objects when deploying\n\nThe deploy job's checkout did not pass `lfs: true`, so every file under\n`packages/app/public/images` reached the Vercel build as a ~130-byte LFS\npointer. The CDN served those with an extension-derived `image/*` type,\nwhich is why the blog and docs images render broken on preview and on\nproduction alike.\n\nApp CI's visual-regression job does pass `lfs: true`, so snapshot tests\nsaw real bytes and the deploy path was the only one left uncovered. Add\na step that fails the deploy on any pointer left under `public`, so the\nnext such gap surfaces in CI rather than on the live site.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T18:22:32-04:00",
+          "tree_id": "28296716bd703cc9d9b783615def9bec8bc8218d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fa00ddcd6d8fa0af67296c8c9158c2c3144170b7"
+        },
+        "date": 1787178426778,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 59.06,
+            "range": "8.47",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.27,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.25,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 160.5,
+            "range": "6.76",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 160.5,
+            "range": "6.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 55.76,
+            "range": "8.26",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.59,
+            "range": "0.40",
             "unit": "ms"
           }
         ]
