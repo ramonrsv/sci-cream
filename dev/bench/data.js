@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787157876268,
+  "lastUpdate": 1787157880159,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -538382,6 +538382,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/f25001c0cac9cbd317db972b53536c0dab78a9d5"
         },
         "date": 1787112675084,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cfe45c65af7cb766675351b6f812d3d56ebf0d0d",
+          "message": "Draw the logo as a vector mark that tracks theme\n\n`Logo` renders inline rather than through `<img src=\"/logo.svg\">`. An\n`<img>` is its own document, where the `.dark` class and the theme\ntokens are both out of reach, so a file can only follow\n`prefers-color-scheme` — the OS, not `ThemeSelect`. Inline, the colours\ncome from `fill-graph-blue` and `stroke-txt-prim` through the cascade,\nwhich keeps `useTheme` out of it and avoids a hydration mismatch.\n\nStroke width defaults to 14 below 32px. A stroke under a device pixel\ndoes not vanish, it anti-aliases to grey, discarding the token colour\nthe rest of the file is careful to match — the navbar renders at 22px,\nwhere 7 comes to 0.6px. A test pins the threshold.\n\n`icon.svg` replaces `favicon.ico`, a committed binary carried since the\ninitial commit with nothing in the repo to regenerate it. The SVG is its\nown source and carries the light/dark split a raster favicon cannot.\n\nThat leaves the mark in three files, the two `.svg` copies hard-coding\nvalues the component only names. A further test holds them to the\ncomponent's geometry and to the `globals.css` tokens, since a drifted\ncolour still renders — just off-brand.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T12:28:21-04:00",
+          "tree_id": "3d13e0960c7c52a30c1d50e024023e06cb5ce4b5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cfe45c65af7cb766675351b6f812d3d56ebf0d0d"
+        },
+        "date": 1787157827586,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
