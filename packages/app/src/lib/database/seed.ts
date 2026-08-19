@@ -205,6 +205,12 @@ async function seedComments(comments: SeedCommentAsset[]) {
     return user.id;
   }
 
+  /** The two tombstone columns, which the schema keeps set-or-clear together. */
+  async function deletionColumns(deleted: SeedCommentAsset["deleted"]) {
+    if (!deleted) return {};
+    return { deletedAt: new Date(deleted.at), deletedBy: await userId(deleted.by) };
+  }
+
   for (const entry of comments) {
     const [root] = await db
       .insert(commentsTable)
@@ -215,6 +221,7 @@ async function seedComments(comments: SeedCommentAsset[]) {
         body: entry.body,
         createdAt: new Date(entry.createdAt),
         updatedAt: entry.updatedAt ? new Date(entry.updatedAt) : null,
+        ...(await deletionColumns(entry.deleted)),
       })
       .returning();
 
@@ -229,6 +236,7 @@ async function seedComments(comments: SeedCommentAsset[]) {
           body: reply.body,
           createdAt: new Date(reply.createdAt),
           updatedAt: reply.updatedAt ? new Date(reply.updatedAt) : null,
+          ...(await deletionColumns(reply.deleted)),
         });
     }
 

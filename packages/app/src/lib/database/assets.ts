@@ -188,12 +188,15 @@ export type SeedCommentAsset = {
   updatedAt?: string;
   /** Emails of users who have reported this comment, each with an optional reason. */
   reportedBy?: { reporter: string; reason?: string }[];
+  /** Seeds a tombstone; `body` must be empty and `by` decides `[deleted]` vs `[removed]`. */
+  deleted?: { at: string; by: string };
   replies?: Omit<SeedCommentAsset, "subject" | "replies">[];
 };
 
 /**
  * Seeded public comments, so the blog and docs threads render something. The one report is filed by
  * `TEST_USER_B` against the admin `TEST_USER_A`, in whose queue it is the only way to see one.
+ * The removed reply is the only tombstone: a moderator's, so `[removed]` renders somewhere.
  */
 export const SEED_COMMENTS: SeedCommentAsset[] = [
   {
@@ -207,6 +210,12 @@ export const SEED_COMMENTS: SeedCommentAsset[] = [
         author: TEST_USER_B.email,
         body: "Agreed — plotting hardness against serving temperature made it click for me.",
         createdAt: "2026-07-02T16:05:00Z",
+      },
+      {
+        author: TEST_USER_B.email,
+        body: "",
+        createdAt: "2026-07-02T17:40:00Z",
+        deleted: { at: "2026-07-02T18:10:00Z", by: TEST_USER_A.email },
       },
     ],
   },

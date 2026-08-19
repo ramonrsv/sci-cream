@@ -99,6 +99,12 @@ test.describe("signed out", () => {
     await expect(thread.getByRole("button", { name: "Reply" })).toHaveCount(0);
     await expect(thread.getByRole("button", { name: "Report" })).toHaveCount(0);
   });
+
+  // Only `[removed]` is asserted: a run in flight leaves `[deleted]` tombstones of its own.
+  test("marks the seeded moderator removal as such, not as a withdrawal", async ({ page }) => {
+    const thread = await openThread(page);
+    await expect(thread.getByText("[removed]")).toBeVisible();
+  });
 });
 
 test.describe("signed in", () => {

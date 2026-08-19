@@ -15,8 +15,6 @@
 - [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
 - [ ] In the `PropertiesChart` tooltip, move the numeric value to the left so it does not overflow.
 - [ ] Make the reference and target ticks in `PropertiesBarChart` more visible. Also in watchers?
-- [ ] Seed a moderator-removed comment so `[removed]` gets visual coverage; it has unit tests only.
-      Adding one changes the blog thread snapshots, so it needs a baseline update in the same pass.
 - [ ] Move the remaining inline icon `size={…}` literals (12, 13, 14 in `batch-builder`,
       `batch-checklist`, `list-detail-shell`, `watcher-issues`) into named `styles/sizes` constants.
 - [ ] Change `captureFullContent` to take a `Locator` rather than a testid string, then drop the
@@ -142,6 +140,8 @@
 
 ## Completed
 
+- [x] Seed a moderator-removed comment so `[removed]` gets visual coverage; it has unit tests only.
+      Adding one changes the blog thread snapshots, so it needs a baseline update in the same pass.
 - [x] Have a moderator's delete resolve the open reports on that comment: `deleteComment` never
       touches `comment_reports`, so the queue keeps listing a comment it has already blanked, with
       `[removed]` where the body was. Resolve in the same transaction as the tombstone.
