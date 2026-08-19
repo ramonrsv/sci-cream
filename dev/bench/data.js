@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787180986801,
+  "lastUpdate": 1787181045069,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -73252,6 +73252,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_start)",
             "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "13eb8b9e92ea5da84e5ab0dfe745546f7ebc1f3a",
+          "message": "Add white background to 'Ice Cream Science' banner\n\n* Add `background: white` to the 'Ice Cream Science' banner in\n  `other-resources`; it was difficult to see in dark color theme.",
+          "timestamp": "2026-08-19T19:01:31-04:00",
+          "tree_id": "126ae1e5d8096273001e96dbf998f39d334b3a6f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/13eb8b9e92ea5da84e5ab0dfe745546f7ebc1f3a"
+        },
+        "date": 1787180998866,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4108,
+            "range": "± 66",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 160063,
+            "range": "± 1955",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2426,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 156601,
+            "range": "± 1546",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4706,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4389,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4586,
+            "range": "± 109",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4623,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4596,
+            "range": "± 105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4760,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 105213,
+            "range": "± 1084",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 108672,
+            "range": "± 455",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 182749838,
+            "range": "± 375043",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 626421,
+            "range": "± 1277",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6507,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6671,
+            "range": "± 198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 95637,
+            "range": "± 1002",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 92033,
+            "range": "± 386",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 151914,
+            "range": "± 556",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 149972,
+            "range": "± 790",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 331413,
+            "range": "± 1359",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14371,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 15,
             "range": "± 0",
             "unit": "ns/iter"
           },
