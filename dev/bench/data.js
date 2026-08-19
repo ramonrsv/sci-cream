@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787107998084,
+  "lastUpdate": 1787109602852,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -441853,6 +441853,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 656.25,
             "range": "9.47",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7711cffb155bbc3ce15d6f32b08d99fee922b995",
+          "message": "Test the docs table of contents\n\nSix e2e cases, written viewport-agnostically: each opens the list only\nwhen the disclosure is showing, so the rail and the collapsed bar are\ncovered by one run each rather than by two specs.\n\nTwo of them assert what only the narrow shape has, that a heading lands\nclear of the pinned bar and that picking a page closes the list, and\nskip where the rail sits beside the article and covers nothing.\n\n`waitForHydration` waits on the mark `WebVitals` sets from its root\neffect. `networkidle` is reached while React may still be attaching\nhandlers, and a click landing in that window hits static markup and\ngoes nowhere.\n\nVisually, the contents bar is shot collapsed and expanded at a mobile\nviewport, and the layout matrix gains `/docs/other-resources` — the one\npage carrying both nested children and headings of its own, so the\ncontents shows every kind of entry.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-18T22:43:58-04:00",
+          "tree_id": "589bf7b24d41c16ece3875f3760ba3f27b3da005",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7711cffb155bbc3ce15d6f32b08d99fee922b995"
+        },
+        "date": 1787109568181,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 36.5,
+            "range": "4.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 39.13,
+            "range": "2.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 49.38,
+            "range": "4.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1922.63,
+            "range": "32.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 259,
+            "range": "4.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 266.5,
+            "range": "2.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 285.13,
+            "range": "3.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 13475.5,
+            "range": "78.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 828.88,
+            "range": "18.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 44.5,
+            "range": "1.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 49.25,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 35.75,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.5,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 113.63,
+            "range": "4.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 64.63,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 45.55,
+            "range": "0.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 32.71,
+            "range": "0.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 533.25,
+            "range": "10.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 562.13,
+            "range": "7.15",
             "unit": "ms"
           }
         ]
