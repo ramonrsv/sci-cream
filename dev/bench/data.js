@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787178744595,
+  "lastUpdate": 1787179108078,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -444889,6 +444889,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 543.75,
             "range": "11.62",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fa00ddcd6d8fa0af67296c8c9158c2c3144170b7",
+          "message": "Fetch LFS objects when deploying\n\nThe deploy job's checkout did not pass `lfs: true`, so every file under\n`packages/app/public/images` reached the Vercel build as a ~130-byte LFS\npointer. The CDN served those with an extension-derived `image/*` type,\nwhich is why the blog and docs images render broken on preview and on\nproduction alike.\n\nApp CI's visual-regression job does pass `lfs: true`, so snapshot tests\nsaw real bytes and the deploy path was the only one left uncovered. Add\na step that fails the deploy on any pointer left under `public`, so the\nnext such gap surfaces in CI rather than on the live site.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T18:22:32-04:00",
+          "tree_id": "28296716bd703cc9d9b783615def9bec8bc8218d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fa00ddcd6d8fa0af67296c8c9158c2c3144170b7"
+        },
+        "date": 1787179061017,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.25,
+            "range": "6.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 60.13,
+            "range": "7.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 58.38,
+            "range": "3.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2368.25,
+            "range": "37.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 324.63,
+            "range": "5.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 329.63,
+            "range": "4.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 358.88,
+            "range": "8.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16627.63,
+            "range": "56.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 932.38,
+            "range": "15.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.38,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56.63,
+            "range": "1.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.63,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.25,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 131.5,
+            "range": "3.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 86.63,
+            "range": "1.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.14,
+            "range": "1.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.91,
+            "range": "0.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 627.75,
+            "range": "14.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 689.25,
+            "range": "16.04",
             "unit": "ms"
           }
         ]
