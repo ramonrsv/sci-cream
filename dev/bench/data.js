@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787180760067,
+  "lastUpdate": 1787180858081,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -445684,6 +445684,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 689.25,
             "range": "16.04",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "109edd95fbab3e298a763c311bae3ea8092a9e9c",
+          "message": "Seed a moderator-removed comment for tests\n\n`[removed]` had unit tests but rendered nowhere a snapshot or an e2e\nrun could see it. The seed now carries one, as a reply: a childless\nroot is deleted outright rather than blanked, so a removed root would\nbe a state the app cannot reach.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T18:47:17-04:00",
+          "tree_id": "80a30875127ed941a2cc4ee36eaa67ec0ac4c226",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/109edd95fbab3e298a763c311bae3ea8092a9e9c"
+        },
+        "date": 1787180805975,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 60.5,
+            "range": "5.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 62.75,
+            "range": "4.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 65,
+            "range": "4.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2656.75,
+            "range": "18.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 313,
+            "range": "4.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 320,
+            "range": "4.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 337.38,
+            "range": "5.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15984.38,
+            "range": "66.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 946.63,
+            "range": "8.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 55.13,
+            "range": "1.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60,
+            "range": "2.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.88,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.25,
+            "range": "1.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 137,
+            "range": "4.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 94.13,
+            "range": "2.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 63.34,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 46.41,
+            "range": "0.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 650.75,
+            "range": "7.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 703.5,
+            "range": "16.82",
             "unit": "ms"
           }
         ]
