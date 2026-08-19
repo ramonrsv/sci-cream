@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787179108078,
+  "lastUpdate": 1787180044661,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -541613,6 +541613,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/fa00ddcd6d8fa0af67296c8c9158c2c3144170b7"
         },
         "date": 1787178305179,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "109edd95fbab3e298a763c311bae3ea8092a9e9c",
+          "message": "Seed a moderator-removed comment for tests\n\n`[removed]` had unit tests but rendered nowhere a snapshot or an e2e\nrun could see it. The seed now carries one, as a reply: a childless\nroot is deleted outright rather than blanked, so a removed root would\nbe a state the app cannot reach.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T18:47:17-04:00",
+          "tree_id": "80a30875127ed941a2cc4ee36eaa67ec0ac4c226",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/109edd95fbab3e298a763c311bae3ea8092a9e9c"
+        },
+        "date": 1787179997877,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
