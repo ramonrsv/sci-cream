@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787158218360,
+  "lastUpdate": 1787158266900,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -72508,6 +72508,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_start)",
             "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cfe45c65af7cb766675351b6f812d3d56ebf0d0d",
+          "message": "Draw the logo as a vector mark that tracks theme\n\n`Logo` renders inline rather than through `<img src=\"/logo.svg\">`. An\n`<img>` is its own document, where the `.dark` class and the theme\ntokens are both out of reach, so a file can only follow\n`prefers-color-scheme` — the OS, not `ThemeSelect`. Inline, the colours\ncome from `fill-graph-blue` and `stroke-txt-prim` through the cascade,\nwhich keeps `useTheme` out of it and avoids a hydration mismatch.\n\nStroke width defaults to 14 below 32px. A stroke under a device pixel\ndoes not vanish, it anti-aliases to grey, discarding the token colour\nthe rest of the file is careful to match — the navbar renders at 22px,\nwhere 7 comes to 0.6px. A test pins the threshold.\n\n`icon.svg` replaces `favicon.ico`, a committed binary carried since the\ninitial commit with nothing in the repo to regenerate it. The SVG is its\nown source and carries the light/dark split a raster favicon cannot.\n\nThat leaves the mark in three files, the two `.svg` copies hard-coding\nvalues the component only names. A further test holds them to the\ncomponent's geometry and to the `globals.css` tokens, since a drifted\ncolour still renders — just off-brand.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-19T12:28:21-04:00",
+          "tree_id": "3d13e0960c7c52a30c1d50e024023e06cb5ce4b5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cfe45c65af7cb766675351b6f812d3d56ebf0d0d"
+        },
+        "date": 1787158219678,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4092,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 156845,
+            "range": "± 598",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2464,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 154324,
+            "range": "± 2004",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4513,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4599,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4524,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4575,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4534,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4963,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 111334,
+            "range": "± 795",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 114754,
+            "range": "± 715",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 180607631,
+            "range": "± 1026862",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 615105,
+            "range": "± 3542",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6468,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6645,
+            "range": "± 147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 95306,
+            "range": "± 814",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 91775,
+            "range": "± 321",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 151288,
+            "range": "± 318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 149457,
+            "range": "± 968",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 331227,
+            "range": "± 1790",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14365,
+            "range": "± 189",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 15,
             "range": "± 0",
             "unit": "ns/iter"
           },
