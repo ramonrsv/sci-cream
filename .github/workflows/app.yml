@@ -113,6 +113,8 @@ jobs:
       - uses: ./.github/actions/sci-cream-package
       - uses: ./.github/actions/build-and-seed-database
       - uses: ./.github/actions/setup-playwright
+        with:
+          browsers: chromium
 
       - name: Run app visual regression tests with Playwright
         run: PORT=3002 pnpm test:visual
@@ -279,6 +281,8 @@ jobs:
       - uses: ./.github/actions/sci-cream-package
       - uses: ./.github/actions/build-and-seed-database
       - uses: ./.github/actions/setup-playwright
+        with:
+          browsers: chromium
 
       - name: Run app end-to-end benchmarks
         run: PORT=3002 pnpm bench:e2e
@@ -318,6 +322,8 @@ jobs:
       - uses: ./.github/actions/sci-cream-package
       - uses: ./.github/actions/build-and-seed-database
       - uses: ./.github/actions/setup-playwright
+        with:
+          browsers: chromium
 
       - name: Run app web vitals benchmarks
         run: PORT=3003 pnpm bench:web-vitals

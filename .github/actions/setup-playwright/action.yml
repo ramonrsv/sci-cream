@@ -1,40 +1,36 @@
 name: "Install Playwright Browsers"
-description: "Install Playwright browsers and dependencies"
+description: "Install Playwright browsers and their system dependencies"
 inputs:
-  additional-browsers:
-    description: "Additional browsers other than default (comma-separated)"
+  browsers:
+    description: "Browsers to install (space-separated). Empty installs all of them."
     required: false
+    default: ""
 runs:
   using: "composite"
   steps:
-    - name: Get Playwright version
-      id: playwright-version
+    - name: Resolve Playwright version and cache key
+      id: playwright
       shell: bash
       run: |
         cd ./packages/app
-        echo "version=$(pnpm list @playwright/test --json | jq -r '.[0].devDependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+        query='.[0].devDependencies["@playwright/test"].version'
+        version=$(pnpm list @playwright/test --json | jq -r "$query")
+        # Key on the browser set too, so a chromium-only job cannot reuse an all-browsers entry.
+        browsers=$(echo "${{ inputs.browsers }}" | tr -s ' ' '-' | sed 's/^-//;s/-$//')
+        echo "cache-key=playwright-$RUNNER_OS-$version-${browsers:-all}" >> "$GITHUB_OUTPUT"
 
     - name: Cache Playwright browsers
       uses: actions/cache@v5
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+        key: ${{ steps.playwright.outputs.cache-key }}
 
-    - name: Install Playwright default browsers
+    - name: Install Playwright browsers
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       shell: bash
-      run: cd ./packages/app && pnpm playwright install
+      run: cd ./packages/app && pnpm playwright install ${{ inputs.browsers }}
 
     - name: Install system dependencies
       shell: bash
-      run: cd ./packages/app && pnpm playwright install-deps
-
-    - if: ${{ inputs.additional-browsers != '' }}
-      name: Install additional non-default browsers
-      shell: bash
-      run: |
-        IFS=',' read -ra BROWSERS <<< "${{ inputs.additional-browsers }}"
-        for browser in "${BROWSERS[@]}"; do
-          cd ./packages/app && pnpm playwright install "$browser" --with-deps
-        done
+      run: cd ./packages/app && pnpm playwright install-deps ${{ inputs.browsers }}
