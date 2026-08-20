@@ -15,7 +15,10 @@
 #                  holds a copy of production, real user rows included. A failed run always leaves
 #                  it, so the failure can be examined.
 #
-# Environment:
+# Environment. What is not already exported is read from ~/.config/sci-cream/prod.env, or from the
+# file SCI_CREAM_PROD_ENV names; an exported value always wins over the file, so the workflow's
+# secrets stand on a runner that has no such file.
+#
 #   PROD_MIGRATION_POSTGRES_URL     Supabase *session* pooler URL, port 5432. Keep this out of
 #                                   packages/app/.env — see DEVELOPMENT.md for why.
 #   MIGRATION_CLONE_POSTGRES_URL    Throwaway database to copy into, dropped and recreated on every
@@ -29,6 +32,10 @@ cd "$SCRIPT_DIR/.."
 
 # shellcheck source=lib/postgres.sh
 source "$SCRIPT_DIR/lib/postgres.sh"
+# shellcheck source=lib/env.sh
+source "$SCRIPT_DIR/lib/env.sh"
+
+load_prod_env
 
 # ── Arguments ────────────────────────────────────────────────────────────────
 

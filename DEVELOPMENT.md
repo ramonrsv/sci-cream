@@ -311,7 +311,6 @@ the development server is behind:
 docker run -d --rm -e POSTGRES_PASSWORD=password -p 127.0.0.1:5442:5432 postgres:17
 export MIGRATION_CLONE_POSTGRES_URL="postgres://postgres:password@localhost:5442/sci_cream_clone"
 
-set -a; . ~/.config/sci-cream/prod.env; set +a
 ./packages/app/scripts/verify-migration-on-clone.sh
 ```
 
@@ -364,11 +363,14 @@ install -m 600 /dev/null ~/.config/sci-cream/prod.env
 # BACKUP_AGE_RECIPIENT="age1..."
 ```
 
+`backup-db.sh` and `verify-migration-on-clone.sh` read that file for any variable not already
+exported — so exporting one overrides it, and `SCI_CREAM_PROD_ENV` names a different file. Nothing
+else reads it: `run-local-test-suite.sh` takes `POSTGRES_URL`, and only from `packages/app/.env`.
+
 Never put a production URL in `packages/app/.env` — the dev server, `drizzle.config.ts`, and the
 tests all read it, and `pnpm seed-db` deletes each seeded user's recipes and batches.
 
 ```bash
-set -a; . ~/.config/sci-cream/prod.env; set +a
 ./packages/app/scripts/backup-db.sh --verify
 ```
 

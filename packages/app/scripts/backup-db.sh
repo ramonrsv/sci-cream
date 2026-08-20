@@ -22,7 +22,9 @@
 # The schemas must be dropped first: the dump creates them itself, and every new database already
 # has a `public`. `--verify` restores exactly this way, so the path is exercised on every run.
 #
-# Environment:
+# Environment. What is not already exported is read from ~/.config/sci-cream/prod.env, or from the
+# file SCI_CREAM_PROD_ENV names; an exported value always wins over the file.
+#
 #   PROD_DUMP_POSTGRES_URL         Supabase *session* pooler URL, port 5432. Keep this out of
 #                                  packages/app/.env — see DEVELOPMENT.md for why.
 #   BACKUP_AGE_RECIPIENT           age public key (age1...). The private key belongs somewhere this
@@ -39,6 +41,10 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 # shellcheck source=lib/postgres.sh
 source "$SCRIPT_DIR/lib/postgres.sh"
+# shellcheck source=lib/env.sh
+source "$SCRIPT_DIR/lib/env.sh"
+
+load_prod_env
 
 # ── Arguments ────────────────────────────────────────────────────────────────
 
