@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787262005270,
+  "lastUpdate": 1787262105588,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -549295,6 +549295,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/bbf6831e6925917bb64c589ef1c9348cb311f74b"
         },
         "date": 1787261595520,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "74fc95f77fc3a111b74ba1ee2531445a7f707837",
+          "message": "Show App CI passing in welcome post's screenshot\n\nThe GitHub page capture in the post's \"Open-source Library\" section\ncaught the badge row with App CI red. The workflow is green now, so the\nimage sitting under the repo link advertises a broken app.\n\nRepaint the state half from the Crate CI badge lower in the same image\nrather than from a fresh render of app.yml/badge.svg: both are GitHub's\nown 50px `passing` chunk, but no headless render reproduces the\ncapture's subpixel antialiasing at the same gamma.\n\n`passing` is 115px wide against `failing`'s 108, so the release and\ncodecov badges move 7px right to hold their gap. Nothing outside\nx 94-383, y 451-470 changes.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T17:35:54-04:00",
+          "tree_id": "70dd3c1aecf87171b768d50ce6d32a9c5ec83619",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/74fc95f77fc3a111b74ba1ee2531445a7f707837"
+        },
+        "date": 1787262059190,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
