@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787202843941,
+  "lastUpdate": 1787203914529,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -544967,6 +544967,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/7e68a8a6065518c9fc553b72de300cf007977e19"
         },
         "date": 1787202009676,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0ac8ea791a97ee1967db2b1620fd6bfe02fd85c2",
+          "message": "Drop the navbar's non-load-bearing useCallbacks\n\n`openPeek` and `closePeek` reach no dependency array and no memoized\nchild, so their stability was never observed. The context value they\ntravel in is an inline literal, rebuilt every render regardless.\n\n`useCallback` still allocates the closure it is handed, so wrapping\nthese bought a hook slot and a deps comparison to keep an identity\nnothing reads. Behaviour is unchanged: the cancel-and-restart hangs\noff `closeTimer`, a ref.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T01:09:33-04:00",
+          "tree_id": "7c25af8003047e881c189c8dddb7481881356f38",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0ac8ea791a97ee1967db2b1620fd6bfe02fd85c2"
+        },
+        "date": 1787203870658,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
