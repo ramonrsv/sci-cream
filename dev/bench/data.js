@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787261696790,
+  "lastUpdate": 1787261718708,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -538472,6 +538472,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.13,
             "range": "0.16",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bbf6831e6925917bb64c589ef1c9348cb311f74b",
+          "message": "Inline docs SVGs so a mark can track the app theme\n\nA markdown image compiles to an `<img>`, which renders its source in a\nseparate document where `.dark` and the theme tokens never reach. An\nSVG referenced that way follows the OS preference rather than the app's\ntoggle — the failure fixed by hand for the 'Ice Cream Science' banner\nin 13eb8b9e.\n\n`rehypeInlineSvg` splices the named file into the page instead, so the\nmark is ordinary page DOM and the tokens it names resolve there. The\ntag's other attributes ride onto the `<svg>` root, leaving sizing and\nstyling with the author. Opting in is explicit, via `data-inline`:\ninferring it from the `src` swept up the shields.io badge rows, which\nend in `.svg` too. `rehype-raw` runs first, a hand-written tag being\none opaque string until it does.\n\n`logo-inline.svg` is a fourth carrier, naming the theme tokens rather\nthan restating them, its outline weight a custom property defaulting\nto 7. `logo.svg` is unchanged, having no page to resolve tokens against.\n\nThe two READMEs take the mark as a plain `<img>`, `logo.svg`'s own\n`prefers-color-scheme` query being the only theming GitHub allows: it\nstrips `style` and `class`, so no token can resolve there. Their app\nheadings drop the backticks, naming the app rather than the package.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T16:56:26-04:00",
+          "tree_id": "8143353ce10119aa5950eaf7beb82b73e33d95cd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bbf6831e6925917bb64c589ef1c9348cb311f74b"
+        },
+        "date": 1787261680142,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 55.63,
+            "range": "7.83",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.04,
+            "range": "0.67",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.01,
+            "range": "0.63",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 151.5,
+            "range": "8.35",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.43,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 151.5,
+            "range": "8.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 51.88,
+            "range": "6.01",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.34,
+            "range": "0.46",
             "unit": "ms"
           }
         ]
