@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787204620052,
+  "lastUpdate": 1787204667952,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -448069,6 +448069,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 683.88,
             "range": "10.95",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0ac8ea791a97ee1967db2b1620fd6bfe02fd85c2",
+          "message": "Drop the navbar's non-load-bearing useCallbacks\n\n`openPeek` and `closePeek` reach no dependency array and no memoized\nchild, so their stability was never observed. The context value they\ntravel in is an inline literal, rebuilt every render regardless.\n\n`useCallback` still allocates the closure it is handed, so wrapping\nthese bought a hook slot and a deps comparison to keep an identity\nnothing reads. Behaviour is unchanged: the cancel-and-restart hangs\noff `closeTimer`, a ref.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T01:09:33-04:00",
+          "tree_id": "7c25af8003047e881c189c8dddb7481881356f38",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0ac8ea791a97ee1967db2b1620fd6bfe02fd85c2"
+        },
+        "date": 1787204619745,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 44,
+            "range": "4.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49.38,
+            "range": "3.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 56.5,
+            "range": "2.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2364.5,
+            "range": "86.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 320.13,
+            "range": "5.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 332.25,
+            "range": "4.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 344.25,
+            "range": "5.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16561.88,
+            "range": "71.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 919.63,
+            "range": "15.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.38,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 53.25,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.63,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 123.75,
+            "range": "3.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 83.25,
+            "range": "3.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.56,
+            "range": "0.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.42,
+            "range": "0.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 622.75,
+            "range": "10.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 659,
+            "range": "9.53",
             "unit": "ms"
           }
         ]
