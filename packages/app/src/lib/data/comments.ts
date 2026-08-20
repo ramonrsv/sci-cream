@@ -22,6 +22,7 @@ import {
   type CommentSelect,
 } from "@/lib/database/schema";
 import { getMarkdownSlugs } from "@/lib/markdown";
+import { log as baseLog } from "@/lib/log";
 
 /**
  * Server actions for public comment threads.
@@ -30,6 +31,8 @@ import { getMarkdownSlugs } from "@/lib/markdown";
  * Subjects are validated against the content tree on every call, since the `comment_subject_type`
  * enum constrains a subject's type but never its key.
  */
+
+const log = baseLog.child({ mod: "data/comments" });
 
 /** One open report joined to the comment it is about, for the moderation queue. */
 export type OpenReportJson = {
@@ -135,7 +138,7 @@ async function isRateLimited(userId: number): Promise<boolean> {
  */
 export async function fetchComments(subject: CommentSubject): Promise<CommentJson[] | undefined> {
   if (!isKnownSubject(subject)) {
-    console.warn(`fetchComments: unknown subject`);
+    log.warn({ action: "fetchComments" }, "unknown subject");
     return undefined;
   }
 
@@ -312,7 +315,7 @@ export async function reportComment(
 export async function fetchOpenReports(): Promise<OpenReportJson[] | undefined> {
   const admin = await requireAdmin();
   if (!admin) {
-    console.warn(`fetchOpenReports: not an admin`);
+    log.warn({ action: "fetchOpenReports" }, "not an admin");
     return undefined;
   }
 

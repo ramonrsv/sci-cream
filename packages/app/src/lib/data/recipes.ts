@@ -10,9 +10,11 @@ import { hasVersionNames, isValidVersionName, nextVersionName } from "@/lib/reci
 import { verifyDefined } from "@/lib/util";
 import { recipesTable, recipeVersionsTable, RecipeSelect } from "@/lib/database/schema";
 import { findUserByEmail } from "@/lib/data/users";
-import { FetchCounter } from "@/lib/data/util";
+import { log as baseLog } from "@/lib/log";
 
 /** Server actions for saved recipes and their versions. See `./users`, `userEmail` argument. */
+
+const log = baseLog.child({ mod: "data/recipes" });
 
 /** One snapshot of a saved recipe; the `recipe` is the same `[name, qty]` payload as embedded */
 export type SavedRecipeVersionJson = {
@@ -99,11 +101,11 @@ async function findUserRecipe(userId: number, recipeId: number): Promise<RecipeS
 export async function fetchAllUserSavedRecipes(
   userEmail: string,
 ): Promise<SavedRecipeJson[] | undefined> {
-  console.log(`[${await FetchCounter.get()}] fetchAllUserSavedRecipes`);
+  log.debug({ action: "fetchAllUserSavedRecipes" }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`fetchAllUserSavedRecipes: user not found`);
+    log.warn({ action: "fetchAllUserSavedRecipes" }, "user not found");
     return undefined;
   }
 
@@ -143,7 +145,10 @@ export async function fetchAllUserSavedRecipes(
   }
 
   const result = Array.from(byId.values());
-  console.log(`fetchAllUserSavedRecipes: found ${result.length} recipes for userId=${user.id}`);
+  log.debug(
+    { action: "fetchAllUserSavedRecipes", count: result.length, userId: user.id },
+    "fetched",
+  );
   return result;
 }
 
@@ -174,7 +179,7 @@ async function insertNextVersion(
         : null;
 
   if (versionName != null && rows.some((r) => r.versionName === versionName)) {
-    console.warn(`insertNextVersion: version name "${versionName}" already exists`);
+    log.warn({ action: "insertNextVersion", versionName }, "version name already exists");
     return undefined;
   }
 
@@ -207,16 +212,16 @@ export async function createUserRecipe(
   recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
 ): Promise<{ recipeId: number; version: SavedRecipeVersionJson } | undefined> {
-  console.log(`[${await FetchCounter.get()}] createUserRecipe("${name}")`);
+  log.debug({ action: "createUserRecipe", recipeName: name }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`createUserRecipe: user not found`);
+    log.warn({ action: "createUserRecipe" }, "user not found");
     return undefined;
   }
 
   if (!isValidVersionMeta(meta)) {
-    console.warn(`createUserRecipe: invalid version metadata`);
+    log.warn({ action: "createUserRecipe" }, "invalid version metadata");
     return undefined;
   }
 
@@ -240,22 +245,25 @@ export async function createUserRecipeVersion(
   recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
 ): Promise<SavedRecipeVersionJson | undefined> {
-  console.log(`[${await FetchCounter.get()}] createUserRecipeVersion(${recipeId})`);
+  log.debug({ action: "createUserRecipeVersion", recipeId }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`createUserRecipeVersion: user not found`);
+    log.warn({ action: "createUserRecipeVersion" }, "user not found");
     return undefined;
   }
 
   if (!isValidVersionMeta(meta)) {
-    console.warn(`createUserRecipeVersion: invalid version metadata`);
+    log.warn({ action: "createUserRecipeVersion" }, "invalid version metadata");
     return undefined;
   }
 
   const owned = await findUserRecipe(user.id, recipeId);
   if (!owned) {
-    console.warn(`createUserRecipeVersion: recipeId=${recipeId} not owned by userId=${user.id}`);
+    log.warn(
+      { action: "createUserRecipeVersion", recipeId, userId: user.id },
+      "recipe not owned by user",
+    );
     return undefined;
   }
 
@@ -273,22 +281,25 @@ export async function updateUserRecipeVersion(
   version: number,
   updates: { recipe?: LightRecipe } & RecipeVersionMeta,
 ): Promise<SavedRecipeVersionJson | undefined> {
-  console.log(`[${await FetchCounter.get()}] updateUserRecipeVersion(${recipeId}, v${version})`);
+  log.debug({ action: "updateUserRecipeVersion", recipeId, version }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`updateUserRecipeVersion: user not found`);
+    log.warn({ action: "updateUserRecipeVersion" }, "user not found");
     return undefined;
   }
 
   if (!isValidVersionMeta(updates)) {
-    console.warn(`updateUserRecipeVersion: invalid version metadata`);
+    log.warn({ action: "updateUserRecipeVersion" }, "invalid version metadata");
     return undefined;
   }
 
   const owned = await findUserRecipe(user.id, recipeId);
   if (!owned) {
-    console.warn(`updateUserRecipeVersion: recipeId=${recipeId} not owned by userId=${user.id}`);
+    log.warn(
+      { action: "updateUserRecipeVersion", recipeId, userId: user.id },
+      "recipe not owned by user",
+    );
     return undefined;
   }
 
@@ -324,17 +335,17 @@ export async function renameUserRecipe(
   recipeId: number,
   newName: string,
 ): Promise<RecipeSelect | undefined> {
-  console.log(`[${await FetchCounter.get()}] renameUserRecipe(${recipeId}, "${newName}")`);
+  log.debug({ action: "renameUserRecipe", recipeId, newName }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`renameUserRecipe: user not found`);
+    log.warn({ action: "renameUserRecipe" }, "user not found");
     return undefined;
   }
 
   const owned = await findUserRecipe(user.id, recipeId);
   if (!owned) {
-    console.warn(`renameUserRecipe: recipeId=${recipeId} not owned by userId=${user.id}`);
+    log.warn({ action: "renameUserRecipe", recipeId, userId: user.id }, "recipe not owned by user");
     return undefined;
   }
 
@@ -357,17 +368,20 @@ export async function setUserRecipeFavourite(
   recipeId: number,
   favourite: boolean,
 ): Promise<RecipeSelect | undefined> {
-  console.log(`[${await FetchCounter.get()}] setUserRecipeFavourite(${recipeId}, ${favourite})`);
+  log.debug({ action: "setUserRecipeFavourite", recipeId, favourite }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`setUserRecipeFavourite: user not found`);
+    log.warn({ action: "setUserRecipeFavourite" }, "user not found");
     return undefined;
   }
 
   const owned = await findUserRecipe(user.id, recipeId);
   if (!owned) {
-    console.warn(`setUserRecipeFavourite: recipeId=${recipeId} not owned by userId=${user.id}`);
+    log.warn(
+      { action: "setUserRecipeFavourite", recipeId, userId: user.id },
+      "recipe not owned by user",
+    );
     return undefined;
   }
 
@@ -389,11 +403,11 @@ export async function deleteUserRecipe(
   userEmail: string,
   recipeId: number,
 ): Promise<RecipeSelect | undefined> {
-  console.log(`[${await FetchCounter.get()}] deleteUserRecipe(${recipeId})`);
+  log.debug({ action: "deleteUserRecipe", recipeId }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`deleteUserRecipe: user not found`);
+    log.warn({ action: "deleteUserRecipe" }, "user not found");
     return undefined;
   }
 
@@ -417,17 +431,20 @@ export async function deleteUserRecipeVersion(
   recipeId: number,
   version: number,
 ): Promise<SavedRecipeVersionJson | undefined> {
-  console.log(`[${await FetchCounter.get()}] deleteUserRecipeVersion(${recipeId}, v${version})`);
+  log.debug({ action: "deleteUserRecipeVersion", recipeId, version }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`deleteUserRecipeVersion: user not found`);
+    log.warn({ action: "deleteUserRecipeVersion" }, "user not found");
     return undefined;
   }
 
   const owned = await findUserRecipe(user.id, recipeId);
   if (!owned) {
-    console.warn(`deleteUserRecipeVersion: recipeId=${recipeId} not owned by userId=${user.id}`);
+    log.warn(
+      { action: "deleteUserRecipeVersion", recipeId, userId: user.id },
+      "recipe not owned by user",
+    );
     return undefined;
   }
 
@@ -437,7 +454,10 @@ export async function deleteUserRecipeVersion(
     .where(eq(recipeVersionsTable.recipeId, recipeId));
 
   if (Number(count) <= 1) {
-    console.warn(`deleteUserRecipeVersion: refusing to delete the last remaining version`);
+    log.warn(
+      { action: "deleteUserRecipeVersion" },
+      "refusing to delete the last remaining version",
+    );
     return undefined;
   }
 

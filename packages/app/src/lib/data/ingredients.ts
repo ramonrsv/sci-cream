@@ -5,9 +5,11 @@ import { eq, and, sql } from "drizzle-orm";
 import { db } from "@/lib/database/client";
 import { Ingredient as IngredientDb, ingredientsTable } from "@/lib/database/schema";
 import { findUserByEmail } from "@/lib/data/users";
-import { FetchCounter } from "@/lib/data/util";
+import { log as baseLog } from "@/lib/log";
 
 /** Server actions for a user's own ingredient specs. See `./users` on the `userEmail` argument. */
+
+const log = baseLog.child({ mod: "data/ingredients" });
 
 /** The database row type used to transfer ingredient data to the client */
 export type IngredientTransfer = IngredientDb;
@@ -21,11 +23,11 @@ export async function fetchUserIngredientSpecByName(
   userEmail: string,
   ingredientName: string,
 ): Promise<IngredientTransfer | undefined> {
-  console.log(`[${await FetchCounter.get()}] fetchUserIngredientSpecByName("${ingredientName}")`);
+  log.debug({ action: "fetchUserIngredientSpecByName", ingredientName }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`fetchUserIngredientSpecByName: user not found`);
+    log.warn({ action: "fetchUserIngredientSpecByName" }, "user not found");
     return undefined;
   }
 
@@ -37,8 +39,9 @@ export async function fetchUserIngredientSpecByName(
   )[0];
 
   if (!ingredient) {
-    console.warn(
-      `fetchUserIngredientSpecByName: ingredient "${ingredientName}" not found for userId=${user.id} `,
+    log.warn(
+      { action: "fetchUserIngredientSpecByName", ingredientName, userId: user.id },
+      "ingredient not found",
     );
     return undefined;
   }
@@ -50,11 +53,11 @@ export async function fetchUserIngredientSpecByName(
 export async function fetchAllUserIngredientSpecs(
   userEmail: string,
 ): Promise<IngredientTransfer[] | undefined> {
-  console.log(`[${await FetchCounter.get()}] fetchAllUserIngredientSpecs`);
+  log.debug({ action: "fetchAllUserIngredientSpecs" }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`fetchAllUserIngredientSpecs: user not found`);
+    log.warn({ action: "fetchAllUserIngredientSpecs" }, "user not found");
     return undefined;
   }
 
@@ -64,8 +67,9 @@ export async function fetchAllUserIngredientSpecs(
     .where(eq(ingredientsTable.user, user.id))
     .orderBy(sql`${ingredientsTable.name} COLLATE "C" ASC`);
 
-  console.log(
-    `fetchAllUserIngredientSpecs: found ${ingredients.length} ingredients for userId=${user.id}`,
+  log.debug(
+    { action: "fetchAllUserIngredientSpecs", count: ingredients.length, userId: user.id },
+    "fetched",
   );
   return ingredients;
 }

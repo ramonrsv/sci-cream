@@ -8,9 +8,11 @@ import type { BatchRecipeVersion } from "@/lib/batch/batch";
 import { db } from "@/lib/database/client";
 import { batchesTable, batchRecipesTable, BatchSelect } from "@/lib/database/schema";
 import { findUserByEmail } from "@/lib/data/users";
-import { FetchCounter } from "@/lib/data/util";
+import { log as baseLog } from "@/lib/log";
 
 /** Server actions for saved batches and their recipes. See `./users`, `userEmail` argument. */
+
+const log = baseLog.child({ mod: "data/batches" });
 
 /**
  * One recipe within a saved batch; `rows` are the `[name, grams]` amounts exactly as weighed
@@ -140,11 +142,11 @@ async function findUserBatch(userId: number, batchId: number): Promise<BatchSele
 export async function fetchAllUserBatches(
   userEmail: string,
 ): Promise<SavedBatchJson[] | undefined> {
-  console.log(`[${await FetchCounter.get()}] fetchAllUserBatches`);
+  log.debug({ action: "fetchAllUserBatches" }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`fetchAllUserBatches: user not found`);
+    log.warn({ action: "fetchAllUserBatches" }, "user not found");
     return undefined;
   }
 
@@ -215,7 +217,7 @@ export async function fetchAllUserBatches(
   const result = Array.from(byId.values()).map(({ batch, recipes }) =>
     toSavedBatchJson(batch, recipes),
   );
-  console.log(`fetchAllUserBatches: found ${result.length} batches for userId=${user.id}`);
+  log.debug({ action: "fetchAllUserBatches", count: result.length, userId: user.id }, "fetched");
   return result;
 }
 
@@ -224,11 +226,11 @@ export async function createUserBatch(
   userEmail: string,
   input: BatchInput,
 ): Promise<SavedBatchJson | undefined> {
-  console.log(`[${await FetchCounter.get()}] createUserBatch`);
+  log.debug({ action: "createUserBatch" }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`createUserBatch: user not found`);
+    log.warn({ action: "createUserBatch" }, "user not found");
     return undefined;
   }
 
@@ -266,17 +268,17 @@ export async function updateUserBatch(
   batchId: number,
   input: BatchInput,
 ): Promise<SavedBatchJson | undefined> {
-  console.log(`[${await FetchCounter.get()}] updateUserBatch(${batchId})`);
+  log.debug({ action: "updateUserBatch", batchId }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`updateUserBatch: user not found`);
+    log.warn({ action: "updateUserBatch" }, "user not found");
     return undefined;
   }
 
   const owned = await findUserBatch(user.id, batchId);
   if (!owned) {
-    console.warn(`updateUserBatch: batchId=${batchId} not owned by userId=${user.id}`);
+    log.warn({ action: "updateUserBatch", batchId, userId: user.id }, "batch not owned by user");
     return undefined;
   }
 
@@ -316,17 +318,20 @@ export async function setUserBatchFavourite(
   batchId: number,
   favourite: boolean,
 ): Promise<BatchSelect | undefined> {
-  console.log(`[${await FetchCounter.get()}] setUserBatchFavourite(${batchId}, ${favourite})`);
+  log.debug({ action: "setUserBatchFavourite", batchId, favourite }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`setUserBatchFavourite: user not found`);
+    log.warn({ action: "setUserBatchFavourite" }, "user not found");
     return undefined;
   }
 
   const owned = await findUserBatch(user.id, batchId);
   if (!owned) {
-    console.warn(`setUserBatchFavourite: batchId=${batchId} not owned by userId=${user.id}`);
+    log.warn(
+      { action: "setUserBatchFavourite", batchId, userId: user.id },
+      "batch not owned by user",
+    );
     return undefined;
   }
 
@@ -347,11 +352,11 @@ export async function deleteUserBatch(
   userEmail: string,
   batchId: number,
 ): Promise<BatchSelect | undefined> {
-  console.log(`[${await FetchCounter.get()}] deleteUserBatch(${batchId})`);
+  log.debug({ action: "deleteUserBatch", batchId }, "start");
 
   const user = await findUserByEmail(userEmail);
   if (!user) {
-    console.warn(`deleteUserBatch: user not found`);
+    log.warn({ action: "deleteUserBatch" }, "user not found");
     return undefined;
   }
 

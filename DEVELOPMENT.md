@@ -225,6 +225,16 @@ To perform a release execute the steps below, followed by doing a GitHub release
 ./scripts/release.sh push
 ```
 
+### Logging
+
+Server-side code logs through Pino (`packages/app/src/lib/log.ts`), one JSON line per event on
+stdout. `pnpm dev` logs at `debug`; a production build defaults to `info`; `LOG_LEVEL` overrides.
+
+```bash
+# Per-action debug lines from a production build, rendered for a human
+LOG_LEVEL=debug pnpm start | npx pino-pretty
+```
+
 ## Database migrations
 
 `packages/app/drizzle/` is the source of truth for the database schema.
