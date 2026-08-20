@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787202016756,
+  "lastUpdate": 1787202057734,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -543972,6 +543972,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/13eb8b9e92ea5da84e5ab0dfe745546f7ebc1f3a"
         },
         "date": 1787180601655,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1086.25,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1682.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 518.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 565.63,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1883.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7e68a8a6065518c9fc553b72de300cf007977e19",
+          "message": "Install only the browsers each CI job runs\n\n`playwright.config.ts` gives three of the four jobs that use this action\na Desktop Chrome project and nothing else — visual regression and both\nbenchmark suites. They were installing chromium, firefox and webkit all\nthe same, along with the system dependencies of each: on ubuntu24.04\nthat is 53 apt packages for webkit against 21 for chromium, none of\nwebkit's ever loaded. Fewer packages is less to download, and less to\nfail on when the apt mirrors are unhappy.\n\nThe new `browsers` input narrows both the browser download and\n`install-deps`. It carries into the cache key too, since each set\ninstalls a different closure and a chromium-only job must not restore —\nor save over — an all-browsers entry.\n\n`additional-browsers` had no callers and is dropped rather than\nconverted. Its loop ran `cd ./packages/app` on every iteration, so a\nsecond browser would have failed on the path being relative to the\nfirst `cd`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T00:57:26-04:00",
+          "tree_id": "d0a2c8b967a019f125bd9a410385915cb561527f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7e68a8a6065518c9fc553b72de300cf007977e19"
+        },
+        "date": 1787202009676,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
