@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787262541248,
+  "lastUpdate": 1787262871328,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -451249,6 +451249,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 594.25,
             "range": "19.18",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "74fc95f77fc3a111b74ba1ee2531445a7f707837",
+          "message": "Show App CI passing in welcome post's screenshot\n\nThe GitHub page capture in the post's \"Open-source Library\" section\ncaught the badge row with App CI red. The workflow is green now, so the\nimage sitting under the repo link advertises a broken app.\n\nRepaint the state half from the Crate CI badge lower in the same image\nrather than from a fresh render of app.yml/badge.svg: both are GitHub's\nown 50px `passing` chunk, but no headless render reproduces the\ncapture's subpixel antialiasing at the same gamma.\n\n`passing` is 115px wide against `failing`'s 108, so the release and\ncodecov badges move 7px right to hold their gap. Nothing outside\nx 94-383, y 451-470 changes.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T17:35:54-04:00",
+          "tree_id": "70dd3c1aecf87171b768d50ce6d32a9c5ec83619",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/74fc95f77fc3a111b74ba1ee2531445a7f707837"
+        },
+        "date": 1787262833956,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 42.63,
+            "range": "3.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 45.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57.88,
+            "range": "5.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2228.75,
+            "range": "37.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 293.38,
+            "range": "2.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 275.25,
+            "range": "5.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 289.88,
+            "range": "8.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 13706.63,
+            "range": "133.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 807.5,
+            "range": "28.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 42.13,
+            "range": "1.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 42.75,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 32.13,
+            "range": "1.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 34.63,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 110.38,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 71.5,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 46.29,
+            "range": "0.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 34.17,
+            "range": "0.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 536,
+            "range": "9.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 571.38,
+            "range": "9.08",
             "unit": "ms"
           }
         ]
