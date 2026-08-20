@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787202057734,
+  "lastUpdate": 1787202077217,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -482400,6 +482400,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 383251,
             "range": "±1.15%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7e68a8a6065518c9fc553b72de300cf007977e19",
+          "message": "Install only the browsers each CI job runs\n\n`playwright.config.ts` gives three of the four jobs that use this action\na Desktop Chrome project and nothing else — visual regression and both\nbenchmark suites. They were installing chromium, firefox and webkit all\nthe same, along with the system dependencies of each: on ubuntu24.04\nthat is 53 apt packages for webkit against 21 for chromium, none of\nwebkit's ever loaded. Fewer packages is less to download, and less to\nfail on when the apt mirrors are unhappy.\n\nThe new `browsers` input narrows both the browser download and\n`install-deps`. It carries into the cache key too, since each set\ninstalls a different closure and a chromium-only job must not restore —\nor save over — an all-browsers entry.\n\n`additional-browsers` had no callers and is dropped rather than\nconverted. Its loop ran `cd ./packages/app` on every iteration, so a\nsecond browser would have failed on the path being relative to the\nfirst `cd`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T00:57:26-04:00",
+          "tree_id": "d0a2c8b967a019f125bd9a410385915cb561527f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7e68a8a6065518c9fc553b72de300cf007977e19"
+        },
+        "date": 1787202028742,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 48566,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 519117,
+            "range": "±0.32%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33572,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 387896,
+            "range": "±1.04%",
             "unit": "ops/sec",
             "extra": "89 samples"
           }
