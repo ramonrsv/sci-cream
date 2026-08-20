@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787262189320,
+  "lastUpdate": 1787262197878,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -486493,6 +486493,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.04%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "74fc95f77fc3a111b74ba1ee2531445a7f707837",
+          "message": "Show App CI passing in welcome post's screenshot\n\nThe GitHub page capture in the post's \"Open-source Library\" section\ncaught the badge row with App CI red. The workflow is green now, so the\nimage sitting under the repo link advertises a broken app.\n\nRepaint the state half from the Crate CI badge lower in the same image\nrather than from a fresh render of app.yml/badge.svg: both are GitHub's\nown 50px `passing` chunk, but no headless render reproduces the\ncapture's subpixel antialiasing at the same gamma.\n\n`passing` is 115px wide against `failing`'s 108, so the release and\ncodecov badges move 7px right to hold their gap. Nothing outside\nx 94-383, y 451-470 changes.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T17:35:54-04:00",
+          "tree_id": "70dd3c1aecf87171b768d50ce6d32a9c5ec83619",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/74fc95f77fc3a111b74ba1ee2531445a7f707837"
+        },
+        "date": 1787262150609,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 54057,
+            "range": "±8.43%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 470805,
+            "range": "±3.09%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 37957,
+            "range": "±1.08%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 369297,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
           }
         ]
       }
