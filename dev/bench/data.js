@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787204965548,
+  "lastUpdate": 1787205343965,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -448864,6 +448864,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 659,
             "range": "9.53",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b9a854a6d39caaf69085a9303a554f6a74546fdc",
+          "message": "Say when to dump a migration fixture\n\nThe recipe assumed you had not yet edited `schema.ts`, but described\nthe target as a database state rather than a moment, so it read as\nsomething to do after generating the migration. By then drizzle names\nthe new column in every insert and seeding one migration back fails.\n\nThe dump therefore lands under a temporary name, the tag not existing\nuntil `db:generate` runs. Applying the migrations is a loop over the\njournal, as the comment above it always claimed.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T01:40:03-04:00",
+          "tree_id": "f372288fda78ea28957576d8c3eab6f90f62cea2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b9a854a6d39caaf69085a9303a554f6a74546fdc"
+        },
+        "date": 1787205298444,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.13,
+            "range": "4.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 57.63,
+            "range": "5.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57.88,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2473.5,
+            "range": "27.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 335.75,
+            "range": "6.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 345.5,
+            "range": "5.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 369.25,
+            "range": "12.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17269.5,
+            "range": "79.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 890.25,
+            "range": "21.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 55.75,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.38,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.63,
+            "range": "1.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 131.75,
+            "range": "1.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 96.5,
+            "range": "4.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 60.95,
+            "range": "1.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 48.17,
+            "range": "0.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 662,
+            "range": "15.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 722.75,
+            "range": "17.38",
             "unit": "ms"
           }
         ]
