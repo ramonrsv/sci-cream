@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787202429741,
+  "lastUpdate": 1787202843941,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -447274,6 +447274,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 660.13,
             "range": "21.19",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7e68a8a6065518c9fc553b72de300cf007977e19",
+          "message": "Install only the browsers each CI job runs\n\n`playwright.config.ts` gives three of the four jobs that use this action\na Desktop Chrome project and nothing else — visual regression and both\nbenchmark suites. They were installing chromium, firefox and webkit all\nthe same, along with the system dependencies of each: on ubuntu24.04\nthat is 53 apt packages for webkit against 21 for chromium, none of\nwebkit's ever loaded. Fewer packages is less to download, and less to\nfail on when the apt mirrors are unhappy.\n\nThe new `browsers` input narrows both the browser download and\n`install-deps`. It carries into the cache key too, since each set\ninstalls a different closure and a chromium-only job must not restore —\nor save over — an all-browsers entry.\n\n`additional-browsers` had no callers and is dropped rather than\nconverted. Its loop ran `cd ./packages/app` on every iteration, so a\nsecond browser would have failed on the path being relative to the\nfirst `cd`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T00:57:26-04:00",
+          "tree_id": "d0a2c8b967a019f125bd9a410385915cb561527f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7e68a8a6065518c9fc553b72de300cf007977e19"
+        },
+        "date": 1787202799851,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.75,
+            "range": "2.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49.88,
+            "range": "3.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 56.63,
+            "range": "2.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2337.13,
+            "range": "31.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 329.38,
+            "range": "10.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 331.63,
+            "range": "3.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 349.63,
+            "range": "4.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16529.25,
+            "range": "36.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 979,
+            "range": "9.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 60.75,
+            "range": "2.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.13,
+            "range": "2.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 44,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46.75,
+            "range": "2.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 138.63,
+            "range": "6.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 87.5,
+            "range": "4.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.18,
+            "range": "1.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 43.06,
+            "range": "0.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 650,
+            "range": "7.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 683.88,
+            "range": "10.95",
             "unit": "ms"
           }
         ]
