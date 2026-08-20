@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787181459115,
+  "lastUpdate": 1787202013174,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -516154,6 +516154,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1030.29,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 14.75,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7e68a8a6065518c9fc553b72de300cf007977e19",
+          "message": "Install only the browsers each CI job runs\n\n`playwright.config.ts` gives three of the four jobs that use this action\na Desktop Chrome project and nothing else — visual regression and both\nbenchmark suites. They were installing chromium, firefox and webkit all\nthe same, along with the system dependencies of each: on ubuntu24.04\nthat is 53 apt packages for webkit against 21 for chromium, none of\nwebkit's ever loaded. Fewer packages is less to download, and less to\nfail on when the apt mirrors are unhappy.\n\nThe new `browsers` input narrows both the browser download and\n`install-deps`. It carries into the cache key too, since each set\ninstalls a different closure and a chromium-only job must not restore —\nor save over — an all-browsers entry.\n\n`additional-browsers` had no callers and is dropped rather than\nconverted. Its loop ran `cd ./packages/app` on every iteration, so a\nsecond browser would have failed on the path being relative to the\nfirst `cd`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T00:57:26-04:00",
+          "tree_id": "d0a2c8b967a019f125bd9a410385915cb561527f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7e68a8a6065518c9fc553b72de300cf007977e19"
+        },
+        "date": 1787201986917,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 704.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 873.15,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 641.86,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 810.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 651.97,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 820.42,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 624.62,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 793.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 625.64,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 794.09,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1030.28,
             "unit": "KB"
           },
           {
