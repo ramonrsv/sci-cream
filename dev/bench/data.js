@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787207802726,
+  "lastUpdate": 1787207864233,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -537447,6 +537447,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.34,
             "range": "0.28",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "87909e75be6a7fa9254e39282e67bef3bba4821b",
+          "message": "Log the data layer through Pino instead of console\n\nEvery server action opened with a `console.log` carrying a\n`FetchCounter` index. The counter was per-process, so its numbers\ncollided across instances and reset on cold start, and the template\nliterals built their strings whether or not anything read them.\n\nReplace all 51 call sites in src/lib/data/ with a Pino logger. Each\nmodule takes a child bound to `mod`, and every call names its `action`\nas a field under a static message, so the per-call entry lines drop to\n`debug` and cost an integer comparison once the level is `info`.\n\nRedact email fields: several of these actions take one as an argument,\nand they should not reach a log drain.\n\nCLI scripts and client components keep `console` — the former print for\na human at a terminal, the latter have no stdout.\n\nNote the levels and how to read them in DEVELOPMENT.md.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T02:32:47-04:00",
+          "tree_id": "095f8f4b654ae939008509d28276cf77c767fe83",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/87909e75be6a7fa9254e39282e67bef3bba4821b"
+        },
+        "date": 1787207816307,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.52,
+            "range": "9.69",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.33,
+            "range": "0.69",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.28,
+            "range": "0.68",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 172.5,
+            "range": "13.33",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.10",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 172.5,
+            "range": "13.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.4,
+            "range": "9.70",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.13,
+            "range": "0.16",
             "unit": "ms"
           }
         ]
