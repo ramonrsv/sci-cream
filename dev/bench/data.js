@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787204616365,
+  "lastUpdate": 1787204620052,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -541640,6 +541640,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/0ac8ea791a97ee1967db2b1620fd6bfe02fd85c2"
         },
         "date": 1787203983623,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b9a854a6d39caaf69085a9303a554f6a74546fdc",
+          "message": "Say when to dump a migration fixture\n\nThe recipe assumed you had not yet edited `schema.ts`, but described\nthe target as a database state rather than a moment, so it read as\nsomething to do after generating the migration. By then drizzle names\nthe new column in every insert and seeding one migration back fails.\n\nThe dump therefore lands under a temporary name, the tag not existing\nuntil `db:generate` runs. Applying the migrations is a loop over the\njournal, as the comment above it always claimed.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T01:40:03-04:00",
+          "tree_id": "f372288fda78ea28957576d8c3eab6f90f62cea2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b9a854a6d39caaf69085a9303a554f6a74546fdc"
+        },
+        "date": 1787204619090,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
