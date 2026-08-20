@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787261999701,
+  "lastUpdate": 1787262005270,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -74188,6 +74188,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bbf6831e6925917bb64c589ef1c9348cb311f74b",
+          "message": "Inline docs SVGs so a mark can track the app theme\n\nA markdown image compiles to an `<img>`, which renders its source in a\nseparate document where `.dark` and the theme tokens never reach. An\nSVG referenced that way follows the OS preference rather than the app's\ntoggle — the failure fixed by hand for the 'Ice Cream Science' banner\nin 13eb8b9e.\n\n`rehypeInlineSvg` splices the named file into the page instead, so the\nmark is ordinary page DOM and the tokens it names resolve there. The\ntag's other attributes ride onto the `<svg>` root, leaving sizing and\nstyling with the author. Opting in is explicit, via `data-inline`:\ninferring it from the `src` swept up the shields.io badge rows, which\nend in `.svg` too. `rehype-raw` runs first, a hand-written tag being\none opaque string until it does.\n\n`logo-inline.svg` is a fourth carrier, naming the theme tokens rather\nthan restating them, its outline weight a custom property defaulting\nto 7. `logo.svg` is unchanged, having no page to resolve tokens against.\n\nThe two READMEs take the mark as a plain `<img>`, `logo.svg`'s own\n`prefers-color-scheme` query being the only theming GitHub allows: it\nstrips `style` and `class`, so no token can resolve there. Their app\nheadings drop the backticks, naming the app rather than the package.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T16:56:26-04:00",
+          "tree_id": "8143353ce10119aa5950eaf7beb82b73e33d95cd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bbf6831e6925917bb64c589ef1c9348cb311f74b"
+        },
+        "date": 1787261960995,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4042,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 155783,
+            "range": "± 452",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2410,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 153957,
+            "range": "± 520",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4490,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4861,
+            "range": "± 224",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4812,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4604,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4571,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5011,
+            "range": "± 109",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 107573,
+            "range": "± 1615",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 117680,
+            "range": "± 1174",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 183148352,
+            "range": "± 566018",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 623496,
+            "range": "± 2149",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6603,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6692,
+            "range": "± 224",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 96057,
+            "range": "± 802",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 92565,
+            "range": "± 428",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 182089,
+            "range": "± 1689",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 181284,
+            "range": "± 1458",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 330189,
+            "range": "± 15989",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14409,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 15,
             "range": "± 0",
             "unit": "ns/iter"
           }
