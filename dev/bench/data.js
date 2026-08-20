@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787204667952,
+  "lastUpdate": 1787204679812,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -536422,6 +536422,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.4,
             "range": "0.35",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b9a854a6d39caaf69085a9303a554f6a74546fdc",
+          "message": "Say when to dump a migration fixture\n\nThe recipe assumed you had not yet edited `schema.ts`, but described\nthe target as a database state rather than a moment, so it read as\nsomething to do after generating the migration. By then drizzle names\nthe new column in every insert and seeding one migration back fails.\n\nThe dump therefore lands under a temporary name, the tag not existing\nuntil `db:generate` runs. Applying the migrations is a loop over the\njournal, as the comment above it always claimed.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T01:40:03-04:00",
+          "tree_id": "f372288fda78ea28957576d8c3eab6f90f62cea2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b9a854a6d39caaf69085a9303a554f6a74546fdc"
+        },
+        "date": 1787204635075,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.15,
+            "range": "10.70",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.25,
+            "range": "0.64",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.19,
+            "range": "0.63",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 173.5,
+            "range": "10.76",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 173.5,
+            "range": "10.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.05,
+            "range": "10.55",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.34,
+            "range": "0.28",
             "unit": "ms"
           }
         ]
