@@ -247,16 +247,22 @@ migrator compares bookmarks by timestamp rather than hash, so an edited one woul
 while production kept the original schema.
 
 Each migration also needs a data-only fixture at `drizzle/fixtures/<tag>.sql`, giving the
-`db_migration` CI job a populated database to apply it to. Dump one from a database at the
-_previous_ migration, holding whatever rows the new migration's constraints must validate against.
-Only the newest fixture is read, so delete the previous one:
+`db_migration` CI job a populated database to apply it to. It should look like production the moment
+before the migration runs: at the _previous_ migration, holding whatever rows the new migration's
+constraints must validate against. Only the newest is read, so you can delete the previous one.
+
+**Dump it before editing `schema.ts`.** Drizzle names every column of the current schema in the
+statements it generates, so seeding one migration back fails as soon as the new column is in
+`schema.ts`. Dump to a temporary name and rename once `db:generate` has told you the tag:
 
 ```bash
 createdb sci_cream_fixture
 export POSTGRES_URL="postgres://postgres:password@localhost:5432/sci_cream_fixture"
 
-# Every migration except the new one, in journal order
-psql "$POSTGRES_URL" -q -v ON_ERROR_STOP=1 -f drizzle/0000_baseline.sql
+# Every migration in journal order; none of them is new yet
+for tag in $(jq -r '.entries[].tag' drizzle/meta/_journal.json); do
+  psql "$POSTGRES_URL" -q -v ON_ERROR_STOP=1 -f "drizzle/$tag.sql"
+done
 
 pnpm tsx ./src/lib/database/seed.ts
 pg_dump "$POSTGRES_URL" --data-only --schema=public --no-owner --no-privileges \

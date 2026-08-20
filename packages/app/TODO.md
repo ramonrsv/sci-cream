@@ -56,6 +56,8 @@
       the `production` secrets go live — `codecov-action@v6` already resolves to v7.0.0, tag moved.
 - [ ] Lint the shell scripts with `shellcheck`, as a `lint:sh` script and a CI job beside
       `lint:sql`; they drop and recreate databases now, so its `set -e` and quoting checks pay off.
+- [ ] `pnpm test:e2e` run directly fails ~4 comment tests: without `CI=true` its five projects run
+      in parallel, posting as one user until they trip the rate limit. Seed a user per project.
 - [ ] Review the implicit memoization contract `entity-search` imposes: its results `useMemo` lists
       the `matchesQuery` / `matchesFilters` props, so a fresh callback re-filters the whole pool
       every render. Document it on the props, or restructure so identity stops mattering.
