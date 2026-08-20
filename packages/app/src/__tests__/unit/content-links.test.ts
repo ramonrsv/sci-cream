@@ -71,10 +71,10 @@ function resolveLink(link: string, content: Content): string | undefined {
   const [, segment, ...rest] = pathname.split("/");
   const slug = rest.join("/");
 
-  if (segment === "images" || segment === "icons") {
-    const asset = path.join(PUBLIC_ROOT, pathname);
-    return fs.existsSync(asset) ? undefined : "no such file under public/";
-  }
+  // Any link naming a real file under `public/` is an asset, wherever in that tree it sits —
+  // `/images/…` and `/icons/…`, but also the marks served from the root, such as `/logo.svg`.
+  if (fs.existsSync(path.join(PUBLIC_ROOT, pathname))) return undefined;
+  if (segment === "images" || segment === "icons") return "no such file under public/";
 
   // `/docs` and `/blog` are generated index routes, checked as routes rather than as pages
   let ids: Set<string> | undefined;

@@ -1,3 +1,10 @@
+<!-- markdownlint-disable no-inline-html first-line-heading -- needed for HTML banner -->
+
+<div align="center">
+    <img src="https://raw.githubusercontent.com/ramonrsv/sci-cream/refs/heads/main/packages/app/public/logo.svg"
+         alt="Sci-Cream logo" width="120" />
+</div>
+
 # Sci-Cream
 
 A collection of resources about the science and technology of ice cream and related frozen products.
@@ -22,7 +29,7 @@ whole.
 The [`sci-cream` crate](https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream) is a
 Rust library that facilitates the mathematical analysis of ice cream mixes and their properties.
 
-## `sci-cream` app
+## Sci-Cream App
 
 [![CI](https://github.com/ramonrsv/sci-cream/actions/workflows/app.yml/badge.svg)](https://github.com/ramonrsv/sci-cream/actions)
 [![GitHub Release](https://img.shields.io/github/v/release/ramonrsv/sci-cream?filter=app-v*)](https://github.com/ramonrsv/sci-cream/releases/tag/app-v0.0.7)

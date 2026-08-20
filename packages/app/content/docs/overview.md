@@ -4,9 +4,14 @@ description: "Overview of the Sci-Cream project and available resources, includi
 calculator, reference recipes, ingredient database, documentation, blog, sci-cream Rust crate, etc."
 ---
 
-<!-- markdownlint-disable no-inline-html -- required for the badge row wrappers -->
+<!-- markdownlint-disable no-inline-html -- required for the badge row wrappers and the masthead -->
 
 # Overview
+
+<div class="flex items-center justify-center gap-4 -mt-2">
+  <img src="/logo-inline.svg" data-inline width="90" height="90" alt="" />
+  <span class="text-txt-prim text-4xl font-semibold tracking-tight">Sci-Cream</span>
+</div>
 
 The _Sci-Cream_ project is a collection of tools, references, and writings about ice cream science,
 and my own journey in ice cream making:

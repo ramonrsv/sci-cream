@@ -315,3 +315,113 @@ describe("getMarkdownPage headings", () => {
     expect(page.headings?.every((heading) => !heading.text.includes("#"))).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------
+// rehypeInlineSvg
+// ---------------------------------------------------------------------------
+
+/** A stand-in mark: small, and carrying a comment plus a `currentColor` stroke to assert on. */
+const MARK =
+  '<svg viewBox="0 0 8 8" width="8" height="8">' +
+  "<!-- carrier note -->" +
+  '<path d="M 0 0 L 8 8" style="stroke: currentColor"></path>' +
+  "</svg>";
+
+/** Serve `body` as the page and {@link MARK} as every `.svg` the plugin reaches for. */
+function mockPageWithSvg(body: string) {
+  readFileSyncSpy.mockImplementation((file) =>
+    String(file).endsWith(".svg") ? MARK : `---\ntitle: T\n---\n\n${body}`,
+  );
+}
+
+const pageHtml = async (body: string) => {
+  mockPageWithSvg(body);
+  return (await getMarkdownPage("docs", "page")).contentHtml!;
+};
+
+describe("rehypeInlineSvg", () => {
+  it("splices a marked svg into the page in place of the tag", async () => {
+    const html = await pageHtml('<img src="/logo-inline.svg" data-inline alt="" />');
+    expect(html).toContain('<svg viewBox="0 0 8 8"');
+    expect(html).toContain('d="M 0 0 L 8 8"');
+    expect(html).not.toContain("<img");
+  });
+
+  it("forwards the tag's own attributes onto the svg root, marker excluded", async () => {
+    // Authored as raw HTML, so this also pins that `rehype-raw` runs before the plugin: without it
+    // the tag is one opaque string, and neither the marker nor these attributes reach the tree.
+    const html = await pageHtml(
+      '<img src="/m.svg" data-inline width="48" height="48" style="color: red" />',
+    );
+    expect(html).toMatch(/<svg[^>]*width="48"/);
+    expect(html).toMatch(/<svg[^>]*height="48"/);
+    expect(html).toMatch(/<svg[^>]*style="color: red"/);
+    expect(html).not.toContain("data-inline");
+    // The tag's own size wins over the file's.
+    expect(html).not.toMatch(/<svg[^>]*width="8"/);
+  });
+
+  it("forwards a custom property, which is how a carrier's own knobs are retuned", async () => {
+    // `logo-inline.svg` declares its stroke weight as a custom property with a fallback; setting
+    // that property on the tag is the whole override path, so the `style` must survive intact.
+    const html = await pageHtml('<img src="/m.svg" data-inline style="--logo-stroke-width: 14" />');
+    expect(html).toMatch(/<svg[^>]*style="--logo-stroke-width: 14"/);
+  });
+
+  it("names the graphic from alt, and marks an empty alt decorative", async () => {
+    expect(await pageHtml('<img src="/m.svg" data-inline alt="Sci-Cream" />')).toMatch(
+      /<svg[^>]*role="img"[^>]*aria-label="Sci-Cream"/,
+    );
+    expect(await pageHtml('<img src="/m.svg" data-inline alt="" />')).toMatch(
+      /<svg[^>]*aria-hidden="true"/,
+    );
+  });
+
+  it("drops the carrier's own comments", async () => {
+    expect(await pageHtml('<img src="/m.svg" data-inline alt="" />')).not.toContain("carrier note");
+  });
+
+  it("leaves a local svg alone when the tag does not ask to be inlined", async () => {
+    const html = await pageHtml('<img src="/icons/github.svg" alt="GitHub" />');
+    expect(html).toContain('<img src="/icons/github.svg"');
+    expect(html).not.toContain("<svg");
+  });
+
+  it("leaves markdown image syntax alone, which cannot carry the marker", async () => {
+    expect(await pageHtml("![x](/m.svg)")).toContain('<img src="/m.svg"');
+  });
+
+  it("leaves the badge rows alone, being remote and unmarked", async () => {
+    const html = await pageHtml("![CI](https://img.shields.io/badge.svg)");
+    expect(html).toContain('<img src="https://img.shields.io/badge.svg"');
+    expect(html).not.toContain("<svg");
+  });
+
+  it("rejects a marked tag naming something remote", async () => {
+    mockPageWithSvg('<img src="https://img.shields.io/badge.svg" data-inline />');
+    await expect(getMarkdownPage("docs", "page")).rejects.toThrow(
+      "data-inline wants a root-relative .svg src",
+    );
+  });
+
+  it("rejects a marked tag naming a protocol-relative url, it being remote too", async () => {
+    mockPageWithSvg('<img src="//cdn.example.com/m.svg" data-inline />');
+    await expect(getMarkdownPage("docs", "page")).rejects.toThrow(
+      "data-inline wants a root-relative .svg src",
+    );
+  });
+
+  it("rejects a marked tag naming a file that is not an svg", async () => {
+    mockPageWithSvg('<img src="/images/photo.png" data-inline />');
+    await expect(getMarkdownPage("docs", "page")).rejects.toThrow(
+      "data-inline wants a root-relative .svg src",
+    );
+  });
+
+  it("rejects a src climbing out of the public root", async () => {
+    mockPageWithSvg('<img src="/../../secret.svg" data-inline />');
+    await expect(getMarkdownPage("docs", "page")).rejects.toThrow(
+      "Image path escapes the public root",
+    );
+  });
+});

@@ -2,7 +2,9 @@ import fs from "fs";
 import path from "path";
 
 import matter from "gray-matter";
+import { fromHtml } from "hast-util-from-html";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeRaw from "rehype-raw";
 import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
 import { remark } from "remark";
@@ -12,6 +14,9 @@ import remarkRehype from "remark-rehype";
 
 /** Root of the authored content tree; `docs`/`blog` sections live directly beneath it. */
 export const CONTENT_ROOT = path.join(process.cwd(), "content");
+
+/** Root a root-relative image `src` resolves against: `/logo.svg` is `public/logo.svg`. */
+const PUBLIC_ROOT = path.join(process.cwd(), "public");
 
 export interface Frontmatter {
   title: string;
@@ -96,6 +101,64 @@ function rehypeCollectHeadings(into: MarkdownHeading[]) {
   };
 }
 
+/** Attribute a tag opts in with; `<img data-inline …>` is the whole of the marker. */
+const INLINE_MARKER = "dataInline";
+
+/** An `src` this plugin can inline: root-relative, and naming an `.svg`. */
+const LOCAL_SVG = /^\/(?!\/).*\.svg$/;
+
+/** Drop the file's own comments: they document the carrier, and the page has no use for them. */
+function stripComments(node: ContentNode): void {
+  if (!node.children) return;
+  node.children = node.children.filter((child) => child.type !== "comment");
+  node.children.forEach(stripComments);
+}
+
+/**
+ * The `<svg>` an image node inlines to, or `undefined` where the tag did not ask to be inlined.
+ *
+ * Opting in is explicit rather than inferred from the `src`, which would sweep up every image that
+ * merely looks local; a marked tag naming something unreadable throws rather than passing through.
+ * Remaining attributes ride onto the `<svg>` root, and `alt` keeps its HTML meaning.
+ */
+function inlineSvg(node: ContentNode): ContentNode | undefined {
+  if (node.tagName !== "img") return undefined;
+  const { src, alt, [INLINE_MARKER]: marker, ...rest } = node.properties ?? {};
+  if (marker === undefined) return undefined;
+  if (typeof src !== "string" || !LOCAL_SVG.test(src)) {
+    throw new Error(`data-inline wants a root-relative .svg src, got: ${String(src)}`);
+  }
+
+  const parsed = fromHtml(readSvgFromPublicRoot(src), { fragment: true, space: "svg" });
+  const svg = (parsed.children as ContentNode[]).find((child) => child.tagName === "svg");
+  if (!svg) throw new Error(`Inlined file has no <svg> root: ${src}`);
+
+  stripComments(svg);
+  const label = typeof alt === "string" ? alt : "";
+  svg.properties = {
+    ...svg.properties,
+    ...rest,
+    ...(label ? { role: "img", ariaLabel: label } : { ariaHidden: "true" }),
+  };
+  return svg;
+}
+
+/**
+ * Rehype plugin splicing the `.svg` an `<img data-inline>` names into the page in place of the tag.
+ *
+ * An `<img>` renders its source in a separate document, out of reach of `.dark` and the theme
+ * tokens; inlined, the mark is ordinary page DOM, so both resolve against the page. Position is
+ * load-bearing: before `rehype-raw` a hand-written tag is still one opaque string.
+ */
+function rehypeInlineSvg() {
+  return (tree: ContentNode) => {
+    walkContentTree(tree, (node) => {
+      if (!node.children) return;
+      node.children = node.children.map((child) => inlineSvg(child) ?? child);
+    });
+  };
+}
+
 /**
  * Read a file from the content directory as UTF-8 text.
  *
@@ -105,6 +168,19 @@ function readFileFromContentRoot(...segments: string[]): string {
   const filePath = path.resolve(CONTENT_ROOT, ...segments);
   if (!filePath.startsWith(CONTENT_ROOT + path.sep)) {
     throw new Error(`Content path escapes the content root: ${segments.join("/")}`);
+  }
+  return fs.readFileSync(filePath, "utf8");
+}
+
+/**
+ * Read an SVG named by a root-relative `src`.
+ *
+ * Authored input, so a path escaping the root is rejected, as in {@link readFileFromContentRoot}.
+ */
+function readSvgFromPublicRoot(src: string): string {
+  const filePath = path.resolve(PUBLIC_ROOT, `.${src}`);
+  if (!filePath.startsWith(PUBLIC_ROOT + path.sep)) {
+    throw new Error(`Image path escapes the public root: ${src}`);
   }
   return fs.readFileSync(filePath, "utf8");
 }
@@ -159,6 +235,8 @@ export async function getMarkdownPage(section: string, slug: string): Promise<Ma
     .use(remarkGfm)
     .use(remarkAlert)
     .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeRaw)
+    .use(rehypeInlineSvg)
     .use(rehypeSlug)
     .use(rehypeCollectHeadings, headings)
     .use(rehypeAutolinkHeadings, HEADING_PERMALINK)

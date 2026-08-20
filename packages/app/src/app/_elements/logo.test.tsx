@@ -70,10 +70,11 @@ function carrier(rel: string) {
 }
 
 /**
- * The mark ships three times over — as this component, as the favicon, and as a standalone file —
- * and the two `.svg` copies hard-code values the component only references by token name. Nothing
- * makes them move together, and a drifted colour renders fine while being quietly off-brand, so
- * the sync is asserted rather than trusted.
+ * The mark ships four times over — as this component, as the favicon, as a standalone file, and as
+ * the carrier `rehypeInlineSvg` splices into a markdown page — and the standalone `.svg` copies
+ * hard-code values the component only references by token name. Nothing makes them move together,
+ * and a drifted colour renders fine while being quietly off-brand, so the sync is asserted rather
+ * than trusted. The inline carrier is checked separately below: it duplicates only the geometry.
  */
 describe("logo carriers stay in sync", () => {
   const carriers = [
@@ -116,5 +117,56 @@ describe("logo carriers stay in sync", () => {
     it("keeps its intended stroke weight", () => {
       expect(carrier(file).strokeWidth).toBe(strokeWidth);
     });
+  });
+});
+
+/**
+ * The fourth carrier, spliced into a markdown page by `rehypeInlineSvg`.
+ *
+ * Inlined it is ordinary page DOM, so it names the theme tokens directly rather than restating
+ * their values — colour cannot drift here, only the geometry can. Its outline weight is the one
+ * thing a caller may override, and it must stay unlabelled, the markup around it naming the mark.
+ */
+describe("public/logo-inline.svg", () => {
+  const INLINE = "public/logo-inline.svg";
+  const doc = () => new DOMParser().parseFromString(read(INLINE), "image/svg+xml");
+  const paths = () => [...doc().querySelectorAll("path")];
+
+  it("is well-formed XML", () => {
+    expect(doc().querySelector("parsererror")).toBeNull();
+  });
+
+  it("draws the same geometry as the component", () => {
+    const { container } = render(<Logo />);
+    const pick = (sel: string) => flat(container.querySelector(sel)?.getAttribute("d"));
+    expect(paths().map((path) => flat(path.getAttribute("d")))).toEqual([
+      pick("path.fill-graph-blue"),
+      pick("path.stroke-txt-prim"),
+    ]);
+  });
+
+  it("names both colours by token rather than restating them", () => {
+    // The colours belong to the mark, so they are named here — not left to whatever `color` the
+    // surrounding page happens to carry. Naming the tokens keeps the values in one place.
+    expect(paths()[0]?.getAttribute("style")).toContain("var(--color-graph-blue)");
+    expect(paths()[1]?.getAttribute("style")).toContain("var(--color-text-primary)");
+    // Nothing here to keep in step with globals.css, so no literal colour may creep back in.
+    expect(read(INLINE)).not.toMatch(/rgb\(|#[0-9a-f]{3,6}\b/i);
+  });
+
+  it("falls back to the stroke weight the full-size mark uses", () => {
+    // Authored as a custom property so a caller can pick another weight, defaulting to the 7
+    // `logo.svg` and the component both use at full size. The fallback is the contract.
+    expect(flat(paths()[1]?.getAttribute("style"))).toContain(
+      "stroke-width: var(--logo-stroke-width, 7)",
+    );
+    expect(paths()[1]?.getAttribute("stroke-width")).toBeNull();
+  });
+
+  it("carries no accessible name, the markup around it naming the mark", () => {
+    const svg = doc().documentElement;
+    expect(svg.querySelector("title")).toBeNull();
+    expect(svg.getAttribute("role")).toBeNull();
+    expect(svg.getAttribute("aria-label")).toBeNull();
   });
 });

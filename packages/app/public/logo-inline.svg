@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- The carrier `rehypeInlineSvg` splices into a page, where the tokens below resolve against
+       it; alone they resolve to nothing, so standalone consumers want `logo.svg` instead.
+
+       The outline's weight is the one knob: a custom property, defaulting to 7 (`logo.tsx` uses 14
+       under 32px). Set it in `style`, or from Tailwind as class="[- -logo-stroke-width:14]".
+
+       Unlabelled, the markup naming the mark; geometry mirrors `logo.tsx`, per `logo.test.tsx`. -->
+
+  <!-- Filled region: upper-left vertex, 60° arc through the hexagon centre, landing on the
+       midpoint of the lower-right edge, then back along the lower-left and left edges. -->
+  <path d="M 34.47 74
+           A 194.7 194.7 0 0 1 174.77 209
+           L 128 236
+           L 34.47 182
+           Z"
+        style="fill: var(--color-graph-blue)"/>
+
+  <!-- Regular pointy-top hexagon, circumradius 108, centred at (128,128). -->
+  <path d="M 128 20
+           L 221.53 74
+           L 221.53 182
+           L 128 236
+           L 34.47 182
+           L 34.47 74
+           Z"
+        style="fill: none;
+               stroke: var(--color-text-primary);
+               stroke-width: var(--logo-stroke-width, 7)"
+        stroke-linejoin="round"/>
+</svg>
