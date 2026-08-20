@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787262228518,
+  "lastUpdate": 1787262324979,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -450454,6 +450454,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 699.75,
             "range": "14.79",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bbf6831e6925917bb64c589ef1c9348cb311f74b",
+          "message": "Inline docs SVGs so a mark can track the app theme\n\nA markdown image compiles to an `<img>`, which renders its source in a\nseparate document where `.dark` and the theme tokens never reach. An\nSVG referenced that way follows the OS preference rather than the app's\ntoggle — the failure fixed by hand for the 'Ice Cream Science' banner\nin 13eb8b9e.\n\n`rehypeInlineSvg` splices the named file into the page instead, so the\nmark is ordinary page DOM and the tokens it names resolve there. The\ntag's other attributes ride onto the `<svg>` root, leaving sizing and\nstyling with the author. Opting in is explicit, via `data-inline`:\ninferring it from the `src` swept up the shields.io badge rows, which\nend in `.svg` too. `rehype-raw` runs first, a hand-written tag being\none opaque string until it does.\n\n`logo-inline.svg` is a fourth carrier, naming the theme tokens rather\nthan restating them, its outline weight a custom property defaulting\nto 7. `logo.svg` is unchanged, having no page to resolve tokens against.\n\nThe two READMEs take the mark as a plain `<img>`, `logo.svg`'s own\n`prefers-color-scheme` query being the only theming GitHub allows: it\nstrips `style` and `class`, so no token can resolve there. Their app\nheadings drop the backticks, naming the app rather than the package.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T16:56:26-04:00",
+          "tree_id": "8143353ce10119aa5950eaf7beb82b73e33d95cd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bbf6831e6925917bb64c589ef1c9348cb311f74b"
+        },
+        "date": 1787262288928,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 43.75,
+            "range": "5.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49.38,
+            "range": "3.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 50.13,
+            "range": "1.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2043,
+            "range": "33.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 262.63,
+            "range": "4.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 285.38,
+            "range": "7.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 285.13,
+            "range": "3.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 13718,
+            "range": "94.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 828,
+            "range": "30.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 44,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 45.13,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 32.38,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 115.5,
+            "range": "5.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 69.63,
+            "range": "3.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 48.25,
+            "range": "1.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 35.48,
+            "range": "0.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 529.88,
+            "range": "8.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 594.25,
+            "range": "19.18",
             "unit": "ms"
           }
         ]
