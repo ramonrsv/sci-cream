@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787202172945,
+  "lastUpdate": 1787202405471,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -73444,6 +73444,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7e68a8a6065518c9fc553b72de300cf007977e19",
+          "message": "Install only the browsers each CI job runs\n\n`playwright.config.ts` gives three of the four jobs that use this action\na Desktop Chrome project and nothing else — visual regression and both\nbenchmark suites. They were installing chromium, firefox and webkit all\nthe same, along with the system dependencies of each: on ubuntu24.04\nthat is 53 apt packages for webkit against 21 for chromium, none of\nwebkit's ever loaded. Fewer packages is less to download, and less to\nfail on when the apt mirrors are unhappy.\n\nThe new `browsers` input narrows both the browser download and\n`install-deps`. It carries into the cache key too, since each set\ninstalls a different closure and a chromium-only job must not restore —\nor save over — an all-browsers entry.\n\n`additional-browsers` had no callers and is dropped rather than\nconverted. Its loop ran `cd ./packages/app` on every iteration, so a\nsecond browser would have failed on the path being relative to the\nfirst `cd`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T00:57:26-04:00",
+          "tree_id": "d0a2c8b967a019f125bd9a410385915cb561527f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7e68a8a6065518c9fc553b72de300cf007977e19"
+        },
+        "date": 1787202369172,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3227,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 98847,
+            "range": "± 571",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1783,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 98193,
+            "range": "± 951",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 2811,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 2766,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 2848,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 2886,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 2845,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 3014,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 70261,
+            "range": "± 898",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 70381,
+            "range": "± 979",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 143962571,
+            "range": "± 2410635",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 461485,
+            "range": "± 2705",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 4316,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 40,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 4007,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 60426,
+            "range": "± 848",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 57547,
+            "range": "± 972",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 95327,
+            "range": "± 651",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 93671,
+            "range": "± 906",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 292682,
+            "range": "± 828",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 12758,
+            "range": "± 465",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 569,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 12,
             "range": "± 0",
             "unit": "ns/iter"
           }
