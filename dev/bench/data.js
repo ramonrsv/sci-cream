@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787208107505,
+  "lastUpdate": 1787208527418,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -449659,6 +449659,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 722.75,
             "range": "17.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "87909e75be6a7fa9254e39282e67bef3bba4821b",
+          "message": "Log the data layer through Pino instead of console\n\nEvery server action opened with a `console.log` carrying a\n`FetchCounter` index. The counter was per-process, so its numbers\ncollided across instances and reset on cold start, and the template\nliterals built their strings whether or not anything read them.\n\nReplace all 51 call sites in src/lib/data/ with a Pino logger. Each\nmodule takes a child bound to `mod`, and every call names its `action`\nas a field under a static message, so the per-call entry lines drop to\n`debug` and cost an integer comparison once the level is `info`.\n\nRedact email fields: several of these actions take one as an argument,\nand they should not reach a log drain.\n\nCLI scripts and client components keep `console` — the former print for\na human at a terminal, the latter have no stdout.\n\nNote the levels and how to read them in DEVELOPMENT.md.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T02:32:47-04:00",
+          "tree_id": "095f8f4b654ae939008509d28276cf77c767fe83",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/87909e75be6a7fa9254e39282e67bef3bba4821b"
+        },
+        "date": 1787208479097,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.88,
+            "range": "3.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49.25,
+            "range": "2.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 56.25,
+            "range": "3.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2352.63,
+            "range": "29.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 322.13,
+            "range": "6.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 332,
+            "range": "6.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 350.25,
+            "range": "7.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16937.63,
+            "range": "169.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 937.88,
+            "range": "15.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.63,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.5,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.75,
+            "range": "2.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.5,
+            "range": "1.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 132,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 94,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.72,
+            "range": "1.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.67,
+            "range": "0.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 642.25,
+            "range": "16.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 699.75,
+            "range": "14.79",
             "unit": "ms"
           }
         ]
