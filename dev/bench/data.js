@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787207757034,
+  "lastUpdate": 1787207772584,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -518977,6 +518977,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1030.29,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 14.75,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "87909e75be6a7fa9254e39282e67bef3bba4821b",
+          "message": "Log the data layer through Pino instead of console\n\nEvery server action opened with a `console.log` carrying a\n`FetchCounter` index. The counter was per-process, so its numbers\ncollided across instances and reset on cold start, and the template\nliterals built their strings whether or not anything read them.\n\nReplace all 51 call sites in src/lib/data/ with a Pino logger. Each\nmodule takes a child bound to `mod`, and every call names its `action`\nas a field under a static message, so the per-call entry lines drop to\n`debug` and cost an integer comparison once the level is `info`.\n\nRedact email fields: several of these actions take one as an argument,\nand they should not reach a log drain.\n\nCLI scripts and client components keep `console` — the former print for\na human at a terminal, the latter have no stdout.\n\nNote the levels and how to read them in DEVELOPMENT.md.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T02:32:47-04:00",
+          "tree_id": "095f8f4b654ae939008509d28276cf77c767fe83",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/87909e75be6a7fa9254e39282e67bef3bba4821b"
+        },
+        "date": 1787207724516,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 704.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 873.15,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 641.86,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 810.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 651.98,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 820.42,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 624.62,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 793.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 625.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 794.1,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1030.3,
             "unit": "KB"
           },
           {
