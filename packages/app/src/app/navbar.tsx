@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { useIsNarrow } from "@/lib/hooks/use-is-narrow";
 import { useCanHover } from "@/lib/hooks/use-can-hover";
@@ -109,16 +109,16 @@ export function Navbar({ children }: { children: React.ReactNode }) {
   const canHover = useCanHover();
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const openPeek = useCallback(() => {
+  const openPeek = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setPeek(true);
-  }, []);
+  };
 
   // Deferred so re-entry cancels the close when the cursor crosses between header and sidebar.
-  const closePeek = useCallback(() => {
+  const closePeek = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     closeTimer.current = setTimeout(() => setPeek(false), 80);
-  }, []);
+  };
 
   useEffect(() => {
     setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
