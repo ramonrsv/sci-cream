@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787277536426,
+  "lastUpdate": 1787302278374,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -551675,6 +551675,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/cdeb41f96d962783373d2775c61d5277803f0460"
         },
         "date": 1787276981842,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "218a60991ace19c46700f257664d0833e7b0e0a8",
+          "message": "Let the sidebar spacer own the left gutter\n\nOn mobile the sidebar collapses to a `w-4` in-flow spacer that serves\nas the page's left gutter. Only the spacer can size it: hidden, it\nmust be a real gutter; in every other state it matches the rail's own\nwidth so content sits flush. That turns on the persisted `pinned`\nstate rather than the viewport, so no page-level class can express it.\n\n`/recipes`, `/ingredients` and `/make-recipe` stacked a symmetric\n`px-1 md:px-4` on top of it anyway, giving 20px on the left against\n4px on the right; `/blog` and `/share` did the same. Add a\n`page-gutters` utility that sets the right gutter alone and point\nevery page container at it, so no page hand-rolls the pair again.\n\nFold `.blog-post` and `.doc-shell` onto it too, dropping their\n`sm:px-6`. There is no visible edge to sit off — `.navbar` is just\n`bg-page` — and inside the centred, capped prose column that padding\nonly pushed the text off centre.\n\nAdd a unit test asserting the utility declares no left padding, and\nthat no `page-gutters` class string carries an unprefixed `pl-*` or\n`px-*`. Breakpoint-prefixed ones stay legal: above `sm:` the spacer\nis a visible rail.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-21T04:39:58-04:00",
+          "tree_id": "66243202c38954f5aa07ddec3e9332ed0ddaf028",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/218a60991ace19c46700f257664d0833e7b0e0a8"
+        },
+        "date": 1787302232857,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
