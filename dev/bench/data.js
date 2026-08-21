@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787262871328,
+  "lastUpdate": 1787277010000,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -521800,6 +521800,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1031.64,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 14.82,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cdeb41f96d962783373d2775c61d5277803f0460",
+          "message": "Take script variables from .env and prod.env\n\n`backup-db.sh` and `verify-migration-on-clone.sh` needed their\nproduction URLs exported by hand first: DEVELOPMENT.md prefixed both\ninvocations with `set -a; . ~/.config/sci-cream/prod.env; set +a`. And\n`run-local-test-suite.sh` wanted a `POSTGRES_URL` that already sat in\npackages/app/.env, read there by dotenv but never by the shell itself.\n\n`load_env_file` exports only what the environment does not already\ncarry, so `VAR=... ./script` still overrides and db-migrate.yml's\ninjected secrets stand on a runner that has no such file. It parses\nrather than sources: `set -a; . file` would overwrite what is already\nset, losing that precedence, and would run whatever else the file\nhappened to contain.\n\nEach caller names one file, and no helper loads whichever env files\nexist. prod.env holds production URLs, while the test suite drops and\nreseeds the database `POSTGRES_URL` names — which is why prod.env\ncarries a commented-out `POSTGRES_URL` under a warning not to uncomment\nit. So the two production scripts read prod.env alone, reachable\nelsewhere as `SCI_CREAM_PROD_ENV`, and the test suite takes the single\nname `POSTGRES_URL`, only from .env, consulting .env.local first as\nNext.js does.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T19:39:08-04:00",
+          "tree_id": "8c540dd7fe86d9804014c7af69f0d42c2e24b800",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cdeb41f96d962783373d2775c61d5277803f0460"
+        },
+        "date": 1787276971902,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 625.96,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.41,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 626.99,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 795.44,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1031.63,
             "unit": "KB"
           },
           {
