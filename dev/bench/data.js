@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787277017889,
+  "lastUpdate": 1787277021633,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -550732,6 +550732,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/74fc95f77fc3a111b74ba1ee2531445a7f707837"
         },
         "date": 1787262059190,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cdeb41f96d962783373d2775c61d5277803f0460",
+          "message": "Take script variables from .env and prod.env\n\n`backup-db.sh` and `verify-migration-on-clone.sh` needed their\nproduction URLs exported by hand first: DEVELOPMENT.md prefixed both\ninvocations with `set -a; . ~/.config/sci-cream/prod.env; set +a`. And\n`run-local-test-suite.sh` wanted a `POSTGRES_URL` that already sat in\npackages/app/.env, read there by dotenv but never by the shell itself.\n\n`load_env_file` exports only what the environment does not already\ncarry, so `VAR=... ./script` still overrides and db-migrate.yml's\ninjected secrets stand on a runner that has no such file. It parses\nrather than sources: `set -a; . file` would overwrite what is already\nset, losing that precedence, and would run whatever else the file\nhappened to contain.\n\nEach caller names one file, and no helper loads whichever env files\nexist. prod.env holds production URLs, while the test suite drops and\nreseeds the database `POSTGRES_URL` names — which is why prod.env\ncarries a commented-out `POSTGRES_URL` under a warning not to uncomment\nit. So the two production scripts read prod.env alone, reachable\nelsewhere as `SCI_CREAM_PROD_ENV`, and the test suite takes the single\nname `POSTGRES_URL`, only from .env, consulting .env.local first as\nNext.js does.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T19:39:08-04:00",
+          "tree_id": "8c540dd7fe86d9804014c7af69f0d42c2e24b800",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cdeb41f96d962783373d2775c61d5277803f0460"
+        },
+        "date": 1787276981842,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
