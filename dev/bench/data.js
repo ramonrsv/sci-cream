@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787303982447,
+  "lastUpdate": 1787309444976,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -524296,6 +524296,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 14.8,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2313ae1f19aba2b4b5412da086c2d09686cf73ef",
+          "message": "Fit a four-recipe checklist on a large phone\n\nEvery cell reserved 13px for a checkmark, in both states so weighing\none never reflowed its column — 52px across four recipes, enough to\nforce horizontal scroll once an ingredient name hit its cap. The\nglyph was redundant: `aria-checked` already strikes the amount\nthrough, so a weighed cell is marked by a shape change, not only a\nhue. Hide it below `sm:`; print lays out past that, so paper keeps\nits tick.\n\nNarrow the chip padding below `sm:` for another 16px, and the name\ncap from `max-w-56` to `max-w-52` for 16px more, which the cells\nspend on sitting apart. At 448px with the name at its cap and\nfour-character amounts, the three together take the table from\noverflowing by 74px to fitting with 10 to spare.\n\nName the fixture's pistachio paste long enough to reach that cap and\ngive every recipe a four-character amount, so the snapshots stop\ntesting the easy case, and assert the fit rather than eyeballing it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-21T06:28:35-04:00",
+          "tree_id": "88f01ecb69bb2316d35498e98569a89e316dbacf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2313ae1f19aba2b4b5412da086c2d09686cf73ef"
+        },
+        "date": 1787309399899,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 625.96,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.41,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 626.99,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 795.44,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1031.65,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 14.81,
             "unit": "KB"
           },
           {
