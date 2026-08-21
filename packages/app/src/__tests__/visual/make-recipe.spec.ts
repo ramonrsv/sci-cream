@@ -13,6 +13,9 @@ import { encodeBatchPayload, makeBatchPayload } from "@/lib/batch/share";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { CategoryColor } from "@/lib/styles/colors";
 
+/** The ingredient column's `max-w-52` cap, in px: the width the handheld layouts are tuned to. */
+const INGREDIENT_COLUMN_MAX_PX = 208;
+
 /** The handheld layouts a recipient is most likely weighing from. */
 const PORTRAIT_VIEWPORTS = [
   VIEWPORT_MOBILE_SMALL_PORTRAIT,
@@ -79,6 +82,10 @@ const SHARED_BATCH: Batch = {
 /**
  * Four recipes sharing a pantry, so rows span every column count from one to four.
  * Only a link reaches this width: the calculator has `MAX_RECIPES` slots.
+ *
+ * The pistachio paste is named long enough to pin the ingredient column to its `max-w-56` cap,
+ * and every recipe carries a four-character amount, so each column sits at the width the handheld
+ * layouts are tuned against. Relax either and the tight case quietly stops being tested.
  */
 const SHARED_BATCH_WIDE: Batch = {
   title: "Four-way tasting batch",
@@ -88,7 +95,7 @@ const SHARED_BATCH_WIDE: Batch = {
       name: "Strawberry Sorbet",
       rows: [
         ["Strawberry", 300],
-        ["Sucrose", 100],
+        ["Sucrose", 97.5],
         ["Water", 250],
       ],
     },
@@ -96,7 +103,7 @@ const SHARED_BATCH_WIDE: Batch = {
       name: "Vanilla Base",
       rows: [
         ["Whole Milk", 500],
-        ["Sucrose", 120],
+        ["Sucrose", 82.5],
         ["35% Cream", 150],
       ],
     },
@@ -104,7 +111,7 @@ const SHARED_BATCH_WIDE: Batch = {
       name: "Chocolate Base",
       rows: [
         ["Whole Milk", 400],
-        ["Sucrose", 90],
+        ["Sucrose", 87.5],
         ["Cocoa Powder", 60],
       ],
     },
@@ -114,7 +121,7 @@ const SHARED_BATCH_WIDE: Batch = {
         ["Whole Milk", 450],
         ["Sucrose", 110],
         ["35% Cream", 100],
-        ["Shoei Pistachio Paste", 80],
+        ["Shoei Sicilian Pistachio Paste, unsalted", 82.5],
       ],
     },
   ],
@@ -163,6 +170,13 @@ async function shootPage(page: Page, name: string) {
 async function shootEditor(page: Page, name: string) {
   await parkCursor(page);
   await expect(page.getByTestId("batch-editor")).toHaveScreenshot(name);
+}
+
+/** Assert no sideways scroll: `scrollWidth` floors at `clientWidth`, so a fit reads exactly 0. */
+async function expectNoHorizontalOverflow(page: Page) {
+  const scroller = page.getByTestId("checklist-scroll");
+  const overflow = await scroller.evaluate((el) => el.scrollWidth - el.clientWidth);
+  expect(overflow).toBe(0);
 }
 
 /**
@@ -311,8 +325,34 @@ test.describe("Visual Regression: Make Recipe", () => {
     });
   }
 
-  // Only the small phone hides a whole column, so only it earns a second shot: the large phone
-  // overflows by a few pixels with recipe D already visible, and the tablet does not overflow.
+  // The guarantee: four recipes and a name at its cap still fit a large phone without scrolling.
+  // Asserted, not eyeballed — a screenshot of a scrolling table looks much like one that fits.
+  test.describe("make recipe - four recipes, fits a large phone", () => {
+    test.use({ hasTouch: VIEWPORT_MOBILE_LARGE_PORTRAIT.hasTouch });
+
+    test("no horizontal overflow", async ({ page }) => {
+      await page.setViewportSize(VIEWPORT_MOBILE_LARGE_PORTRAIT.viewport);
+      await goToSharedLink(page, SHARED_BATCH_WIDE);
+
+      // Pin both halves of the tight case, so a relaxed fixture fails here, not passing for free.
+      for (const recipe of SHARED_BATCH_WIDE.recipes) {
+        const widest = Math.max(...recipe.rows.map(([, quantity]) => String(quantity).length));
+        expect(widest).toBeGreaterThanOrEqual(4);
+      }
+
+      const nameColumn = await page
+        .getByTestId("checklist-header")
+        .locator("th")
+        .first()
+        .evaluate((el) => Math.round(el.getBoundingClientRect().width));
+      expect(nameColumn).toBe(INGREDIENT_COLUMN_MAX_PX);
+
+      await expectNoHorizontalOverflow(page);
+    });
+  });
+
+  // The fallback the guarantee cannot cover: the small phone is ~55px narrower and still overflows
+  // at the name cap, so only it earns a second shot revealing the last column; the tablet fits.
   test.describe("make recipe - four recipes, scrolled to the last column", () => {
     test.use({ hasTouch: VIEWPORT_MOBILE_SMALL_PORTRAIT.hasTouch });
 

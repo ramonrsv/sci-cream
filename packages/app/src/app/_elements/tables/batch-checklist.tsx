@@ -113,14 +113,15 @@ function ChecklistCell({
       onClick={onToggle}
       title={label}
       style={chip.style}
-      className={`checklist-cell px-1.5 py-0.5 ${chip.className}`}
+      className={`checklist-cell px-1 py-0.5 sm:px-1.5 ${chip.className}`}
       data-testid={`checklist-cell-${String(recipeIndex)}-${rowName}`}
     >
       <span className="comp-val flex-1">{formatAmount(quantity)}</span>
-      {/* A glyph, not only a hue shift, so the checked state survives colorblindness and print */}
+      {/* Redundant below `sm:`: `aria-checked` strikes the amount through, so state survives
+          colorblindness. Hidden, not unmounted, so weighing never reflows; print keeps it. */}
       <Check
         size={13}
-        className={checked ? "text-txt-sec" : "invisible"}
+        className={`hidden sm:block ${checked ? "text-txt-sec" : "invisible"}`}
         aria-hidden
         strokeWidth={3}
       />
@@ -151,7 +152,7 @@ function ChecklistRow({
       data-done={done}
     >
       <td
-        className={`table-inner-cell table-pin-cell left-0 max-w-56 min-w-32 truncate px-2 ${
+        className={`table-inner-cell table-pin-cell left-0 max-w-52 min-w-32 truncate px-2 ${
           done ? "line-through" : ""
         }`}
         title={row.name}
