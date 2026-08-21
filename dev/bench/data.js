@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787309469590,
+  "lastUpdate": 1787309542765,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -543181,6 +543181,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.15,
             "range": "0.20",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2313ae1f19aba2b4b5412da086c2d09686cf73ef",
+          "message": "Fit a four-recipe checklist on a large phone\n\nEvery cell reserved 13px for a checkmark, in both states so weighing\none never reflowed its column — 52px across four recipes, enough to\nforce horizontal scroll once an ingredient name hit its cap. The\nglyph was redundant: `aria-checked` already strikes the amount\nthrough, so a weighed cell is marked by a shape change, not only a\nhue. Hide it below `sm:`; print lays out past that, so paper keeps\nits tick.\n\nNarrow the chip padding below `sm:` for another 16px, and the name\ncap from `max-w-56` to `max-w-52` for 16px more, which the cells\nspend on sitting apart. At 448px with the name at its cap and\nfour-character amounts, the three together take the table from\noverflowing by 74px to fitting with 10 to spare.\n\nName the fixture's pistachio paste long enough to reach that cap and\ngive every recipe a four-character amount, so the snapshots stop\ntesting the easy case, and assert the fit rather than eyeballing it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-21T06:28:35-04:00",
+          "tree_id": "88f01ecb69bb2316d35498e98569a89e316dbacf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2313ae1f19aba2b4b5412da086c2d09686cf73ef"
+        },
+        "date": 1787309498230,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.54,
+            "range": "8.07",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.82,
+            "range": "0.62",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.78,
+            "range": "0.65",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 165,
+            "range": "9.54",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.48,
+            "range": "0.11",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 165,
+            "range": "9.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.91,
+            "range": "7.82",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.44,
+            "range": "0.34",
             "unit": "ms"
           }
         ]
