@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787303342169,
+  "lastUpdate": 1787303982447,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -453448,6 +453448,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 693.75,
             "range": "17.20",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "218a60991ace19c46700f257664d0833e7b0e0a8",
+          "message": "Let the sidebar spacer own the left gutter\n\nOn mobile the sidebar collapses to a `w-4` in-flow spacer that serves\nas the page's left gutter. Only the spacer can size it: hidden, it\nmust be a real gutter; in every other state it matches the rail's own\nwidth so content sits flush. That turns on the persisted `pinned`\nstate rather than the viewport, so no page-level class can express it.\n\n`/recipes`, `/ingredients` and `/make-recipe` stacked a symmetric\n`px-1 md:px-4` on top of it anyway, giving 20px on the left against\n4px on the right; `/blog` and `/share` did the same. Add a\n`page-gutters` utility that sets the right gutter alone and point\nevery page container at it, so no page hand-rolls the pair again.\n\nFold `.blog-post` and `.doc-shell` onto it too, dropping their\n`sm:px-6`. There is no visible edge to sit off — `.navbar` is just\n`bg-page` — and inside the centred, capped prose column that padding\nonly pushed the text off centre.\n\nAdd a unit test asserting the utility declares no left padding, and\nthat no `page-gutters` class string carries an unprefixed `pl-*` or\n`px-*`. Breakpoint-prefixed ones stay legal: above `sm:` the spacer\nis a visible rail.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-21T04:39:58-04:00",
+          "tree_id": "66243202c38954f5aa07ddec3e9332ed0ddaf028",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/218a60991ace19c46700f257664d0833e7b0e0a8"
+        },
+        "date": 1787303946057,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 36.25,
+            "range": "4.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 38.63,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 48,
+            "range": "5.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1946.38,
+            "range": "56.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 259.25,
+            "range": "5.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 266.88,
+            "range": "3.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 279.75,
+            "range": "4.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 13388.75,
+            "range": "58.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 16.31,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 797.13,
+            "range": "31.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 41,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 40.63,
+            "range": "0.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 30,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 32.63,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 106.13,
+            "range": "2.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 61.25,
+            "range": "3.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 43.61,
+            "range": "0.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 33.27,
+            "range": "0.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 521.38,
+            "range": "10.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 560,
+            "range": "16.31",
             "unit": "ms"
           }
         ]
