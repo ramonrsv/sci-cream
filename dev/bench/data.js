@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787302634309,
+  "lastUpdate": 1787302680607,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -74735,6 +74735,192 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 635,
             "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "218a60991ace19c46700f257664d0833e7b0e0a8",
+          "message": "Let the sidebar spacer own the left gutter\n\nOn mobile the sidebar collapses to a `w-4` in-flow spacer that serves\nas the page's left gutter. Only the spacer can size it: hidden, it\nmust be a real gutter; in every other state it matches the rail's own\nwidth so content sits flush. That turns on the persisted `pinned`\nstate rather than the viewport, so no page-level class can express it.\n\n`/recipes`, `/ingredients` and `/make-recipe` stacked a symmetric\n`px-1 md:px-4` on top of it anyway, giving 20px on the left against\n4px on the right; `/blog` and `/share` did the same. Add a\n`page-gutters` utility that sets the right gutter alone and point\nevery page container at it, so no page hand-rolls the pair again.\n\nFold `.blog-post` and `.doc-shell` onto it too, dropping their\n`sm:px-6`. There is no visible edge to sit off — `.navbar` is just\n`bg-page` — and inside the centred, capped prose column that padding\nonly pushed the text off centre.\n\nAdd a unit test asserting the utility declares no left padding, and\nthat no `page-gutters` class string carries an unprefixed `pl-*` or\n`px-*`. Breakpoint-prefixed ones stay legal: above `sm:` the spacer\nis a visible rail.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-21T04:39:58-04:00",
+          "tree_id": "66243202c38954f5aa07ddec3e9332ed0ddaf028",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/218a60991ace19c46700f257664d0833e7b0e0a8"
+        },
+        "date": 1787302635574,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4130,
+            "range": "± 103",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 155982,
+            "range": "± 740",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2479,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 154197,
+            "range": "± 778",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4516,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4472,
+            "range": "± 144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4819,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4603,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4575,
+            "range": "± 124",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4991,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 107810,
+            "range": "± 3597",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 111025,
+            "range": "± 1682",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 179882758,
+            "range": "± 578918",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 619572,
+            "range": "± 2646",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6825,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6955,
+            "range": "± 161",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 95278,
+            "range": "± 324",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 91793,
+            "range": "± 333",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 197646,
+            "range": "± 21657",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 177194,
+            "range": "± 840",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 330050,
+            "range": "± 1048",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14435,
+            "range": "± 223",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 636,
+            "range": "± 2",
             "unit": "ns/iter"
           },
           {
