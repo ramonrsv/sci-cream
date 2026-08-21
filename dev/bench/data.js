@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787277021633,
+  "lastUpdate": 1787277103523,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -540522,6 +540522,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.4,
             "range": "0.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cdeb41f96d962783373d2775c61d5277803f0460",
+          "message": "Take script variables from .env and prod.env\n\n`backup-db.sh` and `verify-migration-on-clone.sh` needed their\nproduction URLs exported by hand first: DEVELOPMENT.md prefixed both\ninvocations with `set -a; . ~/.config/sci-cream/prod.env; set +a`. And\n`run-local-test-suite.sh` wanted a `POSTGRES_URL` that already sat in\npackages/app/.env, read there by dotenv but never by the shell itself.\n\n`load_env_file` exports only what the environment does not already\ncarry, so `VAR=... ./script` still overrides and db-migrate.yml's\ninjected secrets stand on a runner that has no such file. It parses\nrather than sources: `set -a; . file` would overwrite what is already\nset, losing that precedence, and would run whatever else the file\nhappened to contain.\n\nEach caller names one file, and no helper loads whichever env files\nexist. prod.env holds production URLs, while the test suite drops and\nreseeds the database `POSTGRES_URL` names — which is why prod.env\ncarries a commented-out `POSTGRES_URL` under a warning not to uncomment\nit. So the two production scripts read prod.env alone, reachable\nelsewhere as `SCI_CREAM_PROD_ENV`, and the test suite takes the single\nname `POSTGRES_URL`, only from .env, consulting .env.local first as\nNext.js does.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-20T19:39:08-04:00",
+          "tree_id": "8c540dd7fe86d9804014c7af69f0d42c2e24b800",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cdeb41f96d962783373d2775c61d5277803f0460"
+        },
+        "date": 1787277058932,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 67.92,
+            "range": "14.34",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.13,
+            "range": "0.68",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.09,
+            "range": "0.69",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 185,
+            "range": "21.33",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 185,
+            "range": "21.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 61.59,
+            "range": "11.46",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.37,
+            "range": "0.50",
             "unit": "ms"
           }
         ]
