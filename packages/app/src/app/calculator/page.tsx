@@ -210,7 +210,7 @@ function CalculatorContent() {
   }, []);
 
   return (
-    <div ref={containerRef} className="pr-4">
+    <div ref={containerRef} className="page-gutters">
       {mounted && (
         <ResponsiveGridLayout
           breakpoints={breakpoints}

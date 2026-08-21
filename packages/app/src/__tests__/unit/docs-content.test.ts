@@ -7,9 +7,8 @@ import { getMarkdownSlugs } from "@/lib/markdown";
 // ---------------------------------------------------------------------------
 // Docs navigation manifest
 //
-// Reads the real `content/docs` files: the manifest is the only record of which pages exist and in
-// what order, so a page added without listing it is invisible, and a listed page that was deleted
-// breaks the build.
+// Reads the real `content/docs` files: the manifest alone records which pages exist and in what
+// order, so an unlisted page is invisible and a listed page that was deleted breaks the build.
 // ---------------------------------------------------------------------------
 
 /** Every slug in the tree, in document order. */

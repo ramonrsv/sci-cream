@@ -495,15 +495,22 @@ tbody tr:hover > .table-emphasis {
   @apply bg-brd;
 }
 
-/* Blog and Documentation pages */
-.blog-post {
-  @apply mx-auto max-w-5xl py-2 pr-2 sm:px-6 sm:py-10;
+/* Right gutter only — the left is the sidebar's in-flow spacer (`SIDEBAR_W_SPACER_*`): a gutter
+   when the sidebar is hidden, the rail's width otherwise. That turns on the persisted `pinned`
+   state, not the viewport, so no page class can express it; never add `pl-*`/`px-*` here. `pr-4`
+   matches the spacer, so mobile is symmetric. `/share/embed` is chromeless and pads itself. */
+@utility page-gutters {
+  @apply pr-4;
 }
 
-/* `pr-2` only: the app sidebar's in-flow spacer is the left gutter. Vertical padding belongs to
-   the children, so the sticky rail rests exactly where `top-0` pins it. */
+/* Blog and Documentation pages */
+.blog-post {
+  @apply page-gutters mx-auto max-w-5xl py-2 sm:py-10;
+}
+
+/* Vertical padding belongs to the children, so sticky `.doc-toc` rests where `top-0` pins it. */
 .doc-shell {
-  @apply mx-auto flex w-full max-w-6xl flex-col gap-3 pr-2 sm:px-6 md:flex-row md:gap-8;
+  @apply page-gutters mx-auto flex w-full max-w-6xl flex-col gap-3 md:flex-row md:gap-8;
 }
 
 /* `min-w-0` so wide content shrinks here rather than squeezing the rail; a flex item otherwise

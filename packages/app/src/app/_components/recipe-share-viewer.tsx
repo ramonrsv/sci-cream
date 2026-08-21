@@ -33,7 +33,7 @@ type ViewerState =
 /** Error state of the share viewer: a friendly message shown in place of any recipe content. */
 function ShareErrorNotice({ message }: { message: string }) {
   return (
-    <div className="mx-auto mt-4 max-w-2xl px-2 md:px-4">
+    <div className="page-gutters mx-auto mt-4 max-w-2xl">
       <p className="msg-error p-3" data-testid="share-error">
         {message}
       </p>
@@ -114,7 +114,7 @@ export function ShareViewer({ embed = false }: { embed?: boolean }) {
 
   return (
     <div
-      className={`flex flex-col gap-3 ${embed ? "p-2" : "mx-auto mt-4 max-w-3xl gap-4 px-2 md:px-4"}`}
+      className={`flex flex-col gap-3 ${embed ? "p-2" : "page-gutters mx-auto mt-4 max-w-3xl gap-4"}`}
       data-testid="share-viewer"
     >
       {/* Header: name + shared badge on the left; open-in-calculator / full-view on the right */}

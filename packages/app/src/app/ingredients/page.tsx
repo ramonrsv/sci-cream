@@ -49,7 +49,7 @@ export default function IngredientsPage() {
   );
 
   return (
-    <div className="mx-auto mt-4 max-w-5xl px-1 md:px-4">
+    <div className="page-gutters mx-auto mt-4 max-w-5xl">
       <IngredientSearch savedSpecs={savedSpecs} />
     </div>
   );

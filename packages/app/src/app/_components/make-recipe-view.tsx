@@ -61,7 +61,7 @@ function makeEmptySelection(): BatchSelection {
 /** Friendly failure state for an unusable link; no partial checklist is ever shown. */
 function BatchErrorNotice({ message }: { message: string }) {
   return (
-    <div className="mx-auto mt-4 max-w-2xl px-2 md:px-4">
+    <div className="page-gutters mx-auto mt-4 max-w-2xl">
       <p className="msg-error p-3" data-testid="make-recipe-error">
         {message}
       </p>
@@ -213,7 +213,7 @@ export function MakeRecipeView() {
   if (state.status === "link") {
     return (
       <div
-        className="mx-auto mt-4 flex max-w-3xl flex-col gap-4 px-2 md:px-4"
+        className="page-gutters mx-auto mt-4 flex max-w-3xl flex-col gap-4"
         data-testid="make-recipe-view"
       >
         <div className="flex min-w-0 flex-col gap-1">
@@ -306,7 +306,7 @@ export function MakeRecipeView() {
   );
 
   return (
-    <div className="mx-auto mt-4 max-w-5xl px-1 md:px-4" data-testid="make-recipe-view">
+    <div className="page-gutters mx-auto mt-4 max-w-5xl" data-testid="make-recipe-view">
       <ListDetailShell
         query={batchQuery}
         onQueryChange={setBatchQuery}
