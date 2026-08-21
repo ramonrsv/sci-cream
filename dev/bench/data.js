@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787310245494,
+  "lastUpdate": 1787311838169,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -553991,6 +553991,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/218a60991ace19c46700f257664d0833e7b0e0a8"
         },
         "date": 1787302232857,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2313ae1f19aba2b4b5412da086c2d09686cf73ef",
+          "message": "Fit a four-recipe checklist on a large phone\n\nEvery cell reserved 13px for a checkmark, in both states so weighing\none never reflowed its column — 52px across four recipes, enough to\nforce horizontal scroll once an ingredient name hit its cap. The\nglyph was redundant: `aria-checked` already strikes the amount\nthrough, so a weighed cell is marked by a shape change, not only a\nhue. Hide it below `sm:`; print lays out past that, so paper keeps\nits tick.\n\nNarrow the chip padding below `sm:` for another 16px, and the name\ncap from `max-w-56` to `max-w-52` for 16px more, which the cells\nspend on sitting apart. At 448px with the name at its cap and\nfour-character amounts, the three together take the table from\noverflowing by 74px to fitting with 10 to spare.\n\nName the fixture's pistachio paste long enough to reach that cap and\ngive every recipe a four-character amount, so the snapshots stop\ntesting the easy case, and assert the fit rather than eyeballing it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-21T06:28:35-04:00",
+          "tree_id": "88f01ecb69bb2316d35498e98569a89e316dbacf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2313ae1f19aba2b4b5412da086c2d09686cf73ef"
+        },
+        "date": 1787311793576,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
