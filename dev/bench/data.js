@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787358934128,
+  "lastUpdate": 1787358974263,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -544206,6 +544206,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.44,
             "range": "0.34",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "50c3a3685ec28baf28c871dd0b06c7e35dfe12e8",
+          "message": "Scale checklist density to the recipe count\n\nThe phone checklist was tuned for its worst case, four recipes at the\nname cap, and every batch paid for it — though most hold one or two,\nwhich leave 96 to 151px unspent. Pick the styling from the count: one\nor two recipes keep the tick and the roomier chip, a lone recipe also\nwidening the name from 208px to 270px. Three and up are unchanged, so\nthe four-recipe guarantee holds.\n\nDensity never returns past that, the name column being frozen: its\nwidth costs scroll viewport rather than table, so five recipes on a\nlarge phone now show four at a time rather than two. A fit matrix over\none to five holds both phones to the tiers, which are sized against\nthe small one, and five recipes get their own unscrolled and scrolled\nshots.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-21T20:16:36-04:00",
+          "tree_id": "a305c211f65b1c681aba1f134e23eb44d4607f0a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/50c3a3685ec28baf28c871dd0b06c7e35dfe12e8"
+        },
+        "date": 1787358936310,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 50.1,
+            "range": "6.59",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.49,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.46,
+            "range": "0.62",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 137,
+            "range": "9.75",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.4,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 137,
+            "range": "9.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 47.64,
+            "range": "6.34",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.95,
+            "range": "0.36",
             "unit": "ms"
           }
         ]
