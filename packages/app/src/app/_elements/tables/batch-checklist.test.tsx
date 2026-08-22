@@ -3,7 +3,7 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 
-import type { Batch } from "@/lib/batch/batch";
+import { type Batch, cellKey } from "@/lib/batch/batch";
 import { BatchChecklist } from "@/app/_elements/tables/batch-checklist";
 import { CATEGORY_COLORS, CategoryColor } from "@/lib/styles/colors";
 
@@ -111,5 +111,60 @@ describe("BatchChecklist units", () => {
     expect(
       screen.getByRole("checkbox", { name: "Whole Milk, recipe B: 500 g" }),
     ).toBeInTheDocument();
+  });
+});
+
+describe("BatchChecklist recipe completion", () => {
+  /** Recipe A spans two ingredients, so it can be half weighed; B shares one of them. */
+  const SPLIT: Batch = {
+    date: "2026-07-18",
+    recipes: [
+      {
+        name: "Strawberry Sorbet",
+        rows: [
+          ["Sucrose", 100],
+          ["Strawberry", 300],
+        ],
+      },
+      { name: "Vanilla Base", rows: [["Sucrose", 120]] },
+    ],
+  };
+
+  /** Render `batch` with exactly the given `[recipeIndex, ingredient]` cells weighed off. */
+  function renderWeighed(batch: Batch, cells: [number, string][]) {
+    const checked = new Set(cells.map(([index, name]) => cellKey(name, index)));
+    render(<BatchChecklist batch={batch} checked={checked} onToggle={() => undefined} />);
+  }
+
+  /** The column header's badge for the `index`-th recipe, which is where a done column shows. */
+  function badge(index: number): HTMLElement {
+    return screen.getByTestId(`recipe-badge-${String(index)}`);
+  }
+
+  it("leaves a recipe unfinished while any of its amounts is unweighed", () => {
+    renderWeighed(SPLIT, [[0, "Sucrose"]]);
+
+    expect(badge(0)).toHaveAttribute("data-done", "false");
+  });
+
+  it("marks a recipe done once its last amount is weighed, and only that recipe", () => {
+    renderWeighed(SPLIT, [
+      [0, "Sucrose"],
+      [0, "Strawberry"],
+    ]);
+
+    // B shares the Sucrose row but has a cell of its own there, so A finishing cannot finish B.
+    expect(badge(0)).toHaveAttribute("data-done", "true");
+    expect(badge(1)).toHaveAttribute("data-done", "false");
+  });
+
+  // `every` calls an empty list complete, which would hand a builder's empty slot a finished badge.
+  it("never finishes a recipe that contributes no ingredients", () => {
+    renderWeighed({ ...SPLIT, recipes: [SPLIT.recipes[0]!, { name: "Empty", rows: [] }] }, [
+      [0, "Sucrose"],
+      [0, "Strawberry"],
+    ]);
+
+    expect(badge(1)).toHaveAttribute("data-done", "false");
   });
 });

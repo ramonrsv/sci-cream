@@ -102,6 +102,40 @@ test.describe("Make-Recipe Checklist", () => {
     await expectWhiteFill(page);
   });
 
+  // A drained badge is mostly border at this size, so the border stays opaque: faded toward the
+  // page instead, a white chip vanishes on a light background — and only a browser can tell.
+  test("a finished recipe's solid badge keeps a border that survives the drain", async ({
+    page,
+  }) => {
+    await seedCalculatorSlots(page);
+    await goToPageAndWaitFor(page, "/make-recipe");
+    await page.getByTestId("batch-add-recipe").selectOption("slot:0");
+    await page.getByTestId("batch-add-recipe").selectOption("slot:1");
+
+    await page.getByTestId("builder-color-button").first().click();
+    await page.getByTestId("builder-color-White").click();
+
+    for (const name of ["Strawberry", "Sucrose"]) {
+      await page.getByTestId(`checklist-cell-0-${name}`).click();
+    }
+    await expect(page.getByTestId("batch-progress")).toContainText("2 of 4 weighed");
+
+    // The builder wears the same badges, so the header's copy is the one that carries the state.
+    const badge = page.getByTestId("checklist-header").getByTestId("recipe-badge-0");
+    await expect(badge).toHaveAttribute("data-done", "true");
+    await expect(badge).toHaveCSS("text-decoration-line", "line-through");
+
+    // A canvas reads the alpha out: matching the `oklab()` string would pin the color too.
+    const alpha = await badge.evaluate((el) => {
+      const context = document.createElement("canvas").getContext("2d");
+      if (!context) throw new Error("no 2d context");
+      context.fillStyle = getComputedStyle(el).borderTopColor;
+      context.fillRect(0, 0, 1, 1);
+      return context.getImageData(0, 0, 1, 1).data[3];
+    });
+    expect(alpha).toBe(255);
+  });
+
   test("the shared link shows the same checklist to a recipient with no account", async ({
     browser,
   }) => {

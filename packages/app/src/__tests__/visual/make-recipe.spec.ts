@@ -187,6 +187,23 @@ async function weighOffColoredCells(page: Page) {
   await expect(page.getByTestId("batch-progress")).toContainText("3 of 13 weighed");
 }
 
+/** Weigh off every amount of the two solid-filled recipes, so both their badges read done. */
+async function weighOffSolidRecipes(page: Page) {
+  const cells: [number, string][] = [
+    [0, "Strawberry"],
+    [0, "Sucrose"],
+    [0, "Water"],
+    [1, "Whole Milk"],
+    [1, "Sucrose"],
+    [1, "35% Cream"],
+  ];
+  for (const [index, name] of cells) {
+    await page.getByTestId(`checklist-cell-${String(index)}-${name}`).click();
+  }
+
+  await expect(page.getByTestId("batch-progress")).toContainText("6 of 13 weighed");
+}
+
 /** Screenshot the whole checklist page, grown to fit its content. */
 async function shootPage(page: Page, name: string) {
   // Park the cursor off the checklist, or it hover-tints whichever cell sits beneath it.
@@ -300,6 +317,24 @@ test.describe("Visual Regression: Make Recipe", () => {
     await expect(page.getByTestId("checklist-row-Strawberry")).toHaveAttribute("data-done", "true");
 
     await shootEditor(page, "make-recipe-rows-done.png");
+  });
+
+  test("make recipe - a whole recipe checked off", async ({ page }) => {
+    await openOwnerPage(page, { recipes: 2 });
+
+    // Every amount of recipe A and nothing else, which is the mixed state worth pinning: A's badge
+    // drains while B's stays lit, and the rows A alone contributes read done while Sucrose cannot.
+    for (const name of ["Strawberry", "Sucrose", "Water"]) {
+      await page.getByTestId(`checklist-cell-0-${name}`).click();
+    }
+    await expect(page.getByTestId("batch-progress")).toContainText("3 of 6 weighed");
+
+    // The builder wears the same badges, so the assertion has to name the header's copy.
+    const header = page.getByTestId("checklist-header");
+    await expect(header.getByTestId("recipe-badge-0")).toHaveAttribute("data-done", "true");
+    await expect(header.getByTestId("recipe-badge-1")).toHaveAttribute("data-done", "false");
+
+    await shootEditor(page, "make-recipe-recipe-done.png");
   });
 
   test("make recipe - whole page, signed out", async ({ page }) => {
@@ -469,6 +504,21 @@ test.describe("Visual Regression: Make Recipe", () => {
     await goToSharedLink(page, SHARED_BATCH_COLORED);
     await weighOffColoredCells(page);
     await shootPage(page, "make-recipe-colored-dark.png");
+  });
+
+  // White and black drain to a tint a badge is too small to hold, so their borders stay opaque to
+  // keep the chip. Dark is where black has to survive that drain without going invisible.
+  test("make recipe - whole recipes checked off, picked colors", async ({ page }) => {
+    await goToSharedLink(page, SHARED_BATCH_COLORED);
+    await weighOffSolidRecipes(page);
+    await shootPage(page, "make-recipe-colored-done.png");
+  });
+
+  test("make recipe - whole recipes checked off, picked colors - dark", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await goToSharedLink(page, SHARED_BATCH_COLORED);
+    await weighOffSolidRecipes(page);
+    await shootPage(page, "make-recipe-colored-done-dark.png");
   });
 
   test("make recipe - invalid link error", async ({ page }) => {

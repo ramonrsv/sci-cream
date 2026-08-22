@@ -135,6 +135,25 @@ export function cellKey(rowName: string, recipeIndex: number): string {
   return `${String(recipeIndex)}:${rowName}`;
 }
 
+/**
+ * Indices of the recipes whose every amount is weighed, so a column reads done the way a row does.
+ * A recipe with no rows is never seen, so an empty builder slot cannot wear a finished badge.
+ */
+export function doneRecipes(
+  rows: readonly MergedRow[],
+  checked: ReadonlySet<string>,
+): ReadonlySet<number> {
+  const seen = new Set<number>();
+  const pending = new Set<number>();
+  for (const row of rows) {
+    for (const { recipeIndex } of row.cells) {
+      seen.add(recipeIndex);
+      if (!checked.has(cellKey(row.name, recipeIndex))) pending.add(recipeIndex);
+    }
+  }
+  return new Set([...seen].filter((index) => !pending.has(index)));
+}
+
 /** Today's date as `YYYY-MM-DD` in the local timezone, for defaulting {@link Batch.date}. */
 export function todayIsoDate(): string {
   const now = new Date();

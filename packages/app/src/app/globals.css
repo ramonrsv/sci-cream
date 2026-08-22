@@ -635,6 +635,13 @@ tbody tr:hover > .table-emphasis {
   border-color: color-mix(in oklab, var(--cat) 55%, transparent);
 }
 
+/* Weighed: the whole column checked off, so the badge wears exactly what its own cells wear. */
+.recipe-badge[data-done="true"] {
+  @apply text-txt-sec line-through;
+  background-color: color-mix(in oklab, var(--cat) 8%, transparent);
+  border-color: color-mix(in oklab, var(--cat) 22%, transparent);
+}
+
 /* Checklist cell: the badge's tint on the whole chip, since the column already names the recipe. */
 .checklist-cell {
   @apply text-txt-prim flex w-full items-center rounded border text-sm;
@@ -670,6 +677,14 @@ tbody tr:hover > .table-emphasis {
   @apply text-txt-sec;
   background-color: color-mix(in oklab, var(--cat) 30%, transparent);
   border-color: color-mix(in oklab, var(--cat) 45%, transparent);
+}
+
+/* The badge drains to the cells' tint, but keeps an opaque border where they fade one out: a chip
+   this small is mostly border, and a white one faded toward the page leaves nothing behind. */
+.recipe-badge.cat-solid[data-done="true"] {
+  @apply text-txt-sec;
+  background-color: color-mix(in oklab, var(--cat) 30%, transparent);
+  border-color: color-mix(in oklab, var(--cat) 65%, var(--cat-ink));
 }
 
 /* JSON Viewer (react-json-view-lite)

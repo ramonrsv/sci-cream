@@ -9,6 +9,7 @@ import {
   batchRecipeLetter,
   cellKey,
   displayVersion,
+  doneRecipes,
   mergeBatchRows,
 } from "@/lib/batch/batch";
 import { VersionBadge } from "@/app/_elements/version-badge";
@@ -47,10 +48,13 @@ export function RecipeBadge({
   index,
   color,
   title,
+  done = false,
 }: {
   index: number;
   color: CategoryColor;
   title?: string;
+  /** Every amount for this recipe weighed; the chip then wears what its own cells wear. */
+  done?: boolean;
 }) {
   const chip = categoryChipStyle(color);
   return (
@@ -58,6 +62,7 @@ export function RecipeBadge({
       className={`recipe-badge ${chip.className}`}
       style={chip.style}
       title={title}
+      data-done={done}
       data-testid={`recipe-badge-${String(index)}`}
     >
       {batchRecipeLetter(index)}
@@ -205,7 +210,14 @@ function ChecklistRow({
 }
 
 /** Sticky header naming each column: ingredient, batch total, and one badge per recipe. */
-function ChecklistHeader({ recipes }: { recipes: Batch["recipes"] }) {
+function ChecklistHeader({
+  recipes,
+  done,
+}: {
+  recipes: Batch["recipes"];
+  /** Indices of the recipes weighed to completion — see {@link doneRecipes}. */
+  done: ReadonlySet<number>;
+}) {
   // A lone recipe needs no letter, and its column is the only place left to carry the unit.
   const single = recipes.length === 1;
 
@@ -242,6 +254,7 @@ function ChecklistHeader({ recipes }: { recipes: Batch["recipes"] }) {
                   index={index}
                   color={batchRecipeColor(recipe, index)}
                   title={recipe.name || "Untitled recipe"}
+                  done={done.has(index)}
                 />
               </span>
             )}
@@ -267,6 +280,7 @@ export function BatchChecklist({
 }) {
   const rows = mergeBatchRows(batch.recipes);
   const density = densityFor(batch.recipes.length);
+  const done = doneRecipes(rows, checked);
   const isChecked = (key: string) => checked.has(key);
 
   if (rows.length === 0) {
@@ -281,7 +295,7 @@ export function BatchChecklist({
     // Height-bounded scroll region freezing header and first column; a lone `overflow-x` unsticks.
     <div className="max-h-[70vh] overflow-auto" data-testid="checklist-scroll">
       <table className="border-separate border-spacing-0" data-testid="batch-checklist">
-        <ChecklistHeader recipes={batch.recipes} />
+        <ChecklistHeader recipes={batch.recipes} done={done} />
         <tbody>
           {rows.map((row) => (
             <ChecklistRow
