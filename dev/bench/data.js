@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787359284748,
+  "lastUpdate": 1787359484007,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -455038,6 +455038,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 681.63,
             "range": "15.00",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "50c3a3685ec28baf28c871dd0b06c7e35dfe12e8",
+          "message": "Scale checklist density to the recipe count\n\nThe phone checklist was tuned for its worst case, four recipes at the\nname cap, and every batch paid for it — though most hold one or two,\nwhich leave 96 to 151px unspent. Pick the styling from the count: one\nor two recipes keep the tick and the roomier chip, a lone recipe also\nwidening the name from 208px to 270px. Three and up are unchanged, so\nthe four-recipe guarantee holds.\n\nDensity never returns past that, the name column being frozen: its\nwidth costs scroll viewport rather than table, so five recipes on a\nlarge phone now show four at a time rather than two. A fit matrix over\none to five holds both phones to the tiers, which are sized against\nthe small one, and five recipes get their own unscrolled and scrolled\nshots.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-21T20:16:36-04:00",
+          "tree_id": "a305c211f65b1c681aba1f134e23eb44d4607f0a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/50c3a3685ec28baf28c871dd0b06c7e35dfe12e8"
+        },
+        "date": 1787359447299,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 34.5,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 39.38,
+            "range": "3.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 43.75,
+            "range": "2.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1918.13,
+            "range": "80.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 260.13,
+            "range": "5.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 268.88,
+            "range": "3.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 282.13,
+            "range": "3.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 13501.63,
+            "range": "58.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 760.25,
+            "range": "35.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 41,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 41.25,
+            "range": "2.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 30.88,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 31.75,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 107.5,
+            "range": "4.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 59.75,
+            "range": "1.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 41.92,
+            "range": "0.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.95,
+            "range": "0.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 515.88,
+            "range": "9.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 557.75,
+            "range": "7.63",
             "unit": "ms"
           }
         ]
