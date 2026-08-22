@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787358892081,
+  "lastUpdate": 1787358930728,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -525289,6 +525289,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 14.81,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "50c3a3685ec28baf28c871dd0b06c7e35dfe12e8",
+          "message": "Scale checklist density to the recipe count\n\nThe phone checklist was tuned for its worst case, four recipes at the\nname cap, and every batch paid for it — though most hold one or two,\nwhich leave 96 to 151px unspent. Pick the styling from the count: one\nor two recipes keep the tick and the roomier chip, a lone recipe also\nwidening the name from 208px to 270px. Three and up are unchanged, so\nthe four-recipe guarantee holds.\n\nDensity never returns past that, the name column being frozen: its\nwidth costs scroll viewport rather than table, so five recipes on a\nlarge phone now show four at a time rather than two. A fit matrix over\none to five holds both phones to the tiers, which are sized against\nthe small one, and five recipes get their own unscrolled and scrolled\nshots.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-21T20:16:36-04:00",
+          "tree_id": "a305c211f65b1c681aba1f134e23eb44d4607f0a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/50c3a3685ec28baf28c871dd0b06c7e35dfe12e8"
+        },
+        "date": 1787358876080,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.05,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.77,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 625.96,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.41,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 626.99,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 795.44,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1031.74,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 14.83,
             "unit": "KB"
           },
           {
