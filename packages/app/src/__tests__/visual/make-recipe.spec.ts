@@ -13,8 +13,17 @@ import { encodeBatchPayload, makeBatchPayload } from "@/lib/batch/share";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { CategoryColor } from "@/lib/styles/colors";
 
-/** The ingredient column's `max-w-52` cap, in px: the width the handheld layouts are tuned to. */
+/** The ingredient column's dense-tier cap (`max-w-52`), in px: what three or four recipes leave. */
 const INGREDIENT_COLUMN_MAX_PX = 208;
+
+/**
+ * Where the checklist fits without a sideways scroll, per phone and recipe count. The density
+ * tiers in `densityFor` are sized against the small phone, so it is the row that constrains them.
+ */
+const FIT_MATRIX = [
+  { ...VIEWPORT_MOBILE_SMALL_PORTRAIT, fitsUpTo: 3 },
+  { ...VIEWPORT_MOBILE_LARGE_PORTRAIT, fitsUpTo: 4 },
+];
 
 /** The handheld layouts a recipient is most likely weighing from. */
 const PORTRAIT_VIEWPORTS = [
@@ -141,6 +150,26 @@ const SHARED_BATCH_COLORED: Batch = {
   ],
 };
 
+/**
+ * Five recipes: more than any phone can show at once, so the checklist scrolls. The batch that
+ * shows whether the dense tier leaves a useful number of recipes on screen while scrolling.
+ */
+const SHARED_BATCH_SCROLLING: Batch = {
+  ...SHARED_BATCH_WIDE,
+  title: "Five-way tasting batch",
+  recipes: [
+    ...SHARED_BATCH_WIDE.recipes,
+    {
+      name: "Coffee Base",
+      rows: [
+        ["Whole Milk", 425],
+        ["Sucrose", 92.5],
+        ["Espresso", 45],
+      ],
+    },
+  ],
+};
+
 /** Open a batch through a real share link, as a recipient would. */
 async function goToSharedLink(page: Page, batch: Batch = SHARED_BATCH) {
   const encoded = await encodeBatchPayload(makeBatchPayload(batch));
@@ -172,11 +201,30 @@ async function shootEditor(page: Page, name: string) {
   await expect(page.getByTestId("batch-editor")).toHaveScreenshot(name);
 }
 
-/** Assert no sideways scroll: `scrollWidth` floors at `clientWidth`, so a fit reads exactly 0. */
-async function expectNoHorizontalOverflow(page: Page) {
+/** Width the checklist scrolls over. `scrollWidth` floors at `clientWidth`, so a fit reads 0. */
+async function checklistOverflow(page: Page): Promise<number> {
   const scroller = page.getByTestId("checklist-scroll");
-  const overflow = await scroller.evaluate((el) => el.scrollWidth - el.clientWidth);
-  expect(overflow).toBe(0);
+  return scroller.evaluate((el) => el.scrollWidth - el.clientWidth);
+}
+
+/** Assert no sideways scroll. */
+async function expectNoHorizontalOverflow(page: Page) {
+  expect(await checklistOverflow(page)).toBe(0);
+}
+
+/** A batch of `count` recipes at the tight case: a name past the cap, four-character amounts. */
+function batchOfWidth(count: number): Batch {
+  return {
+    title: "Fit matrix",
+    date: FIXED_DATE,
+    recipes: Array.from({ length: count }, (_, index) => ({
+      name: `Recipe ${String(index)}`,
+      rows: [
+        ["Shoei Sicilian Pistachio Paste, unsalted", 97.5],
+        ["Whole Milk", 250],
+      ] as [string, number][],
+    })),
+  };
 }
 
 /**
@@ -327,6 +375,8 @@ test.describe("Visual Regression: Make Recipe", () => {
 
   // The guarantee: four recipes and a name at its cap still fit a large phone without scrolling.
   // Asserted, not eyeballed — a screenshot of a scrolling table looks much like one that fits.
+  // It assumes the sidebar at its default, unpinned: pinning spends 40px of the row on the rail,
+  // and four recipes then scroll, which is the deliberate cost of that choice.
   test.describe("make recipe - four recipes, fits a large phone", () => {
     test.use({ hasTouch: VIEWPORT_MOBILE_LARGE_PORTRAIT.hasTouch });
 
@@ -351,6 +401,25 @@ test.describe("Visual Regression: Make Recipe", () => {
     });
   });
 
+  // Fit is a function of the phone and the count: `densityFor` spends the slack a small count
+  // leaves. Both phones are asserted, the small one being the width the tiers are sized against.
+  for (const { name, viewport, hasTouch, fitsUpTo } of FIT_MATRIX) {
+    test.describe(`make recipe - fit by recipe count - ${name}`, () => {
+      test.use({ hasTouch });
+
+      for (const count of [1, 2, 3, 4, 5]) {
+        test(`${String(count)} recipes`, async ({ page }) => {
+          await page.setViewportSize(viewport);
+          await goToSharedLink(page, batchOfWidth(count));
+
+          const overflow = await checklistOverflow(page);
+          if (count <= fitsUpTo) expect(overflow).toBe(0);
+          else expect(overflow).toBeGreaterThan(0);
+        });
+      }
+    });
+  }
+
   // The fallback the guarantee cannot cover: the small phone is ~55px narrower and still overflows
   // at the name cap, so only it earns a second shot revealing the last column; the tablet fits.
   test.describe("make recipe - four recipes, scrolled to the last column", () => {
@@ -361,6 +430,29 @@ test.describe("Visual Regression: Make Recipe", () => {
       await goToSharedLink(page, SHARED_BATCH_WIDE);
 
       await shootScrolledToLastColumn(page, "make-recipe-wide-scrolled-mobile-small-portrait.png");
+    });
+  });
+
+  // A batch too wide to fit, where the frozen name column costs scroll viewport. Shot at the large
+  // phone: unscrolled for how many recipes land on screen, then scrolled for the ones pushed off.
+  test.describe("make recipe - five recipes", () => {
+    test.use({ hasTouch: VIEWPORT_MOBILE_LARGE_PORTRAIT.hasTouch });
+
+    test.beforeEach(async ({ page }) => {
+      await page.setViewportSize(VIEWPORT_MOBILE_LARGE_PORTRAIT.viewport);
+      await goToSharedLink(page, SHARED_BATCH_SCROLLING);
+      await expect(page.getByTestId("batch-progress")).toContainText("0 of 16 weighed");
+    });
+
+    test("five recipes", async ({ page }) => {
+      await shootPage(page, "make-recipe-scrolling-mobile-large-portrait.png");
+    });
+
+    test("scrolled to the last column", async ({ page }) => {
+      await shootScrolledToLastColumn(
+        page,
+        "make-recipe-scrolling-scrolled-mobile-large-portrait.png",
+      );
     });
   });
 

@@ -84,6 +84,15 @@ export function BatchLegend({ recipes }: { recipes: Batch["recipes"] }) {
   );
 }
 
+/**
+ * Phone styling per recipe count: below `sm:` the tick and some chip padding give way to width
+ * from the third recipe on, and never come back — the name column is frozen, so its pixels cost
+ * scroll viewport, not table width. Sized against the small phone; the spec holds a fit matrix.
+ */
+function densityFor(count: number): { dense: boolean; nameCap: string } {
+  return { dense: count > 2, nameCap: count === 1 ? "max-w-68" : "max-w-52 sm:max-w-68" };
+}
+
 /** One (recipe, ingredient) cell: the unit of weighing, and the unit of checkoff. */
 function ChecklistCell({
   rowName,
@@ -91,6 +100,7 @@ function ChecklistCell({
   color,
   quantity,
   checked,
+  dense,
   onToggle,
 }: {
   rowName: string;
@@ -98,6 +108,8 @@ function ChecklistCell({
   color: CategoryColor;
   quantity: number;
   checked: boolean;
+  /** Drop the tick and tighten the chip, for the counts that need the width — see `densityFor`. */
+  dense: boolean;
   onToggle: () => void;
 }) {
   // The label carries the unit the cell drops: a button is named by itself, not by its headers.
@@ -113,15 +125,15 @@ function ChecklistCell({
       onClick={onToggle}
       title={label}
       style={chip.style}
-      className={`checklist-cell px-1 py-0.5 sm:px-1.5 ${chip.className}`}
+      className={`checklist-cell py-0.5 ${dense ? "px-1 sm:px-1.5" : "px-1.5"} ${chip.className}`}
       data-testid={`checklist-cell-${String(recipeIndex)}-${rowName}`}
     >
       <span className="comp-val flex-1">{formatAmount(quantity)}</span>
-      {/* Redundant below `sm:`: `aria-checked` strikes the amount through, so state survives
-          colorblindness. Hidden, not unmounted, so weighing never reflows; print keeps it. */}
+      {/* Dropped only where the count needs the width: `aria-checked` strikes the amount through,
+          so state survives colorblindness. Hidden, not unmounted, so weighing never reflows. */}
       <Check
         size={13}
-        className={`hidden sm:block ${checked ? "text-txt-sec" : "invisible"}`}
+        className={`${dense ? "hidden sm:block" : "block"} ${checked ? "text-txt-sec" : "invisible"}`}
         aria-hidden
         strokeWidth={3}
       />
@@ -133,12 +145,14 @@ function ChecklistCell({
 function ChecklistRow({
   row,
   recipes,
+  density,
   isChecked,
   onToggle,
 }: {
   row: MergedRow;
   /** The whole batch: a row spans every recipe, not just the ones using this ingredient. */
   recipes: Batch["recipes"];
+  density: ReturnType<typeof densityFor>;
   isChecked: (key: string) => boolean;
   onToggle: (key: string) => void;
 }) {
@@ -152,7 +166,7 @@ function ChecklistRow({
       data-done={done}
     >
       <td
-        className={`table-inner-cell table-pin-cell left-0 max-w-52 min-w-32 truncate px-2 ${
+        className={`table-inner-cell table-pin-cell left-0 ${density.nameCap} min-w-32 truncate px-2 ${
           done ? "line-through" : ""
         }`}
         title={row.name}
@@ -179,6 +193,7 @@ function ChecklistRow({
                 color={batchRecipeColor(recipe, recipeIndex)}
                 quantity={cell.quantity}
                 checked={isChecked(key)}
+                dense={density.dense}
                 onToggle={() => onToggle(key)}
               />
             )}
@@ -251,6 +266,7 @@ export function BatchChecklist({
   onToggle: (key: string) => void;
 }) {
   const rows = mergeBatchRows(batch.recipes);
+  const density = densityFor(batch.recipes.length);
   const isChecked = (key: string) => checked.has(key);
 
   if (rows.length === 0) {
@@ -272,6 +288,7 @@ export function BatchChecklist({
               key={row.name}
               row={row}
               recipes={batch.recipes}
+              density={density}
               isChecked={isChecked}
               onToggle={onToggle}
             />
