@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787470187637,
+  "lastUpdate": 1787470264783,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -557079,6 +557079,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/fb7813323f6f7fa398eb13b742e658682ab77bac"
         },
         "date": 1787470079628,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2a2b1ebcf8ffb3ee65bca4c51d6ae5177a5ae64c",
+          "message": "Track the heading being read in the docs contents\n\nThe contents marks the heading being read `aria-current=\"location\"`,\n`page` already belonging to the page link. An `IntersectionObserver`\nresolves against the app's scrolling content area rather than the\nviewport, the shell being `h-screen` so the window never scrolls, and\na cropped band keeps the answer to the heading just scrolled past\nrather than any heading on screen.\n\nRe-observing keys on the route as well as on the heading ids. Two\npages can list exactly the same headings — `other-resources/science`\nand `.../recipes` do — so the ids alone cannot tell them apart, and\nthe observer would go on watching the previous page's detached\nelements, tracking dead until a reload.\n\nThe mark clears on the same key. Holding the last heading is right\nwhile reading a page, since the band empties between two far-apart\nones, but carrying it across pages leaves the highlight stuck on a\nheading the new page never had.\n\n`app-shell.ts` collects the identifiers the shell publishes for code\nthat cannot import it, replacing `web-vitals-mark.ts` and taking the\ncontent area's id alongside. Both are read from a Playwright loader,\nwhich is why neither can live in the component that mounts it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-23T03:08:17-04:00",
+          "tree_id": "652fa9f252dcd0d423ecd79385c217e85d218ea8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2a2b1ebcf8ffb3ee65bca4c51d6ae5177a5ae64c"
+        },
+        "date": 1787470217667,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
