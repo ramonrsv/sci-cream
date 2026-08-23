@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787527785641,
+  "lastUpdate": 1787528120466,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -458218,6 +458218,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 740.38,
             "range": "22.61",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8d5aaea88ecb2bb5f5b4233980a1288f75ede351",
+          "message": "Locate the app content area by id alone\n\n`captureFullContent` looked its scroller up from a `data-testid`\nstring, which is the only reason the app shell carried a testid\nbeside the id it already publishes. It now takes the `Locator`\ndirectly, and the duplicate is gone: `#app-content` is what the\ndocs scroll-padding rule and the scroll-spy root already use.\n\nThe `= \"app-content\"` default goes rather than becoming a default\n`Locator`: all four call sites already passed a target of their own.\n`page` stays the first parameter, matching `expandToFullHeight`\nrather than reaching for `scroller.page()`.\n\n`setViewportHeightForAllAppContentScreenshot` reached for the testid\ntoo, so both now go through one `appContent` helper.\n\nNo snapshots move: `data-testid` renders nothing.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-23T19:17:54-04:00",
+          "tree_id": "667f98f521900ad21b43c4983aee876b30c8dbd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8d5aaea88ecb2bb5f5b4233980a1288f75ede351"
+        },
+        "date": 1787528074090,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.25,
+            "range": "4.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 56,
+            "range": "5.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 56.38,
+            "range": "3.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2389.38,
+            "range": "18.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 321.63,
+            "range": "3.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 331,
+            "range": "6.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 348.38,
+            "range": "4.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16503.25,
+            "range": "35.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 905.38,
+            "range": "28.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.88,
+            "range": "2.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.5,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.13,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 128.25,
+            "range": "5.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 83.5,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.99,
+            "range": "0.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.19,
+            "range": "0.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 624.63,
+            "range": "10.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 664.13,
+            "range": "14.72",
             "unit": "ms"
           }
         ]
