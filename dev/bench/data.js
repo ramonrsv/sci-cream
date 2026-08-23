@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787470662324,
+  "lastUpdate": 1787470885026,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -457279,6 +457279,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 702.38,
             "range": "13.43",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fb7813323f6f7fa398eb13b742e658682ab77bac",
+          "message": "Name the shared layout metrics\n\n`--header-h` had four consumers spelling out the same number: the\nheader, its unmounted placeholder, the in-flow spacer that has to\nmatch it, and the docs rail subtracting it from the viewport. The\nrail's top padding and the equal gap beneath it were likewise two\nliterals two lines apart, and the scroll clearance a bare 4rem.\n\nThey sit in plain `:root` rather than `@theme`, which drops tokens\nnothing references. `HEADER_H` in `sizes.ts` carries the utility to\n`navbar.tsx`, beside the `HEADER_W_*` widths it already reads; a CSS\nclass would be unlayered, and would outrank any responsive height\nlater put on the header.\n\n`--doc-bar-clearance` names the constraint without enforcing it. The\nbar's height is emergent from its padding and font size, so the\ncomment records the measured 53px, and the e2e case asserting a\nheading lands clear of the bar is what catches a regression.\n\nValues are unchanged throughout, so no snapshots move.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-23T02:58:14-04:00",
+          "tree_id": "dd3fd6a046dcacd6741e92ff0a97fdd8f225f3a3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fb7813323f6f7fa398eb13b742e658682ab77bac"
+        },
+        "date": 1787470838560,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.13,
+            "range": "4.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 53.5,
+            "range": "3.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 60.5,
+            "range": "4.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2549.63,
+            "range": "45.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 324.38,
+            "range": "3.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 332.25,
+            "range": "2.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 352.63,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16746.63,
+            "range": "28.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 925.88,
+            "range": "27.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 55.5,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.38,
+            "range": "2.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 44.13,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.88,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 137.38,
+            "range": "3.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 91.75,
+            "range": "2.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 59.43,
+            "range": "0.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 43.56,
+            "range": "0.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 640.88,
+            "range": "8.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 696.38,
+            "range": "9.81",
             "unit": "ms"
           }
         ]
