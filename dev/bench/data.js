@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787470885026,
+  "lastUpdate": 1787471166888,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -457423,6 +457423,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 696.38,
             "range": "9.81",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2a2b1ebcf8ffb3ee65bca4c51d6ae5177a5ae64c",
+          "message": "Track the heading being read in the docs contents\n\nThe contents marks the heading being read `aria-current=\"location\"`,\n`page` already belonging to the page link. An `IntersectionObserver`\nresolves against the app's scrolling content area rather than the\nviewport, the shell being `h-screen` so the window never scrolls, and\na cropped band keeps the answer to the heading just scrolled past\nrather than any heading on screen.\n\nRe-observing keys on the route as well as on the heading ids. Two\npages can list exactly the same headings — `other-resources/science`\nand `.../recipes` do — so the ids alone cannot tell them apart, and\nthe observer would go on watching the previous page's detached\nelements, tracking dead until a reload.\n\nThe mark clears on the same key. Holding the last heading is right\nwhile reading a page, since the band empties between two far-apart\nones, but carrying it across pages leaves the highlight stuck on a\nheading the new page never had.\n\n`app-shell.ts` collects the identifiers the shell publishes for code\nthat cannot import it, replacing `web-vitals-mark.ts` and taking the\ncontent area's id alongside. Both are read from a Playwright loader,\nwhich is why neither can live in the component that mounts it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-23T03:08:17-04:00",
+          "tree_id": "652fa9f252dcd0d423ecd79385c217e85d218ea8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2a2b1ebcf8ffb3ee65bca4c51d6ae5177a5ae64c"
+        },
+        "date": 1787471119005,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 50.75,
+            "range": "4.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 54.5,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 65,
+            "range": "2.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2629.63,
+            "range": "84.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 335.75,
+            "range": "3.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 350.25,
+            "range": "3.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 381,
+            "range": "10.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17860.25,
+            "range": "234.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 951.13,
+            "range": "8.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 55.75,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.63,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 43.5,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46.13,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 136.13,
+            "range": "6.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 93,
+            "range": "3.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 62.7,
+            "range": "0.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 46.76,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 660,
+            "range": "9.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 740.38,
+            "range": "22.61",
             "unit": "ms"
           }
         ]
