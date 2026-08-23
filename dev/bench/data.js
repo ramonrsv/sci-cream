@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787470539097,
+  "lastUpdate": 1787470574977,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -75676,6 +75676,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2a2b1ebcf8ffb3ee65bca4c51d6ae5177a5ae64c",
+          "message": "Track the heading being read in the docs contents\n\nThe contents marks the heading being read `aria-current=\"location\"`,\n`page` already belonging to the page link. An `IntersectionObserver`\nresolves against the app's scrolling content area rather than the\nviewport, the shell being `h-screen` so the window never scrolls, and\na cropped band keeps the answer to the heading just scrolled past\nrather than any heading on screen.\n\nRe-observing keys on the route as well as on the heading ids. Two\npages can list exactly the same headings — `other-resources/science`\nand `.../recipes` do — so the ids alone cannot tell them apart, and\nthe observer would go on watching the previous page's detached\nelements, tracking dead until a reload.\n\nThe mark clears on the same key. Holding the last heading is right\nwhile reading a page, since the band empties between two far-apart\nones, but carrying it across pages leaves the highlight stuck on a\nheading the new page never had.\n\n`app-shell.ts` collects the identifiers the shell publishes for code\nthat cannot import it, replacing `web-vitals-mark.ts` and taking the\ncontent area's id alongside. Both are read from a Playwright loader,\nwhich is why neither can live in the component that mounts it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-23T03:08:17-04:00",
+          "tree_id": "652fa9f252dcd0d423ecd79385c217e85d218ea8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2a2b1ebcf8ffb3ee65bca4c51d6ae5177a5ae64c"
+        },
+        "date": 1787470527308,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4465,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 176290,
+            "range": "± 1254",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2799,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 174801,
+            "range": "± 2442",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 5195,
+            "range": "± 54",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 5220,
+            "range": "± 65",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 5180,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 5212,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 5170,
+            "range": "± 115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5496,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 115970,
+            "range": "± 1100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 121942,
+            "range": "± 800",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 215714582,
+            "range": "± 7824051",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 649640,
+            "range": "± 9576",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 7215,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 54,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 7026,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 107421,
+            "range": "± 1347",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 103041,
+            "range": "± 666",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 170361,
+            "range": "± 1033",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 167431,
+            "range": "± 1462",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 387394,
+            "range": "± 1535",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14817,
+            "range": "± 118",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 726,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
             "range": "± 0",
             "unit": "ns/iter"
           }
