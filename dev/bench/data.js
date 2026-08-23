@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787527348602,
+  "lastUpdate": 1787527351770,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -553935,6 +553935,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/2a2b1ebcf8ffb3ee65bca4c51d6ae5177a5ae64c"
         },
         "date": 1787470274941,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8d5aaea88ecb2bb5f5b4233980a1288f75ede351",
+          "message": "Locate the app content area by id alone\n\n`captureFullContent` looked its scroller up from a `data-testid`\nstring, which is the only reason the app shell carried a testid\nbeside the id it already publishes. It now takes the `Locator`\ndirectly, and the duplicate is gone: `#app-content` is what the\ndocs scroll-padding rule and the scroll-spy root already use.\n\nThe `= \"app-content\"` default goes rather than becoming a default\n`Locator`: all four call sites already passed a target of their own.\n`page` stays the first parameter, matching `expandToFullHeight`\nrather than reaching for `scroller.page()`.\n\n`setViewportHeightForAllAppContentScreenshot` reached for the testid\ntoo, so both now go through one `appContent` helper.\n\nNo snapshots move: `data-testid` renders nothing.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-23T19:17:54-04:00",
+          "tree_id": "667f98f521900ad21b43c4983aee876b30c8dbd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8d5aaea88ecb2bb5f5b4233980a1288f75ede351"
+        },
+        "date": 1787527351006,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
