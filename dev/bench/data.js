@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787448097217,
+  "lastUpdate": 1787448174664,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -545231,6 +545231,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.95,
             "range": "0.36",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1bd3746a0d5c081178fc91048564fd07fd611344",
+          "message": "Strike a recipe's badge once its column is done\n\nThe checklist marked a finished row but said nothing about a finished\nrecipe, so a weigher had to scan a column to see it was clear.\n\n`doneRecipes` collects the recipes whose every amount is weighed, built\nas \"seen but never pending\": a recipe contributing no rows never enters\n`seen`, so an empty builder slot cannot read as finished the way a\nper-recipe `every` would have it.\n\nThe badge then wears what its own cells wear when checked. One\ndeviation: the solid pair's border mixes toward its ink rather than\ntoward transparent. A chip this small is mostly border, and a white one\nfaded toward the page leaves nothing behind.\n\nUnit tests cover the complete, incomplete and zero-ingredient columns.\nAn e2e test reads that border through a canvas, since only a browser\ntells a drained chip from a vanished one. Visual tests cover a tinted\nbadge and the solid pair in both themes.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-22T18:52:29-04:00",
+          "tree_id": "8884af2ff7c8e7e687b645df1f1032b13c74cc0c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1bd3746a0d5c081178fc91048564fd07fd611344"
+        },
+        "date": 1787448129379,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 65.67,
+            "range": "8.57",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.79,
+            "range": "0.94",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.75,
+            "range": "0.96",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 181.5,
+            "range": "10.19",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.47,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 181.5,
+            "range": "10.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 61.39,
+            "range": "8.26",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.49,
+            "range": "0.51",
             "unit": "ms"
           }
         ]
