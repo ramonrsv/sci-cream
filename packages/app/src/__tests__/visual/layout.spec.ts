@@ -10,6 +10,7 @@ import {
 import { RecipeID } from "@/__tests__/assets";
 import { VIEWPORTS, type ViewportAsset } from "@/__tests__/visual/assets";
 import {
+  appContent,
   captureFullContent,
   commentMetaMask,
   getOverflow,
@@ -28,9 +29,9 @@ function waitForLayoutStability() {
  * The `fullContent` strategy controls how the full-content screenshot is captured:
  * - `"resize"` (default): grow the viewport to fit all content, then screenshot. Cheaper, but
  *   distorts layouts that adapt to viewport height.
- * - `"stitch"`: scroll the `[data-testid='app-content']` scroller in viewport-sized steps and
- *   stitch the frames together. Faithful to what a user sees while scrolling at the natural
- *   viewport size; required for pages with viewport-adaptive components.
+ * - `"stitch"`: scroll the `#app-content` scroller in viewport-sized steps and stitch the frames
+ *   together. Faithful to what a user sees while scrolling at the natural viewport size; required
+ *   for pages with viewport-adaptive components.
  */
 async function takeViewportAndFullContentScreenshots(
   page: Page,
@@ -50,15 +51,13 @@ async function takeViewportAndFullContentScreenshots(
   const mask = commentMetaMask(page);
   await expect(page).toHaveScreenshot(`${screenshot}.png`, { mask });
 
-  const appContentTestId = "app-content";
-
   // Skip the all-content snapshot if the scroll container has no overflow — e.g. layouts that
   // fix the page to the viewport and rely on internal scrollers (`EntitySearch` at `md+`). The
   // viewport screenshot above already represents everything visible to the user.
-  if ((await getOverflow(page.getByTestId(appContentTestId))) === 0) return;
+  if ((await getOverflow(appContent(page))) === 0) return;
 
   if (fullContent === "stitch") {
-    expect(await captureFullContent(page, appContentTestId)).toMatchSnapshot(
+    expect(await captureFullContent(page, appContent(page))).toMatchSnapshot(
       `${screenshot}-all-content-stitched.png`,
     );
   } else {

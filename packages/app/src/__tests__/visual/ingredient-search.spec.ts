@@ -59,7 +59,7 @@ test.describe("Visual Regression: Ingredient Search", () => {
       "https://docs.rs/sci-cream/latest/sci_cream/specs/dairy/struct.DairyLabelSpec.html",
     );
 
-    expect(await captureFullContent(page, "search-detail-panel")).toMatchSnapshot(
+    expect(await captureFullContent(page, page.getByTestId("search-detail-panel"))).toMatchSnapshot(
       `ingredient-search-detail-panel.png`,
     );
   });

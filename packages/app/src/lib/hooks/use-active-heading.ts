@@ -37,7 +37,7 @@ export function useActiveHeading(ids: string[], scope: string): string | undefin
     const root = document.getElementById(APP_CONTENT_ID);
     if (!root || typeof IntersectionObserver === "undefined") return;
 
-    // Rebuilt from `key` rather than closed over `ids`, whose identity changes every render.
+    // From `key`: using `ids` here makes it a dep the linter demands, re-observing every render.
     const order = key.split(KEY_SEP).slice(1);
     const headings = order
       .map((id) => document.getElementById(id))

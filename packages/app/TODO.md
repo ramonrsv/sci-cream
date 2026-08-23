@@ -17,9 +17,6 @@
 - [ ] Make the reference and target ticks in `PropertiesBarChart` more visible. Also in watchers?
 - [ ] Move the remaining inline icon `size={…}` literals (12, 13, 14 in `batch-builder`,
       `batch-checklist`, `list-detail-shell`, `watcher-issues`) into named `styles/sizes` constants.
-- [ ] Change `captureFullContent` to take a `Locator` rather than a testid string, then drop the
-      now-redundant `data-testid="app-content"`; `#app-content` carries the docs scroll-padding
-      rule, and the other shell landmarks (`#sidebar`, `#header`) are located by id alone.
 - [ ] Make the mobile docs contents panel overlay the article rather than push it down: at scroll
       offset 0 anchoring is suppressed, so opening shifts the body down and closing snaps it back.
       `.doc-toc` is already sticky, so `absolute inset-x-0 top-full` below `md`, plus dismiss keys.
@@ -138,6 +135,9 @@
 
 ## Completed
 
+- [x] Change `captureFullContent` to take a `Locator` rather than a testid string, then drop the
+      now-redundant `data-testid="app-content"`; `#app-content` carries the docs scroll-padding
+      rule, and the other shell landmarks (`#sidebar`, `#header`) are located by id alone.
 - [x] Seed a moderator-removed comment so `[removed]` gets visual coverage; it has unit tests only.
       Adding one changes the blog thread snapshots, so it needs a baseline update in the same pass.
 - [x] Have a moderator's delete resolve the open reports on that comment: `deleteComment` never

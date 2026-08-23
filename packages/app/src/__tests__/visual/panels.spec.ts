@@ -191,12 +191,11 @@ test.describe("Visual Regression: Panels, Properties Group-by Modes", () => {
       await selectOption(page, getGroupBySelectInput(page), GROUP_BY_LABELS[mode]);
 
       // captureFullContent crops to the pane's box, which overflows if it spills below the fold.
-      await page.getByTestId("properties-table-pane").scrollIntoViewIfNeeded();
+      const pane = page.getByTestId("properties-table-pane");
+      await pane.scrollIntoViewIfNeeded();
 
       expect(
-        await captureFullContent(page, "properties-table-pane", {
-          stickyHeader: page.getByTestId("properties-table-pane").locator("thead"),
-        }),
+        await captureFullContent(page, pane, { stickyHeader: pane.locator("thead") }),
       ).toMatchSnapshot(`properties-table-grouped-${filenameSuffix}.png`);
     });
   };

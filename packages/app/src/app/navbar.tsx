@@ -163,11 +163,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
           {/* `scrollbar-gutter:stable` keeps content width fixed when the scrollbar toggles,
               so `react-grid-layout` on the calculator page can't flip breakpoints at viewport
               widths where the container straddles one (e.g. Pixel 5 landscape at 802px). */}
-          <div
-            id={APP_CONTENT_ID}
-            data-testid={APP_CONTENT_ID}
-            className="flex-1 scrollbar-gutter-stable overflow-auto"
-          >
+          <div id={APP_CONTENT_ID} className="flex-1 scrollbar-gutter-stable overflow-auto">
             {children}
           </div>
         </div>

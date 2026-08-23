@@ -1,6 +1,7 @@
 import { Page, Locator } from "@playwright/test";
 import sharp from "sharp";
 
+import { APP_CONTENT_ID } from "@/lib/app-shell";
 import { sleep_ms } from "@/lib/util";
 
 /** Scrolls to the bottom of the page and waits for a short period to allow lazy-loaded content. */
@@ -36,6 +37,11 @@ export async function waitForCommentThread(page: Page) {
  */
 export function commentMetaMask(page: Page): Locator[] {
   return [page.locator(".comment-meta")];
+}
+
+/** The app shell's main scroll container, located by the id the shell publishes for it. */
+export function appContent(page: Page): Locator {
+  return page.locator(`#${APP_CONTENT_ID}`);
 }
 
 /** Vertical overflow (hidden scrollable height, `scrollHeight - clientHeight`) of `locator`. */
@@ -88,15 +94,14 @@ export async function expandToFullHeight(page: Page, locator: Locator) {
  * This function adds 10px to the viewport height for visual clearance at the bottom edge.
  */
 export async function setViewportHeightForAllAppContentScreenshot(page: Page) {
-  await growViewportHeight(page, (await getOverflow(page.getByTestId("app-content"))) + 10);
+  await growViewportHeight(page, (await getOverflow(appContent(page))) + 10);
 }
 
 /**
  * Captures a scroll container's full content as a single stitched PNG.
  *
- * `scrollTargetTestId` identifies the scroll container by `data-testid` (defaults to `app-content`,
- * the app shell's main content area). Useful for capturing nested scrollers, e.g. the search list
- * or detail panel inside `EntitySearch`.
+ * `scroller` is the scroll container to capture — {@link appContent} for the app shell's main
+ * content area, or any nested scroller, e.g. the search list or detail panel inside `EntitySearch`.
  *
  * Unlike {@link setViewportHeightForAllAppContentScreenshot}, this keeps the viewport at its
  * natural size so viewport-adaptive components (`flex-1`, charts that observe their box, etc.)
@@ -112,12 +117,11 @@ export async function setViewportHeightForAllAppContentScreenshot(page: Page) {
  */
 export async function captureFullContent(
   page: Page,
-  scrollTargetTestId = "app-content",
+  scroller: Locator,
   { stickyHeader }: { stickyHeader?: Locator } = {},
 ): Promise<Buffer> {
-  const scroller = page.getByTestId(scrollTargetTestId);
   const box = await scroller.boundingBox();
-  if (!box) throw new Error(`'${scrollTargetTestId}' scroller has no bounding box`);
+  if (!box) throw new Error(`scroller ${scroller} has no bounding box`);
 
   const headerHeight = stickyHeader ? ((await stickyHeader.boundingBox())?.height ?? 0) : 0;
   if (headerHeight >= box.height) {

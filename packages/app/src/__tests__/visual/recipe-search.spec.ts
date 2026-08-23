@@ -46,7 +46,7 @@ test.describe("Visual Regression: Recipe Search", () => {
       page.getByRole("button", { name: "Load" }).locator("..").locator("select"),
     ).toBeVisible();
 
-    expect(await captureFullContent(page, "search-detail-panel")).toMatchSnapshot(
+    expect(await captureFullContent(page, page.getByTestId("search-detail-panel"))).toMatchSnapshot(
       `recipe-search-detail-panel.png`,
     );
   });
