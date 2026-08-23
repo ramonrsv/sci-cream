@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787448076974,
+  "lastUpdate": 1787448080253,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -550773,6 +550773,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/50c3a3685ec28baf28c871dd0b06c7e35dfe12e8"
         },
         "date": 1787358933269,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1bd3746a0d5c081178fc91048564fd07fd611344",
+          "message": "Strike a recipe's badge once its column is done\n\nThe checklist marked a finished row but said nothing about a finished\nrecipe, so a weigher had to scan a column to see it was clear.\n\n`doneRecipes` collects the recipes whose every amount is weighed, built\nas \"seen but never pending\": a recipe contributing no rows never enters\n`seen`, so an empty builder slot cannot read as finished the way a\nper-recipe `every` would have it.\n\nThe badge then wears what its own cells wear when checked. One\ndeviation: the solid pair's border mixes toward its ink rather than\ntoward transparent. A chip this small is mostly border, and a white one\nfaded toward the page leaves nothing behind.\n\nUnit tests cover the complete, incomplete and zero-ingredient columns.\nAn e2e test reads that border through a canvas, since only a browser\ntells a drained chip from a vanished one. Visual tests cover a tinted\nbadge and the solid pair in both themes.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-22T18:52:29-04:00",
+          "tree_id": "8884af2ff7c8e7e687b645df1f1032b13c74cc0c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1bd3746a0d5c081178fc91048564fd07fd611344"
+        },
+        "date": 1787448079437,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
