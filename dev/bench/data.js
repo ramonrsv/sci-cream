@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787359484007,
+  "lastUpdate": 1787448076974,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -526178,6 +526178,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 14.83,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1bd3746a0d5c081178fc91048564fd07fd611344",
+          "message": "Strike a recipe's badge once its column is done\n\nThe checklist marked a finished row but said nothing about a finished\nrecipe, so a weigher had to scan a column to see it was clear.\n\n`doneRecipes` collects the recipes whose every amount is weighed, built\nas \"seen but never pending\": a recipe contributing no rows never enters\n`seen`, so an empty builder slot cannot read as finished the way a\nper-recipe `every` would have it.\n\nThe badge then wears what its own cells wear when checked. One\ndeviation: the solid pair's border mixes toward its ink rather than\ntoward transparent. A chip this small is mostly border, and a white one\nfaded toward the page leaves nothing behind.\n\nUnit tests cover the complete, incomplete and zero-ingredient columns.\nAn e2e test reads that border through a canvas, since only a browser\ntells a drained chip from a vanished one. Visual tests cover a tinted\nbadge and the solid pair in both themes.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-22T18:52:29-04:00",
+          "tree_id": "8884af2ff7c8e7e687b645df1f1032b13c74cc0c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1bd3746a0d5c081178fc91048564fd07fd611344"
+        },
+        "date": 1787448038548,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.05,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 625.97,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.41,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 626.99,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 795.44,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1031.83,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 14.88,
             "unit": "KB"
           },
           {
