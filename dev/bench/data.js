@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787470264783,
+  "lastUpdate": 1787470272360,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -527260,6 +527260,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1031.85,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 14.94,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2a2b1ebcf8ffb3ee65bca4c51d6ae5177a5ae64c",
+          "message": "Track the heading being read in the docs contents\n\nThe contents marks the heading being read `aria-current=\"location\"`,\n`page` already belonging to the page link. An `IntersectionObserver`\nresolves against the app's scrolling content area rather than the\nviewport, the shell being `h-screen` so the window never scrolls, and\na cropped band keeps the answer to the heading just scrolled past\nrather than any heading on screen.\n\nRe-observing keys on the route as well as on the heading ids. Two\npages can list exactly the same headings — `other-resources/science`\nand `.../recipes` do — so the ids alone cannot tell them apart, and\nthe observer would go on watching the previous page's detached\nelements, tracking dead until a reload.\n\nThe mark clears on the same key. Holding the last heading is right\nwhile reading a page, since the band empties between two far-apart\nones, but carrying it across pages leaves the highlight stuck on a\nheading the new page never had.\n\n`app-shell.ts` collects the identifiers the shell publishes for code\nthat cannot import it, replacing `web-vitals-mark.ts` and taking the\ncontent area's id alongside. Both are read from a Playwright loader,\nwhich is why neither can live in the component that mounts it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-23T03:08:17-04:00",
+          "tree_id": "652fa9f252dcd0d423ecd79385c217e85d218ea8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2a2b1ebcf8ffb3ee65bca4c51d6ae5177a5ae64c"
+        },
+        "date": 1787470234541,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.59,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.3,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.42,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 626.06,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 627.55,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 796,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1032.39,
             "unit": "KB"
           },
           {
