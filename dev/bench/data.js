@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787471166888,
+  "lastUpdate": 1787527348602,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -528996,6 +528996,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1032.39,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 14.94,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8d5aaea88ecb2bb5f5b4233980a1288f75ede351",
+          "message": "Locate the app content area by id alone\n\n`captureFullContent` looked its scroller up from a `data-testid`\nstring, which is the only reason the app shell carried a testid\nbeside the id it already publishes. It now takes the `Locator`\ndirectly, and the duplicate is gone: `#app-content` is what the\ndocs scroll-padding rule and the scroll-spy root already use.\n\nThe `= \"app-content\"` default goes rather than becoming a default\n`Locator`: all four call sites already passed a target of their own.\n`page` stays the first parameter, matching `expandToFullHeight`\nrather than reaching for `scroller.page()`.\n\n`setViewportHeightForAllAppContentScreenshot` reached for the testid\ntoo, so both now go through one `appContent` helper.\n\nNo snapshots move: `data-testid` renders nothing.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-23T19:17:54-04:00",
+          "tree_id": "667f98f521900ad21b43c4983aee876b30c8dbd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8d5aaea88ecb2bb5f5b4233980a1288f75ede351"
+        },
+        "date": 1787527315315,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.13,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.58,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.29,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.74,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.41,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.86,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 626.05,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 627.54,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 795.99,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1032.37,
             "unit": "KB"
           },
           {
