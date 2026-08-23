@@ -1,9 +1,10 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, within } from "@testing-library/react";
+import { render, screen, cleanup, within, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { APP_CONTENT_ID } from "@/lib/app-shell";
 import type { DocsNavNode } from "@/lib/docs";
 
 let mockPathname = "/docs";
@@ -158,6 +159,44 @@ describe("DocsToc", () => {
     await user.click(screen.getByRole("link", { name: "Overview" }));
 
     expect(toggle).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("marks the heading in view as the location, the page link holding `page`", async () => {
+    const observers: { emit: (id: string) => void }[] = [];
+
+    /** A stand-in observer, jsdom having none; the hook skips observing without one. */
+    class Stub {
+      /** Records an `emit` that reports one heading as having entered the band. */
+      constructor(private callback: IntersectionObserverCallback) {
+        observers.push({
+          emit: (id) =>
+            this.callback(
+              [{ target: { id }, isIntersecting: true }] as unknown as IntersectionObserverEntry[],
+              this as unknown as IntersectionObserver,
+            ),
+        });
+      }
+      observe = vi.fn();
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+    }
+    vi.stubGlobal("IntersectionObserver", Stub);
+
+    const scroller = document.createElement("div");
+    scroller.id = APP_CONTENT_ID;
+    scroller.innerHTML = `<h2 id="crate"></h2>`;
+    document.body.appendChild(scroller);
+
+    mockPathname = "/docs/overview";
+    render(<DocsToc nav={sampleNav()} />);
+
+    await act(async () => observers[0]?.emit("crate"));
+
+    expect(screen.getByRole("link", { name: "Crate" })).toHaveAttribute("aria-current", "location");
+    expect(screen.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
+
+    vi.unstubAllGlobals();
+    scroller.remove();
   });
 
   it("collapses the mobile list once a heading is picked", async () => {

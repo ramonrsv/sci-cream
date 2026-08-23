@@ -70,8 +70,6 @@
 
 ## Backlog
 
-- [ ] Add `<link rel="canonical">` if URL variants appear (tracking params, alternate host); needs
-      `metadataBase` in `layout.tsx`, else canonicals name the per-deployment host.
 - [ ] Give make-recipe a single total-amount input that rescales every recipe to hit total amount.
 - [ ] Implement scroll restoration, so that pages return to the last point when navigating back.
 - [ ] Look into usability on vertical mobile screens; the shrinking sidebar may not be enough.

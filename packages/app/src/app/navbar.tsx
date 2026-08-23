@@ -39,6 +39,7 @@ import {
   HEADER_H,
 } from "@/lib/styles/sizes";
 import { Logo } from "@/app/_elements/logo";
+import { APP_CONTENT_ID } from "@/lib/app-shell";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
 import { GroupBySelect } from "@/app/_elements/selects/group-by-select";
 import { STORAGE_KEYS } from "@/lib/local-storage";
@@ -163,8 +164,8 @@ export function Navbar({ children }: { children: React.ReactNode }) {
               so `react-grid-layout` on the calculator page can't flip breakpoints at viewport
               widths where the container straddles one (e.g. Pixel 5 landscape at 802px). */}
           <div
-            id="app-content"
-            data-testid="app-content"
+            id={APP_CONTENT_ID}
+            data-testid={APP_CONTENT_ID}
             className="flex-1 scrollbar-gutter-stable overflow-auto"
           >
             {children}

@@ -13,7 +13,7 @@ import {
 } from "@workspace/sci-cream";
 
 import { Metric } from "@/app/_elements/web-vitals";
-import { HYDRATION_MARK } from "@/lib/web-vitals-mark";
+import { HYDRATION_MARK } from "@/lib/app-shell";
 import { formatCompositionValue, applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";

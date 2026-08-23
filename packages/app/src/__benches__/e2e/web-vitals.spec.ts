@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
 import type { Metric } from "@/app/_elements/web-vitals";
-import { HYDRATION_MARK } from "@/lib/web-vitals-mark";
+import { HYDRATION_MARK } from "@/lib/app-shell";
 import { sleep_ms } from "@/lib/util";
 
 import {
