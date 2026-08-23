@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787448857398,
+  "lastUpdate": 1787470085651,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -527119,6 +527119,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 14.88,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fb7813323f6f7fa398eb13b742e658682ab77bac",
+          "message": "Name the shared layout metrics\n\n`--header-h` had four consumers spelling out the same number: the\nheader, its unmounted placeholder, the in-flow spacer that has to\nmatch it, and the docs rail subtracting it from the viewport. The\nrail's top padding and the equal gap beneath it were likewise two\nliterals two lines apart, and the scroll clearance a bare 4rem.\n\nThey sit in plain `:root` rather than `@theme`, which drops tokens\nnothing references. `HEADER_H` in `sizes.ts` carries the utility to\n`navbar.tsx`, beside the `HEADER_W_*` widths it already reads; a CSS\nclass would be unlayered, and would outrank any responsive height\nlater put on the header.\n\n`--doc-bar-clearance` names the constraint without enforcing it. The\nbar's height is emergent from its padding and font size, so the\ncomment records the measured 53px, and the e2e case asserting a\nheading lands clear of the bar is what catches a regression.\n\nValues are unchanged throughout, so no snapshots move.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-23T02:58:14-04:00",
+          "tree_id": "dd3fd6a046dcacd6741e92ff0a97fdd8f225f3a3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fb7813323f6f7fa398eb13b742e658682ab77bac"
+        },
+        "date": 1787470048780,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.22,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.34,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.79,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 625.99,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.43,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 627.01,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 795.46,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1031.85,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 14.94,
             "unit": "KB"
           },
           {
