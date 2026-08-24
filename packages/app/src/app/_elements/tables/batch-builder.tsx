@@ -226,7 +226,7 @@ export function BatchBuilder({
             value={selection.title ?? ""}
             onChange={(e) => onChange({ ...selection, title: e.target.value })}
             placeholder="Test batch"
-            className="boxed-input my-0 px-1 py-0.5 text-sm"
+            className="boxed-input py-0.5 text-sm"
             data-testid="batch-title"
           />
         </label>
@@ -236,7 +236,7 @@ export function BatchBuilder({
             type="date"
             value={selection.date}
             onChange={(e) => onChange({ ...selection, date: e.target.value })}
-            className="boxed-input my-0 px-1 py-0.5 text-sm"
+            className="boxed-input py-0.5 text-sm"
             data-testid="batch-date"
           />
         </label>
@@ -270,7 +270,7 @@ export function BatchBuilder({
               value=""
               disabled={full || sources.length === 0}
               onChange={(e) => addRecipeToSelection(e.target.value)}
-              className="boxed-input my-0 w-full px-1 py-0.5 text-sm"
+              className="boxed-input w-full py-0.5 text-sm"
               data-testid="batch-add-recipe"
             >
               <option value="" disabled>

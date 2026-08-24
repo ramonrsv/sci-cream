@@ -339,7 +339,7 @@ function AccountButton({ iconSize }: { iconSize: number }) {
         <span id="user-name" className="hidden text-sm sm:inline">
           {session.user.name}
         </span>
-        <button title="Sign out" className="header-button ml-1 p-1" onClick={() => signOut()}>
+        <button title="Sign out" className="header-button ml-1" onClick={() => signOut()}>
           <LogOut size={iconSize} />
         </button>
       </div>

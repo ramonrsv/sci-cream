@@ -433,7 +433,7 @@ export function WatcherCard({
               {/* Reserve the delta slot so the input doesn't shift as the target changes. */}
               {deltaToggle !== DeltaToggle.Off && (
                 <span
-                  className={`comp-val text-secondary -mr-3 w-9 text-left text-[11px]`}
+                  className={`comp-val text-secondary -mr-3 w-9 text-[11px]`}
                   title={targetMet ? "Target met" : "Delta from current to target"}
                   data-testid={`watcher-card-${String(propKey)}-target-delta`}
                 >

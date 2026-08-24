@@ -95,7 +95,7 @@ export function WatcherIssues({
           anchor={{ to: "bottom end", gap: 4, padding: 8 }}
           role="dialog"
           aria-label="Balancing issues"
-          className="flex max-h-64 w-72 flex-col gap-0.5 overflow-y-auto p-1 text-xs"
+          className="flex max-h-64 w-72 flex-col gap-0.5 overflow-y-auto p-1"
           data-testid="watcher-issues-popup"
         >
           {({ close }) => (

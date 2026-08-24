@@ -120,7 +120,7 @@ export function RecipeTable({
           </td>
           {evaporation && (
             <td
-              className={`table-total px-1 text-center text-xs font-normal whitespace-nowrap ${
+              className={`table-total px-1 text-center whitespace-nowrap ${
                 recipe.mixError ? "outline-2 -outline-offset-3 outline-red-400 outline-solid" : ""
               }`}
               title={
@@ -150,9 +150,7 @@ export function RecipeTable({
               >
                 {row.name}
               </td>
-              <td className="table-inner-cell comp-val px-2 text-right font-mono">
-                {row.quantity ?? ""}
-              </td>
+              <td className="table-inner-cell comp-val px-2 font-mono">{row.quantity ?? ""}</td>
               <td className="table-inner-cell comp-val px-1">
                 {row.quantity && mixTotal
                   ? formatCompositionValue((row.quantity / mixTotal) * 100)

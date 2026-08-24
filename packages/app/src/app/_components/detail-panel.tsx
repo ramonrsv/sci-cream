@@ -205,7 +205,7 @@ function EditVersionDetailsForm({
           aria-label="Version name"
           aria-invalid={nameError !== undefined}
           title={nameError}
-          className={`boxed-input w-11 px-1.5 py-0.5 text-center text-sm ${
+          className={`boxed-input w-11 py-0.5 text-center text-sm ${
             nameError ? "outline-2 -outline-offset-2 outline-red-400 outline-solid" : ""
           }`}
         />
@@ -217,7 +217,7 @@ function EditVersionDetailsForm({
           onChange={(e) => setLabel(e.target.value)}
           placeholder="e.g. first cut"
           aria-label="Version label"
-          className="boxed-input min-w-0 flex-1 px-1.5 py-0.5 text-sm"
+          className="boxed-input min-w-0 flex-1 py-0.5 text-sm"
         />
       </div>
       <button

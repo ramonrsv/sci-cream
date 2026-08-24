@@ -67,7 +67,7 @@ function BatchShareDialogBody({ batch }: { batch: Batch }) {
             testId="batch-share-link"
           />
           {link.encoded.length > BATCH_URL_WARN_CHARS && (
-            <p className="msg-warning p-2 text-xs" data-testid="batch-share-length-warning">
+            <p className="msg-warning p-2" data-testid="batch-share-length-warning">
               This link is long ({link.url.length} characters) and some chat apps may truncate it.
               Consider sharing fewer recipes at once.
             </p>
