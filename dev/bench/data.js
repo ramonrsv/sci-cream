@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787693357753,
+  "lastUpdate": 1787695020236,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -500798,6 +500798,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.70%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7998a1aafb44f8810bafc0c75ddcadd864cf5983",
+          "message": "Wait out the sidebar drawer's width transition\n\nThe navbar tests clicked and shot through the drawer's 200ms\ntransition, asserting only that the sidebar was visible:\n`rail sidebar` lost the pin tap ~1 run in 10 and caught the peeked\ndrawer at 216px against a 56px baseline, and `expanded sidebar`\ncame back with greyscale text antialiasing. Desktop never failed,\nbut had the same hazard.\n\nAll six now wait on the settled width, so a lost click fails naming\nthe width it got. Desktop peek and pinned share `sm:w-58`, so its\npost-click wait is the button's title flip instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T17:44:27-04:00",
+          "tree_id": "ea01a859662a8765e3a7753a4d23c54d43aa59be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7998a1aafb44f8810bafc0c75ddcadd864cf5983"
+        },
+        "date": 1787694970917,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 55157,
+            "range": "±0.49%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 501289,
+            "range": "±0.37%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 40927,
+            "range": "±1.42%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 375076,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
