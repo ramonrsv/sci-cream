@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787675744568,
+  "lastUpdate": 1787676099653,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -459808,6 +459808,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 546.63,
             "range": "6.69",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "95a46115d39acb6c0f6acd9b283726c1e43900d9",
+          "message": "Drop call-site utilities that never applied\n\nRules in `globals.css` are unlayered, so they outrank any Tailwind\nutility at a call site regardless of specificity. Twelve call sites\nacross eight files were writing classes that never rendered, and some\nwere also wrong: the recipe quantity column asked for `text-right`\nwhere centred is correct, and the evaporation total carried the\n`text-xs font-normal` of the yield annotation beside it, over a\n`.table-total` that already paints the whole row.\n\nDelete them rather than let the coming layer change activate them\nwholesale. Each deleted class already resolves to what its component\nclass paints, so nothing changes on screen; verified by rendering every\naffected class list under both stylesheets in headless Chromium and\ndiffing computed styles.\n\nThe two `!` workarounds stay for now: without the layer, a bare `pl-1`\nor `my-0` would lose to the unlayered class.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T02:19:36-04:00",
+          "tree_id": "d15c36ca48171c580899c5f3d48ce495366f97f5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/95a46115d39acb6c0f6acd9b283726c1e43900d9"
+        },
+        "date": 1787676052009,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 48.63,
+            "range": "5.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 54.88,
+            "range": "6.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 60.25,
+            "range": "3.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2498.25,
+            "range": "28.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 331.13,
+            "range": "6.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 333.38,
+            "range": "5.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 357,
+            "range": "2.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16883.13,
+            "range": "65.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 926.63,
+            "range": "11.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.63,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.38,
+            "range": "2.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.75,
+            "range": "1.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 130.5,
+            "range": "2.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 88.25,
+            "range": "1.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 56.76,
+            "range": "0.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 43.93,
+            "range": "0.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 637.75,
+            "range": "12.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 699.88,
+            "range": "19.92",
             "unit": "ms"
           }
         ]
