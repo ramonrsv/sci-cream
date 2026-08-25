@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787696319561,
+  "lastUpdate": 1787696343995,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -501645,6 +501645,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.02%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f8bafc24b2d1de0e26a736a97091b28ae8427d4a",
+          "message": "Fit the docs rail to its widest entry\n\n`md:w-60` gave the contents 240px, against a measured natural width\nof 138px on five routes and 147px on the three `other-resources`\npages, where \"Ice Cream Science\" sits indented as an h3 sub-item.\n`md:w-44` leaves 29px over that worst case, and no entry wraps.\n\nNot `w-fit`: it sees only the current page's DOM, so the rail would\nbe 138px on five routes and 147px on three, reflowing the article by\n9px on every navigation between them. `max-content` also never\nwraps, so one long heading in a future doc would eat the column\nrather than take two lines in the rail.\n\nThe article takes the 64px: 398px to 462px at the `md` boundary,\nwhere the two-column layout is tightest, and 864px to 928px from\n1280px up, `.doc-shell` being capped at `max-w-6xl`.\n\nBelow `md` the rail is a full-width bar, so only the `md+` snapshots\nmove; the two portrait phone viewports are unchanged.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T18:06:57-04:00",
+          "tree_id": "7545347e27ae8b0fb90ecc5fde16c392d5f66a5e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f8bafc24b2d1de0e26a736a97091b28ae8427d4a"
+        },
+        "date": 1787696293278,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 59593,
+            "range": "±1.27%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 487705,
+            "range": "±2.61%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 40537,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 389635,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
