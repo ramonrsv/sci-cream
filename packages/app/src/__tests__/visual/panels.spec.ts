@@ -237,8 +237,8 @@ test.describe("Visual Regression: Panels, Interactive States", () => {
 
     const nameInput = getIngredientNameInputAtIdx(page, 0);
     await nameInput.click();
-    await nameInput.fill("Milk");
-    await expect(nameInput).toHaveValue("Milk");
+    await nameInput.fill("Whole Milk");
+    await expect(nameInput).toHaveValue("Whole Milk");
 
     await expect(nameInput).toHaveScreenshot("ingredient-input-valid-focused.png");
   });
@@ -305,7 +305,7 @@ test.describe("Visual Regression: Panels, Interactive States", () => {
     await goToPageAndWaitFor(page);
 
     const nameInput = getIngredientNameInputAtIdx(page, 0);
-    await nameInput.fill("Milk");
+    await nameInput.fill("Whole Milk");
 
     const qtyInput = getIngredientQtyInputAtIdx(page, 0);
     await qtyInput.click();
