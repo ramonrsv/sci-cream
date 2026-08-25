@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787676099653,
+  "lastUpdate": 1787676264362,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -531824,6 +531824,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 14.94,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c5e4c1b555cc153781d5005086f7567b3d0de0bd",
+          "message": "Move component classes into @layer components\n\n`globals.css` rules were unlayered, so they beat every Tailwind utility\nat a call site regardless of specificity, and a call site could only win\nwith `!`. Tailwind declares `@layer theme, base, components, utilities`,\nso housing the component skins in `components` puts them below\n`utilities` and lets a call-site utility take the tie.\n\nFourteen rules stay unlayered, each because it has to beat a stylesheet\nno layer can outrank: the `@import`ed ones, unlayered themselves, and\n`@tailwindcss/typography`, which generates into `utilities`. Both `!`\nworkarounds are now redundant and go.\n\nNo class changes: comparing the compiled output before and after, every\nselector carries identical declarations. What the layer does change is\nfour call sites whose classes had never taken effect — the ingredient\nand quantity focus rings, which now go blue when valid and red when\nflagged, and the selected-tab and active-favourites borders. Two of the\nfour are asserted by existing unit tests that could not fail while the\ncascade swallowed them.\n\nRecord the convention in CLAUDE.md, since nothing stops the next class\nfrom being written outside the layer and re-creating the trap.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T10:33:11-04:00",
+          "tree_id": "7053b21cf84f70113b69d6c958c56d3f264f1c9f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c5e4c1b555cc153781d5005086f7567b3d0de0bd"
+        },
+        "date": 1787676224609,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.11,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.56,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.28,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.73,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.38,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.83,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 626.05,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 627.54,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 795.98,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1032.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.17,
             "unit": "KB"
           },
           {
