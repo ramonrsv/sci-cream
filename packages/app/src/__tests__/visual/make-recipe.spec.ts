@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
 import type { Batch } from "@/lib/batch/batch";
+import type { RecipeStore } from "@/lib/recipe/recipe";
 import { goToPageAndWaitFor, loginAsTestUserWithCredentials } from "@/__tests__/e2e/util";
 import { TEST_USER_B } from "@/lib/database/assets";
 import { parkCursor, setViewportHeightForAllAppContentScreenshot } from "@/__tests__/visual/util";
@@ -43,18 +44,21 @@ const SLOTS = [
 ];
 
 /** Seed the calculator slots so owner mode has recipes to offer. */
-async function seedSlots(page: Page) {
+async function seedSlots(page: Page, slots: RecipeStore[]) {
   await page.addInitScript(
     ([key, stores]) => {
       window.localStorage.setItem(key as string, JSON.stringify(stores));
     },
-    [STORAGE_KEYS.recipeStores, SLOTS],
+    [STORAGE_KEYS.recipeStores, slots],
   );
 }
 
 /** Open owner mode with the slots seeded and the date pinned. */
-async function openOwnerPage(page: Page, { recipes = 0 }: { recipes?: number } = {}) {
-  await seedSlots(page);
+async function openOwnerPage(
+  page: Page,
+  { recipes = 0, slots = SLOTS }: { recipes?: number; slots?: RecipeStore[] } = {},
+) {
+  await seedSlots(page, slots);
   await goToPageAndWaitFor(page, "/make-recipe");
   await expect(page.getByTestId("make-recipe-view")).toBeVisible();
 
@@ -529,6 +533,64 @@ test.describe("Visual Regression: Make Recipe", () => {
   });
 });
 
+/**
+ * Ingredients for the oversized batch. What has to clear the length budget is the deflated
+ * payload, not the batch, so these names are long and all different — repeated text costs it
+ * almost nothing.
+ */
+const BULK_INGREDIENTS = [
+  "Shoei Sicilian Pistachio Paste, unsalted",
+  "Valrhona Guanaja 70% couverture",
+  "Cacao Barry Extra Brute cocoa powder",
+  "Sosa locust bean gum (carob) E410",
+  "Danisco Cremodan SE 30 stabiliser",
+  "Nielsen-Massey Madagascar Bourbon vanilla paste",
+  "Maldon smoked sea salt flakes",
+  "Isigny Sainte-Mère crème fraîche",
+  "Kerrygold cultured unsalted butter",
+  "Bob's Red Mill non-fat dry milk powder",
+  "Domino granulated cane sucrose",
+  "Now Foods dextrose monohydrate powder",
+  "Roquette glucose syrup DE 42 powder",
+  "King Arthur malted barley extract",
+  "Fabbri Amarena cherry syrup, drained",
+  "Agrimontana Piedmont hazelnut paste",
+  "Blue Diamond almond praline paste",
+  "Chaokoh toasted coconut cream, unsweetened",
+  "Lavazza espresso concentrate, double strength",
+  "Meyer lemon juice, freshly pressed",
+  "Boiron raspberry purée, 10% added sugar",
+  "Galbani mascarpone, full fat",
+  "Straus Family Creamery 36% heavy cream",
+  "Modernist Pantry lambda carrageenan",
+  "Palsgaard mono- and diglycerides 0291",
+];
+
+/** Notes for the oversized batch; a non-repeating passage, entropy for the same reason. */
+const BULK_NOTES =
+  "Age each base twelve hours at 4 °C before churning; draw at -6 °C and blast the trays to " +
+  "-30 °C within twenty minutes. Pull an overrun reading on every third batch and log it against " +
+  "the container letter rather than the recipe title, since the letters survive a rename. " +
+  "Rebalance the stabiliser blend whenever total solids drift more than 3.2 % from the target " +
+  "sheet, and record which direction it moved. Scale the pistachio paste last: warmed past 26 °C " +
+  "it seizes against cold cream and will not disperse without a second pass. Start the chocolate " +
+  "bases first, as they want the longest rest, and let the fruit sorbets follow while the dairy " +
+  "ages. Rinse the churn with hot water before anything pale, because residual cocoa butter greys " +
+  "a strawberry base badly. Verify the blast cabinet has reached temperature before loading — a " +
+  "warm start costs an hour of hardening and shows up later as coarse ice.";
+
+/** Three full recipes, each weighing every bulk ingredient at an amount of its own. */
+const BULK_SLOTS: RecipeStore[] = [
+  "Sicilian Pistachio Gelato",
+  "Brown Butter & Amarena",
+  "Guanaja Dark Chocolate",
+].map((name, slot) => ({
+  name,
+  serializedRows: BULK_INGREDIENTS.map(
+    (ingredient, row) => `${ingredient}\t${(17.3 + slot * 91.7 + row * 13.9).toFixed(1)}`,
+  ).join("\n"),
+}));
+
 test.describe("Visual Regression: Batch Share Dialog", () => {
   test("batch share dialog - popup", async ({ page }) => {
     await openOwnerPage(page, { recipes: 2 });
@@ -555,6 +617,25 @@ test.describe("Visual Regression: Batch Share Dialog", () => {
     await expect(page.getByTestId("batch-share-link")).toHaveValue(/\/make-recipe#.+/);
 
     await expect(dialog).toHaveScreenshot("batch-share-dialog-dark.png", {
+      mask: [page.getByTestId("batch-share-link")],
+    });
+  });
+
+  test("batch share dialog - a link long enough to warn", async ({ page }) => {
+    await openOwnerPage(page, { slots: BULK_SLOTS, recipes: 3 });
+    await page.getByTestId("batch-notes").fill(BULK_NOTES);
+    await page.getByTestId("share-batch-button").click();
+
+    const dialog = page.getByTestId("batch-share-dialog");
+    await expect(dialog).toBeVisible();
+    await expect(page.getByTestId("batch-share-link")).toHaveValue(/\/make-recipe#.+/);
+
+    // Assert the warning: under budget the fixture would quietly snapshot a dialog without one.
+    await expect(page.getByTestId("batch-share-length-warning")).toBeVisible();
+
+    // The warning prints the link's own length, so these pixels depend on the port's digit count —
+    // four for both 3000 (the local default) and 3002 (CI).
+    await expect(dialog).toHaveScreenshot("batch-share-dialog-long-link.png", {
       mask: [page.getByTestId("batch-share-link")],
     });
   });
