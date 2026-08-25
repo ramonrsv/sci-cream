@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787674187939,
+  "lastUpdate": 1787674248711,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -76036,6 +76036,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "interpolate_pairs(near_end)",
             "value": 725,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ff4ad4ab4a3567baa27a5eba8d9859c993f5e9e1",
+          "message": "Test the valid state the panel snapshots claim\n\n`valid ingredient input focused` and `valid quantity input focused`\nfilled the ingredient name with \"Milk\", which is not an ingredient: the\ndatabase has \"0% Milk\", \"3.25% Milk\", \"Whole Milk\" and the like. Both\ntests were exercising the invalid state under a valid name.\n\nNothing caught it because `.table-fillable-input` is unlayered, so its\n`focus:ring-foc` beat the call site's `focus:ring-blue-400` and\n`focus:ring-red-400` alike: the ring stayed blue whichever branch\napplied, and the red outline is suppressed while focused. The snapshots\nlooked right in every state.\n\nUse \"Whole Milk\", already the known-good ingredient in the share-viewer\ntests. Only the ingredient snapshot moves, for the wider text; the\nquantity one is clipped to its own input and is unchanged.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T02:04:53-04:00",
+          "tree_id": "3d7b2603e05745dc1c5b207a036ae54dc3ee7885",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ff4ad4ab4a3567baa27a5eba8d9859c993f5e9e1"
+        },
+        "date": 1787674200755,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4137,
+            "range": "± 159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 156326,
+            "range": "± 536",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2473,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 154878,
+            "range": "± 715",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4514,
+            "range": "± 69",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4718,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4815,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4845,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4814,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5001,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 110600,
+            "range": "± 996",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 114037,
+            "range": "± 1049",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 180072530,
+            "range": "± 1600623",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 622902,
+            "range": "± 3061",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6881,
+            "range": "± 94",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6633,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 95766,
+            "range": "± 875",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 92421,
+            "range": "± 426",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 152055,
+            "range": "± 1160",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 150244,
+            "range": "± 566",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 330141,
+            "range": "± 1080",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14435,
+            "range": "± 54",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
             "range": "± 3",
             "unit": "ns/iter"
           },
