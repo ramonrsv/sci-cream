@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787677047615,
+  "lastUpdate": 1787677099390,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -563639,6 +563639,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/c5e4c1b555cc153781d5005086f7567b3d0de0bd"
         },
         "date": 1787676223566,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8d163e488af7c0784b3dd95ef69ac66e3db957c2",
+          "message": "Snapshot the batch link's length warning\n\nThe dialog's length warning had no visual coverage: no test built a\nlink past the budget. It fires on the deflated payload, not the\nbatch, so a realistic fixture will not reach it — three recipes over\nthirty ordinary rows encode to 1770, under the 1800 cap. Three over\ntwenty-five long, distinct names plus a paragraph of notes clear it\nby about a fifth.\n\nThe warning is asserted before the shot, so a fixture that ever\ncompressed back under the cap fails loudly rather than quietly\nsnapshotting a dialog without one.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T11:54:36-04:00",
+          "tree_id": "cad699f78a0a9b18abebd599526e21360a303f42",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8d163e488af7c0784b3dd95ef69ac66e3db957c2"
+        },
+        "date": 1787677052100,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
