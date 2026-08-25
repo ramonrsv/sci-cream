@@ -11,6 +11,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Comment threads on every blog post and docs page, with a moderation queue for admins:
+  - One level of replies, markdown bodies, relative timestamps, and edit and delete for the author.
+  - A withdrawn comment reads `[deleted]` and a moderator-removed one `[removed]`, keeping replies.
+  - Report a comment; admins resolve, delete, or purge at `/admin/reports`; removal closes reports.
+- Docs section rebuilt around one page per route, with real content and a contents rail:
+  - New Background, Overview, Ice Cream Science, and Other Resources pages replace the placeholders.
+  - Nested URLs such as `/docs/other-resources/science`, with `/docs` built from the nav manifest.
+  - The rail lists every page plus the read page's own headings, marking the heading being read.
+  - Below `md:` it collapses into a sticky "Contents" bar disclosing the same list.
+- GitHub-flavoured markdown in docs and blog content, plus `> [!NOTE]` callouts that track theme.
+- A `#` permalink on every docs and blog heading, revealed on hover and always shown without one.
+- Icons, accessible names, and tooltips on the toolbar selects, telling overlapping options apart.
+- Strike a recipe's badge in the weighing checklist once every amount in its column is weighed.
+
+### Changed
+
+- Adopt one canonical order for the toolbar selects and for the entity actions, in every toolbar.
+- Draw the logo and the docs marks inline, so they follow the app's theme toggle and not the OS:
+  - `icon.svg` replaces the committed `favicon.ico`, carrying a light/dark split a raster cannot.
+- Fit a four-recipe weighing checklist on a large phone, relaxing density again at one or two.
+- Tighten the batch-builder controls and copyable share fields, and shrink the link length warning.
+- Log the data layer through Pino at `debug`, with email fields redacted, in place of `console.log`.
+
+### Fixed
+
+- Ingredient and quantity focus rings, and the selected-tab and favourites borders, not applying.
+- Pages padding 20px left against 4px right below `sm:`, where the sidebar spacer is the gutter.
+- Deployed fonts weighing 1260KiB for two emoji chunks; only the faces in use ship, at 252KiB.
+
 ## [0.0.7] - 2026-08-07
 
 ### Added
