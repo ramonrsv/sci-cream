@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787692487805,
+  "lastUpdate": 1787692491197,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -561313,6 +561313,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/3f28792a6bacac6c301366e684460015466c864b"
         },
         "date": 1787678107079,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "931ffe6ffc45d1589114c2a8208bbf8e3913b528",
+          "message": "Tighten the visual snapshot threshold to 0.1\n\nA pixel differs once its YIQ distance passes `35215 * threshold²`,\nso the 0.2 default admitted 1408 — enough to pass a recolour of the\nfocus ring, blue-500 → blue-400, which scored 572. At 0.1 the\nceiling is 352.\n\nThe re-check caught one stale baseline. The properties chart's\ntoolbar selects gained their marks in 697307d0, but the snapshot\nwas last written before that; the diff fell inside this test's\n750-pixel maxDiffPixels budget, added for canvas shimmer, which\nabsorbed it silently.\n\nThe mobile sidebar tests flake for their own reasons, unrelated to\nthe threshold; TODO.md carries the follow-up.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T17:03:19-04:00",
+          "tree_id": "b23b6932ad702ae64ad4b2b54d587738e44c5604",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/931ffe6ffc45d1589114c2a8208bbf8e3913b528"
+        },
+        "date": 1787692490421,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
