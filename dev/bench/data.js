@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787677755678,
+  "lastUpdate": 1787677788478,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -498113,6 +498113,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.00%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a6bfbb1b5d6c2c919223e1330ce603ba377b581e",
+          "message": "Restore the call-site utilities worth keeping\n\nFour of the six tokens dropped as dead in \"Drop call-site utilities\nthat never applied\" were saying something worth saying, now that the\ncomponent layer lets a call site win:\n\n  - the batch share dialog's length warning goes text-xs\n  - the version name and label fields inset by px-1.5\n  - the copyable field and the three batch-builder controls drop\n    boxed-input's my-1 and inset by px-1\n\nThe watcher target's text-left and the sign-out button's p-1 stay\ndropped: centred reads better in the reserved delta slot, and p-1\nwould make sign-out the only header button off the shared p-2.\n\nSeventeen snapshots move. The batch editor keeps its height and\ntightens inside it, each copyable field takes 7px off its dialog\n(the Copy button, not the input, now floors the row), and the\nversion popup changes only where the label text starts.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T12:25:15-04:00",
+          "tree_id": "20e0ab5273072d0720f5cf6a3836ba2fb3c0c2c9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a6bfbb1b5d6c2c919223e1330ce603ba377b581e"
+        },
+        "date": 1787677734779,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 53967,
+            "range": "±0.57%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 497150,
+            "range": "±0.37%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 38723,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 386274,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
