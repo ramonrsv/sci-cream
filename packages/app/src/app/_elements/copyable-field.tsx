@@ -57,7 +57,7 @@ export function CopyableField({
           value={value}
           onFocus={(e) => e.target.select()}
           aria-label={label}
-          className="boxed-input comp-val min-w-0 flex-1 py-0.5 text-xs"
+          className="boxed-input comp-val my-0 min-w-0 flex-1 px-1 py-0.5 text-xs"
           data-testid={testId}
         />
         <CopyButton text={value} label={copyLabel} testId={`${testId}-copy`} />
