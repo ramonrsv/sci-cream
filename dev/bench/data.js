@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787678119524,
+  "lastUpdate": 1787678146980,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -554074,6 +554074,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.86,
             "range": "0.30",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3f28792a6bacac6c301366e684460015466c864b",
+          "message": "Move boxed-input's margin to its call sites\n\nMargin is the gap between the box and its neighbours, so it belongs\nto whoever places the box, not to the skin that draws it. Five of\nthe twelve call sites were already undoing it with my-0, and one\nneeded my-0! before the component layer landed — a default its\ncallers keep overriding is not a default.\n\nSeven sites now state the my-1 they were inheriting; five drop the\nmy-0 they no longer need, falling back to Preflight's own reset.\nRenders identically: no snapshot moves.\n\nThe inset stays on the class. It sits inside the border, is what\nmakes the box a box rather than a hairline, and px-0.5 is still\nwhat most call sites want.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T12:56:58-04:00",
+          "tree_id": "bed5e63ab98e246683f7f05f6d08aa99f80b2b4a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3f28792a6bacac6c301366e684460015466c864b"
+        },
+        "date": 1787678092559,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 65.73,
+            "range": "11.82",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.26,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.23,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 175,
+            "range": "19.47",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.46,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 175,
+            "range": "19.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.4,
+            "range": "8.62",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.46,
+            "range": "0.41",
             "unit": "ms"
           }
         ]
