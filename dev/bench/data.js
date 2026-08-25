@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787676674294,
+  "lastUpdate": 1787677019410,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -460603,6 +460603,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 699.88,
             "range": "19.92",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c5e4c1b555cc153781d5005086f7567b3d0de0bd",
+          "message": "Move component classes into @layer components\n\n`globals.css` rules were unlayered, so they beat every Tailwind utility\nat a call site regardless of specificity, and a call site could only win\nwith `!`. Tailwind declares `@layer theme, base, components, utilities`,\nso housing the component skins in `components` puts them below\n`utilities` and lets a call-site utility take the tie.\n\nFourteen rules stay unlayered, each because it has to beat a stylesheet\nno layer can outrank: the `@import`ed ones, unlayered themselves, and\n`@tailwindcss/typography`, which generates into `utilities`. Both `!`\nworkarounds are now redundant and go.\n\nNo class changes: comparing the compiled output before and after, every\nselector carries identical declarations. What the layer does change is\nfour call sites whose classes had never taken effect — the ingredient\nand quantity focus rings, which now go blue when valid and red when\nflagged, and the selected-tab and active-favourites borders. Two of the\nfour are asserted by existing unit tests that could not fail while the\ncascade swallowed them.\n\nRecord the convention in CLAUDE.md, since nothing stops the next class\nfrom being written outside the layer and re-creating the trap.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T10:33:11-04:00",
+          "tree_id": "7053b21cf84f70113b69d6c958c56d3f264f1c9f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c5e4c1b555cc153781d5005086f7567b3d0de0bd"
+        },
+        "date": 1787676972453,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 53.25,
+            "range": "4.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 58.25,
+            "range": "7.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 60.25,
+            "range": "3.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2332.5,
+            "range": "34.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 321.88,
+            "range": "4.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 339.13,
+            "range": "3.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 350,
+            "range": "3.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16677.13,
+            "range": "110.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 897.13,
+            "range": "21.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.5,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.88,
+            "range": "2.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.13,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.75,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 128.5,
+            "range": "3.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 83.63,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.38,
+            "range": "1.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.09,
+            "range": "0.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 621.88,
+            "range": "6.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 674.5,
+            "range": "8.49",
             "unit": "ms"
           }
         ]
