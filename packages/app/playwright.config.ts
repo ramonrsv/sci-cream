@@ -45,11 +45,15 @@ export default defineConfig({
     },
 
     /* Visual regression testing. `reducedMotion` disables Chart.js canvas animations (which
-       Playwright's screenshot animation-freezing can't touch) so snapshots are deterministic. */
+       Playwright's screenshot animation-freezing can't touch) so snapshots are deterministic.
+
+       A pixel differs once its YIQ distance passes `35215 * threshold²`, so the 0.2 default
+       admits 1408, enough to pass the blue-500 → blue-400 recolour at 572; 0.1 admits 352. */
     {
       name: "visual",
       testDir: "./src/__tests__/visual",
       use: { ...devices["Desktop Chrome"], contextOptions: { reducedMotion: "reduce" } },
+      expect: { toHaveScreenshot: { threshold: 0.1 } },
     },
   ],
 

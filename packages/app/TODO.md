@@ -130,12 +130,15 @@
 - [ ] `BatchBuilder` assumes `batch.recipes[i]` pairs with `selection.items[i]`: the JSX maps the
       batch while `removeAt`/`colorAt`/`versionAt` index the selection. Nothing enforces it beyond
       `makeBatchFromSelection` mapping 1:1; look into pairing them explicitly via row view-models.
-- [ ] Lower `expect.toHaveScreenshot.threshold` in `playwright.config.ts` to ~0.1, then re-check
-      every snapshot: the default 0.2 compares by YIQ distance against `35215 * threshold²`, so
-      recoloring the focus ring blue-500 → blue-400 scored 572 against 1408 and slipped through.
+- [ ] The mobile sidebar tests click and shoot through the drawer's 200ms width transition:
+      `rail sidebar` loses the pin click ~1/10, `expanded sidebar` captures greyscale text
+      antialiasing. Wait for the settled width (216px peeked, 56px rail) between clicks and shots.
 
 ## Completed
 
+- [x] Lower `expect.toHaveScreenshot.threshold` in `playwright.config.ts` to ~0.1, then re-check
+      every snapshot: the default 0.2 compares by YIQ distance against `35215 * threshold²`, so
+      recoloring the focus ring blue-500 → blue-400 scored 572 against 1408 and slipped through.
 - [x] `.boxed-input`'s `my-1` is unlayered, so utility overrides (`my-0`) silently no-op. Move
       custom cls into `@layer components`, drop dead `my-0`s and the `my-0!` hack in `recipe.tsx`.
 - [x] Change `captureFullContent` to take a `Locator` rather than a testid string, then drop the
