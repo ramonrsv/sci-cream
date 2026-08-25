@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787674248711,
+  "lastUpdate": 1787674485363,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -459013,6 +459013,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 664.13,
             "range": "14.72",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ff4ad4ab4a3567baa27a5eba8d9859c993f5e9e1",
+          "message": "Test the valid state the panel snapshots claim\n\n`valid ingredient input focused` and `valid quantity input focused`\nfilled the ingredient name with \"Milk\", which is not an ingredient: the\ndatabase has \"0% Milk\", \"3.25% Milk\", \"Whole Milk\" and the like. Both\ntests were exercising the invalid state under a valid name.\n\nNothing caught it because `.table-fillable-input` is unlayered, so its\n`focus:ring-foc` beat the call site's `focus:ring-blue-400` and\n`focus:ring-red-400` alike: the ring stayed blue whichever branch\napplied, and the red outline is suppressed while focused. The snapshots\nlooked right in every state.\n\nUse \"Whole Milk\", already the known-good ingredient in the share-viewer\ntests. Only the ingredient snapshot moves, for the wider text; the\nquantity one is clipped to its own input and is unchanged.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T02:04:53-04:00",
+          "tree_id": "3d7b2603e05745dc1c5b207a036ae54dc3ee7885",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ff4ad4ab4a3567baa27a5eba8d9859c993f5e9e1"
+        },
+        "date": 1787674445845,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 36.25,
+            "range": "4.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 36,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 41.13,
+            "range": "1.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1765.13,
+            "range": "49.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 241.25,
+            "range": "5.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 247.75,
+            "range": "5.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 257.38,
+            "range": "4.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 12558.13,
+            "range": "51.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 780.5,
+            "range": "25.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 43.63,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 44.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 32.25,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 33,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 113.63,
+            "range": "4.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 61.25,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 40.29,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.41,
+            "range": "0.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 516.63,
+            "range": "21.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 546.63,
+            "range": "6.69",
             "unit": "ms"
           }
         ]
