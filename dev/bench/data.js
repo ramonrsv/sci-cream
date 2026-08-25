@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787678437019,
+  "lastUpdate": 1787678618699,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -462844,6 +462844,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 701.75,
             "range": "16.87",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a6bfbb1b5d6c2c919223e1330ce603ba377b581e",
+          "message": "Restore the call-site utilities worth keeping\n\nFour of the six tokens dropped as dead in \"Drop call-site utilities\nthat never applied\" were saying something worth saying, now that the\ncomponent layer lets a call site win:\n\n  - the batch share dialog's length warning goes text-xs\n  - the version name and label fields inset by px-1.5\n  - the copyable field and the three batch-builder controls drop\n    boxed-input's my-1 and inset by px-1\n\nThe watcher target's text-left and the sign-out button's p-1 stay\ndropped: centred reads better in the reserved delta slot, and p-1\nwould make sign-out the only header button off the shared p-2.\n\nSeventeen snapshots move. The batch editor keeps its height and\ntightens inside it, each copyable field takes 7px off its dialog\n(the Copy button, not the input, now floors the row), and the\nversion popup changes only where the label text starts.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T12:25:15-04:00",
+          "tree_id": "20e0ab5273072d0720f5cf6a3836ba2fb3c0c2c9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a6bfbb1b5d6c2c919223e1330ce603ba377b581e"
+        },
+        "date": 1787678568708,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 47.25,
+            "range": "3.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 51.25,
+            "range": "3.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 59.25,
+            "range": "4.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2473.5,
+            "range": "67.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 331,
+            "range": "3.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 339.88,
+            "range": "7.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 355.63,
+            "range": "7.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16779.5,
+            "range": "162.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 937.5,
+            "range": "13.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.5,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.75,
+            "range": "3.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.63,
+            "range": "3.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 135,
+            "range": "7.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 83.38,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.61,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.46,
+            "range": "0.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 631.38,
+            "range": "11.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 689.5,
+            "range": "21.93",
             "unit": "ms"
           }
         ]
