@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787678174403,
+  "lastUpdate": 1787678185824,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -498960,6 +498960,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.87%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3f28792a6bacac6c301366e684460015466c864b",
+          "message": "Move boxed-input's margin to its call sites\n\nMargin is the gap between the box and its neighbours, so it belongs\nto whoever places the box, not to the skin that draws it. Five of\nthe twelve call sites were already undoing it with my-0, and one\nneeded my-0! before the component layer landed — a default its\ncallers keep overriding is not a default.\n\nSeven sites now state the my-1 they were inheriting; five drop the\nmy-0 they no longer need, falling back to Preflight's own reset.\nRenders identically: no snapshot moves.\n\nThe inset stays on the class. It sits inside the border, is what\nmakes the box a box rather than a hairline, and px-0.5 is still\nwhat most call sites want.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T12:56:58-04:00",
+          "tree_id": "bed5e63ab98e246683f7f05f6d08aa99f80b2b4a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3f28792a6bacac6c301366e684460015466c864b"
+        },
+        "date": 1787678133472,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 58946,
+            "range": "±0.66%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 537317,
+            "range": "±0.80%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 41506,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 411857,
+            "range": "±1.61%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
           }
         ]
       }
