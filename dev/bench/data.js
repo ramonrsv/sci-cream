@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787696949982,
+  "lastUpdate": 1787697064342,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -466024,6 +466024,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 553.25,
             "range": "15.89",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f8bafc24b2d1de0e26a736a97091b28ae8427d4a",
+          "message": "Fit the docs rail to its widest entry\n\n`md:w-60` gave the contents 240px, against a measured natural width\nof 138px on five routes and 147px on the three `other-resources`\npages, where \"Ice Cream Science\" sits indented as an h3 sub-item.\n`md:w-44` leaves 29px over that worst case, and no entry wraps.\n\nNot `w-fit`: it sees only the current page's DOM, so the rail would\nbe 138px on five routes and 147px on three, reflowing the article by\n9px on every navigation between them. `max-content` also never\nwraps, so one long heading in a future doc would eat the column\nrather than take two lines in the rail.\n\nThe article takes the 64px: 398px to 462px at the `md` boundary,\nwhere the two-column layout is tightest, and 864px to 928px from\n1280px up, `.doc-shell` being capped at `max-w-6xl`.\n\nBelow `md` the rail is a full-width bar, so only the `md+` snapshots\nmove; the two portrait phone viewports are unchanged.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T18:06:57-04:00",
+          "tree_id": "7545347e27ae8b0fb90ecc5fde16c392d5f66a5e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f8bafc24b2d1de0e26a736a97091b28ae8427d4a"
+        },
+        "date": 1787697016154,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.75,
+            "range": "6.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 50.88,
+            "range": "3.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 55.75,
+            "range": "3.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2368.13,
+            "range": "36.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 320,
+            "range": "5.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 331.25,
+            "range": "4.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 346.25,
+            "range": "3.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16565.13,
+            "range": "67.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 911,
+            "range": "23.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.25,
+            "range": "1.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 53.88,
+            "range": "2.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.25,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41.63,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 124.63,
+            "range": "2.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 81.63,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.55,
+            "range": "0.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.69,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 642.63,
+            "range": "12.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 667.38,
+            "range": "20.34",
             "unit": "ms"
           }
         ]
