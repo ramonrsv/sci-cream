@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787677099390,
+  "lastUpdate": 1787677137798,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -552406,6 +552406,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.35,
             "range": "0.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8d163e488af7c0784b3dd95ef69ac66e3db957c2",
+          "message": "Snapshot the batch link's length warning\n\nThe dialog's length warning had no visual coverage: no test built a\nlink past the budget. It fires on the deflated payload, not the\nbatch, so a realistic fixture will not reach it — three recipes over\nthirty ordinary rows encode to 1770, under the 1800 cap. Three over\ntwenty-five long, distinct names plus a paragraph of notes clear it\nby about a fifth.\n\nThe warning is asserted before the shot, so a fixture that ever\ncompressed back under the cap fails loudly rather than quietly\nsnapshotting a dialog without one.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T11:54:36-04:00",
+          "tree_id": "cad699f78a0a9b18abebd599526e21360a303f42",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8d163e488af7c0784b3dd95ef69ac66e3db957c2"
+        },
+        "date": 1787677087838,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 71.11,
+            "range": "8.91",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 16.16,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 16.13,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 195.5,
+            "range": "14.62",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.46,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 195.5,
+            "range": "14.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 66.33,
+            "range": "8.58",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.78,
+            "range": "0.26",
             "unit": "ms"
           }
         ]
