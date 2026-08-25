@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787677815794,
+  "lastUpdate": 1787677829438,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -461398,6 +461398,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 674.5,
             "range": "8.49",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8d163e488af7c0784b3dd95ef69ac66e3db957c2",
+          "message": "Snapshot the batch link's length warning\n\nThe dialog's length warning had no visual coverage: no test built a\nlink past the budget. It fires on the deflated payload, not the\nbatch, so a realistic fixture will not reach it — three recipes over\nthirty ordinary rows encode to 1770, under the 1800 cap. Three over\ntwenty-five long, distinct names plus a paragraph of notes clear it\nby about a fifth.\n\nThe warning is asserted before the shot, so a fixture that ever\ncompressed back under the cap fails loudly rather than quietly\nsnapshotting a dialog without one.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T11:54:36-04:00",
+          "tree_id": "cad699f78a0a9b18abebd599526e21360a303f42",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8d163e488af7c0784b3dd95ef69ac66e3db957c2"
+        },
+        "date": 1787677780381,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.63,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52.38,
+            "range": "4.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 58.88,
+            "range": "6.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2499.38,
+            "range": "32.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 324.13,
+            "range": "5.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 335.5,
+            "range": "9.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 350.25,
+            "range": "3.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16887,
+            "range": "57.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 934.75,
+            "range": "18.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 55.88,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59.75,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 43.38,
+            "range": "1.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.38,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 135.13,
+            "range": "2.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 91.13,
+            "range": "2.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.66,
+            "range": "0.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 45.04,
+            "range": "0.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 656.75,
+            "range": "8.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 701.75,
+            "range": "16.87",
             "unit": "ms"
           }
         ]
