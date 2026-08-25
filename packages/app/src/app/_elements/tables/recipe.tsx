@@ -935,8 +935,7 @@ export function RecipeEditor({
                   aria-label="New version"
                   title={newVersionError}
                   aria-invalid={newVersionError !== undefined}
-                  // `my-0!` beats boxed-input's unlayered `my-1`; else row grows on version load.
-                  className={`boxed-input my-0! w-10 text-center text-sm ${
+                  className={`boxed-input my-0 w-10 text-center text-sm ${
                     newVersionError
                       ? "outline-2 -outline-offset-2 outline-red-400 outline-solid"
                       : ""

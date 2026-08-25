@@ -79,7 +79,7 @@ export function Select<T>({
   if (!icon) return select;
 
   return (
-    <span className={`boxed-input inline-flex items-center pl-1! ${className}`} title={title}>
+    <span className={`boxed-input inline-flex items-center pl-1 ${className}`} title={title}>
       <span aria-hidden className="text-secondary flex shrink-0">
         {icon}
       </span>

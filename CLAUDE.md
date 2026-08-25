@@ -293,6 +293,22 @@ Destructive last is the rule that matters. Delete is always the shared `DeleteAc
 (`_components/detail-panel.tsx`), which owns its `window.confirm` — don't hand-roll a trash button
 or add a second confirmation.
 
+#### Styling: `globals.css` carries the look, the `.tsx` carries the box
+
+A class in `globals.css` describes what something looks like — color, border, radius, shadow,
+typography. Size and position belong at the call site, where they vary per usage: `.action-button`
+is the model, defining no padding at all.
+
+Component classes live in `@layer components`, ordered below `utilities`, so a call-site utility
+wins the tie; keep new ones there. The rules after the layer are unlayered only because they must
+beat stylesheets no layer outranks: the `@import`ed ones, and `@tailwindcss/typography`, which
+generates into `utilities`. An ordinary class out there silently beats its call site, which then
+needs `!` to win back.
+
+Layout may stay in a class when it _is_ the class — a cross-file invariant (`.table-pin-*`'s
+z-order), a shared contract (`.toolbar`'s gap, `page-gutters`), a widget's geometry
+(`.range-meter-*`), or an overridable shared default (`.header-button`'s `p-2`).
+
 ## Linting strictness
 
 The Rust crate uses a very strict configuration: `clippy::all`, `clippy::pedantic`,

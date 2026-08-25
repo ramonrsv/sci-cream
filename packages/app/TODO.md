@@ -127,14 +127,17 @@
 - [ ] Investigate why updating pnpm dependencies in 275a906 degraded the performance of `is*Key`.
       275a906: Update /sci-cream & /app pnpm deps to latest
 - [ ] Review the sign-in classes in `globals.css`, used in `/signin/page.tsx` and `/signup/page.tsx`
-- [ ] `.boxed-input`'s `my-1` is unlayered, so utility overrides (`my-0`) silently no-op. Move
-      custom cls into `@layer components`, drop dead `my-0`s and the `my-0!` hack in `recipe.tsx`.
 - [ ] `BatchBuilder` assumes `batch.recipes[i]` pairs with `selection.items[i]`: the JSX maps the
       batch while `removeAt`/`colorAt`/`versionAt` index the selection. Nothing enforces it beyond
       `makeBatchFromSelection` mapping 1:1; look into pairing them explicitly via row view-models.
+- [ ] Lower `expect.toHaveScreenshot.threshold` in `playwright.config.ts` to ~0.1, then re-check
+      every snapshot: the default 0.2 compares by YIQ distance against `35215 * threshold²`, so
+      recoloring the focus ring blue-500 → blue-400 scored 572 against 1408 and slipped through.
 
 ## Completed
 
+- [x] `.boxed-input`'s `my-1` is unlayered, so utility overrides (`my-0`) silently no-op. Move
+      custom cls into `@layer components`, drop dead `my-0`s and the `my-0!` hack in `recipe.tsx`.
 - [x] Change `captureFullContent` to take a `Locator` rather than a testid string, then drop the
       now-redundant `data-testid="app-content"`; `#app-content` carries the docs scroll-padding
       rule, and the other shell landmarks (`#sidebar`, `#header`) are located by id alone.

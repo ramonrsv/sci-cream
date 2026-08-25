@@ -207,307 +207,6 @@ body {
   @apply bg-page text-txt-prim;
 }
 
-/* Global Styles */
-.text-primary {
-  @apply text-txt-prim;
-}
-
-.text-secondary {
-  @apply text-txt-sec;
-}
-
-/* Table Components: a 1px cell grid under a borderless typographic header band. */
-
-/* Column headers: borderless uppercase tracked label with a bottom rule. */
-.table-col-header {
-  @apply border-b text-xs font-medium tracking-wide uppercase;
-  @apply border-brd bg-surface text-txt-sec;
-}
-
-/* Totals row: bold summary band on a recessed page fill, sharing the data cells' grid borders. */
-.table-total {
-  @apply border-r border-b text-sm font-semibold;
-  @apply border-brd bg-page text-txt-prim;
-}
-
-/* Frozen header & columns. `.table-sticky-head` sticks the `<thead>`; the pin classes freeze a
-   column (paired with a `left-{offset}`). The head band (z-20) paints over the body band (z-10). */
-.table-sticky-head {
-  @apply sticky top-0 z-20;
-}
-.table-pin-head {
-  @apply sticky z-20;
-}
-.table-pin-cell {
-  @apply sticky z-10;
-}
-
-/* Row-label cells: emphasized text sharing the data cells' grid borders. */
-.table-emphasis {
-  @apply border-r border-b text-sm font-semibold;
-  @apply border-brd bg-surface text-txt-prim;
-}
-
-.table-inner-cell {
-  @apply border-r border-b text-sm;
-  @apply border-brd bg-surface text-txt-sec;
-}
-
-/* Left outer edge on each row's first cell so a pinned-left column keeps it on scroll */
-tr > .table-total:first-child,
-tr > .table-emphasis:first-child,
-tr > .table-inner-cell:first-child {
-  @apply border-l;
-}
-
-/* Quiet hover highlight for body rows. */
-tbody tr:hover > .table-inner-cell,
-tbody tr:hover > .table-emphasis {
-  @apply bg-hov;
-}
-
-.table-fillable-input {
-  @apply focus:ring-2 focus:outline-none focus:ring-inset;
-  @apply hover:bg-hov focus:ring-foc;
-}
-
-/* Typography */
-.comp-val {
-  @apply text-center font-mono whitespace-pre;
-}
-
-/* Remove @tailwindcss/typography's decorative backticks around <code> elements. */
-.prose :where(code)::before,
-.prose :where(code)::after {
-  content: none !important;
-}
-
-/* UI Components */
-.popup {
-  @apply rounded-lg border text-sm shadow-lg;
-  @apply border-brd bg-surface text-txt-prim;
-}
-
-/* A standalone bordered, rounded editable input box (not inside a framed table cell). */
-.boxed-input {
-  @apply my-1 rounded-lg border px-0.5;
-  @apply border-brd bg-surface text-txt-prim hover:border-brd-hov;
-}
-
-/* Bordered box for the markdown comment field's textarea and preview; padded, focus-ringed. */
-.markdown-field {
-  @apply rounded-lg border px-2 py-1;
-  @apply border-brd bg-surface hover:border-brd-hov;
-  @apply focus:ring-foc focus:ring-2 focus:outline-none focus:ring-inset;
-}
-
-/* A single option row in the Headless UI `ThemeSelect` popup, highlighted on focus/selection. */
-.select-option {
-  @apply flex cursor-pointer items-center gap-1 px-2 py-1.5;
-
-  @apply hover:bg-gray-100 data-focus:bg-gray-100 data-selected:bg-blue-100;
-  @variant dark {
-    @apply hover:bg-gray-700 data-focus:bg-gray-700 data-selected:bg-blue-900;
-  }
-}
-
-.action-button {
-  @apply cursor-pointer rounded-xl border border-transparent text-sm leading-tight hover:border hover:shadow-sm;
-  @apply disabled:cursor-not-allowed disabled:opacity-40;
-  @apply bg-surface text-txt-prim hover:border-brd-hov active:bg-act;
-}
-
-/* Filled accent button for a panel's primary action (e.g. the watchers Balance button). */
-.btn-primary {
-  @apply cursor-pointer rounded-xl border border-transparent text-sm leading-tight font-semibold shadow-sm;
-  @apply focus-visible:ring-2 focus-visible:outline-none;
-  @apply disabled:cursor-not-allowed disabled:opacity-40;
-
-  @apply focus-visible:ring-foc bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
-  @variant dark {
-    @apply bg-blue-500 hover:bg-blue-400 active:bg-blue-600;
-  }
-}
-
-.drag-handle {
-  @apply -mx-1 my-2 cursor-move;
-}
-
-.toolbar {
-  @apply flex flex-wrap items-center gap-x-1.5 gap-y-0;
-}
-
-/* Grid Components */
-/* `isolate` contains the panel's sticky-cell z-indices in its own stacking context so they don't
-   paint over the grid item's resize handles (rendered as later siblings). */
-.grid-component {
-  @apply isolate rounded-lg border border-transparent;
-
-  @apply bg-surface shadow-md;
-  @variant dark {
-    @apply shadow-lg;
-  }
-}
-
-/* Self-contained rounded data tile (e.g. a panel surface). */
-.data-card {
-  @apply overflow-hidden rounded-lg border;
-  @apply border-brd bg-surface text-txt-prim;
-}
-
-/* Square tile for a flush, gapless grid: neighbors collapse borders via negative margins */
-.data-card-flat {
-  @apply overflow-hidden border;
-  @apply border-brd bg-surface text-txt-prim;
-}
-
-/* Horizontal gauge: band, current marker, and target/reference ticks positioned by inline
-   left/right %, with marker/tick colors set inline. */
-.range-meter {
-  @apply relative h-1.5 w-full rounded-full;
-  @apply bg-brd;
-}
-
-/* Soft acceptable-range band tint. The `/25` alpha is mirrored by `RANGE_BAND_ALPHA` in
-   `lib/styles/colors.ts` for the canvas chart's matching band; keep the two in sync. */
-.range-meter-band {
-  @apply bg-graph-green/25 absolute inset-y-0 rounded-full;
-}
-
-.range-meter-marker {
-  @apply absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-1;
-  @apply ring-surface;
-}
-
-.range-meter-tick {
-  @apply absolute top-1/2 h-3 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full;
-}
-
-/* Navigation Shell */
-.navbar {
-  @apply bg-page;
-}
-
-.navbar-trans-width {
-  @apply transition-[width] duration-200;
-}
-
-/* Lifted edge for the sidebar drawer while it overlays content on peek. */
-.sidebar-drawer-peek {
-  @apply border-brd border-r shadow-lg;
-}
-
-.sidebar-item {
-  @apply flex items-center rounded-lg py-2 text-sm font-medium;
-  @apply text-txt-sec hover:bg-hov active:text-txt-prim active:bg-hov;
-}
-
-.sidebar-item-active {
-  @apply text-txt-prim bg-hov;
-}
-
-.header-button {
-  @apply rounded-full border border-transparent p-2 text-sm leading-tight;
-  @apply hover:border-brd hover:bg-surface text-txt-prim active:bg-act;
-}
-
-/* Sign-in Page */
-.signin-container {
-  @apply rounded-xl border shadow-md;
-  @apply bg-surface border-brd;
-}
-
-.signin-provider {
-  @apply rounded-lg border text-sm font-medium;
-  @apply border-brd hover:bg-hov active:bg-act;
-}
-
-.signin-failed {
-  @apply rounded-lg border text-center text-sm;
-
-  @apply border-red-300 bg-red-50 text-red-700;
-  @variant dark {
-    @apply border-red-800 bg-red-950 text-red-300;
-  }
-}
-
-.signin-success {
-  @apply rounded-lg border text-center text-sm;
-
-  @apply border-green-300 bg-green-50 text-green-700;
-  @variant dark {
-    @apply border-green-800 bg-green-950 text-green-300;
-  }
-}
-
-/* Severity accents selected by `issue-text-${severity}` / `issue-border-${severity}`. */
-.issue-text-error {
-  @apply text-err;
-}
-
-.issue-text-warning {
-  @apply text-warn;
-}
-
-.issue-text-information {
-  @apply text-info;
-}
-
-.issue-border-error {
-  @apply border-err-brd;
-}
-
-.issue-border-warning {
-  @apply border-warn-brd;
-}
-
-/* Card-level issue emphasis. The inset ring frames all sides. */
-.issue-card-error {
-  @apply ring-2 ring-inset;
-  @apply border-err-brd ring-err-brd;
-}
-
-.issue-card-warning {
-  @apply ring-2 ring-inset;
-  @apply border-warn-brd ring-warn-brd;
-}
-
-.msg-error {
-  @apply rounded border text-sm;
-
-  @apply text-err border-red-300 bg-red-50;
-  @variant dark {
-    @apply border-red-800 bg-red-950;
-  }
-}
-
-.msg-warning {
-  @apply rounded border text-sm;
-
-  @apply text-warn border-amber-300 bg-amber-50;
-  @variant dark {
-    @apply border-amber-800 bg-amber-950;
-  }
-}
-
-.msg-information {
-  @apply rounded border text-sm;
-
-  @apply text-info border-blue-300 bg-blue-50;
-  @variant dark {
-    @apply border-blue-800 bg-blue-950;
-  }
-}
-
-.signin-input {
-  @apply rounded-lg border text-sm outline-none;
-  @apply border-brd bg-surface text-txt-prim focus:border-foc;
-}
-
-.signin-divider {
-  @apply bg-brd;
-}
-
 /* Right gutter only — the left is the sidebar's in-flow spacer (`SIDEBAR_W_SPACER_*`): a gutter
    when the sidebar is hidden, the rail's width otherwise. That turns on the persisted `pinned`
    state, not the viewport, so no page class can express it; never add `pl-*`/`px-*` here. `pr-4`
@@ -516,36 +215,457 @@ tbody tr:hover > .table-emphasis {
   @apply pr-4;
 }
 
-/* Blog and Documentation pages */
-.blog-post {
-  @apply page-gutters mx-auto max-w-5xl py-2 sm:py-10;
-}
+/* Component skins. In `components`, the layer below `utilities`, so a call-site utility always
+   wins the tie: the class carries the look, the `.tsx` carries size and position. */
+@layer components {
+  /* Table Components: a 1px cell grid under a borderless typographic header band. */
 
-/* Vertical padding belongs to the children, so sticky `.doc-toc` rests where `top-0` pins it. */
-.doc-shell {
-  @apply page-gutters mx-auto flex w-full max-w-6xl flex-col gap-3 md:flex-row md:gap-8;
-}
-
-/* `min-w-0` so wide content shrinks here rather than squeezing the rail; a flex item otherwise
-   floors at its intrinsic width. Top padding only at `md+`, where the rail sits beside it. */
-.doc-content {
-  @apply min-w-0 flex-1 pb-2 sm:pb-10 md:pt-10;
-}
-
-/* `md:self-start` is load-bearing: stretched to the row, sticky has no travel. Padding rides
-   inside the box, so scrolling never shifts it; compact below `md` to fit `--doc-bar-clearance`. */
-.doc-toc {
-  @apply border-brd bg-page sticky top-0 z-10 shrink-0 border-b py-2 md:pt-(--doc-rail-pad);
-  @apply md:z-auto md:w-60 md:self-start md:overflow-y-auto md:border-b-0 md:pb-0;
-  @apply md:max-h-[calc(100vh-var(--header-h)-var(--doc-rail-pad))];
-}
-
-/* The pinned bar would cover what the browser scrolls to: a fragment, or the new page when Next
-   leaves a `#fragment` URL. That targets the article, so `scroll-margin` on headings misses it. */
-@media (width < 48rem) {
-  #app-content:has(.doc-shell) {
-    scroll-padding-top: var(--doc-bar-clearance);
+  /* Column headers: borderless uppercase tracked label with a bottom rule. */
+  .table-col-header {
+    @apply border-b text-xs font-medium tracking-wide uppercase;
+    @apply border-brd bg-surface text-txt-sec;
   }
+
+  /* Totals row: bold summary band on a recessed page fill, sharing the data cells' grid borders. */
+  .table-total {
+    @apply border-r border-b text-sm font-semibold;
+    @apply border-brd bg-page text-txt-prim;
+  }
+
+  /* Frozen header & columns. `.table-sticky-head` sticks the `<thead>`; the pin classes freeze
+     a column (paired with a `left-{offset}`). The head band (z-20) paints over the body band
+     (z-10). */
+  .table-sticky-head {
+    @apply sticky top-0 z-20;
+  }
+  .table-pin-head {
+    @apply sticky z-20;
+  }
+  .table-pin-cell {
+    @apply sticky z-10;
+  }
+
+  /* Row-label cells: emphasized text sharing the data cells' grid borders. */
+  .table-emphasis {
+    @apply border-r border-b text-sm font-semibold;
+    @apply border-brd bg-surface text-txt-prim;
+  }
+
+  .table-inner-cell {
+    @apply border-r border-b text-sm;
+    @apply border-brd bg-surface text-txt-sec;
+  }
+
+  /* Left outer edge on each row's first cell so a pinned-left column keeps it on scroll */
+  tr > .table-total:first-child,
+  tr > .table-emphasis:first-child,
+  tr > .table-inner-cell:first-child {
+    @apply border-l;
+  }
+
+  /* Quiet hover highlight for body rows. */
+  tbody tr:hover > .table-inner-cell,
+  tbody tr:hover > .table-emphasis {
+    @apply bg-hov;
+  }
+
+  .table-fillable-input {
+    @apply focus:ring-2 focus:outline-none focus:ring-inset;
+    @apply hover:bg-hov focus:ring-foc;
+  }
+
+  /* Typography */
+  .comp-val {
+    @apply text-center font-mono whitespace-pre;
+  }
+
+  /* UI Components */
+  .popup {
+    @apply rounded-lg border text-sm shadow-lg;
+    @apply border-brd bg-surface text-txt-prim;
+  }
+
+  /* A standalone bordered, rounded editable input box (not inside a framed table cell). The inset
+     and margin are the shared default; a call site that wants a different box overrides them. */
+  .boxed-input {
+    @apply my-1 rounded-lg border px-0.5;
+    @apply border-brd bg-surface text-txt-prim hover:border-brd-hov;
+  }
+
+  /* Bordered box for the markdown comment field's textarea and preview; padded, focus-ringed. */
+  .markdown-field {
+    @apply rounded-lg border px-2 py-1;
+    @apply border-brd bg-surface hover:border-brd-hov;
+    @apply focus:ring-foc focus:ring-2 focus:outline-none focus:ring-inset;
+  }
+
+  /* A single option row in the Headless UI `ThemeSelect` popup, highlighted on focus/selection. */
+  .select-option {
+    @apply flex cursor-pointer items-center gap-1 px-2 py-1.5;
+
+    @apply hover:bg-gray-100 data-focus:bg-gray-100 data-selected:bg-blue-100;
+    @variant dark {
+      @apply hover:bg-gray-700 data-focus:bg-gray-700 data-selected:bg-blue-900;
+    }
+  }
+
+  .action-button {
+    @apply cursor-pointer rounded-xl border border-transparent text-sm leading-tight hover:border hover:shadow-sm;
+    @apply disabled:cursor-not-allowed disabled:opacity-40;
+    @apply bg-surface text-txt-prim hover:border-brd-hov active:bg-act;
+  }
+
+  /* Filled accent button for a panel's primary action (e.g. the watchers Balance button). */
+  .btn-primary {
+    @apply cursor-pointer rounded-xl border border-transparent text-sm leading-tight font-semibold shadow-sm;
+    @apply focus-visible:ring-2 focus-visible:outline-none;
+    @apply disabled:cursor-not-allowed disabled:opacity-40;
+
+    @apply focus-visible:ring-foc bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
+    @variant dark {
+      @apply bg-blue-500 hover:bg-blue-400 active:bg-blue-600;
+    }
+  }
+
+  .drag-handle {
+    @apply -mx-1 my-2 cursor-move;
+  }
+
+  .toolbar {
+    @apply flex flex-wrap items-center gap-x-1.5 gap-y-0;
+  }
+
+  /* Grid Components */
+  /* `isolate` contains the panel's sticky-cell z-indices in its own stacking context so they don't
+     paint over the grid item's resize handles (rendered as later siblings). */
+  .grid-component {
+    @apply isolate rounded-lg border border-transparent;
+
+    @apply bg-surface shadow-md;
+    @variant dark {
+      @apply shadow-lg;
+    }
+  }
+
+  /* Self-contained rounded data tile (e.g. a panel surface). */
+  .data-card {
+    @apply overflow-hidden rounded-lg border;
+    @apply border-brd bg-surface text-txt-prim;
+  }
+
+  /* Square tile for a flush, gapless grid: neighbors collapse borders via negative margins */
+  .data-card-flat {
+    @apply overflow-hidden border;
+    @apply border-brd bg-surface text-txt-prim;
+  }
+
+  /* Horizontal gauge: band, current marker, and target/reference ticks positioned by inline
+     left/right %, with marker/tick colors set inline. */
+  .range-meter {
+    @apply relative h-1.5 w-full rounded-full;
+    @apply bg-brd;
+  }
+
+  /* Soft acceptable-range band tint. The `/25` alpha is mirrored by `RANGE_BAND_ALPHA` in
+     `lib/styles/colors.ts` for the canvas chart's matching band; keep the two in sync. */
+  .range-meter-band {
+    @apply bg-graph-green/25 absolute inset-y-0 rounded-full;
+  }
+
+  .range-meter-marker {
+    @apply absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-1;
+    @apply ring-surface;
+  }
+
+  .range-meter-tick {
+    @apply absolute top-1/2 h-3 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full;
+  }
+
+  /* Navigation Shell */
+  .navbar {
+    @apply bg-page;
+  }
+
+  .navbar-trans-width {
+    @apply transition-[width] duration-200;
+  }
+
+  /* Lifted edge for the sidebar drawer while it overlays content on peek. */
+  .sidebar-drawer-peek {
+    @apply border-brd border-r shadow-lg;
+  }
+
+  .sidebar-item {
+    @apply flex items-center rounded-lg py-2 text-sm font-medium;
+    @apply text-txt-sec hover:bg-hov active:text-txt-prim active:bg-hov;
+  }
+
+  .sidebar-item-active {
+    @apply text-txt-prim bg-hov;
+  }
+
+  .header-button {
+    @apply rounded-full border border-transparent p-2 text-sm leading-tight;
+    @apply hover:border-brd hover:bg-surface text-txt-prim active:bg-act;
+  }
+
+  /* Sign-in Page */
+  .signin-container {
+    @apply rounded-xl border shadow-md;
+    @apply bg-surface border-brd;
+  }
+
+  .signin-provider {
+    @apply rounded-lg border text-sm font-medium;
+    @apply border-brd hover:bg-hov active:bg-act;
+  }
+
+  .signin-failed {
+    @apply rounded-lg border text-center text-sm;
+
+    @apply border-red-300 bg-red-50 text-red-700;
+    @variant dark {
+      @apply border-red-800 bg-red-950 text-red-300;
+    }
+  }
+
+  .signin-success {
+    @apply rounded-lg border text-center text-sm;
+
+    @apply border-green-300 bg-green-50 text-green-700;
+    @variant dark {
+      @apply border-green-800 bg-green-950 text-green-300;
+    }
+  }
+
+  /* Severity accents selected by `issue-text-${severity}` / `issue-border-${severity}`. */
+  .issue-text-error {
+    @apply text-err;
+  }
+
+  .issue-text-warning {
+    @apply text-warn;
+  }
+
+  .issue-text-information {
+    @apply text-info;
+  }
+
+  .issue-border-error {
+    @apply border-err-brd;
+  }
+
+  .issue-border-warning {
+    @apply border-warn-brd;
+  }
+
+  /* Card-level issue emphasis. The inset ring frames all sides. */
+  .issue-card-error {
+    @apply ring-2 ring-inset;
+    @apply border-err-brd ring-err-brd;
+  }
+
+  .issue-card-warning {
+    @apply ring-2 ring-inset;
+    @apply border-warn-brd ring-warn-brd;
+  }
+
+  .msg-error {
+    @apply rounded border text-sm;
+
+    @apply text-err border-red-300 bg-red-50;
+    @variant dark {
+      @apply border-red-800 bg-red-950;
+    }
+  }
+
+  .msg-warning {
+    @apply rounded border text-sm;
+
+    @apply text-warn border-amber-300 bg-amber-50;
+    @variant dark {
+      @apply border-amber-800 bg-amber-950;
+    }
+  }
+
+  .msg-information {
+    @apply rounded border text-sm;
+
+    @apply text-info border-blue-300 bg-blue-50;
+    @variant dark {
+      @apply border-blue-800 bg-blue-950;
+    }
+  }
+
+  .signin-input {
+    @apply rounded-lg border text-sm outline-none;
+    @apply border-brd bg-surface text-txt-prim focus:border-foc;
+  }
+
+  .signin-divider {
+    @apply bg-brd;
+  }
+
+  /* Blog and Documentation pages */
+  .blog-post {
+    @apply page-gutters mx-auto max-w-5xl py-2 sm:py-10;
+  }
+
+  /* Vertical padding belongs to the children, so sticky `.doc-toc` rests where `top-0` pins it. */
+  .doc-shell {
+    @apply page-gutters mx-auto flex w-full max-w-6xl flex-col gap-3 md:flex-row md:gap-8;
+  }
+
+  /* `min-w-0` so wide content shrinks here rather than squeezing the rail; a flex item otherwise
+     floors at its intrinsic width. Top padding only at `md+`, where the rail sits beside it. */
+  .doc-content {
+    @apply min-w-0 flex-1 pb-2 sm:pb-10 md:pt-10;
+  }
+
+  /* `md:self-start` is load-bearing: stretched to the row, sticky has no travel. Padding rides
+     inside the box, so scrolling never shifts it; compact below `md` to fit
+     `--doc-bar-clearance`. */
+  .doc-toc {
+    @apply border-brd bg-page sticky top-0 z-10 shrink-0 border-b py-2 md:pt-(--doc-rail-pad);
+    @apply md:z-auto md:w-60 md:self-start md:overflow-y-auto md:border-b-0 md:pb-0;
+    @apply md:max-h-[calc(100vh-var(--header-h)-var(--doc-rail-pad))];
+  }
+
+  /* The pinned bar would cover what the browser scrolls to: a fragment, or the new page when
+     Next leaves a `#fragment` URL. That targets the article, so `scroll-margin` on headings
+     misses it. */
+  @media (width < 48rem) {
+    #app-content:has(.doc-shell) {
+      scroll-padding-top: var(--doc-bar-clearance);
+    }
+  }
+
+  /* Public comment threads, mounted under a blog post or docs page. */
+  .comments {
+    @apply border-brd mt-10 border-t px-2 py-6 sm:px-6;
+  }
+
+  .comment-card {
+    @apply border-brd bg-surface mb-2 rounded-lg border px-3 py-2;
+  }
+
+  /* Author, timestamp, and the edited marker: one muted row above the body. */
+  .comment-meta {
+    @apply text-txt-sec flex flex-wrap items-baseline gap-2 text-xs;
+  }
+
+  /* Replies sit indented under their root, joined to it by the left rule. */
+  .comment-replies {
+    @apply border-brd ml-4 border-l pl-3 sm:ml-8;
+  }
+
+  .comment-action {
+    @apply text-txt-sec hover:text-txt-prim cursor-pointer hover:underline;
+  }
+
+  /* Search Components */
+  .search-list-item {
+    @apply w-full rounded-lg border px-3 py-2 text-left transition-colors;
+    @apply border-brd bg-surface hover:bg-hov;
+  }
+
+  .search-list-item-active {
+    @apply bg-hov border-blue-400;
+  }
+
+  .search-detail-panel {
+    @apply flex flex-1 scrollbar-gutter-stable flex-col gap-4 overflow-y-auto rounded-lg border p-4;
+    @apply border-brd;
+  }
+
+  .search-empty {
+    @apply flex flex-1 items-center justify-center rounded-lg border text-sm;
+    @apply border-brd text-txt-sec;
+  }
+
+  .meta-tag {
+    @apply rounded px-1.5 py-0.5 text-xs;
+    @apply bg-hov text-txt-sec;
+  }
+
+  /* Recipe badge: letter chip tinted with `--cat`; the letter wears ink, weak hues stay legible. */
+  .recipe-badge {
+    @apply text-txt-prim inline-flex items-center justify-center rounded border;
+    @apply h-4.5 w-4.5 text-xs leading-none font-semibold;
+    background-color: color-mix(in oklab, var(--cat) 22%, transparent);
+    border-color: color-mix(in oklab, var(--cat) 55%, transparent);
+  }
+
+  /* Weighed: the whole column checked off, so the badge wears exactly what its own cells wear. */
+  .recipe-badge[data-done="true"] {
+    @apply text-txt-sec line-through;
+    background-color: color-mix(in oklab, var(--cat) 8%, transparent);
+    border-color: color-mix(in oklab, var(--cat) 22%, transparent);
+  }
+
+  /* Checklist cell: the badge's tint on the whole chip, since the column already names the
+     recipe. */
+  .checklist-cell {
+    @apply text-txt-prim flex w-full items-center rounded border text-sm;
+    background-color: color-mix(in oklab, var(--cat) 22%, transparent);
+    border-color: color-mix(in oklab, var(--cat) 55%, transparent);
+  }
+
+  .checklist-cell:hover {
+    background-color: color-mix(in oklab, var(--cat) 34%, transparent);
+  }
+
+  /* Weighed: tint drained and struck through, kept above zero so the column still identifies it. */
+  .checklist-cell[aria-checked="true"] {
+    @apply text-txt-sec line-through;
+    background-color: color-mix(in oklab, var(--cat) 8%, transparent);
+    border-color: color-mix(in oklab, var(--cat) 22%, transparent);
+  }
+
+  /* Solid fill for the achromatic colors, which a tint would erase. The fill is too strong for the
+     text token, so the chip wears its own ink, and the border leans on it to stay visible. */
+  .cat-solid {
+    background-color: var(--cat);
+    border-color: color-mix(in oklab, var(--cat) 72%, var(--cat-ink));
+    color: var(--cat-ink);
+  }
+
+  .checklist-cell.cat-solid:hover {
+    background-color: color-mix(in oklab, var(--cat) 88%, var(--cat-ink));
+  }
+
+  /* Weighed: drains to a tint like every other cell, so the ink returns to the text token. */
+  .checklist-cell.cat-solid[aria-checked="true"] {
+    @apply text-txt-sec;
+    background-color: color-mix(in oklab, var(--cat) 30%, transparent);
+    border-color: color-mix(in oklab, var(--cat) 45%, transparent);
+  }
+
+  /* The badge drains to the cells' tint, but keeps an opaque border where they fade one out: a chip
+     this small is mostly border, and a white one faded toward the page leaves nothing behind. */
+  .recipe-badge.cat-solid[data-done="true"] {
+    @apply text-txt-sec;
+    background-color: color-mix(in oklab, var(--cat) 30%, transparent);
+    border-color: color-mix(in oklab, var(--cat) 65%, var(--cat-ink));
+  }
+}
+
+/* Unlayered, because each rule below has to beat a stylesheet no layer can outrank: the imported
+   ones above are unlayered too, and `@tailwindcss/typography` generates into `utilities`. */
+
+/* Text colors. Unlayered so they still win over `.prose`, which the `Markdown` wrapper wants. */
+.text-primary {
+  @apply text-txt-prim;
+}
+
+.text-secondary {
+  @apply text-txt-sec;
+}
+
+/* Remove @tailwindcss/typography's decorative backticks around <code> elements. */
+.prose :where(code)::before,
+.prose :where(code)::after {
+  content: none !important;
 }
 
 /* Badge rows: preflight makes every image a block, so a paragraph of badges would stack. */
@@ -589,114 +709,6 @@ tbody tr:hover > .table-emphasis {
   .heading-permalink {
     @apply opacity-60;
   }
-}
-
-/* Public comment threads, mounted under a blog post or docs page. */
-.comments {
-  @apply border-brd mt-10 border-t px-2 py-6 sm:px-6;
-}
-
-.comment-card {
-  @apply border-brd bg-surface mb-2 rounded-lg border px-3 py-2;
-}
-
-/* Author, timestamp, and the edited marker: one muted row above the body. */
-.comment-meta {
-  @apply text-txt-sec flex flex-wrap items-baseline gap-2 text-xs;
-}
-
-/* Replies sit indented under their root, joined to it by the left rule. */
-.comment-replies {
-  @apply border-brd ml-4 border-l pl-3 sm:ml-8;
-}
-
-.comment-action {
-  @apply text-txt-sec hover:text-txt-prim cursor-pointer hover:underline;
-}
-
-/* Search Components */
-.search-list-item {
-  @apply w-full rounded-lg border px-3 py-2 text-left transition-colors;
-  @apply border-brd bg-surface hover:bg-hov;
-}
-
-.search-list-item-active {
-  @apply bg-hov border-blue-400;
-}
-
-.search-detail-panel {
-  @apply flex flex-1 scrollbar-gutter-stable flex-col gap-4 overflow-y-auto rounded-lg border p-4;
-  @apply border-brd;
-}
-
-.search-empty {
-  @apply flex flex-1 items-center justify-center rounded-lg border text-sm;
-  @apply border-brd text-txt-sec;
-}
-
-.meta-tag {
-  @apply rounded px-1.5 py-0.5 text-xs;
-  @apply bg-hov text-txt-sec;
-}
-
-/* Recipe badge: letter chip tinted with `--cat`; the letter wears ink, weak hues stay legible. */
-.recipe-badge {
-  @apply text-txt-prim inline-flex items-center justify-center rounded border;
-  @apply h-4.5 w-4.5 text-xs leading-none font-semibold;
-  background-color: color-mix(in oklab, var(--cat) 22%, transparent);
-  border-color: color-mix(in oklab, var(--cat) 55%, transparent);
-}
-
-/* Weighed: the whole column checked off, so the badge wears exactly what its own cells wear. */
-.recipe-badge[data-done="true"] {
-  @apply text-txt-sec line-through;
-  background-color: color-mix(in oklab, var(--cat) 8%, transparent);
-  border-color: color-mix(in oklab, var(--cat) 22%, transparent);
-}
-
-/* Checklist cell: the badge's tint on the whole chip, since the column already names the recipe. */
-.checklist-cell {
-  @apply text-txt-prim flex w-full items-center rounded border text-sm;
-  background-color: color-mix(in oklab, var(--cat) 22%, transparent);
-  border-color: color-mix(in oklab, var(--cat) 55%, transparent);
-}
-
-.checklist-cell:hover {
-  background-color: color-mix(in oklab, var(--cat) 34%, transparent);
-}
-
-/* Weighed: tint drained and struck through, kept above zero so the column still identifies it. */
-.checklist-cell[aria-checked="true"] {
-  @apply text-txt-sec line-through;
-  background-color: color-mix(in oklab, var(--cat) 8%, transparent);
-  border-color: color-mix(in oklab, var(--cat) 22%, transparent);
-}
-
-/* Solid fill for the achromatic colors, which a tint would erase. The fill is too strong for the
-   text token, so the chip wears its own ink, and the border leans on it to stay visible. */
-.cat-solid {
-  background-color: var(--cat);
-  border-color: color-mix(in oklab, var(--cat) 72%, var(--cat-ink));
-  color: var(--cat-ink);
-}
-
-.checklist-cell.cat-solid:hover {
-  background-color: color-mix(in oklab, var(--cat) 88%, var(--cat-ink));
-}
-
-/* Weighed: drains to a tint like every other cell, so the ink returns to the text token. */
-.checklist-cell.cat-solid[aria-checked="true"] {
-  @apply text-txt-sec;
-  background-color: color-mix(in oklab, var(--cat) 30%, transparent);
-  border-color: color-mix(in oklab, var(--cat) 45%, transparent);
-}
-
-/* The badge drains to the cells' tint, but keeps an opaque border where they fade one out: a chip
-   this small is mostly border, and a white one faded toward the page leaves nothing behind. */
-.recipe-badge.cat-solid[data-done="true"] {
-  @apply text-txt-sec;
-  background-color: color-mix(in oklab, var(--cat) 30%, transparent);
-  border-color: color-mix(in oklab, var(--cat) 65%, var(--cat-ink));
 }
 
 /* JSON Viewer (react-json-view-lite)
