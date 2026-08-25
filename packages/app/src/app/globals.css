@@ -523,11 +523,11 @@ body {
   }
 
   /* `md:self-start` is load-bearing: stretched to the row, sticky has no travel. Padding rides
-     inside the box, so scrolling never shifts it; compact below `md` to fit
-     `--doc-bar-clearance`. */
+     inside the box, so scrolling never shifts it; compact below `md` to fit `--doc-bar-clearance`.
+     `md:w-44` clears the widest entry, 147px across every route. */
   .doc-toc {
     @apply border-brd bg-page sticky top-0 z-10 shrink-0 border-b py-2 md:pt-(--doc-rail-pad);
-    @apply md:z-auto md:w-60 md:self-start md:overflow-y-auto md:border-b-0 md:pb-0;
+    @apply md:z-auto md:w-44 md:self-start md:overflow-y-auto md:border-b-0 md:pb-0;
     @apply md:max-h-[calc(100vh-var(--header-h)-var(--doc-rail-pad))];
   }
 
