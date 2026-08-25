@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787528120466,
+  "lastUpdate": 1787673841330,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -560110,6 +560110,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/8d5aaea88ecb2bb5f5b4233980a1288f75ede351"
         },
         "date": 1787527319247,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ff4ad4ab4a3567baa27a5eba8d9859c993f5e9e1",
+          "message": "Test the valid state the panel snapshots claim\n\n`valid ingredient input focused` and `valid quantity input focused`\nfilled the ingredient name with \"Milk\", which is not an ingredient: the\ndatabase has \"0% Milk\", \"3.25% Milk\", \"Whole Milk\" and the like. Both\ntests were exercising the invalid state under a valid name.\n\nNothing caught it because `.table-fillable-input` is unlayered, so its\n`focus:ring-foc` beat the call site's `focus:ring-blue-400` and\n`focus:ring-red-400` alike: the ring stayed blue whichever branch\napplied, and the red outline is suppressed while focused. The snapshots\nlooked right in every state.\n\nUse \"Whole Milk\", already the known-good ingredient in the share-viewer\ntests. Only the ingredient snapshot moves, for the wider text; the\nquantity one is clipped to its own input and is unchanged.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T02:04:53-04:00",
+          "tree_id": "3d7b2603e05745dc1c5b207a036ae54dc3ee7885",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ff4ad4ab4a3567baa27a5eba8d9859c993f5e9e1"
+        },
+        "date": 1787673793252,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
