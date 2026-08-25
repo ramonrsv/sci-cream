@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787677829438,
+  "lastUpdate": 1787677877801,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -553431,6 +553431,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.78,
             "range": "0.26",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a6bfbb1b5d6c2c919223e1330ce603ba377b581e",
+          "message": "Restore the call-site utilities worth keeping\n\nFour of the six tokens dropped as dead in \"Drop call-site utilities\nthat never applied\" were saying something worth saying, now that the\ncomponent layer lets a call site win:\n\n  - the batch share dialog's length warning goes text-xs\n  - the version name and label fields inset by px-1.5\n  - the copyable field and the three batch-builder controls drop\n    boxed-input's my-1 and inset by px-1\n\nThe watcher target's text-left and the sign-out button's p-1 stay\ndropped: centred reads better in the reserved delta slot, and p-1\nwould make sign-out the only header button off the shared p-2.\n\nSeventeen snapshots move. The batch editor keeps its height and\ntightens inside it, each copyable field takes 7px off its dialog\n(the Copy button, not the input, now floors the row), and the\nversion popup changes only where the label text starts.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T12:25:15-04:00",
+          "tree_id": "20e0ab5273072d0720f5cf6a3836ba2fb3c0c2c9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a6bfbb1b5d6c2c919223e1330ce603ba377b581e"
+        },
+        "date": 1787677839141,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 51.48,
+            "range": "12.73",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.6,
+            "range": "0.85",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.59,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 139.5,
+            "range": "18.70",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.38,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 139.5,
+            "range": "18.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 49.04,
+            "range": "11.95",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.86,
+            "range": "0.30",
             "unit": "ms"
           }
         ]
