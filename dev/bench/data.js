@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787695634618,
+  "lastUpdate": 1787696309897,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -569054,6 +569054,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/7998a1aafb44f8810bafc0c75ddcadd864cf5983"
         },
         "date": 1787694976806,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f8bafc24b2d1de0e26a736a97091b28ae8427d4a",
+          "message": "Fit the docs rail to its widest entry\n\n`md:w-60` gave the contents 240px, against a measured natural width\nof 138px on five routes and 147px on the three `other-resources`\npages, where \"Ice Cream Science\" sits indented as an h3 sub-item.\n`md:w-44` leaves 29px over that worst case, and no entry wraps.\n\nNot `w-fit`: it sees only the current page's DOM, so the rail would\nbe 138px on five routes and 147px on three, reflowing the article by\n9px on every navigation between them. `max-content` also never\nwraps, so one long heading in a future doc would eat the column\nrather than take two lines in the rail.\n\nThe article takes the 64px: 398px to 462px at the `md` boundary,\nwhere the two-column layout is tightest, and 864px to 928px from\n1280px up, `.doc-shell` being capped at `max-w-6xl`.\n\nBelow `md` the rail is a full-width bar, so only the `md+` snapshots\nmove; the two portrait phone viewports are unchanged.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T18:06:57-04:00",
+          "tree_id": "7545347e27ae8b0fb90ecc5fde16c392d5f66a5e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f8bafc24b2d1de0e26a736a97091b28ae8427d4a"
+        },
+        "date": 1787696260695,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
