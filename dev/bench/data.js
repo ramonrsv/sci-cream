@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787675334715,
+  "lastUpdate": 1787675342153,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -495716,6 +495716,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.01%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "95a46115d39acb6c0f6acd9b283726c1e43900d9",
+          "message": "Drop call-site utilities that never applied\n\nRules in `globals.css` are unlayered, so they outrank any Tailwind\nutility at a call site regardless of specificity. Twelve call sites\nacross eight files were writing classes that never rendered, and some\nwere also wrong: the recipe quantity column asked for `text-right`\nwhere centred is correct, and the evaporation total carried the\n`text-xs font-normal` of the yield annotation beside it, over a\n`.table-total` that already paints the whole row.\n\nDelete them rather than let the coming layer change activate them\nwholesale. Each deleted class already resolves to what its component\nclass paints, so nothing changes on screen; verified by rendering every\naffected class list under both stylesheets in headless Chromium and\ndiffing computed styles.\n\nThe two `!` workarounds stay for now: without the layer, a bare `pl-1`\nor `my-0` would lose to the unlayered class.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T02:19:36-04:00",
+          "tree_id": "d15c36ca48171c580899c5f3d48ce495366f97f5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/95a46115d39acb6c0f6acd9b283726c1e43900d9"
+        },
+        "date": 1787675287776,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 48796,
+            "range": "±10.81%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 514006,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33172,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 392024,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
