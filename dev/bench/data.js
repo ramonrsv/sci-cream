@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787677037734,
+  "lastUpdate": 1787677043716,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -532787,6 +532787,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/recipes first-load JS (gzip)",
             "value": 821.83,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 626.05,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 627.54,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 795.98,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1032.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.17,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8d163e488af7c0784b3dd95ef69ac66e3db957c2",
+          "message": "Snapshot the batch link's length warning\n\nThe dialog's length warning had no visual coverage: no test built a\nlink past the budget. It fires on the deflated payload, not the\nbatch, so a realistic fixture will not reach it — three recipes over\nthirty ordinary rows encode to 1770, under the 1800 cap. Three over\ntwenty-five long, distinct names plus a paragraph of notes clear it\nby about a fifth.\n\nThe warning is asserted before the shot, so a fixture that ever\ncompressed back under the cap fails loudly rather than quietly\nsnapshotting a dialog without one.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T11:54:36-04:00",
+          "tree_id": "cad699f78a0a9b18abebd599526e21360a303f42",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8d163e488af7c0784b3dd95ef69ac66e3db957c2"
+        },
+        "date": 1787676993547,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.11,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.56,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.28,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.73,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.39,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.84,
             "unit": "KB"
           },
           {
