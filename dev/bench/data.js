@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787695024703,
+  "lastUpdate": 1787695028956,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -536581,6 +536581,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 15.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7998a1aafb44f8810bafc0c75ddcadd864cf5983",
+          "message": "Wait out the sidebar drawer's width transition\n\nThe navbar tests clicked and shot through the drawer's 200ms\ntransition, asserting only that the sidebar was visible:\n`rail sidebar` lost the pin tap ~1 run in 10 and caught the peeked\ndrawer at 216px against a 56px baseline, and `expanded sidebar`\ncame back with greyscale text antialiasing. Desktop never failed,\nbut had the same hazard.\n\nAll six now wait on the settled width, so a lost click fails naming\nthe width it got. Desktop peek and pinned share `sm:w-58`, so its\npost-click wait is the button's title flip instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T17:44:27-04:00",
+          "tree_id": "ea01a859662a8765e3a7753a4d23c54d43aa59be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7998a1aafb44f8810bafc0c75ddcadd864cf5983"
+        },
+        "date": 1787694974826,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.58,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.3,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.41,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.86,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 626.06,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 627.55,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 795.99,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1032.4,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
             "unit": "KB"
           },
           {
