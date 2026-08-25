@@ -424,7 +424,7 @@ export function WatcherCard({
               <input
                 type="number"
                 step={targetStep}
-                className={`boxed-input comp-val w-14 px-0.5 py-0`}
+                className={`boxed-input comp-val my-1 w-14 px-0.5 py-0`}
                 value={target ?? ""}
                 placeholder={"—"}
                 onChange={(e) => onTargetChange(parseInputTarget(e))}
@@ -1065,7 +1065,7 @@ export function WatchersView({
                     type="number"
                     min={0}
                     step={25}
-                    className="boxed-input comp-val ml-0.5 w-14 px-0.5 py-0 text-sm"
+                    className="boxed-input comp-val my-1 ml-0.5 w-14 px-0.5 py-0 text-sm"
                     value={pinnedTotal ?? ""}
                     placeholder={"—"}
                     onChange={(e) => setPinnedTotal(parseInputTarget(e))}

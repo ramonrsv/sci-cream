@@ -286,9 +286,9 @@ body {
   }
 
   /* A standalone bordered, rounded editable input box (not inside a framed table cell). The inset
-     and margin are the shared default; a call site that wants a different box overrides them. */
+     is the shared default; margin is the gap to the neighbours, so each call site sets its own. */
   .boxed-input {
-    @apply my-1 rounded-lg border px-0.5;
+    @apply rounded-lg border px-0.5;
     @apply border-brd bg-surface text-txt-prim hover:border-brd-hov;
   }
 

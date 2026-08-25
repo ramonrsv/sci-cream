@@ -828,7 +828,7 @@ export function RecipeEditor({
               type="number"
               min={0}
               step={standardInputStepByPercent(currentRecipe.evaporation)}
-              className={`boxed-input comp-val w-14 px-0.5 py-0 text-sm ${
+              className={`boxed-input comp-val my-1 w-14 px-0.5 py-0 text-sm ${
                 evaporationError ? "outline-2 -outline-offset-2 outline-red-400 outline-solid" : ""
               }`}
               value={currentRecipe.evaporation || ""}
@@ -935,7 +935,7 @@ export function RecipeEditor({
                   aria-label="New version"
                   title={newVersionError}
                   aria-invalid={newVersionError !== undefined}
-                  className={`boxed-input my-0 w-10 text-center text-sm ${
+                  className={`boxed-input w-10 text-center text-sm ${
                     newVersionError
                       ? "outline-2 -outline-offset-2 outline-red-400 outline-solid"
                       : ""

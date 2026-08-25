@@ -58,7 +58,7 @@ export function Select<T>({
   // a transparent one leaves them on the UA's light default, unreadable under a dark theme.
   const selectClass = icon
     ? "min-w-0 cursor-pointer bg-inherit text-sm"
-    : `boxed-input cursor-pointer text-sm ${className}`;
+    : `boxed-input my-1 cursor-pointer text-sm ${className}`;
 
   const select = (
     <select
@@ -79,7 +79,7 @@ export function Select<T>({
   if (!icon) return select;
 
   return (
-    <span className={`boxed-input inline-flex items-center pl-1 ${className}`} title={title}>
+    <span className={`boxed-input my-1 inline-flex items-center pl-1 ${className}`} title={title}>
       <span aria-hidden className="text-secondary flex shrink-0">
         {icon}
       </span>
