@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787675330956,
+  "lastUpdate": 1787675334715,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -556043,6 +556043,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/ff4ad4ab4a3567baa27a5eba8d9859c993f5e9e1"
         },
         "date": 1787673912699,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "95a46115d39acb6c0f6acd9b283726c1e43900d9",
+          "message": "Drop call-site utilities that never applied\n\nRules in `globals.css` are unlayered, so they outrank any Tailwind\nutility at a call site regardless of specificity. Twelve call sites\nacross eight files were writing classes that never rendered, and some\nwere also wrong: the recipe quantity column asked for `text-right`\nwhere centred is correct, and the evaporation total carried the\n`text-xs font-normal` of the yield annotation beside it, over a\n`.table-total` that already paints the whole row.\n\nDelete them rather than let the coming layer change activate them\nwholesale. Each deleted class already resolves to what its component\nclass paints, so nothing changes on screen; verified by rendering every\naffected class list under both stylesheets in headless Chromium and\ndiffing computed styles.\n\nThe two `!` workarounds stay for now: without the layer, a bare `pl-1`\nor `my-0` would lose to the unlayered class.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T02:19:36-04:00",
+          "tree_id": "d15c36ca48171c580899c5f3d48ce495366f97f5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/95a46115d39acb6c0f6acd9b283726c1e43900d9"
+        },
+        "date": 1787675333631,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
