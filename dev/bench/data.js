@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787692923500,
+  "lastUpdate": 1787693357753,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -463783,6 +463783,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 685.13,
             "range": "12.73",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "931ffe6ffc45d1589114c2a8208bbf8e3913b528",
+          "message": "Tighten the visual snapshot threshold to 0.1\n\nA pixel differs once its YIQ distance passes `35215 * threshold²`,\nso the 0.2 default admitted 1408 — enough to pass a recolour of the\nfocus ring, blue-500 → blue-400, which scored 572. At 0.1 the\nceiling is 352.\n\nThe re-check caught one stale baseline. The properties chart's\ntoolbar selects gained their marks in 697307d0, but the snapshot\nwas last written before that; the diff fell inside this test's\n750-pixel maxDiffPixels budget, added for canvas shimmer, which\nabsorbed it silently.\n\nThe mobile sidebar tests flake for their own reasons, unrelated to\nthe threshold; TODO.md carries the follow-up.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T17:03:19-04:00",
+          "tree_id": "b23b6932ad702ae64ad4b2b54d587738e44c5604",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/931ffe6ffc45d1589114c2a8208bbf8e3913b528"
+        },
+        "date": 1787693309849,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.5,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 60.63,
+            "range": "5.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 69.38,
+            "range": "5.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2412.25,
+            "range": "48.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 322.75,
+            "range": "2.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 333.38,
+            "range": "2.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 351.63,
+            "range": "5.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 21904.38,
+            "range": "2113.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 943.88,
+            "range": "9.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 55.5,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.88,
+            "range": "2.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.88,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.13,
+            "range": "1.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 133.13,
+            "range": "5.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 88.5,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 58.27,
+            "range": "0.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 44.18,
+            "range": "0.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 652.75,
+            "range": "19.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 718.63,
+            "range": "32.26",
             "unit": "ms"
           }
         ]
