@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787695032920,
+  "lastUpdate": 1787695095586,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -556506,6 +556506,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.3,
             "range": "0.32",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7998a1aafb44f8810bafc0c75ddcadd864cf5983",
+          "message": "Wait out the sidebar drawer's width transition\n\nThe navbar tests clicked and shot through the drawer's 200ms\ntransition, asserting only that the sidebar was visible:\n`rail sidebar` lost the pin tap ~1 run in 10 and caught the peeked\ndrawer at 216px against a 56px baseline, and `expanded sidebar`\ncame back with greyscale text antialiasing. Desktop never failed,\nbut had the same hazard.\n\nAll six now wait on the settled width, so a lost click fails naming\nthe width it got. Desktop peek and pinned share `sm:w-58`, so its\npost-click wait is the button's title flip instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T17:44:27-04:00",
+          "tree_id": "ea01a859662a8765e3a7753a4d23c54d43aa59be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7998a1aafb44f8810bafc0c75ddcadd864cf5983"
+        },
+        "date": 1787695045859,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 65.29,
+            "range": "8.53",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.31,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.29,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 175,
+            "range": "11.45",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.42,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 175,
+            "range": "11.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.88,
+            "range": "6.88",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.42,
+            "range": "0.28",
             "unit": "ms"
           }
         ]
