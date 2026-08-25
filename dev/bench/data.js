@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787695357727,
+  "lastUpdate": 1787695634618,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -464578,6 +464578,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 718.63,
             "range": "32.26",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7998a1aafb44f8810bafc0c75ddcadd864cf5983",
+          "message": "Wait out the sidebar drawer's width transition\n\nThe navbar tests clicked and shot through the drawer's 200ms\ntransition, asserting only that the sidebar was visible:\n`rail sidebar` lost the pin tap ~1 run in 10 and caught the peeked\ndrawer at 216px against a 56px baseline, and `expanded sidebar`\ncame back with greyscale text antialiasing. Desktop never failed,\nbut had the same hazard.\n\nAll six now wait on the settled width, so a lost click fails naming\nthe width it got. Desktop peek and pinned share `sm:w-58`, so its\npost-click wait is the button's title flip instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T17:44:27-04:00",
+          "tree_id": "ea01a859662a8765e3a7753a4d23c54d43aa59be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7998a1aafb44f8810bafc0c75ddcadd864cf5983"
+        },
+        "date": 1787695593963,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 39.25,
+            "range": "3.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 44.63,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 43,
+            "range": "2.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1800.13,
+            "range": "42.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 243.25,
+            "range": "4.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 257.75,
+            "range": "3.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 274.75,
+            "range": "13.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 12524.25,
+            "range": "103.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 788,
+            "range": "33.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 42.75,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 45,
+            "range": "2.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 33.13,
+            "range": "1.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 109.25,
+            "range": "2.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 59,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 40,
+            "range": "1.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.85,
+            "range": "0.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 514.75,
+            "range": "13.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 553.25,
+            "range": "15.89",
             "unit": "ms"
           }
         ]
