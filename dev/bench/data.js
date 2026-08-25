@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787673913549,
+  "lastUpdate": 1787673958607,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -549331,6 +549331,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.27,
             "range": "0.39",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ff4ad4ab4a3567baa27a5eba8d9859c993f5e9e1",
+          "message": "Test the valid state the panel snapshots claim\n\n`valid ingredient input focused` and `valid quantity input focused`\nfilled the ingredient name with \"Milk\", which is not an ingredient: the\ndatabase has \"0% Milk\", \"3.25% Milk\", \"Whole Milk\" and the like. Both\ntests were exercising the invalid state under a valid name.\n\nNothing caught it because `.table-fillable-input` is unlayered, so its\n`focus:ring-foc` beat the call site's `focus:ring-blue-400` and\n`focus:ring-red-400` alike: the ring stayed blue whichever branch\napplied, and the red outline is suppressed while focused. The snapshots\nlooked right in every state.\n\nUse \"Whole Milk\", already the known-good ingredient in the share-viewer\ntests. Only the ingredient snapshot moves, for the wider text; the\nquantity one is clipped to its own input and is unchanged.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-25T02:04:53-04:00",
+          "tree_id": "3d7b2603e05745dc1c5b207a036ae54dc3ee7885",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ff4ad4ab4a3567baa27a5eba8d9859c993f5e9e1"
+        },
+        "date": 1787673910819,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.33,
+            "range": "9.20",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.01,
+            "range": "1.02",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.99,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 179,
+            "range": "8.43",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.49,
+            "range": "0.08",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 40,
+            "range": "8.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 179,
+            "range": "8.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.2,
+            "range": "9.09",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.52,
+            "range": "0.51",
             "unit": "ms"
           }
         ]
