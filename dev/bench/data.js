@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787718276774,
+  "lastUpdate": 1787718374765,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -573526,6 +573526,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/768142efe484bff7478de79d9a9c136546b687de"
         },
         "date": 1787717437008,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d555ec7b7ce5c4b50767e572ed3955de72c6e9e0",
+          "message": "Close the email-at-rest TODO, track normalization\n\nHashing `users.email` would foreclose password reset, and\ndeterministic encryption is not worth the key-management cost while\nthe host already encrypts at rest, so the question closes by\ndecision rather than by change.\n\nThe investigation did turn up that nothing lowercases or trims the\naddress at any of its four lookup sites, so casing alone splits one\nuser across two accounts. Tracked as its own item.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T00:22:14-04:00",
+          "tree_id": "2e51ce1ae2a5ea04be582952883e1b440aad4b82",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d555ec7b7ce5c4b50767e572ed3955de72c6e9e0"
+        },
+        "date": 1787718324355,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
