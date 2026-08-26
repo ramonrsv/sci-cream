@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787775323585,
+  "lastUpdate": 1787775327145,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -568691,6 +568691,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/d555ec7b7ce5c4b50767e572ed3955de72c6e9e0"
         },
         "date": 1787718396861,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5dc3e4cf784b47634158648a421060bb289764fc",
+          "message": "Take data-action identity from the session\n\nEvery action in `lib/data/` took the caller's identity as a\n`userEmail` argument. A server action is an HTTP endpoint, so that\nargument was a claim the client made about itself and could name\nanyone: one signed-in user could read or modify another's recipes,\ningredients, and batches for the cost of knowing their address.\n\nThe fifteen actions across `ingredients`, `recipes`, and `batches`\nnow take no user identifier at all, resolving the caller through\n`requireUser()` as `comments` already did. Each suite gains an\nidentity block asserting that a row created as one user is\nunreachable as another, through every mutating action.\n\n`users.ts` cannot follow, its lookups running before a session\nexists for credentials sign-in, OAuth linking, and signup. It drops\n`\"use server\"` instead, so `findUserByEmail` no longer hands any\nbrowser a password hash and `insertUser` is no longer a way to\ncreate users. Every importer was already server-side.\n\n`seedUserBatches` went through `createUserBatch`, which a script\nhas no session for, and now writes its rows directly as\n`seedUserRecipes` already did. Four component tests began reaching\nNextAuth through the action modules, and stub them to stand in for\nthe boundary Next.js draws around a `\"use server\"` module.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T11:05:23-04:00",
+          "tree_id": "a224f4c6e2e34e22bc32e29e7cff62371dc1c5e6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5dc3e4cf784b47634158648a421060bb289764fc"
+        },
+        "date": 1787775326223,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
