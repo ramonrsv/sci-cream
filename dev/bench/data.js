@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787776202056,
+  "lastUpdate": 1787783961837,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -576165,6 +576165,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/9cab2f57c42a1854bfab320dcd74358ecd81fd88"
         },
         "date": 1787775484891,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "db95bfe5cf01f5e588d972ecb66c6f9a1154b1fd",
+          "message": "Use `requireAdmin` in the reports page\n\nThe page hand-rolled the same query: `auth()`, then a lookup by\nemail, then the `is_admin` test. `requireAdmin()` collapses both\nguards into one, returning `undefined` for each case the two\n`notFound()`s covered.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T12:23:42-04:00",
+          "tree_id": "64a1038991dda983a1936c02649577f941508a71",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/db95bfe5cf01f5e588d972ecb66c6f9a1154b1fd"
+        },
+        "date": 1787783911691,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
