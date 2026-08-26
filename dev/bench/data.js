@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787775537264,
+  "lastUpdate": 1787775835191,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -78466,6 +78466,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9cab2f57c42a1854bfab320dcd74358ecd81fd88",
+          "message": "Express client gating as `signedIn`\n\nFour components held the session email only to test it for\ntruthiness, a leftover from when the `lib/data/` actions took a\n`userEmail` argument. `SaveBatchAction` had it worst, taking an\nemail through its public props purely to ask whether anyone was\nsigned in, and never reading the value.\n\nThe derivation moves into `useSignedIn()` in `lib/hooks/`, beside\n`useIsNarrow` and `useCanHover`, which turn a broader primitive\ninto a named question the same way. Three of the four call it and\ndrop their `useSession` import; `SaveBatchAction` takes a\n`signedIn: boolean` prop instead.\n\n`comment-thread.tsx` keeps deriving its own, from a `status` it\nalready destructures for a three-way check no boolean can answer.\n`navbar.tsx` and the session-resources provider are untouched: one\nrenders the user, the other keys a cache on the email so it can\ntell one user signing out and another in from a session that never\nchanged.\n\nNo existing test needed a change, mocks of `next-auth/react`\nreaching the hook unaltered.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T11:58:25-04:00",
+          "tree_id": "2b7d51cec4ef31cacf764108f3fc8b0b8fc2641b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9cab2f57c42a1854bfab320dcd74358ecd81fd88"
+        },
+        "date": 1787775804900,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 2304,
+            "range": "± 164",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 85132,
+            "range": "± 7250",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1187,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 81908,
+            "range": "± 1691",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 2422,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 2280,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 2422,
+            "range": "± 111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 2358,
+            "range": "± 124",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 2384,
+            "range": "± 110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 2518,
+            "range": "± 113",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 57878,
+            "range": "± 1709",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 57790,
+            "range": "± 4120",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 116977752,
+            "range": "± 7615017",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 383361,
+            "range": "± 7200",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 3406,
+            "range": "± 84",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 22,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 3329,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 52737,
+            "range": "± 4663",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 49276,
+            "range": "± 5853",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 82859,
+            "range": "± 1178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 80923,
+            "range": "± 3774",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 189033,
+            "range": "± 4214",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 7697,
+            "range": "± 763",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 353,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 7,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 7,
             "range": "± 0",
             "unit": "ns/iter"
           }
