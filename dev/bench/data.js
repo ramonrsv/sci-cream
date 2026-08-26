@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787784758193,
+  "lastUpdate": 1787784777987,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -471082,6 +471082,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 667.63,
             "range": "14.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "993e5623dceb829d499c1991a3648ef97188c4dc",
+          "message": "Return a Result from every data action\n\nEvery action in `lib/data/` returned bare data or `undefined`, so a\nrefusal arrived indistinguishable from an empty read and carried no\nreason for it. Reads and mutations alike now return `Result<T, E>`\nfrom `lib/result.ts`: an empty read is a success carrying an empty\nvalue, and only a refusal is `ok: false`.\n\n`DataError` names what any action can refuse with, and a domain adds\nan enum of its own for what only it can, as `RecipeError` and\n`CommentError` do. `CommentError` sheds the three members that were\nnever specific to comments. Each module logs its refusals from one\nplace, a `refuse` helper, leaving the four of them one `log.warn`\napiece.\n\nThe client resolves an error to text where it renders it, through a\nshared `ActionError` element. That takes the error and its message\ntable rather than the text, since an error value is itself a string\nand a `message` prop would accept an unresolved one.\n\nTwo fixes fall out. `createUserRecipe` catches the\n`recipes_user_name_uq` violation and refuses with `NameTaken`, where\nit used to throw and leave the generic \"Save failed\" tooltip standing,\nno duplicate-name check existing on the client either. And a refused\ncache refresh in `SessionResourcesProvider` keeps what is already\nloaded: falling back to `[]` blanked the list and reseeded the WASM\nbridge without the user's own ingredients.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T18:30:16-04:00",
+          "tree_id": "9c55f381e7ee7eaafda0add9d13072678ace4995",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/993e5623dceb829d499c1991a3648ef97188c4dc"
+        },
+        "date": 1787784735485,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 35.5,
+            "range": "4.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 37.25,
+            "range": "1.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 41.38,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1719.63,
+            "range": "60.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 237.75,
+            "range": "3.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 248.63,
+            "range": "3.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 259.13,
+            "range": "3.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 12473,
+            "range": "42.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 753.63,
+            "range": "32.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 42.63,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 43.75,
+            "range": "1.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 32.13,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 32.5,
+            "range": "0.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 107.75,
+            "range": "3.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 58.75,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 39.39,
+            "range": "0.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.19,
+            "range": "0.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 506.25,
+            "range": "4.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 551.38,
+            "range": "6.06",
             "unit": "ms"
           }
         ]
