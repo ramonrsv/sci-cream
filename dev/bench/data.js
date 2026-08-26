@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787784438840,
+  "lastUpdate": 1787784489314,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -78838,6 +78838,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "993e5623dceb829d499c1991a3648ef97188c4dc",
+          "message": "Return a Result from every data action\n\nEvery action in `lib/data/` returned bare data or `undefined`, so a\nrefusal arrived indistinguishable from an empty read and carried no\nreason for it. Reads and mutations alike now return `Result<T, E>`\nfrom `lib/result.ts`: an empty read is a success carrying an empty\nvalue, and only a refusal is `ok: false`.\n\n`DataError` names what any action can refuse with, and a domain adds\nan enum of its own for what only it can, as `RecipeError` and\n`CommentError` do. `CommentError` sheds the three members that were\nnever specific to comments. Each module logs its refusals from one\nplace, a `refuse` helper, leaving the four of them one `log.warn`\napiece.\n\nThe client resolves an error to text where it renders it, through a\nshared `ActionError` element. That takes the error and its message\ntable rather than the text, since an error value is itself a string\nand a `message` prop would accept an unresolved one.\n\nTwo fixes fall out. `createUserRecipe` catches the\n`recipes_user_name_uq` violation and refuses with `NameTaken`, where\nit used to throw and leave the generic \"Save failed\" tooltip standing,\nno duplicate-name check existing on the client either. And a refused\ncache refresh in `SessionResourcesProvider` keeps what is already\nloaded: falling back to `[]` blanked the list and reseeded the WASM\nbridge without the user's own ingredients.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T18:30:16-04:00",
+          "tree_id": "9c55f381e7ee7eaafda0add9d13072678ace4995",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/993e5623dceb829d499c1991a3648ef97188c4dc"
+        },
+        "date": 1787784439328,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4047,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 155946,
+            "range": "± 727",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2422,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 154249,
+            "range": "± 712",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4517,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4436,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4857,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4633,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4857,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5030,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 108060,
+            "range": "± 2339",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 109924,
+            "range": "± 1822",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 180227526,
+            "range": "± 1317023",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 619420,
+            "range": "± 3228",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6637,
+            "range": "± 84",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6676,
+            "range": "± 212",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 95566,
+            "range": "± 754",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 92069,
+            "range": "± 418",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 151821,
+            "range": "± 1052",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 178091,
+            "range": "± 6129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 329859,
+            "range": "± 749",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14413,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
             "range": "± 0",
             "unit": "ns/iter"
           }
