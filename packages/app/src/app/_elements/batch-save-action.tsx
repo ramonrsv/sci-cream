@@ -15,7 +15,7 @@ import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
  */
 export function SaveBatchAction({
   batch,
-  userEmail,
+  signedIn,
   savedBatchId,
   onSaved,
   dirty = false,
@@ -23,7 +23,7 @@ export function SaveBatchAction({
   iconSize = DETAIL_PANEL_ACTION_ICON_SIZE,
 }: {
   batch: Batch;
-  userEmail: string | null | undefined;
+  signedIn: boolean;
   savedBatchId?: number;
   onSaved: (batchId: number) => void;
   /** True when the bound batch has unsaved edits; tints the Save control amber. */
@@ -35,12 +35,12 @@ export function SaveBatchAction({
 
   const empty = batch.recipes.every((recipe) => recipe.rows.length === 0);
   const bound = savedBatchId !== undefined;
-  const disabled = saving || empty || !userEmail;
+  const disabled = saving || empty || !signedIn;
   const dirtyColor = dirty ? "text-amber-500" : undefined;
 
   /** Create a fresh batch, or — when `asNew` is false and already bound — update the bound one. */
   const save = async (asNew: boolean) => {
-    if (!userEmail || empty) return;
+    if (!signedIn || empty) return;
     setSaving(true);
     try {
       const input = batchToInput(batch);
@@ -52,7 +52,7 @@ export function SaveBatchAction({
     }
   };
 
-  const saveTitle = !userEmail
+  const saveTitle = !signedIn
     ? "Sign in to save this batch"
     : empty
       ? "Add a recipe to save the batch"

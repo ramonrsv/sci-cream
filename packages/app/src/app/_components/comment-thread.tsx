@@ -221,6 +221,7 @@ export function CommentThread({ subject }: { subject: CommentSubject }) {
             </button>
           )
         ) : (
+          // Not `!signedIn`: that would flash this prompt at a signed-in reader during `loading`.
           status === "unauthenticated" && (
             <p className="text-secondary text-sm">
               <Link

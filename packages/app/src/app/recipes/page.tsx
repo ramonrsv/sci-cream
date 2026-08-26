@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 
 import { RecipeSearch, type GroupedRecipe } from "@/app/_components/recipe-search";
+import { useSignedIn } from "@/lib/hooks/use-signed-in";
 import { useSessionResources } from "@/lib/resources/session";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 
@@ -26,16 +26,14 @@ import {
 /** Recipes page: browse and load recipes from embedded data and the user's saved versions */
 export default function RecipesPage() {
   const router = useRouter();
-  const { data: session } = useSession();
   const { savedRecipes, refreshUserRecipes } = useSessionResources();
 
-  const userEmail = session?.user?.email;
+  const signedIn = useSignedIn();
 
   /**
-   * Write the chosen version into the given localStorage slot and navigate to the calculator.
-   * For embedded entries (`recipeId === undefined`) the slot is populated anonymously; for saved
-   * entries the slot carries a `savedRef` so the editor knows it is editing a specific saved
-   * version.
+   * Write the chosen version into the given localStorage slot and navigate to the calculator. For
+   * embedded entries (`recipeId === undefined`) the slot is populated anonymously; for saved ones
+   * the slot carries a `savedRef` so the editor knows it is editing a specific saved version.
    */
   function handleLoadRecipe(
     entry: GroupedRecipe,
@@ -62,8 +60,8 @@ export default function RecipesPage() {
   /** Delete the entry (all versions) from the user's saved recipes and refresh the list */
   async function handleDeleteSavedRecipe(entry: GroupedRecipe) {
     verify(
-      userEmail && entry.recipeId !== undefined,
-      "handleDeleteSavedRecipe invoked while userEmail or entry.recipeId is missing",
+      signedIn && entry.recipeId !== undefined,
+      "handleDeleteSavedRecipe invoked while signed out or entry.recipeId is missing",
     );
 
     await deleteUserRecipe(entry.recipeId);
@@ -76,8 +74,8 @@ export default function RecipesPage() {
     version: SavedRecipeVersionJson,
   ) {
     verify(
-      userEmail && entry.recipeId !== undefined,
-      "handleDeleteSavedRecipeVersion invoked while userEmail or entry.recipeId is missing",
+      signedIn && entry.recipeId !== undefined,
+      "handleDeleteSavedRecipeVersion invoked while signed out or entry.recipeId is missing",
     );
 
     await deleteUserRecipeVersion(entry.recipeId, version.version);
@@ -91,8 +89,8 @@ export default function RecipesPage() {
     meta: RecipeVersionMeta,
   ) {
     verify(
-      userEmail && entry.recipeId !== undefined,
-      "handleUpdateSavedRecipeVersion invoked while userEmail or entry.recipeId is missing",
+      signedIn && entry.recipeId !== undefined,
+      "handleUpdateSavedRecipeVersion invoked while signed out or entry.recipeId is missing",
     );
 
     await updateUserRecipeVersion(entry.recipeId, version.version, meta);
@@ -102,8 +100,8 @@ export default function RecipesPage() {
   /** Star or clear the star on a saved recipe, then refresh the list */
   async function handleToggleSavedRecipeFavourite(entry: GroupedRecipe, favourite: boolean) {
     verify(
-      userEmail && entry.recipeId !== undefined,
-      "handleToggleSavedRecipeFavourite invoked while userEmail or entry.recipeId is missing",
+      signedIn && entry.recipeId !== undefined,
+      "handleToggleSavedRecipeFavourite invoked while signed out or entry.recipeId is missing",
     );
 
     await setUserRecipeFavourite(entry.recipeId, favourite);
@@ -118,10 +116,10 @@ export default function RecipesPage() {
         onLoadRecipe={handleLoadRecipe}
         savedRecipes={savedRecipes}
         slots={slots}
-        onDeleteSavedRecipe={userEmail ? handleDeleteSavedRecipe : undefined}
-        onDeleteSavedRecipeVersion={userEmail ? handleDeleteSavedRecipeVersion : undefined}
-        onUpdateSavedRecipeVersion={userEmail ? handleUpdateSavedRecipeVersion : undefined}
-        onToggleSavedRecipeFavourite={userEmail ? handleToggleSavedRecipeFavourite : undefined}
+        onDeleteSavedRecipe={signedIn ? handleDeleteSavedRecipe : undefined}
+        onDeleteSavedRecipeVersion={signedIn ? handleDeleteSavedRecipeVersion : undefined}
+        onUpdateSavedRecipeVersion={signedIn ? handleUpdateSavedRecipeVersion : undefined}
+        onToggleSavedRecipeFavourite={signedIn ? handleToggleSavedRecipeFavourite : undefined}
       />
     </div>
   );

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
 import { FilePlus2 } from "lucide-react";
 
 import { DeleteAction } from "@/app/_components/detail-panel";
@@ -29,6 +28,7 @@ import { type Batch, batchChecklistKey, todayIsoDate, touchChecklist } from "@/l
 import { deleteUserBatch, setUserBatchFavourite, type SavedBatchJson } from "@/lib/data/batches";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
+import { useSignedIn } from "@/lib/hooks/use-signed-in";
 import { useSessionResources } from "@/lib/resources/session";
 import { useChecklistState } from "@/lib/hooks/use-checklist-state";
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
@@ -80,7 +80,7 @@ function BatchErrorNotice({ message }: { message: string }) {
 export function MakeRecipeView() {
   const [state, setState] = useState<ViewState>({ status: "decoding" });
   const { savedRecipes, savedBatches, refreshUserBatches } = useSessionResources();
-  const userEmail = useSession().data?.user?.email;
+  const signedIn = useSignedIn();
 
   const [selection, setSelection] = usePersistedState<BatchSelection>(
     STORAGE_KEYS.makeRecipeBatch,
@@ -154,10 +154,7 @@ export function MakeRecipeView() {
   /** Delete the saved batch being edited; unbind the draft but keep its rows for re-saving. */
   const deleteBatch = async () => {
     const id = selection.savedBatchId;
-    verify(
-      userEmail != null && id !== undefined,
-      "deleteBatch invoked without a bound saved batch",
-    );
+    verify(signedIn && id !== undefined, "deleteBatch invoked without a bound saved batch");
     await deleteUserBatch(id);
     setSelection((prev) => ({ ...prev, savedBatchId: undefined }));
     await refreshUserBatches();
@@ -172,7 +169,7 @@ export function MakeRecipeView() {
    */
   const toggleBatchFavourite = async (favourite: boolean) => {
     verify(
-      userEmail != null && boundBatch !== undefined,
+      signedIn && boundBatch !== undefined,
       "toggleBatchFavourite invoked without a bound saved batch",
     );
     await setUserBatchFavourite(boundBatch.id, favourite);
@@ -266,7 +263,7 @@ export function MakeRecipeView() {
           </button>
           <SaveBatchAction
             batch={batch}
-            userEmail={userEmail}
+            signedIn={signedIn}
             savedBatchId={selection.savedBatchId}
             dirty={batchDirty}
             onSaved={(batchId) => {
@@ -274,7 +271,7 @@ export function MakeRecipeView() {
               void refreshUserBatches();
             }}
           />
-          {boundBatch && userEmail && (
+          {boundBatch && signedIn && (
             <FavouriteToggle
               favourite={!!boundBatch.favourite}
               onChange={toggleBatchFavourite}
@@ -283,7 +280,7 @@ export function MakeRecipeView() {
             />
           )}
           <ShareBatchAction batch={batch} />
-          {selection.savedBatchId !== undefined && userEmail && (
+          {selection.savedBatchId !== undefined && signedIn && (
             <DeleteAction
               onDelete={deleteBatch}
               confirmText={`Delete the batch "${boundBatch?.title || "Untitled batch"}"? This can't be undone.`}
@@ -320,7 +317,7 @@ export function MakeRecipeView() {
             selectedId={selection.savedBatchId}
             onLoad={loadBatch}
             emptyMessage={
-              userEmail
+              signedIn
                 ? favouritesOnly && savedBatches.length > 0
                   ? "No favourite batches. Star one to find it here."
                   : batchQuery.trim() === ""

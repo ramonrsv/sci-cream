@@ -1,7 +1,6 @@
 "use client";
 
 import { ChangeEvent, Fragment, ReactNode, useState, useEffect, useRef } from "react";
-import { useSession } from "next-auth/react";
 import {
   ClipboardCopy,
   ClipboardPaste,
@@ -50,6 +49,7 @@ import {
   updateUserRecipeVersion,
 } from "@/lib/data/recipes";
 
+import { useSignedIn } from "@/lib/hooks/use-signed-in";
 import { useSessionResources } from "@/lib/resources/session";
 import type { SavedRecipeVersionJson } from "@/lib/data/recipes";
 import { displayVersionName, nextVersionName, validateVersionName } from "@/lib/recipe/version";
@@ -389,8 +389,7 @@ export function RecipeEditor({
   const [deevaporateError, setDeevaporateError] = useState<string | undefined>(undefined);
   const [newVersionInput, setNewVersionInput] = useState("");
 
-  const { data: session } = useSession();
-  const userEmail = session?.user?.email ?? null;
+  const signedIn = useSignedIn();
 
   const recipesRef = useRef(allRecipes);
   recipesRef.current = allRecipes;
@@ -558,7 +557,7 @@ export function RecipeEditor({
    * `true` on success (or when no rename is needed), `false` if the rename failed.
    */
   const applyRenameIfNeeded = async (recipe: Recipe): Promise<boolean> => {
-    if (!userEmail || recipe.savedRef === undefined || !isRecipeRenamed(recipe)) return true;
+    if (!signedIn || recipe.savedRef === undefined || !isRecipeRenamed(recipe)) return true;
     const renamed = await renameUserRecipe(recipe.savedRef.recipeId, recipe.name.trim());
     return renamed !== undefined;
   };
@@ -601,7 +600,7 @@ export function RecipeEditor({
     const recipe = currentRecipe;
 
     verify(
-      userEmail && currentRecipeIdx === 0 && recipe.name.trim() !== "" && !isRecipeEmpty(recipe),
+      signedIn && currentRecipeIdx === 0 && recipe.name.trim() !== "" && !isRecipeEmpty(recipe),
       "saveCurrentRecipe invoked while the Save button should be disabled",
     );
 
@@ -634,7 +633,7 @@ export function RecipeEditor({
     const recipe = currentRecipe;
 
     verify(
-      userEmail &&
+      signedIn &&
         currentRecipeIdx === 0 &&
         recipe.savedRef !== undefined &&
         recipe.name.trim() !== "" &&
@@ -718,7 +717,7 @@ export function RecipeEditor({
   const iconSize = COMPONENT_ACTION_ICON_SIZE;
 
   const canSave =
-    userEmail !== null &&
+    signedIn &&
     currentRecipeIdx === 0 &&
     currentRecipe.name.trim() !== "" &&
     !isRecipeEmpty(currentRecipe);
@@ -759,7 +758,7 @@ export function RecipeEditor({
   const defaultNewVersionName = nextVersionName(savedVersions);
   const newVersionInputName = newVersionInput.trim();
 
-  const saveTitle = !userEmail
+  const saveTitle = !signedIn
     ? "Sign in to save recipes"
     : currentRecipeIdx !== 0
       ? "Select main recipe to save"
@@ -779,7 +778,7 @@ export function RecipeEditor({
                     : `Saved — version ${displayedVersionName}`
                   : "Save recipe";
 
-  const saveAsNewVersionTitle = !userEmail
+  const saveAsNewVersionTitle = !signedIn
     ? "Sign in to save recipes"
     : currentRecipeIdx !== 0
       ? "Select main recipe to save"
