@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787775355972,
+  "lastUpdate": 1787775431325,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -542316,6 +542316,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1032.38,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9cab2f57c42a1854bfab320dcd74358ecd81fd88",
+          "message": "Express client gating as `signedIn`\n\nFour components held the session email only to test it for\ntruthiness, a leftover from when the `lib/data/` actions took a\n`userEmail` argument. `SaveBatchAction` had it worst, taking an\nemail through its public props purely to ask whether anyone was\nsigned in, and never reading the value.\n\nThe derivation moves into `useSignedIn()` in `lib/hooks/`, beside\n`useIsNarrow` and `useCanHover`, which turn a broader primitive\ninto a named question the same way. Three of the four call it and\ndrop their `useSession` import; `SaveBatchAction` takes a\n`signedIn: boolean` prop instead.\n\n`comment-thread.tsx` keeps deriving its own, from a `status` it\nalready destructures for a three-way check no boolean can answer.\n`navbar.tsx` and the session-resources provider are untouched: one\nrenders the user, the other keys a cache on the email so it can\ntell one user signing out and another in from a session that never\nchanged.\n\nNo existing test needed a change, mocks of `next-auth/react`\nreaching the hook unaltered.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T11:58:25-04:00",
+          "tree_id": "2b7d51cec4ef31cacf764108f3fc8b0b8fc2641b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9cab2f57c42a1854bfab320dcd74358ecd81fd88"
+        },
+        "date": 1787775383553,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.15,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 874.6,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.29,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 811.74,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 653.42,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 821.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 626.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 627.53,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 795.98,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1032.44,
             "unit": "KB"
           },
           {
