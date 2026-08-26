@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787718374765,
+  "lastUpdate": 1787718388740,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -505033,6 +505033,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.96%",
             "unit": "ops/sec",
             "extra": "97 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d555ec7b7ce5c4b50767e572ed3955de72c6e9e0",
+          "message": "Close the email-at-rest TODO, track normalization\n\nHashing `users.email` would foreclose password reset, and\ndeterministic encryption is not worth the key-management cost while\nthe host already encrypts at rest, so the question closes by\ndecision rather than by change.\n\nThe investigation did turn up that nothing lowercases or trims the\naddress at any of its four lookup sites, so casing alone splits one\nuser across two accounts. Tracked as its own item.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T00:22:14-04:00",
+          "tree_id": "2e51ce1ae2a5ea04be582952883e1b440aad4b82",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d555ec7b7ce5c4b50767e572ed3955de72c6e9e0"
+        },
+        "date": 1787718339438,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 52054,
+            "range": "±1.30%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 514103,
+            "range": "±0.47%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33264,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 397272,
+            "range": "±0.98%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
