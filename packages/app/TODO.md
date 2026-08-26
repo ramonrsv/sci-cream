@@ -137,6 +137,8 @@
 - [ ] Stop `users.name` falling back to the email address: `lib/auth.ts` inserts OAuth users as
       `{ name: user.name ?? user.email }`, and comment threads render that publicly as the byline.
       Add a user-chosen display name, resolved for every payload by one `displayNameFor(user)`.
+- [ ] Normalize `users.email` at its four lookup sites (credentials, OAuth linking, signup,
+      `requireUser`); nothing lowercases or trims it, so casing alone splits one user in two.
 - [ ] Unify date handling: `batches.date` is `text` `YYYY-MM-DD` while nine `timestamp` columns
       carry no zone, and three sites convert differently (UTC midnight in `batch/share.ts`, local
       today in `batch/batch.ts`, `Z` in `comments/comments.ts`). Centralize and format via `Intl`.
@@ -161,11 +163,11 @@
 - [ ] Untangle the overlapping batch shapes: `AddableRecipe`, `RecipeSnapshot`, `VersionChoice`,
       `BatchSelection`, `BatchRecipe`, and `SavedBatchJson` all describe a recipe in a batch, and
       `lib/batch/builder` converts between them in every direction. Versions are split the same way.
-- [ ] Look into whether `users.email` should be encrypted or hashed; it is plaintext under a unique
-      index, and `lib/data/` looks users up by the value, so any scheme has to stay deterministic.
 
 ## Completed
 
+- [x] Look into whether `users.email` should be encrypted or hashed; it is plaintext under a unique
+      index, and `lib/data/` looks users up by the value, so any scheme has to stay deterministic.
 - [x] Cross out a recipe's `/make-recipe` column header once every cell in that column is checked.
 - [x] The mobile sidebar tests click and shoot through the drawer's 200ms width transition:
       `rail sidebar` loses the pin click ~1/10, `expanded sidebar` captures greyscale text
