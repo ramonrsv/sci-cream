@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787775873537,
+  "lastUpdate": 1787776119396,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -469348,6 +469348,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 680,
             "range": "15.99",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5dc3e4cf784b47634158648a421060bb289764fc",
+          "message": "Take data-action identity from the session\n\nEvery action in `lib/data/` took the caller's identity as a\n`userEmail` argument. A server action is an HTTP endpoint, so that\nargument was a claim the client made about itself and could name\nanyone: one signed-in user could read or modify another's recipes,\ningredients, and batches for the cost of knowing their address.\n\nThe fifteen actions across `ingredients`, `recipes`, and `batches`\nnow take no user identifier at all, resolving the caller through\n`requireUser()` as `comments` already did. Each suite gains an\nidentity block asserting that a row created as one user is\nunreachable as another, through every mutating action.\n\n`users.ts` cannot follow, its lookups running before a session\nexists for credentials sign-in, OAuth linking, and signup. It drops\n`\"use server\"` instead, so `findUserByEmail` no longer hands any\nbrowser a password hash and `insertUser` is no longer a way to\ncreate users. Every importer was already server-side.\n\n`seedUserBatches` went through `createUserBatch`, which a script\nhas no session for, and now writes its rows directly as\n`seedUserRecipes` already did. Four component tests began reaching\nNextAuth through the action modules, and stub them to stand in for\nthe boundary Next.js draws around a `\"use server\"` module.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T11:05:23-04:00",
+          "tree_id": "a224f4c6e2e34e22bc32e29e7cff62371dc1c5e6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5dc3e4cf784b47634158648a421060bb289764fc"
+        },
+        "date": 1787776070058,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 48.75,
+            "range": "7.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 53.13,
+            "range": "2.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 58.5,
+            "range": "2.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2465.38,
+            "range": "23.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 323.75,
+            "range": "4.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 332.5,
+            "range": "4.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 355.88,
+            "range": "9.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16813.88,
+            "range": "52.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 927.13,
+            "range": "19.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.25,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56.13,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.25,
+            "range": "1.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.25,
+            "range": "2.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 129.88,
+            "range": "2.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 84.25,
+            "range": "1.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.12,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.77,
+            "range": "0.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 621.88,
+            "range": "10.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 687.13,
+            "range": "14.92",
             "unit": "ms"
           }
         ]
