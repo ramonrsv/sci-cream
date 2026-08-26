@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787784094585,
+  "lastUpdate": 1787784150998,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -506975,6 +506975,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.97%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "993e5623dceb829d499c1991a3648ef97188c4dc",
+          "message": "Return a Result from every data action\n\nEvery action in `lib/data/` returned bare data or `undefined`, so a\nrefusal arrived indistinguishable from an empty read and carried no\nreason for it. Reads and mutations alike now return `Result<T, E>`\nfrom `lib/result.ts`: an empty read is a success carrying an empty\nvalue, and only a refusal is `ok: false`.\n\n`DataError` names what any action can refuse with, and a domain adds\nan enum of its own for what only it can, as `RecipeError` and\n`CommentError` do. `CommentError` sheds the three members that were\nnever specific to comments. Each module logs its refusals from one\nplace, a `refuse` helper, leaving the four of them one `log.warn`\napiece.\n\nThe client resolves an error to text where it renders it, through a\nshared `ActionError` element. That takes the error and its message\ntable rather than the text, since an error value is itself a string\nand a `message` prop would accept an unresolved one.\n\nTwo fixes fall out. `createUserRecipe` catches the\n`recipes_user_name_uq` violation and refuses with `NameTaken`, where\nit used to throw and leave the generic \"Save failed\" tooltip standing,\nno duplicate-name check existing on the client either. And a refused\ncache refresh in `SessionResourcesProvider` keeps what is already\nloaded: falling back to `[]` blanked the list and reseeded the WASM\nbridge without the user's own ingredients.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T18:30:16-04:00",
+          "tree_id": "9c55f381e7ee7eaafda0add9d13072678ace4995",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/993e5623dceb829d499c1991a3648ef97188c4dc"
+        },
+        "date": 1787784102161,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 48993,
+            "range": "±0.59%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 409499,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 34835,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 332235,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
