@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787783989116,
+  "lastUpdate": 1787784094585,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -564055,6 +564055,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.16,
             "range": "0.17",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "db95bfe5cf01f5e588d972ecb66c6f9a1154b1fd",
+          "message": "Use `requireAdmin` in the reports page\n\nThe page hand-rolled the same query: `auth()`, then a lookup by\nemail, then the `is_admin` test. `requireAdmin()` collapses both\nguards into one, returning `undefined` for each case the two\n`notFound()`s covered.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T12:23:42-04:00",
+          "tree_id": "64a1038991dda983a1936c02649577f941508a71",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/db95bfe5cf01f5e588d972ecb66c6f9a1154b1fd"
+        },
+        "date": 1787784043721,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.49,
+            "range": "8.98",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.73,
+            "range": "0.70",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.68,
+            "range": "0.67",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 172.5,
+            "range": "11.39",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.48,
+            "range": "0.10",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 172.5,
+            "range": "11.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 55.93,
+            "range": "6.78",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.31,
+            "range": "0.20",
             "unit": "ms"
           }
         ]
