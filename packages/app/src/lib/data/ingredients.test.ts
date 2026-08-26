@@ -20,6 +20,7 @@ import {
 } from "@/lib/data/ingredients";
 
 import { UserSelect } from "@/lib/database/schema";
+import { DataError } from "@/lib/result";
 
 import {
   into_ingredient_from_spec,
@@ -34,6 +35,17 @@ import {
 import { TEST_USER_A, TEST_USER_B, USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/assets";
 
 type SpecAsset = typeof USER_DEFINED_FRUCTOSE_SPEC;
+
+/** The value of a successful result; fails the test naming the refusal otherwise. */
+function expectOk<T>(result: { ok: true; value: T } | { ok: false; error: unknown }): T {
+  if (!result.ok) throw new Error(`expected success, was refused with: ${String(result.error)}`);
+  return result.value;
+}
+
+/** Assert an action refused, and for the stated reason rather than merely for some reason. */
+function expectRefused(result: { ok: boolean }, error: unknown): void {
+  expect(result).toEqual({ ok: false, error });
+}
 
 /** Sign in as the given test user for the rest of the test; no argument signs out. */
 function signInAs(email?: string) {
@@ -81,7 +93,7 @@ describe("fetchUserIngredientSpecByName", () => {
     const spec = USER_DEFINED_FRUCTOSE_SPEC;
     signInAs(TEST_USER_B.email);
 
-    const specDrizzle = await fetchUserIngredientSpecByName(spec.name);
+    const specDrizzle = expectOk(await fetchUserIngredientSpecByName(spec.name));
     expectDrizzleSpecToMatch(specDrizzle, spec, user);
 
     const ingParsed = into_ingredient_from_spec(specDrizzle!.spec);
@@ -94,7 +106,7 @@ describe("fetchUserIngredientSpecByName", () => {
     const bridge = new WasmBridge(new IngredientDatabase());
     signInAs(TEST_USER_B.email);
 
-    const specDrizzle = await fetchUserIngredientSpecByName(spec.name);
+    const specDrizzle = expectOk(await fetchUserIngredientSpecByName(spec.name));
     expectDrizzleSpecToMatch(specDrizzle, spec, user);
 
     bridge.seed_from_specs([specDrizzle!.spec], OnConflict.Reject);
@@ -109,7 +121,7 @@ describe("fetchAllUserIngredientSpecs", () => {
     const spec = USER_DEFINED_FRUCTOSE_SPEC;
     signInAs(TEST_USER_B.email);
 
-    const specsDrizzle = await fetchAllUserIngredientSpecs();
+    const specsDrizzle = expectOk(await fetchAllUserIngredientSpecs());
     expect(specsDrizzle).toBeDefined();
     expect(specsDrizzle!.length).toBeGreaterThan(0);
 
@@ -126,7 +138,7 @@ describe("fetchAllUserIngredientSpecs", () => {
     const bridge = new WasmBridge(new IngredientDatabase());
     signInAs(TEST_USER_B.email);
 
-    const specsDrizzle = await fetchAllUserIngredientSpecs();
+    const specsDrizzle = expectOk(await fetchAllUserIngredientSpecs());
     expect(specsDrizzle).toBeDefined();
     expect(specsDrizzle!.length).toBeGreaterThan(0);
 
@@ -145,7 +157,7 @@ describe("fetchAllUserIngredientSpecs", () => {
   test("returns specs in ascending order by name (for stable UI rendering)", async () => {
     signInAs(TEST_USER_A.email);
 
-    const specs = await fetchAllUserIngredientSpecs();
+    const specs = expectOk(await fetchAllUserIngredientSpecs());
     expect(specs).toBeDefined();
     expect(specs!.length).toBeGreaterThan(1);
 
@@ -155,9 +167,12 @@ describe("fetchAllUserIngredientSpecs", () => {
 });
 
 describe("identity", () => {
-  test("an anonymous caller reads nothing", async () => {
-    expect(await fetchAllUserIngredientSpecs()).toBeUndefined();
-    expect(await fetchUserIngredientSpecByName(USER_DEFINED_FRUCTOSE_SPEC.name)).toBeUndefined();
+  test("an anonymous caller is refused, rather than shown an empty list", async () => {
+    expectRefused(await fetchAllUserIngredientSpecs(), DataError.Unauthenticated);
+    expectRefused(
+      await fetchUserIngredientSpecByName(USER_DEFINED_FRUCTOSE_SPEC.name),
+      DataError.Unauthenticated,
+    );
   });
 
   test("the rows returned belong to whoever is signed in", async () => {
@@ -167,13 +182,13 @@ describe("identity", () => {
     const userB = await getTestUserB();
 
     signInAs(TEST_USER_B.email);
-    expect((await fetchUserIngredientSpecByName(specName))?.user).toBe(userB.id);
-    const specsB = await fetchAllUserIngredientSpecs();
-    expect(specsB!.every((spec) => spec.user === userB.id)).toBe(true);
+    expect(expectOk(await fetchUserIngredientSpecByName(specName)).user).toBe(userB.id);
+    const specsB = expectOk(await fetchAllUserIngredientSpecs());
+    expect(specsB.every((spec) => spec.user === userB.id)).toBe(true);
 
     signInAs(TEST_USER_A.email);
-    expect((await fetchUserIngredientSpecByName(specName))?.user).toBe(userA.id);
-    const specsA = await fetchAllUserIngredientSpecs();
-    expect(specsA!.every((spec) => spec.user === userA.id)).toBe(true);
+    expect(expectOk(await fetchUserIngredientSpecByName(specName)).user).toBe(userA.id);
+    const specsA = expectOk(await fetchAllUserIngredientSpecs());
+    expect(specsA.every((spec) => spec.user === userA.id)).toBe(true);
   });
 });

@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { RecipeSearch, type GroupedRecipe } from "@/app/_components/recipe-search";
+import { ActionError } from "@/app/_elements/action-error";
+import { RECIPE_ERROR_MESSAGES, RecipeError } from "@/lib/recipe/recipe";
+import type { DataError, Result } from "@/lib/result";
 import { useSignedIn } from "@/lib/hooks/use-signed-in";
 import { useSessionResources } from "@/lib/resources/session";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
@@ -29,6 +33,17 @@ export default function RecipesPage() {
   const { savedRecipes, refreshUserRecipes } = useSessionResources();
 
   const signedIn = useSignedIn();
+
+  /** Why the last action was refused; cleared as the next one starts. */
+  const [actionError, setActionError] = useState<DataError | RecipeError | undefined>(undefined);
+
+  /** Run a mutating action, surfacing its refusal or refreshing the list on success. */
+  async function runAction(action: () => Promise<Result<unknown, RecipeError>>) {
+    setActionError(undefined);
+    const result = await action();
+    if (!result.ok) setActionError(result.error);
+    await refreshUserRecipes();
+  }
 
   /**
    * Write the chosen version into the given localStorage slot and navigate to the calculator. For
@@ -63,9 +78,8 @@ export default function RecipesPage() {
       signedIn && entry.recipeId !== undefined,
       "handleDeleteSavedRecipe invoked while signed out or entry.recipeId is missing",
     );
-
-    await deleteUserRecipe(entry.recipeId);
-    await refreshUserRecipes();
+    const { recipeId } = entry;
+    await runAction(() => deleteUserRecipe(recipeId));
   }
 
   /** Delete a single version of a saved recipe and refresh the list */
@@ -77,9 +91,8 @@ export default function RecipesPage() {
       signedIn && entry.recipeId !== undefined,
       "handleDeleteSavedRecipeVersion invoked while signed out or entry.recipeId is missing",
     );
-
-    await deleteUserRecipeVersion(entry.recipeId, version.version);
-    await refreshUserRecipes();
+    const { recipeId } = entry;
+    await runAction(() => deleteUserRecipeVersion(recipeId, version.version));
   }
 
   /** Update part of a saved recipe version's editable details, then refresh the list */
@@ -92,9 +105,8 @@ export default function RecipesPage() {
       signedIn && entry.recipeId !== undefined,
       "handleUpdateSavedRecipeVersion invoked while signed out or entry.recipeId is missing",
     );
-
-    await updateUserRecipeVersion(entry.recipeId, version.version, meta);
-    await refreshUserRecipes();
+    const { recipeId } = entry;
+    await runAction(() => updateUserRecipeVersion(recipeId, version.version, meta));
   }
 
   /** Star or clear the star on a saved recipe, then refresh the list */
@@ -103,15 +115,15 @@ export default function RecipesPage() {
       signedIn && entry.recipeId !== undefined,
       "handleToggleSavedRecipeFavourite invoked while signed out or entry.recipeId is missing",
     );
-
-    await setUserRecipeFavourite(entry.recipeId, favourite);
-    await refreshUserRecipes();
+    const { recipeId } = entry;
+    await runAction(() => setUserRecipeFavourite(recipeId, favourite));
   }
 
   const slots = Array.from({ length: MAX_RECIPES }, (_, idx) => idx);
 
   return (
     <div className="page-gutters mx-auto mt-4 max-w-5xl">
+      <ActionError error={actionError} messages={RECIPE_ERROR_MESSAGES} />
       <RecipeSearch
         onLoadRecipe={handleLoadRecipe}
         savedRecipes={savedRecipes}

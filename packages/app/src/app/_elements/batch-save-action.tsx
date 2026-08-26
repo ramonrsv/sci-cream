@@ -6,6 +6,7 @@ import { CopyPlus, Save } from "lucide-react";
 import type { Batch } from "@/lib/batch/batch";
 import { batchToInput } from "@/lib/batch/builder";
 import { createUserBatch, updateUserBatch } from "@/lib/data/batches";
+import { DATA_ERROR_MESSAGES } from "@/lib/result";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 /**
@@ -32,6 +33,8 @@ export function SaveBatchAction({
   iconSize?: number;
 }) {
   const [saving, setSaving] = useState(false);
+  /** Why the last save was refused, shown in the button's tooltip in place of the usual text. */
+  const [saveError, setSaveError] = useState<string | undefined>(undefined);
 
   const empty = batch.recipes.every((recipe) => recipe.rows.length === 0);
   const bound = savedBatchId !== undefined;
@@ -42,11 +45,13 @@ export function SaveBatchAction({
   const save = async (asNew: boolean) => {
     if (!signedIn || empty) return;
     setSaving(true);
+    setSaveError(undefined);
     try {
       const input = batchToInput(batch);
       const saved =
         asNew || !bound ? await createUserBatch(input) : await updateUserBatch(savedBatchId, input);
-      if (saved) onSaved(saved.id);
+      if (saved.ok) onSaved(saved.value.id);
+      else setSaveError(DATA_ERROR_MESSAGES[saved.error]);
     } finally {
       setSaving(false);
     }
@@ -58,9 +63,7 @@ export function SaveBatchAction({
       ? "Add a recipe to save the batch"
       : saving
         ? "Saving…"
-        : bound
-          ? "Update the saved batch"
-          : "Save batch";
+        : (saveError ?? (bound ? "Update the saved batch" : "Save batch"));
 
   return (
     <>

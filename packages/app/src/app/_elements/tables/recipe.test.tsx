@@ -70,18 +70,30 @@ vi.mock("@/lib/data/recipes", () => ({
   createUserRecipe: vi
     .fn()
     .mockResolvedValue({
-      recipeId: 42,
-      version: { version: 1, recipe: [], createdAt: "2026-05-17T00:00:00.000Z" },
+      ok: true,
+      value: {
+        recipeId: 42,
+        version: { version: 1, recipe: [], createdAt: "2026-05-17T00:00:00.000Z" },
+      },
     }),
   createUserRecipeVersion: vi
     .fn()
-    .mockResolvedValue({ version: 2, recipe: [], createdAt: "2026-05-17T00:00:00.000Z" }),
+    .mockResolvedValue({
+      ok: true,
+      value: { version: 2, recipe: [], createdAt: "2026-05-17T00:00:00.000Z" },
+    }),
   updateUserRecipeVersion: vi
     .fn()
-    .mockResolvedValue({ version: 1, recipe: [], createdAt: "2026-05-17T00:00:00.000Z" }),
+    .mockResolvedValue({
+      ok: true,
+      value: { version: 1, recipe: [], createdAt: "2026-05-17T00:00:00.000Z" },
+    }),
   renameUserRecipe: vi
     .fn()
-    .mockResolvedValue({ id: 42, name: "renamed", user: 1, createdAt: new Date() }),
+    .mockResolvedValue({
+      ok: true,
+      value: { id: 42, name: "renamed", user: 1, createdAt: new Date() },
+    }),
 }));
 
 // ---------------------------------------------------------------------------

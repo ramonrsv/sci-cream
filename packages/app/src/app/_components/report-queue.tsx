@@ -26,7 +26,8 @@ export function ReportQueue() {
   // The one memoized callback here: the mount effect depends on it, and a fresh identity each
   // render would re-fire the effect, whose own setState would spin that into a fetch loop.
   const refresh = useCallback(async () => {
-    setReports(await fetchOpenReports());
+    const result = await fetchOpenReports();
+    setReports(result.ok ? result.value : undefined);
     setLoading(false);
   }, []);
 

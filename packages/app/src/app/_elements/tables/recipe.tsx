@@ -50,6 +50,8 @@ import {
 } from "@/lib/data/recipes";
 
 import { useSignedIn } from "@/lib/hooks/use-signed-in";
+import { mapOk, ok, type DataError, type Result } from "@/lib/result";
+import { RECIPE_ERROR_MESSAGES, RecipeError } from "@/lib/recipe/recipe";
 import { useSessionResources } from "@/lib/resources/session";
 import type { SavedRecipeVersionJson } from "@/lib/data/recipes";
 import { displayVersionName, nextVersionName, validateVersionName } from "@/lib/recipe/version";
@@ -386,6 +388,8 @@ export function RecipeEditor({
   });
 
   const [saveStatus, setSaveStatus] = useState<SaveStatus>(SaveStatus.Idle);
+  /** Why the last save was refused, shown in place of the generic failure tooltip. */
+  const [saveError, setSaveError] = useState<DataError | RecipeError | undefined>(undefined);
   const [deevaporateError, setDeevaporateError] = useState<string | undefined>(undefined);
   const [newVersionInput, setNewVersionInput] = useState("");
 
@@ -553,13 +557,12 @@ export function RecipeEditor({
   };
 
   /**
-   * Persist a rename for the loaded recipe when the in-editor name differs from baseline. Returns
-   * `true` on success (or when no rename is needed), `false` if the rename failed.
+   * Persist a rename for the loaded recipe when the in-editor name differs from baseline.
+   * Succeeds with no call when there is nothing to rename.
    */
-  const applyRenameIfNeeded = async (recipe: Recipe): Promise<boolean> => {
-    if (!signedIn || recipe.savedRef === undefined || !isRecipeRenamed(recipe)) return true;
-    const renamed = await renameUserRecipe(recipe.savedRef.recipeId, recipe.name.trim());
-    return renamed !== undefined;
+  const applyRenameIfNeeded = async (recipe: Recipe): Promise<Result<null, RecipeError>> => {
+    if (!signedIn || recipe.savedRef === undefined || !isRecipeRenamed(recipe)) return ok(null);
+    return mapOk(await renameUserRecipe(recipe.savedRef.recipeId, recipe.name.trim()), () => null);
   };
 
   /**
@@ -569,16 +572,18 @@ export function RecipeEditor({
    */
   const performSave = async (
     recipe: Recipe,
-    operation: () => Promise<SavedRecipeRef | undefined>,
+    operation: () => Promise<Result<SavedRecipeRef, RecipeError>>,
   ) => {
     setSaveStatus(SaveStatus.Saving);
+    setSaveError(undefined);
     try {
-      const newRef = await operation();
-      if (!newRef) {
+      const result = await operation();
+      if (!result.ok) {
+        setSaveError(result.error);
         setSaveStatus(SaveStatus.Error);
         return;
       }
-      updateRecipes([withRecipeIdentity(recipe, newRef)]);
+      updateRecipes([withRecipeIdentity(recipe, result.value)]);
       setSaveStatus(SaveStatus.Saved);
 
       // Refresh the shared saved-recipes cache so other routes (e.g. the recipes list) see it.
@@ -611,17 +616,22 @@ export function RecipeEditor({
         const created = await createUserRecipe(recipe.name.trim(), lightRecipe, {
           evaporation: recipe.evaporation || null,
         });
-        return created && { recipeId: created.recipeId, versionNumber: created.version.version };
+        return mapOk(created, ({ recipeId, version }) => ({
+          recipeId,
+          versionNumber: version.version,
+        }));
       }
 
       // Existing recipe: rename first if needed, then overwrite the loaded version
-      if (!(await applyRenameIfNeeded(recipe))) return undefined;
+      const renamed = await applyRenameIfNeeded(recipe);
+      if (!renamed.ok) return renamed;
+
       const { recipeId, versionNumber } = recipe.savedRef;
       const updated = await updateUserRecipeVersion(recipeId, versionNumber, {
         recipe: lightRecipe,
         evaporation: recipe.evaporation || null,
       });
-      return updated && { recipeId, versionNumber };
+      return mapOk(updated, () => ({ recipeId, versionNumber }));
     });
   };
 
@@ -645,13 +655,15 @@ export function RecipeEditor({
     const { recipeId } = recipe.savedRef;
 
     await performSave(recipe, async () => {
-      if (!(await applyRenameIfNeeded(recipe))) return undefined;
+      const renamed = await applyRenameIfNeeded(recipe);
+      if (!renamed.ok) return renamed;
+
       const lightRecipe = makeLightRecipeAllRows(recipe);
       const created = await createUserRecipeVersion(recipeId, lightRecipe, {
         ...(versionName !== undefined ? { versionName } : {}),
         evaporation: recipe.evaporation || null,
       });
-      return created && { recipeId, versionNumber: created.version };
+      return mapOk(created, ({ version }) => ({ recipeId, versionNumber: version }));
     });
   };
 
@@ -758,6 +770,10 @@ export function RecipeEditor({
   const defaultNewVersionName = nextVersionName(savedVersions);
   const newVersionInputName = newVersionInput.trim();
 
+  // Undefined where the save threw rather than refused: `performSave` leaves no reason for those.
+  const saveFailure =
+    saveError === undefined ? "Save failed — try again" : RECIPE_ERROR_MESSAGES[saveError];
+
   const saveTitle = !signedIn
     ? "Sign in to save recipes"
     : currentRecipeIdx !== 0
@@ -771,7 +787,7 @@ export function RecipeEditor({
             : saveStatus === SaveStatus.Saved
               ? "Saved"
               : saveStatus === SaveStatus.Error
-                ? "Save failed — try again"
+                ? saveFailure
                 : currentRecipe.savedRef !== undefined
                   ? dirty
                     ? `Save changes to version ${displayedVersionName}`

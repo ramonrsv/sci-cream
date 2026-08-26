@@ -28,7 +28,9 @@ import { type Batch, batchChecklistKey, todayIsoDate, touchChecklist } from "@/l
 import { deleteUserBatch, setUserBatchFavourite, type SavedBatchJson } from "@/lib/data/batches";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
+import { ActionError } from "@/app/_elements/action-error";
 import { useSignedIn } from "@/lib/hooks/use-signed-in";
+import { DATA_ERROR_MESSAGES, type DataError, type Result } from "@/lib/result";
 import { useSessionResources } from "@/lib/resources/session";
 import { useChecklistState } from "@/lib/hooks/use-checklist-state";
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
@@ -81,6 +83,17 @@ export function MakeRecipeView() {
   const [state, setState] = useState<ViewState>({ status: "decoding" });
   const { savedRecipes, savedBatches, refreshUserBatches } = useSessionResources();
   const signedIn = useSignedIn();
+
+  /** Why the last batch action was refused; cleared as the next one starts. */
+  const [actionError, setActionError] = useState<DataError | undefined>(undefined);
+
+  /** Run a batch action, surfacing its refusal. Reports success; follow-up is the caller's. */
+  const runAction = async (action: () => Promise<Result<unknown>>): Promise<boolean> => {
+    setActionError(undefined);
+    const result = await action();
+    if (!result.ok) setActionError(result.error);
+    return result.ok;
+  };
 
   const [selection, setSelection] = usePersistedState<BatchSelection>(
     STORAGE_KEYS.makeRecipeBatch,
@@ -155,7 +168,9 @@ export function MakeRecipeView() {
   const deleteBatch = async () => {
     const id = selection.savedBatchId;
     verify(signedIn && id !== undefined, "deleteBatch invoked without a bound saved batch");
-    await deleteUserBatch(id);
+
+    if (!(await runAction(() => deleteUserBatch(id)))) return;
+
     setSelection((prev) => ({ ...prev, savedBatchId: undefined }));
     await refreshUserBatches();
   };
@@ -172,7 +187,8 @@ export function MakeRecipeView() {
       signedIn && boundBatch !== undefined,
       "toggleBatchFavourite invoked without a bound saved batch",
     );
-    await setUserBatchFavourite(boundBatch.id, favourite);
+
+    await runAction(() => setUserBatchFavourite(boundBatch.id, favourite));
     await refreshUserBatches();
   };
 
@@ -291,7 +307,7 @@ export function MakeRecipeView() {
           )}
         </div>
       </div>
-
+      <ActionError error={actionError} messages={DATA_ERROR_MESSAGES} />
       <BatchBuilder
         selection={selection}
         batch={ownerBatch}

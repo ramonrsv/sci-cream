@@ -10,6 +10,27 @@ import { fetchAllUserSavedRecipes, type SavedRecipeJson } from "@/lib/data/recip
 import { fetchAllUserBatches, type SavedBatchJson } from "@/lib/data/batches";
 import { makeWasmResources, makeWasmResourcesFromEmbeddedData } from "@/lib/resources/wasm";
 import { SessionResourcesContext, type SessionResources } from "@/lib/resources/session";
+import type { Result } from "@/lib/result";
+
+/**
+ * Apply a cache fetch, or keep what is already loaded when it is refused.
+ *
+ * These reads refuse only with `Unauthenticated`, so past the `email` gate a refusal means the
+ * session lapsed mid-flight. Blanking a cache would read as "you have none" — and would strip the
+ * user's specs from the bridge — so the stale copy stands until NextAuth re-gates the UI.
+ */
+async function applyFetch<T>(
+  name: string,
+  fetch: () => Promise<Result<T[]>>,
+  apply: (rows: T[]) => void,
+): Promise<void> {
+  const result = await fetch();
+  if (!result.ok) {
+    console.error(`${name} refresh refused:`, result.error);
+    return;
+  }
+  apply(result.value);
+}
 
 /**
  * Provides the session-scoped {@link SessionResources}: the single WASM bridge (seeded from
@@ -35,36 +56,37 @@ export function SessionResourcesProvider({ children }: { children: ReactNode }) 
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipeJson[]>([]);
   const [savedBatches, setSavedBatches] = useState<SavedBatchJson[]>([]);
 
+  /** Cache the user's specs, then rebuild the bridge: embedded baseline, their specs over it. */
+  const applyUserIngredients = useCallback(
+    (rows: IngredientTransfer[]) => {
+      setUserIngredientSpecs(rows);
+
+      const bridge = bridgeRef.current;
+      bridge.clear();
+      bridge.seed_from_embedded_data(OnConflict.Reject);
+      bridge.seed_from_specs(
+        rows.map((row) => row.spec),
+        OnConflict.Overwrite,
+      );
+
+      setResources((prev) => makeWasmResources(prev.wasmBridge, prev.updateIdx + 1));
+    },
+    [setResources],
+  );
+
   const refreshUserIngredients = useCallback(async () => {
     if (!email) return;
-
-    const rows = (await fetchAllUserIngredientSpecs()) ?? [];
-    setUserIngredientSpecs(rows);
-
-    // Reset to the embedded baseline, then overlay the user's specs overwriting any collisions.
-    const bridge = bridgeRef.current;
-    bridge.clear();
-    bridge.seed_from_embedded_data(OnConflict.Reject);
-    bridge.seed_from_specs(
-      rows.map((row) => row.spec),
-      OnConflict.Overwrite,
-    );
-
-    setResources((prev) => makeWasmResources(prev.wasmBridge, prev.updateIdx + 1));
-  }, [email, setResources]);
+    await applyFetch("ingredients", fetchAllUserIngredientSpecs, applyUserIngredients);
+  }, [email, applyUserIngredients]);
 
   const refreshUserRecipes = useCallback(async () => {
     if (!email) return;
-
-    const recipes = await fetchAllUserSavedRecipes();
-    setSavedRecipes(recipes ?? []);
+    await applyFetch("recipes", fetchAllUserSavedRecipes, setSavedRecipes);
   }, [email]);
 
   const refreshUserBatches = useCallback(async () => {
     if (!email) return;
-
-    const batches = await fetchAllUserBatches();
-    setSavedBatches(batches ?? []);
+    await applyFetch("batches", fetchAllUserBatches, setSavedBatches);
   }, [email]);
 
   // Fetch once per session, keyed on email so a flickering `useSession` can't re-fire the effect.
@@ -72,7 +94,6 @@ export function SessionResourcesProvider({ children }: { children: ReactNode }) 
   const loadedForEmailRef = useRef<string | undefined>(undefined);
 
   // The refresh callbacks set state only after awaiting their fetch, not synchronously here.
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!email || loadedForEmailRef.current === email) return;
     loadedForEmailRef.current = email;
@@ -80,7 +101,6 @@ export function SessionResourcesProvider({ children }: { children: ReactNode }) 
     void refreshUserRecipes();
     void refreshUserBatches();
   }, [email, refreshUserIngredients, refreshUserRecipes, refreshUserBatches]);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   const value: SessionResources = {
     wasmResourcesState,

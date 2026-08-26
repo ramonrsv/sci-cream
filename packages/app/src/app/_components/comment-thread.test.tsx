@@ -67,7 +67,7 @@ function typeIntoComposer(text: string) {
 beforeEach(() => {
   vi.clearAllMocks();
   setSession(true);
-  vi.mocked(fetchComments).mockResolvedValue([]);
+  vi.mocked(fetchComments).mockResolvedValue({ ok: true, value: [] });
   vi.mocked(postComment).mockResolvedValue({ ok: true, value: makeComment() });
   vi.mocked(editComment).mockResolvedValue({ ok: true, value: makeComment() });
   vi.mocked(deleteComment).mockResolvedValue({ ok: true, value: { tombstoned: false } });
@@ -92,16 +92,22 @@ describe("CommentThread rendering", () => {
   });
 
   it("shows the comment count in the heading", async () => {
-    vi.mocked(fetchComments).mockResolvedValue([makeComment(), makeComment({ id: 2 })]);
+    vi.mocked(fetchComments).mockResolvedValue({
+      ok: true,
+      value: [makeComment(), makeComment({ id: 2 })],
+    });
     await renderThread();
     expect(screen.getByRole("heading", { name: "Comments (2)" })).toBeInTheDocument();
   });
 
   it("renders replies nested under their root", async () => {
-    vi.mocked(fetchComments).mockResolvedValue([
-      makeComment({ id: 1, body: "root" }),
-      makeComment({ id: 2, parentId: 1, body: "reply", authorId: OTHER_ID }),
-    ]);
+    vi.mocked(fetchComments).mockResolvedValue({
+      ok: true,
+      value: [
+        makeComment({ id: 1, body: "root" }),
+        makeComment({ id: 2, parentId: 1, body: "reply", authorId: OTHER_ID }),
+      ],
+    });
     await renderThread();
 
     expect(screen.getByTestId("comment-1")).toBeInTheDocument();
@@ -109,7 +115,7 @@ describe("CommentThread rendering", () => {
   });
 
   it("reports an unavailable thread when the fetch returns undefined", async () => {
-    vi.mocked(fetchComments).mockResolvedValue(undefined);
+    vi.mocked(fetchComments).mockResolvedValue({ ok: false, error: CommentError.BadSubject });
     await renderThread();
 
     expect(screen.getByText("Comments aren't available for this page.")).toBeInTheDocument();
@@ -125,7 +131,10 @@ describe("CommentThread signed out", () => {
   beforeEach(() => setSession(false));
 
   it("still renders the thread", async () => {
-    vi.mocked(fetchComments).mockResolvedValue([makeComment({ body: "public words" })]);
+    vi.mocked(fetchComments).mockResolvedValue({
+      ok: true,
+      value: [makeComment({ body: "public words" })],
+    });
     await renderThread();
     expect(screen.getByText("public words")).toBeInTheDocument();
   });
@@ -141,7 +150,7 @@ describe("CommentThread signed out", () => {
   });
 
   it("offers no per-comment actions", async () => {
-    vi.mocked(fetchComments).mockResolvedValue([makeComment()]);
+    vi.mocked(fetchComments).mockResolvedValue({ ok: true, value: [makeComment()] });
     await renderThread();
 
     expect(screen.queryByRole("button", { name: "Reply" })).not.toBeInTheDocument();
@@ -218,10 +227,13 @@ describe("CommentThread posting", () => {
 
 describe("CommentThread replying", () => {
   beforeEach(() => {
-    vi.mocked(fetchComments).mockResolvedValue([
-      makeComment({ id: 1, body: "root", authorId: OTHER_ID }),
-      makeComment({ id: 2, parentId: 1, body: "reply", authorId: OTHER_ID }),
-    ]);
+    vi.mocked(fetchComments).mockResolvedValue({
+      ok: true,
+      value: [
+        makeComment({ id: 1, body: "root", authorId: OTHER_ID }),
+        makeComment({ id: 2, parentId: 1, body: "reply", authorId: OTHER_ID }),
+      ],
+    });
   });
 
   it("posts a reply against its root", async () => {
@@ -248,7 +260,10 @@ describe("CommentThread replying", () => {
 
 describe("CommentThread per-comment actions", () => {
   it("offers Edit and Delete on one's own comment, but not Report", async () => {
-    vi.mocked(fetchComments).mockResolvedValue([makeComment({ authorId: AUTHOR_ID })]);
+    vi.mocked(fetchComments).mockResolvedValue({
+      ok: true,
+      value: [makeComment({ authorId: AUTHOR_ID })],
+    });
     await renderThread();
 
     expect(screen.getByRole("button", { name: "Edit" })).toBeInTheDocument();
@@ -257,7 +272,10 @@ describe("CommentThread per-comment actions", () => {
   });
 
   it("offers Report on someone else's comment, but not Edit or Delete", async () => {
-    vi.mocked(fetchComments).mockResolvedValue([makeComment({ authorId: OTHER_ID })]);
+    vi.mocked(fetchComments).mockResolvedValue({
+      ok: true,
+      value: [makeComment({ authorId: OTHER_ID })],
+    });
     await renderThread();
 
     expect(screen.getByRole("button", { name: "Report" })).toBeInTheDocument();
@@ -266,7 +284,10 @@ describe("CommentThread per-comment actions", () => {
   });
 
   it("seeds the edit composer with the existing body and saves the change", async () => {
-    vi.mocked(fetchComments).mockResolvedValue([makeComment({ id: 5, body: "before" })]);
+    vi.mocked(fetchComments).mockResolvedValue({
+      ok: true,
+      value: [makeComment({ id: 5, body: "before" })],
+    });
     await renderThread();
 
     fireEvent.click(screen.getByRole("button", { name: "Edit" }));
@@ -280,7 +301,7 @@ describe("CommentThread per-comment actions", () => {
 
   it("deletes after the confirmation is accepted", async () => {
     vi.spyOn(window, "confirm").mockReturnValue(true);
-    vi.mocked(fetchComments).mockResolvedValue([makeComment({ id: 5 })]);
+    vi.mocked(fetchComments).mockResolvedValue({ ok: true, value: [makeComment({ id: 5 })] });
     await renderThread();
 
     fireEvent.click(screen.getByRole("button", { name: "Delete" }));
@@ -289,7 +310,7 @@ describe("CommentThread per-comment actions", () => {
 
   it("does not delete when the confirmation is declined", async () => {
     vi.spyOn(window, "confirm").mockReturnValue(false);
-    vi.mocked(fetchComments).mockResolvedValue([makeComment({ id: 5 })]);
+    vi.mocked(fetchComments).mockResolvedValue({ ok: true, value: [makeComment({ id: 5 })] });
     await renderThread();
 
     fireEvent.click(screen.getByRole("button", { name: "Delete" }));
@@ -298,7 +319,10 @@ describe("CommentThread per-comment actions", () => {
 
   it("reports after the confirmation is accepted", async () => {
     vi.spyOn(window, "confirm").mockReturnValue(true);
-    vi.mocked(fetchComments).mockResolvedValue([makeComment({ id: 5, authorId: OTHER_ID })]);
+    vi.mocked(fetchComments).mockResolvedValue({
+      ok: true,
+      value: [makeComment({ id: 5, authorId: OTHER_ID })],
+    });
     await renderThread();
 
     fireEvent.click(screen.getByRole("button", { name: "Report" }));
@@ -306,10 +330,13 @@ describe("CommentThread per-comment actions", () => {
   });
 
   it("offers no actions on a tombstoned root", async () => {
-    vi.mocked(fetchComments).mockResolvedValue([
-      makeComment({ id: 1, body: "", deletion: CommentDeletion.Author, authorId: OTHER_ID }),
-      makeComment({ id: 2, parentId: 1, body: "reply", authorId: OTHER_ID }),
-    ]);
+    vi.mocked(fetchComments).mockResolvedValue({
+      ok: true,
+      value: [
+        makeComment({ id: 1, body: "", deletion: CommentDeletion.Author, authorId: OTHER_ID }),
+        makeComment({ id: 2, parentId: 1, body: "reply", authorId: OTHER_ID }),
+      ],
+    });
     await renderThread();
 
     const root = within(screen.getByTestId("comment-1"));

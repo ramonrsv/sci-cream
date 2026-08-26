@@ -8,11 +8,27 @@ import type { BatchRecipeVersion } from "@/lib/batch/batch";
 import { db } from "@/lib/database/client";
 import { batchesTable, batchRecipesTable, BatchSelect } from "@/lib/database/schema";
 import { requireUser } from "@/lib/data/session";
+import { DataError, ok, type Result } from "@/lib/result";
 import { log as baseLog } from "@/lib/log";
 
 /** Server actions for saved batches and their recipes. Identity comes from `requireUser()`. */
 
 const log = baseLog.child({ mod: "data/batches" });
+
+/**
+ * Log a refusal and return it, so a guard is one line where it stands.
+ *
+ * Every refusal is logged, the unauthenticated one included: the UI gates each action behind
+ * `signedIn`, so reaching one anonymously means the gate failed or the endpoint was called direct.
+ */
+function refuse(
+  action: string,
+  error: DataError,
+  ctx: Record<string, unknown> = {},
+): { ok: false; error: DataError } {
+  log.warn({ action, error, ...ctx }, "refused");
+  return { ok: false, error };
+}
 
 /**
  * One recipe within a saved batch; `rows` are the `[name, grams]` amounts exactly as weighed
@@ -138,15 +154,12 @@ async function findUserBatch(userId: number, batchId: number): Promise<BatchSele
   return row;
 }
 
-/** Fetch the signed-in user's saved batches, newest first; `undefined` if nobody is signed in. */
-export async function fetchAllUserBatches(): Promise<SavedBatchJson[] | undefined> {
+/** Fetch the signed-in user's saved batches, newest first; an empty list is a success. */
+export async function fetchAllUserBatches(): Promise<Result<SavedBatchJson[]>> {
   log.debug({ action: "fetchAllUserBatches" }, "start");
 
   const user = await requireUser();
-  if (!user) {
-    log.warn({ action: "fetchAllUserBatches" }, "no signed-in user");
-    return undefined;
-  }
+  if (!user) return refuse("fetchAllUserBatches", DataError.Unauthenticated);
 
   const rows = await db
     .select({
@@ -216,18 +229,15 @@ export async function fetchAllUserBatches(): Promise<SavedBatchJson[] | undefine
     toSavedBatchJson(batch, recipes),
   );
   log.debug({ action: "fetchAllUserBatches", count: result.length, userId: user.id }, "fetched");
-  return result;
+  return ok(result);
 }
 
 /** Create a batch for the signed-in user; returns it, or `undefined` if nobody is signed in. */
-export async function createUserBatch(input: BatchInput): Promise<SavedBatchJson | undefined> {
+export async function createUserBatch(input: BatchInput): Promise<Result<SavedBatchJson>> {
   log.debug({ action: "createUserBatch" }, "start");
 
   const user = await requireUser();
-  if (!user) {
-    log.warn({ action: "createUserBatch" }, "no signed-in user");
-    return undefined;
-  }
+  if (!user) return refuse("createUserBatch", DataError.Unauthenticated);
 
   return db.transaction(async (tx) => {
     const [batch] = await tx
@@ -248,7 +258,7 @@ export async function createUserBatch(input: BatchInput): Promise<SavedBatchJson
             .values(toBatchRecipeInserts(batch.id, input.recipes))
             .returning();
 
-    return toSavedBatchJson(batch, recipeRows);
+    return ok(toSavedBatchJson(batch, recipeRows));
   });
 }
 
@@ -262,20 +272,14 @@ export async function createUserBatch(input: BatchInput): Promise<SavedBatchJson
 export async function updateUserBatch(
   batchId: number,
   input: BatchInput,
-): Promise<SavedBatchJson | undefined> {
+): Promise<Result<SavedBatchJson>> {
   log.debug({ action: "updateUserBatch", batchId }, "start");
 
   const user = await requireUser();
-  if (!user) {
-    log.warn({ action: "updateUserBatch" }, "no signed-in user");
-    return undefined;
-  }
+  if (!user) return refuse("updateUserBatch", DataError.Unauthenticated);
 
   const owned = await findUserBatch(user.id, batchId);
-  if (!owned) {
-    log.warn({ action: "updateUserBatch", batchId, userId: user.id }, "batch not owned by user");
-    return undefined;
-  }
+  if (!owned) return refuse("updateUserBatch", DataError.Forbidden, { batchId, userId: user.id });
 
   return db.transaction(async (tx) => {
     const [batch] = await tx
@@ -299,7 +303,7 @@ export async function updateUserBatch(
             .values(toBatchRecipeInserts(batchId, input.recipes))
             .returning();
 
-    return toSavedBatchJson(batch, recipeRows);
+    return ok(toSavedBatchJson(batch, recipeRows));
   });
 }
 
@@ -311,22 +315,15 @@ export async function updateUserBatch(
 export async function setUserBatchFavourite(
   batchId: number,
   favourite: boolean,
-): Promise<BatchSelect | undefined> {
+): Promise<Result<BatchSelect>> {
   log.debug({ action: "setUserBatchFavourite", batchId, favourite }, "start");
 
   const user = await requireUser();
-  if (!user) {
-    log.warn({ action: "setUserBatchFavourite" }, "no signed-in user");
-    return undefined;
-  }
+  if (!user) return refuse("setUserBatchFavourite", DataError.Unauthenticated);
 
   const owned = await findUserBatch(user.id, batchId);
   if (!owned) {
-    log.warn(
-      { action: "setUserBatchFavourite", batchId, userId: user.id },
-      "batch not owned by user",
-    );
-    return undefined;
+    return refuse("setUserBatchFavourite", DataError.Forbidden, { batchId, userId: user.id });
   }
 
   const [row] = await db
@@ -335,26 +332,25 @@ export async function setUserBatchFavourite(
     .where(and(eq(batchesTable.id, batchId), eq(batchesTable.user, user.id)))
     .returning();
 
-  return row;
+  return ok(row);
 }
 
 /**
  * Delete a batch the signed-in user owns and all of its recipes (cascade). Returns the deleted
  * batch row, or `undefined` if nobody is signed in or no matching batch existed.
  */
-export async function deleteUserBatch(batchId: number): Promise<BatchSelect | undefined> {
+export async function deleteUserBatch(batchId: number): Promise<Result<BatchSelect>> {
   log.debug({ action: "deleteUserBatch", batchId }, "start");
 
   const user = await requireUser();
-  if (!user) {
-    log.warn({ action: "deleteUserBatch" }, "no signed-in user");
-    return undefined;
-  }
+  if (!user) return refuse("deleteUserBatch", DataError.Unauthenticated);
 
   const [row] = await db
     .delete(batchesTable)
     .where(and(eq(batchesTable.id, batchId), eq(batchesTable.user, user.id)))
     .returning();
 
-  return row;
+  // The `user` term in the `where` does the ownership check, so no row means it was never theirs.
+  if (!row) return refuse("deleteUserBatch", DataError.Forbidden, { batchId, userId: user.id });
+  return ok(row);
 }

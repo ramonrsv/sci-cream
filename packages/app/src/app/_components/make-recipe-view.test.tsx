@@ -21,6 +21,7 @@ import {
   setUserBatchFavourite,
   type SavedBatchJson,
 } from "@/lib/data/batches";
+import { DataError } from "@/lib/result";
 import { useSessionResources, type SessionResources } from "@/lib/resources/session";
 import {
   getSelectOptionLabelsByLabel,
@@ -35,8 +36,9 @@ vi.mock("@/lib/resources/session", () => ({ useSessionResources: vi.fn() }));
 vi.mock("@/lib/data/batches", () => ({
   createUserBatch: vi.fn(),
   updateUserBatch: vi.fn(),
-  deleteUserBatch: vi.fn(),
-  setUserBatchFavourite: vi.fn(),
+  // Default to a bare success; the tests that care about the payload set their own.
+  deleteUserBatch: vi.fn().mockResolvedValue({ ok: true, value: null }),
+  setUserBatchFavourite: vi.fn().mockResolvedValue({ ok: true, value: null }),
 }));
 
 // `tables/recipe` is in this tree and imports the saved-recipe actions. Stubbing them draws the
@@ -408,13 +410,10 @@ describe("MakeRecipeView — saving a batch", () => {
   it("creates the batch on the first save and updates it on the next", async () => {
     setSessionEmail("owner@example.com");
     vi.mocked(createUserBatch).mockResolvedValue({
-      id: 7,
-      date: "2026-07-18",
-      recipes: [],
-      createdAt: "",
-      updatedAt: "",
+      ok: true,
+      value: { id: 7, date: "2026-07-18", recipes: [], createdAt: "", updatedAt: "" },
     });
-    vi.mocked(updateUserBatch).mockResolvedValue(undefined);
+    vi.mocked(updateUserBatch).mockResolvedValue({ ok: false, error: DataError.Forbidden });
 
     render(<MakeRecipeView />);
     await screen.findByTestId("batch-builder");
@@ -467,11 +466,8 @@ describe("MakeRecipeView — saving a batch", () => {
   it("New batch clears the selection and unbinds, so the next save creates again", async () => {
     setSessionEmail("owner@example.com");
     vi.mocked(createUserBatch).mockResolvedValue({
-      id: 7,
-      date: "2026-07-18",
-      recipes: [],
-      createdAt: "",
-      updatedAt: "",
+      ok: true,
+      value: { id: 7, date: "2026-07-18", recipes: [], createdAt: "", updatedAt: "" },
     });
 
     render(<MakeRecipeView />);
@@ -502,18 +498,12 @@ describe("MakeRecipeView — saving a batch", () => {
     setSessionEmail("owner@example.com");
     vi.mocked(createUserBatch)
       .mockResolvedValueOnce({
-        id: 7,
-        date: "2026-07-18",
-        recipes: [],
-        createdAt: "",
-        updatedAt: "",
+        ok: true,
+        value: { id: 7, date: "2026-07-18", recipes: [], createdAt: "", updatedAt: "" },
       })
       .mockResolvedValueOnce({
-        id: 99,
-        date: "2026-07-18",
-        recipes: [],
-        createdAt: "",
-        updatedAt: "",
+        ok: true,
+        value: { id: 99, date: "2026-07-18", recipes: [], createdAt: "", updatedAt: "" },
       });
 
     render(<MakeRecipeView />);

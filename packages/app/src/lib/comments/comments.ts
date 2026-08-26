@@ -1,3 +1,5 @@
+import { DataError, DATA_ERROR_MESSAGES, type Result } from "@/lib/result";
+
 /**
  * Shapes and pure helpers for public comment threads: the wire types the server actions return,
  * body validation, thread grouping, and relative-time formatting.
@@ -58,16 +60,10 @@ export interface CommentThreadJson {
 }
 
 /**
- * Why a mutating action refused. Every value is something the composer can explain to the user.
- *
- * The string values cross the server-action boundary, so they are the wire format and renaming one
- * is a protocol change; the member names are free to read however they read best.
+ * Why a comment action refused, beyond the {@link DataError}s every action shares.
+ * The string values cross the server-action boundary, so renaming one is a protocol change.
  */
 export enum CommentError {
-  Unauthenticated = "unauthenticated",
-  Forbidden = "forbidden",
-  /** No such comment: a forged id, or one from a page stale enough that the row has been purged. */
-  NotFound = "not-found",
   /** The comment is a tombstone, which refuses edits, further deletes, and reports alike. */
   Deleted = "deleted",
   BadSubject = "bad-subject",
@@ -76,20 +72,17 @@ export enum CommentError {
   RateLimited = "rate-limited",
 }
 
-/**
- * Result of a mutating comment action.
- *
- * A deliberate departure from `data.ts`, which returns `undefined` and logs. That is fine for
- * private actions whose failures are bugs, but a public composer has to tell the user *why* their
- * comment was refused. Reads keep the `undefined`-on-failure convention.
- */
-export type CommentResult<T> = { ok: true; value: T } | { ok: false; error: CommentError };
+/** Result of a comment action: the shared failures, plus this domain's own. */
+export type CommentResult<T> = Result<T, CommentError>;
 
-/** Human-readable text for a {@link CommentError}, shown next to the composer. */
-export const COMMENT_ERROR_MESSAGES: Record<CommentError, string> = {
-  [CommentError.Unauthenticated]: "Sign in to post a comment.",
-  [CommentError.Forbidden]: "You can't do that.",
-  [CommentError.NotFound]: "That comment doesn't exist.",
+/**
+ * Human-readable text for anything a comment action can refuse with, shown next to the composer.
+ * Shared defaults come first, so the comment-specific wording below overrides them.
+ */
+export const COMMENT_ERROR_MESSAGES: Record<DataError | CommentError, string> = {
+  ...DATA_ERROR_MESSAGES,
+  [DataError.Unauthenticated]: "Sign in to post a comment.",
+  [DataError.NotFound]: "That comment doesn't exist.",
   [CommentError.Deleted]: "That comment was deleted.",
   [CommentError.BadSubject]: "Comments aren't available for this page.",
   [CommentError.Empty]: "Write something first.",

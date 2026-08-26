@@ -33,10 +33,13 @@ vi.mock("next/navigation", () => ({ useRouter: vi.fn(() => ({ push: mockPush }))
 vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
+// These tests assert the wiring, not the payload, so every action reports a bare success.
+// Written out rather than shared, the factory being hoisted above any top-level binding.
 vi.mock("@/lib/data/recipes", () => ({
-  deleteUserRecipe: vi.fn().mockResolvedValue(undefined),
-  deleteUserRecipeVersion: vi.fn().mockResolvedValue(undefined),
-  updateUserRecipeVersion: vi.fn().mockResolvedValue(undefined),
+  deleteUserRecipe: vi.fn().mockResolvedValue({ ok: true, value: null }),
+  deleteUserRecipeVersion: vi.fn().mockResolvedValue({ ok: true, value: null }),
+  updateUserRecipeVersion: vi.fn().mockResolvedValue({ ok: true, value: null }),
+  setUserRecipeFavourite: vi.fn().mockResolvedValue({ ok: true, value: null }),
 }));
 vi.mock("@/lib/resources/session", () => ({ useSessionResources: vi.fn() }));
 vi.mock("@/app/_components/recipe-search", async (importOriginal) => {

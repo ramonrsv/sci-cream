@@ -22,17 +22,32 @@ import {
   type CommentSelect,
 } from "@/lib/database/schema";
 import { getMarkdownSlugs } from "@/lib/markdown";
+import { DataError, ok, type Result } from "@/lib/result";
 import { log as baseLog } from "@/lib/log";
 
 /**
  * Server actions for public comment threads.
  *
- * Identity comes from `requireUser()`; no action here takes a user identifier from the caller.
- * Subjects are validated against the content tree on every call, since the `comment_subject_type`
- * enum constrains a subject's type but never its key.
+ * Identity comes from `requireUser()`. Subjects are validated against the content tree on every
+ * call, since the `comment_subject_type` enum constrains a subject's type but never its key.
  */
 
 const log = baseLog.child({ mod: "data/comments" });
+
+/**
+ * Log a refusal and return it, so a guard is one line where it stands.
+ *
+ * Every refusal is logged, the unauthenticated one included: the UI gates each action behind
+ * `signedIn`, so reaching one anonymously means the gate failed or the endpoint was called direct.
+ */
+function refuse<E>(
+  action: string,
+  error: DataError | E,
+  ctx: Record<string, unknown> = {},
+): { ok: false; error: DataError | E } {
+  log.warn({ action, error, ...ctx }, "refused");
+  return { ok: false, error };
+}
 
 /** One open report joined to the comment it is about, for the moderation queue. */
 export type OpenReportJson = {
@@ -132,15 +147,14 @@ async function isRateLimited(userId: number): Promise<boolean> {
 /**
  * Every comment on a subject, oldest first, roots and replies together.
  *
- * Public: no session required, and none consulted. Returns `undefined` for an unknown subject,
- * following the read convention in the sibling modules. Tombstones come back with an empty body
- * and a `deletion` — their text was blanked at deletion, so there is nothing to withhold.
+ * Public: no session required, and none consulted. An empty thread is a success; only an unknown
+ * subject is a refusal. Tombstones come back with an empty body and a `deletion` — their text was
+ * blanked at deletion, so there is nothing to withhold.
  */
-export async function fetchComments(subject: CommentSubject): Promise<CommentJson[] | undefined> {
-  if (!isKnownSubject(subject)) {
-    log.warn({ action: "fetchComments" }, "unknown subject");
-    return undefined;
-  }
+export async function fetchComments(
+  subject: CommentSubject,
+): Promise<CommentResult<CommentJson[]>> {
+  if (!isKnownSubject(subject)) return refuse("fetchComments", CommentError.BadSubject);
 
   const rows = await db
     .select({ comment: commentsTable, authorDisplayName: usersTable.name })
@@ -151,7 +165,9 @@ export async function fetchComments(subject: CommentSubject): Promise<CommentJso
     )
     .orderBy(asc(commentsTable.createdAt), asc(commentsTable.id));
 
-  return rows.map(({ comment, authorDisplayName }) => toCommentJson(comment, authorDisplayName));
+  return ok(
+    rows.map(({ comment, authorDisplayName }) => toCommentJson(comment, authorDisplayName)),
+  );
 }
 
 /**
@@ -166,17 +182,17 @@ export async function postComment(
   parentId?: number,
 ): Promise<CommentResult<CommentJson>> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: CommentError.Unauthenticated };
+  if (!user) return refuse("postComment", DataError.Unauthenticated);
 
-  if (!isKnownSubject(subject)) return { ok: false, error: CommentError.BadSubject };
+  if (!isKnownSubject(subject)) return refuse("postComment", CommentError.BadSubject);
 
   const validated = validateCommentBody(body);
   if (!validated.ok) return validated;
 
-  if (await isRateLimited(user.id)) return { ok: false, error: CommentError.RateLimited };
+  if (await isRateLimited(user.id)) return refuse("postComment", CommentError.RateLimited);
 
   if (parentId !== undefined && !(await findRootComment(parentId, subject))) {
-    return { ok: false, error: CommentError.NotFound };
+    return refuse("postComment", DataError.NotFound);
   }
 
   const [row] = await db
@@ -190,21 +206,21 @@ export async function postComment(
     })
     .returning();
 
-  return { ok: true, value: toCommentJson(row, user.name) };
+  return ok(toCommentJson(row, user.name));
 }
 
 /** Edit one's own comment. Admins have no special power here — moderation deletes, never edits. */
 export async function editComment(id: number, body: string): Promise<CommentResult<CommentJson>> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: CommentError.Unauthenticated };
+  if (!user) return refuse("editComment", DataError.Unauthenticated);
 
   const validated = validateCommentBody(body);
   if (!validated.ok) return validated;
 
   const [existing] = await db.select().from(commentsTable).where(eq(commentsTable.id, id));
-  if (!existing) return { ok: false, error: CommentError.NotFound };
-  if (existing.deletedAt != null) return { ok: false, error: CommentError.Deleted };
-  if (existing.author !== user.id) return { ok: false, error: CommentError.Forbidden };
+  if (!existing) return refuse("editComment", DataError.NotFound);
+  if (existing.deletedAt != null) return refuse("editComment", CommentError.Deleted);
+  if (existing.author !== user.id) return refuse("editComment", DataError.Forbidden);
 
   const [row] = await db
     .update(commentsTable)
@@ -212,7 +228,7 @@ export async function editComment(id: number, body: string): Promise<CommentResu
     .where(eq(commentsTable.id, id))
     .returning();
 
-  return { ok: true, value: toCommentJson(row, user.name) };
+  return ok(toCommentJson(row, user.name));
 }
 
 /**
@@ -232,13 +248,13 @@ export async function editComment(id: number, body: string): Promise<CommentResu
  */
 export async function deleteComment(id: number): Promise<CommentResult<{ tombstoned: boolean }>> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: CommentError.Unauthenticated };
+  if (!user) return refuse("deleteComment", DataError.Unauthenticated);
 
   const [existing] = await db.select().from(commentsTable).where(eq(commentsTable.id, id));
-  if (!existing) return { ok: false, error: CommentError.NotFound };
-  if (existing.deletedAt != null) return { ok: false, error: CommentError.Deleted };
+  if (!existing) return refuse("deleteComment", DataError.NotFound);
+  if (existing.deletedAt != null) return refuse("deleteComment", CommentError.Deleted);
   if (existing.author !== user.id && !user.isAdmin)
-    return { ok: false, error: CommentError.Forbidden };
+    return refuse("deleteComment", DataError.Forbidden);
 
   if (existing.parentId !== null || (await countReplies(id)) > 0) {
     await db.transaction(async (tx) => {
@@ -253,11 +269,11 @@ export async function deleteComment(id: number): Promise<CommentResult<{ tombsto
         .set({ resolvedAt: sql`now()` })
         .where(and(eq(commentReportsTable.commentId, id), isNull(commentReportsTable.resolvedAt)));
     });
-    return { ok: true, value: { tombstoned: true } };
+    return ok({ tombstoned: true });
   }
 
   await db.delete(commentsTable).where(eq(commentsTable.id, id));
-  return { ok: true, value: { tombstoned: false } };
+  return ok({ tombstoned: false });
 }
 
 /**
@@ -269,17 +285,17 @@ export async function deleteComment(id: number): Promise<CommentResult<{ tombsto
  */
 export async function purgeComment(id: number): Promise<CommentResult<{ purged: number }>> {
   const admin = await requireAdmin();
-  if (!admin) return { ok: false, error: CommentError.Forbidden };
+  if (!admin) return refuse("purgeComment", DataError.Forbidden);
 
   const [existing] = await db.select().from(commentsTable).where(eq(commentsTable.id, id));
-  if (!existing) return { ok: false, error: CommentError.NotFound };
+  if (!existing) return refuse("purgeComment", DataError.NotFound);
 
   // Counted first: `RETURNING` reports the row named, never the ones the cascade takes.
   // Only a root can have replies, threading being capped at one level, so a reply skips the query.
   const replies = existing.parentId === null ? await countReplies(id) : 0;
   await db.delete(commentsTable).where(eq(commentsTable.id, id));
 
-  return { ok: true, value: { purged: 1 + replies } };
+  return ok({ purged: 1 + replies });
 }
 
 /**
@@ -292,11 +308,11 @@ export async function reportComment(
   reason?: string,
 ): Promise<CommentResult<null>> {
   const user = await requireUser();
-  if (!user) return { ok: false, error: CommentError.Unauthenticated };
+  if (!user) return refuse("reportComment", DataError.Unauthenticated);
 
   const [existing] = await db.select().from(commentsTable).where(eq(commentsTable.id, commentId));
-  if (!existing) return { ok: false, error: CommentError.NotFound };
-  if (existing.deletedAt != null) return { ok: false, error: CommentError.Deleted };
+  if (!existing) return refuse("reportComment", DataError.NotFound);
+  if (existing.deletedAt != null) return refuse("reportComment", CommentError.Deleted);
 
   const trimmed = reason?.trim();
   await db
@@ -304,20 +320,17 @@ export async function reportComment(
     .values({ commentId, reporter: user.id, reason: trimmed || null })
     .onConflictDoNothing();
 
-  return { ok: true, value: null };
+  return ok(null);
 }
 
 /**
  * Every unresolved report, oldest first, joined to its reporter and the comment it is about.
  *
- * Admin only; `undefined` for anyone else, who cannot tell an empty queue from a forbidden one.
+ * Admin only; anyone else is refused, and cannot tell an empty queue from a forbidden one.
  */
-export async function fetchOpenReports(): Promise<OpenReportJson[] | undefined> {
+export async function fetchOpenReports(): Promise<Result<OpenReportJson[]>> {
   const admin = await requireAdmin();
-  if (!admin) {
-    log.warn({ action: "fetchOpenReports" }, "not an admin");
-    return undefined;
-  }
+  if (!admin) return refuse("fetchOpenReports", DataError.Forbidden);
 
   // The query joins `users` twice — once for the reporter, once for the comment's author.
   const authors = alias(usersTable, "authors");
@@ -336,20 +349,22 @@ export async function fetchOpenReports(): Promise<OpenReportJson[] | undefined> 
     .where(isNull(commentReportsTable.resolvedAt))
     .orderBy(asc(commentReportsTable.createdAt));
 
-  return rows.map(({ report, reporterDisplayName, comment, authorDisplayName }) => ({
-    commentId: report.commentId,
-    reporterId: report.reporter,
-    reporterDisplayName,
-    ...(report.reason != null && { reason: report.reason }),
-    createdAt: report.createdAt.toISOString(),
-    ...(comment != null && {
-      comment: {
-        ...toCommentJson(comment, authorDisplayName ?? "unknown"),
-        subjectType: comment.subjectType,
-        subjectKey: comment.subjectKey,
-      },
-    }),
-  }));
+  return ok(
+    rows.map(({ report, reporterDisplayName, comment, authorDisplayName }) => ({
+      commentId: report.commentId,
+      reporterId: report.reporter,
+      reporterDisplayName,
+      ...(report.reason != null && { reason: report.reason }),
+      createdAt: report.createdAt.toISOString(),
+      ...(comment != null && {
+        comment: {
+          ...toCommentJson(comment, authorDisplayName ?? "unknown"),
+          subjectType: comment.subjectType,
+          subjectKey: comment.subjectKey,
+        },
+      }),
+    })),
+  );
 }
 
 /** Close one report, leaving the comment itself alone. Admin only. */
@@ -358,7 +373,7 @@ export async function resolveReport(
   reporter: number,
 ): Promise<CommentResult<null>> {
   const admin = await requireAdmin();
-  if (!admin) return { ok: false, error: CommentError.Forbidden };
+  if (!admin) return refuse("resolveReport", DataError.Forbidden);
 
   const [row] = await db
     .update(commentReportsTable)
@@ -368,5 +383,5 @@ export async function resolveReport(
     )
     .returning();
 
-  return row ? { ok: true, value: null } : { ok: false, error: CommentError.NotFound };
+  return row ? ok(null) : refuse("resolveReport", DataError.NotFound);
 }

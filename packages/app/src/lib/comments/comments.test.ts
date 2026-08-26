@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 
+import { DataError } from "@/lib/result";
+
 import {
   COMMENT_ERROR_MESSAGES,
   CommentDeletion,
@@ -75,14 +77,22 @@ describe("CommentError", () => {
   // on the wire. Written out rather than derived, so a rename has to be made deliberately here.
   it("keeps its wire values", () => {
     expect({ ...CommentError }).toEqual({
-      Unauthenticated: "unauthenticated",
-      Forbidden: "forbidden",
-      NotFound: "not-found",
       Deleted: "deleted",
       BadSubject: "bad-subject",
       Empty: "empty",
       TooLong: "too-long",
       RateLimited: "rate-limited",
+    });
+  });
+
+  // `DataError` declares these. They are pinned here too because a comment action still puts them
+  // on the wire, so the strings remain this module's protocol whatever enum now declares them.
+  it("keeps the wire values of the failures it shares with every action", () => {
+    expect({ ...DataError }).toEqual({
+      Unauthenticated: "unauthenticated",
+      Forbidden: "forbidden",
+      NotFound: "not-found",
+      Invalid: "invalid",
     });
   });
 });
@@ -93,7 +103,7 @@ describe("COMMENT_ERROR_MESSAGES", () => {
   });
 
   it("carries a message for every error, so none can surface unexplained", () => {
-    for (const error of Object.values(CommentError)) {
+    for (const error of [...Object.values(CommentError), ...Object.values(DataError)]) {
       expect(COMMENT_ERROR_MESSAGES[error]).toBeTruthy();
     }
   });

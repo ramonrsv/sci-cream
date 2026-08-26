@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
+import { ActionError } from "@/app/_elements/action-error";
 import { CommentItem } from "@/app/_elements/comment";
 import { MarkdownField } from "@/app/_elements/markdown";
 import {
@@ -14,6 +15,7 @@ import {
   type CommentJson,
   type CommentResult,
 } from "@/lib/comments/comments";
+import type { DataError } from "@/lib/result";
 import {
   deleteComment,
   editComment,
@@ -54,14 +56,14 @@ export function CommentThread({ subject }: { subject: CommentSubject }) {
   const [loading, setLoading] = useState(true);
   const [composer, setComposer] = useState<Composer | undefined>(undefined);
   const [draft, setDraft] = useState("");
-  const [error, setError] = useState<CommentError | undefined>(undefined);
+  const [error, setError] = useState<DataError | CommentError | undefined>(undefined);
   const [pending, setPending] = useState(false);
 
   // The one memoized callback here: the mount effect depends on it, and a fresh identity each
   // render would re-fire the effect, whose own setState would spin that into a fetch loop.
   const refresh = useCallback(async () => {
     const rows = await fetchComments(subject);
-    setComments(rows);
+    setComments(rows.ok ? rows.value : undefined);
     setLoading(false);
   }, [subject]);
 
@@ -148,11 +150,7 @@ export function CommentThread({ subject }: { subject: CommentSubject }) {
           placeholder={editing ? "Edit your comment…" : "Add a comment…"}
           textareaTestId="comment-input"
         />
-        {error !== undefined && (
-          <p className="text-sm text-red-500" role="alert">
-            {COMMENT_ERROR_MESSAGES[error]}
-          </p>
-        )}
+        <ActionError error={error} messages={COMMENT_ERROR_MESSAGES} />
         <div className="flex gap-2">
           <button
             type="button"

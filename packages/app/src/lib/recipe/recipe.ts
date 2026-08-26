@@ -3,6 +3,7 @@ import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import { roundToStep, standardInputStepByPercent, verify } from "@/lib/util";
 
 import { WasmResources } from "@/lib/resources/wasm";
+import { DataError, DATA_ERROR_MESSAGES } from "@/lib/result";
 import {
   Ingredient,
   MixProperties,
@@ -12,6 +13,32 @@ import {
   type LightRecipe,
   type LightRecipeLine,
 } from "@workspace/sci-cream";
+
+/**
+ * Why a saved-recipe action refused, beyond the {@link DataError}s every action shares.
+ * The string values cross the server-action boundary, so renaming one is a protocol change.
+ */
+export enum RecipeError {
+  /** `recipes_user_name_uq`: this user already has a recipe under that name. */
+  NameTaken = "name-taken",
+  /** A recipe keeps one version; deleting the last is `deleteUserRecipe`'s job, not this one. */
+  LastVersion = "last-version",
+  /** `recipe_versions_recipe_version_name_uq`: that version name is already used on this recipe. */
+  VersionNameTaken = "version-name-taken",
+}
+
+/**
+ * Human-readable text for anything a saved-recipe action can refuse with.
+ * Shared defaults come first, so the recipe-specific wording below overrides them.
+ */
+export const RECIPE_ERROR_MESSAGES: Record<DataError | RecipeError, string> = {
+  ...DATA_ERROR_MESSAGES,
+  [DataError.Unauthenticated]: "Sign in to save recipes.",
+  [DataError.Forbidden]: "That recipe isn't yours.",
+  [RecipeError.NameTaken]: "You already have a recipe with that name.",
+  [RecipeError.LastVersion]: "A recipe keeps its last version — delete the recipe instead.",
+  [RecipeError.VersionNameTaken]: "That version name is already used on this recipe.",
+};
 
 /** A single row in the recipe grid, holding the name, quantity, and resolved WASM `Ingredient` */
 export interface IngredientRow {

@@ -12,6 +12,8 @@
 - [ ] Add a leading emoji to some selects to make their purpose clearer; also add title/labels.
 - [ ] `RecipeEditor` does not update the ingredient name/version if the original is deleted.
 - [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
+- [ ] `ShareErrorNotice` and `BatchErrorNotice` are byte-identical but for their `data-testid`.
+      Share one view-level notice element, distinct from the inline `ActionError`.
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
 - [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
 - [ ] In the `PropertiesChart` tooltip, move the numeric value to the left so it does not overflow.

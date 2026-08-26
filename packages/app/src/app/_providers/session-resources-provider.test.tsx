@@ -16,11 +16,15 @@ import { useSessionResources } from "@/lib/resources/session";
 // ---------------------------------------------------------------------------
 
 vi.mock("next-auth/react", () => ({ useSession: vi.fn() }));
-vi.mock("@/lib/data/recipes", () => ({ fetchAllUserSavedRecipes: vi.fn().mockResolvedValue([]) }));
-vi.mock("@/lib/data/ingredients", () => ({
-  fetchAllUserIngredientSpecs: vi.fn().mockResolvedValue([]),
+vi.mock("@/lib/data/recipes", () => ({
+  fetchAllUserSavedRecipes: vi.fn().mockResolvedValue({ ok: true, value: [] }),
 }));
-vi.mock("@/lib/data/batches", () => ({ fetchAllUserBatches: vi.fn().mockResolvedValue([]) }));
+vi.mock("@/lib/data/ingredients", () => ({
+  fetchAllUserIngredientSpecs: vi.fn().mockResolvedValue({ ok: true, value: [] }),
+}));
+vi.mock("@/lib/data/batches", () => ({
+  fetchAllUserBatches: vi.fn().mockResolvedValue({ ok: true, value: [] }),
+}));
 
 // Spy on the embedded-data seeder (wrapping the real one) so we can assert the provider seeds the
 // shared bridge specifically from embedded data — not via some other seeding path.
@@ -85,9 +89,9 @@ const savedRecipe: SavedRecipeJson = {
 describe("SessionResourcesProvider", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue([]);
-    vi.mocked(fetchAllUserIngredientSpecs).mockResolvedValue([]);
-    vi.mocked(fetchAllUserBatches).mockResolvedValue([]);
+    vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue({ ok: true, value: [] });
+    vi.mocked(fetchAllUserIngredientSpecs).mockResolvedValue({ ok: true, value: [] });
+    vi.mocked(fetchAllUserBatches).mockResolvedValue({ ok: true, value: [] });
     mockSignedOut();
   });
 
@@ -126,7 +130,7 @@ describe("SessionResourcesProvider", () => {
 
     await waitFor(() => expect(screen.getByRole("button")).toHaveTextContent("recipes:0"));
 
-    vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue([savedRecipe]);
+    vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue({ ok: true, value: [savedRecipe] });
     fireEvent.click(screen.getByRole("button"));
 
     await waitFor(() => expect(screen.getByRole("button")).toHaveTextContent("recipes:1"));
