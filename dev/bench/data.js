@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787718398707,
+  "lastUpdate": 1787718451684,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -561630,6 +561630,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "TTFB",
             "value": 3.39,
+            "range": "0.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d555ec7b7ce5c4b50767e572ed3955de72c6e9e0",
+          "message": "Close the email-at-rest TODO, track normalization\n\nHashing `users.email` would foreclose password reset, and\ndeterministic encryption is not worth the key-management cost while\nthe host already encrypts at rest, so the question closes by\ndecision rather than by change.\n\nThe investigation did turn up that nothing lowercases or trims the\naddress at any of its four lookup sites, so casing alone splits one\nuser across two accounts. Tracked as its own item.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T00:22:14-04:00",
+          "tree_id": "2e51ce1ae2a5ea04be582952883e1b440aad4b82",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d555ec7b7ce5c4b50767e572ed3955de72c6e9e0"
+        },
+        "date": 1787718401902,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.44,
+            "range": "7.83",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.72,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.69,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 180.5,
+            "range": "12.24",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 180.5,
+            "range": "12.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.02,
+            "range": "7.34",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.42,
             "range": "0.38",
             "unit": "ms"
           }
