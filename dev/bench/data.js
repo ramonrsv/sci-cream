@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787775443095,
+  "lastUpdate": 1787775458172,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -505932,6 +505932,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.07%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9cab2f57c42a1854bfab320dcd74358ecd81fd88",
+          "message": "Express client gating as `signedIn`\n\nFour components held the session email only to test it for\ntruthiness, a leftover from when the `lib/data/` actions took a\n`userEmail` argument. `SaveBatchAction` had it worst, taking an\nemail through its public props purely to ask whether anyone was\nsigned in, and never reading the value.\n\nThe derivation moves into `useSignedIn()` in `lib/hooks/`, beside\n`useIsNarrow` and `useCanHover`, which turn a broader primitive\ninto a named question the same way. Three of the four call it and\ndrop their `useSession` import; `SaveBatchAction` takes a\n`signedIn: boolean` prop instead.\n\n`comment-thread.tsx` keeps deriving its own, from a `status` it\nalready destructures for a three-way check no boolean can answer.\n`navbar.tsx` and the session-resources provider are untouched: one\nrenders the user, the other keys a cache on the email so it can\ntell one user signing out and another in from a session that never\nchanged.\n\nNo existing test needed a change, mocks of `next-auth/react`\nreaching the hook unaltered.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T11:58:25-04:00",
+          "tree_id": "2b7d51cec4ef31cacf764108f3fc8b0b8fc2641b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9cab2f57c42a1854bfab320dcd74358ecd81fd88"
+        },
+        "date": 1787775406211,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 58440,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 495870,
+            "range": "±0.41%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 42070,
+            "range": "±1.50%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 381427,
+            "range": "±0.90%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
