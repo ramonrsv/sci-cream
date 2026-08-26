@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787717485874,
+  "lastUpdate": 1787717512578,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -504186,6 +504186,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.98%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "768142efe484bff7478de79d9a9c136546b687de",
+          "message": "Fold ad-hoc notes into the TODO files\n\nSome thirty loose notes go into the app, crate, and content TODO\nfiles, reworded to the existing one-to-three line house style and\nplaced by size: fixes and polish in Next Release, features in Up\nNext, investigations in Backlog.\n\nFour were deduplicated: ingredient evaporation against parametric\ningredients, frozen-dessert classes against the acceptable-ranges\npresets, the key-selection pair against itself, and the save-state\nvisual tests into the existing save-interface entry.\n\nThe make-recipe column cross-out goes straight to Completed, since\nthe header badge already strikes through once its column is weighed.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T00:08:17-04:00",
+          "tree_id": "a91e08dd841e0a60c8575aef55ed16c874365509",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/768142efe484bff7478de79d9a9c136546b687de"
+        },
+        "date": 1787717460965,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 55616,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 500569,
+            "range": "±0.41%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 41178,
+            "range": "±1.31%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 385251,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
           }
         ]
       }
