@@ -14,6 +14,7 @@
       Consider tightening to `COMPOSITION_EPSILON` and/or adding a tighter/loser assert variant.
 - [ ] Add `CompKey`s and ingredient for the known emulsifiers, e.g. `gum_arabic`/"Gum Arabic".
 - [ ] Switch the hard-coded FPD calculation `PacToFpdMethod` from `Interpolation` to `Polynomial`.
+- [ ] Add a 'Corn Syrup' definition, most likely an alias to a specific glucose syrup entry.
 
 ## Up Next
 
@@ -57,6 +58,11 @@
 - [ ] Add wine ingredients, and considered adding evaporated wine - how to handle, parametric?
 - [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '\* [Evap 15]', etc.
 - [ ] Look into using sub-footnotes to simplify in-text citations with just a footnote link.
+- [ ] Add proper support for `FullSpec` and convert "Vegetable Oil" and "Palm Oil" to it; they use
+      `FruitSpec`/`NutSpec` today, so their fat lands under fruit/nut fat rather than `OtherFats`.
+- [ ] Consider supporting ignored ingredients — ones strained out before freezing, e.g. herbs, etc.
+- [ ] Add a buttermilk ingredient (Goff & Hartel), distinct from the "Buttermilk Powder" listed
+      above, and look into the stabilizing role that Underbelly and Goff & Hartel both mention.
 
 ## Backlog
 

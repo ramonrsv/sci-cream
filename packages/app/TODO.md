@@ -7,7 +7,8 @@
 - [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
 - [ ] Add a visual warning indicator for user-defined ingredients that shadow built-in ones.
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
-- [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
+- [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes,
+      and for the dirty/saved status dots in `RecipeEditor` and `/make-recipe`.
 - [ ] Add a leading emoji to some selects to make their purpose clearer; also add title/labels.
 - [ ] `RecipeEditor` does not update the ingredient name/version if the original is deleted.
 - [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
@@ -20,6 +21,15 @@
 - [ ] Make the mobile docs contents panel overlay the article rather than push it down: at scroll
       offset 0 anchoring is suppressed, so opening shifts the body down and closing snaps it back.
       `.doc-toc` is already sticky, so `absolute inset-x-0 top-full` below `md`, plus dismiss keys.
+- [ ] Deleting the selected `/make-recipe` batch clears only `savedBatchId`, so the editor keeps
+      the deleted batch's rows as an unbound draft; reset the selection to an empty one instead.
+- [ ] Thin ring around the invalid evaporation input: `-outline-offset-2` insets its red outline.
+- [ ] Make `RatingFilterSelect` narrower; its width follows the widest option label, `Good+`.
+- [ ] The `/make-recipe` `Total (g)` column is `hidden sm:table-cell`, so it goes away on every
+      viewport under 640px. Hide it when the table is actually short of space, not on width.
+- [ ] Add visual regression tests for the chart tooltips; only their callbacks are unit-tested.
+- [ ] Add visual regression coverage for the `/blog` index, the way `docs.spec.ts` covers `/docs`.
+- [ ] Increase the navbar logo size; it is `HEADER_ICON_SIZE + 2`, so give it its own constant.
 
 ## Up Next
 
@@ -64,6 +74,24 @@
 - [ ] Vendor self-subsetted fonts instead of whole families: `@fontsource/noto-emoji` pulls ~117KB
       to draw three rating glyphs that a 3-glyph cut does in 2.3KB, and Geist ships 728 and 889
       codepoints for Latin text. One subsetting step for all; vendored bytes pin snapshot glyphs.
+- [ ] Add the author's custom key selection to the recipe-share payload, as an optional field.
+- [ ] Add a recipe summary panel showing only the key properties, simpler than `PropertiesTable`.
+- [ ] Share built-in recipes with a link naming them, not one encoding them into the URL fragment.
+- [ ] Copy a recipe from a `/make-recipe` batch, or load it into a calculator slot (`LoadAction`).
+- [ ] Check off a whole `/make-recipe` row at once, from the ingredient name or its total cell.
+- [ ] Carry evaporation into `/make-recipe`: `BatchRecipe.rows` holds names and grams only, so a
+      slot's evaporation reaches neither the weighing checklist nor `BatchPayloadRecipe`.
+- [ ] `readCalculatorSources` drops the slot's `savedRef`, so a batch built from a calculator slot
+      shows no version. Carry it through when the slot is bound to a saved version.
+- [ ] Allow short per-recipe notes in a batch; `Batch.notes` covers the whole procedure.
+- [ ] Add more color to the interface, particularly the action buttons, favourite, rating badges.
+- [ ] Add support for different units of measurement (weight, energy, temperature) at the UI level.
+- [ ] Make a grouped `GroupBy` the default; it starts `Ungrouped` to match the first server render.
+- [ ] Add a way to resize a recipe without re-balancing it, probably beside `WatchersView`'s
+      total-amount input: scale every ingredient row to the new total rather than solving.
+- [ ] Pin a clapping-hands glyph the way `DELTA_GLYPH` is pinned and use it for `Rating.Great` in
+      place of lucide's `Trophy`; U+1F44F extends the existing `U+1f44d-1f44e` face range.
+- [ ] Hide the ratings filter in `/recipes` until the user has at least one rated version.
 
 ## Backlog
 
@@ -130,9 +158,15 @@
 - [ ] `BatchBuilder` assumes `batch.recipes[i]` pairs with `selection.items[i]`: the JSX maps the
       batch while `removeAt`/`colorAt`/`versionAt` index the selection. Nothing enforces it beyond
       `makeBatchFromSelection` mapping 1:1; look into pairing them explicitly via row view-models.
+- [ ] Untangle the overlapping batch shapes: `AddableRecipe`, `RecipeSnapshot`, `VersionChoice`,
+      `BatchSelection`, `BatchRecipe`, and `SavedBatchJson` all describe a recipe in a batch, and
+      `lib/batch/builder` converts between them in every direction. Versions are split the same way.
+- [ ] Look into whether `users.email` should be encrypted or hashed; it is plaintext under a unique
+      index, and `lib/data/` looks users up by the value, so any scheme has to stay deterministic.
 
 ## Completed
 
+- [x] Cross out a recipe's `/make-recipe` column header once every cell in that column is checked.
 - [x] The mobile sidebar tests click and shoot through the drawer's 200ms width transition:
       `rail sidebar` loses the pin click ~1/10, `expanded sidebar` captures greyscale text
       antialiasing. Wait for the settled width (216px peeked, 56px rail) between clicks and shots.

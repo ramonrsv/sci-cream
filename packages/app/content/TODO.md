@@ -4,6 +4,7 @@
 
 - [ ] Update blog/2026-04-27-welcome.md date and content to reflect latest release before publish.
 - [ ] Update images for blog/2026-04-27-welcome, to reflect latest release, including fixes.
+- [ ] Write a blog post about AI usage in the project, and add an AI policy docs page.
 
 ## Backlog
 
