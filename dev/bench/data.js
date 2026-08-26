@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787776119396,
+  "lastUpdate": 1787776202056,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -469492,6 +469492,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 687.13,
             "range": "14.92",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9cab2f57c42a1854bfab320dcd74358ecd81fd88",
+          "message": "Express client gating as `signedIn`\n\nFour components held the session email only to test it for\ntruthiness, a leftover from when the `lib/data/` actions took a\n`userEmail` argument. `SaveBatchAction` had it worst, taking an\nemail through its public props purely to ask whether anyone was\nsigned in, and never reading the value.\n\nThe derivation moves into `useSignedIn()` in `lib/hooks/`, beside\n`useIsNarrow` and `useCanHover`, which turn a broader primitive\ninto a named question the same way. Three of the four call it and\ndrop their `useSession` import; `SaveBatchAction` takes a\n`signedIn: boolean` prop instead.\n\n`comment-thread.tsx` keeps deriving its own, from a `status` it\nalready destructures for a three-way check no boolean can answer.\n`navbar.tsx` and the session-resources provider are untouched: one\nrenders the user, the other keys a cache on the email so it can\ntell one user signing out and another in from a session that never\nchanged.\n\nNo existing test needed a change, mocks of `next-auth/react`\nreaching the hook unaltered.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-26T11:58:25-04:00",
+          "tree_id": "2b7d51cec4ef31cacf764108f3fc8b0b8fc2641b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9cab2f57c42a1854bfab320dcd74358ecd81fd88"
+        },
+        "date": 1787776152062,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 55.88,
+            "range": "7.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 58.75,
+            "range": "5.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 60.25,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2552.88,
+            "range": "47.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 329.38,
+            "range": "6.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 341.38,
+            "range": "3.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 356.88,
+            "range": "4.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17009.13,
+            "range": "104.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 958.5,
+            "range": "12.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 57.63,
+            "range": "1.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.38,
+            "range": "1.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.88,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.38,
+            "range": "2.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 132.63,
+            "range": "6.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 98.13,
+            "range": "5.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 59.5,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 45.92,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 660.5,
+            "range": "14.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 726,
+            "range": "10.76",
             "unit": "ms"
           }
         ]
