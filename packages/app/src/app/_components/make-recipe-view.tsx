@@ -158,7 +158,7 @@ export function MakeRecipeView() {
       userEmail != null && id !== undefined,
       "deleteBatch invoked without a bound saved batch",
     );
-    await deleteUserBatch(userEmail, id);
+    await deleteUserBatch(id);
     setSelection((prev) => ({ ...prev, savedBatchId: undefined }));
     await refreshUserBatches();
   };
@@ -175,7 +175,7 @@ export function MakeRecipeView() {
       userEmail != null && boundBatch !== undefined,
       "toggleBatchFavourite invoked without a bound saved batch",
     );
-    await setUserBatchFavourite(userEmail, boundBatch.id, favourite);
+    await setUserBatchFavourite(boundBatch.id, favourite);
     await refreshUserBatches();
   };
 

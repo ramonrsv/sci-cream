@@ -66,7 +66,7 @@ export default function RecipesPage() {
       "handleDeleteSavedRecipe invoked while userEmail or entry.recipeId is missing",
     );
 
-    await deleteUserRecipe(userEmail, entry.recipeId);
+    await deleteUserRecipe(entry.recipeId);
     await refreshUserRecipes();
   }
 
@@ -80,7 +80,7 @@ export default function RecipesPage() {
       "handleDeleteSavedRecipeVersion invoked while userEmail or entry.recipeId is missing",
     );
 
-    await deleteUserRecipeVersion(userEmail, entry.recipeId, version.version);
+    await deleteUserRecipeVersion(entry.recipeId, version.version);
     await refreshUserRecipes();
   }
 
@@ -95,7 +95,7 @@ export default function RecipesPage() {
       "handleUpdateSavedRecipeVersion invoked while userEmail or entry.recipeId is missing",
     );
 
-    await updateUserRecipeVersion(userEmail, entry.recipeId, version.version, meta);
+    await updateUserRecipeVersion(entry.recipeId, version.version, meta);
     await refreshUserRecipes();
   }
 
@@ -106,7 +106,7 @@ export default function RecipesPage() {
       "handleToggleSavedRecipeFavourite invoked while userEmail or entry.recipeId is missing",
     );
 
-    await setUserRecipeFavourite(userEmail, entry.recipeId, favourite);
+    await setUserRecipeFavourite(entry.recipeId, favourite);
     await refreshUserRecipes();
   }
 

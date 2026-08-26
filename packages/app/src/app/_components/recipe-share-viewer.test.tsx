@@ -25,6 +25,15 @@ const routerPush = vi.hoisted(() => vi.fn());
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: routerPush }) }));
 
+// `tables/recipe` is in this tree and imports the saved-recipe actions. Stubbing them draws the
+// boundary Next.js would around a `"use server"` module; the runner otherwise loads NextAuth.
+vi.mock("@/lib/data/recipes", () => ({
+  createUserRecipe: vi.fn(),
+  createUserRecipeVersion: vi.fn(),
+  renameUserRecipe: vi.fn(),
+  updateUserRecipeVersion: vi.fn(),
+}));
+
 // ---------------------------------------------------------------------------
 // Fixtures and helpers
 // ---------------------------------------------------------------------------

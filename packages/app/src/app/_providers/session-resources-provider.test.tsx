@@ -114,9 +114,9 @@ describe("SessionResourcesProvider", () => {
     renderProvider();
 
     await waitFor(() => {
-      expect(fetchAllUserSavedRecipes).toHaveBeenCalledWith("a@b.c");
-      expect(fetchAllUserIngredientSpecs).toHaveBeenCalledWith("a@b.c");
-      expect(fetchAllUserBatches).toHaveBeenCalledWith("a@b.c");
+      expect(fetchAllUserSavedRecipes).toHaveBeenCalledWith();
+      expect(fetchAllUserIngredientSpecs).toHaveBeenCalledWith();
+      expect(fetchAllUserBatches).toHaveBeenCalledWith();
     });
   });
 

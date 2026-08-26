@@ -1,4 +1,16 @@
-import { expect, test, describe } from "vitest";
+import { expect, test, describe, beforeEach, vi } from "vitest";
+
+/**
+ * Identity reaches these actions only through `auth()`, so that is what is mocked:
+ * every test drives the real query path and only swaps who is signed in.
+ */
+
+/** Who `auth()` reports as signed in; `undefined` is an anonymous request. */
+const session = vi.hoisted(() => ({ email: undefined as string | undefined }));
+
+vi.mock("@/lib/auth", () => ({
+  auth: vi.fn(async () => (session.email ? { user: { email: session.email } } : null)),
+}));
 
 import { findUserByEmail } from "@/lib/data/users";
 import {
@@ -23,12 +35,24 @@ import { TEST_USER_A, TEST_USER_B, USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/data
 
 type SpecAsset = typeof USER_DEFINED_FRUCTOSE_SPEC;
 
-/** Helper function to get the test user B from the database, throwing an error if not found */
-async function getTestUserB() {
-  const user = await findUserByEmail(TEST_USER_B.email);
-  if (!user) throw new Error("Test user B not found");
+/** Sign in as the given test user for the rest of the test; no argument signs out. */
+function signInAs(email?: string) {
+  session.email = email;
+}
+
+beforeEach(() => {
+  signInAs();
+});
+
+/** Helper function to get a test user from the database, throwing an error if not found */
+async function getTestUser(email: string) {
+  const user = await findUserByEmail(email);
+  if (!user) throw new Error(`Test user ${email} not found`);
   return user;
 }
+
+const getTestUserA = () => getTestUser(TEST_USER_A.email);
+const getTestUserB = () => getTestUser(TEST_USER_B.email);
 
 /** Helper to assert that a Drizzle ingredient spec matches the expected spec and user asset */
 function expectDrizzleSpecToMatch(
@@ -55,8 +79,9 @@ describe("fetchUserIngredientSpecByName", () => {
   test("into_ingredient_from_spec from user-defined spec in DB", async () => {
     const user = await getTestUserB();
     const spec = USER_DEFINED_FRUCTOSE_SPEC;
+    signInAs(TEST_USER_B.email);
 
-    const specDrizzle = await fetchUserIngredientSpecByName(TEST_USER_B.email, spec.name);
+    const specDrizzle = await fetchUserIngredientSpecByName(spec.name);
     expectDrizzleSpecToMatch(specDrizzle, spec, user);
 
     const ingParsed = into_ingredient_from_spec(specDrizzle!.spec);
@@ -67,8 +92,9 @@ describe("fetchUserIngredientSpecByName", () => {
     const user = await getTestUserB();
     const spec = USER_DEFINED_FRUCTOSE_SPEC;
     const bridge = new WasmBridge(new IngredientDatabase());
+    signInAs(TEST_USER_B.email);
 
-    const specDrizzle = await fetchUserIngredientSpecByName(TEST_USER_B.email, spec.name);
+    const specDrizzle = await fetchUserIngredientSpecByName(spec.name);
     expectDrizzleSpecToMatch(specDrizzle, spec, user);
 
     bridge.seed_from_specs([specDrizzle!.spec], OnConflict.Reject);
@@ -81,8 +107,9 @@ describe("fetchAllUserIngredientSpecs", () => {
   test("into_ingredient_from_spec from user-defined specs in DB", async () => {
     const user = await getTestUserB();
     const spec = USER_DEFINED_FRUCTOSE_SPEC;
+    signInAs(TEST_USER_B.email);
 
-    const specsDrizzle = await fetchAllUserIngredientSpecs(TEST_USER_B.email);
+    const specsDrizzle = await fetchAllUserIngredientSpecs();
     expect(specsDrizzle).toBeDefined();
     expect(specsDrizzle!.length).toBeGreaterThan(0);
 
@@ -97,8 +124,9 @@ describe("fetchAllUserIngredientSpecs", () => {
     const user = await getTestUserB();
     const spec = USER_DEFINED_FRUCTOSE_SPEC;
     const bridge = new WasmBridge(new IngredientDatabase());
+    signInAs(TEST_USER_B.email);
 
-    const specsDrizzle = await fetchAllUserIngredientSpecs(TEST_USER_B.email);
+    const specsDrizzle = await fetchAllUserIngredientSpecs();
     expect(specsDrizzle).toBeDefined();
     expect(specsDrizzle!.length).toBeGreaterThan(0);
 
@@ -115,11 +143,37 @@ describe("fetchAllUserIngredientSpecs", () => {
   });
 
   test("returns specs in ascending order by name (for stable UI rendering)", async () => {
-    const specs = await fetchAllUserIngredientSpecs(TEST_USER_A.email);
+    signInAs(TEST_USER_A.email);
+
+    const specs = await fetchAllUserIngredientSpecs();
     expect(specs).toBeDefined();
     expect(specs!.length).toBeGreaterThan(1);
 
     const names = specs!.map((s) => s.name);
     expect(names).toEqual([...names].sort());
+  });
+});
+
+describe("identity", () => {
+  test("an anonymous caller reads nothing", async () => {
+    expect(await fetchAllUserIngredientSpecs()).toBeUndefined();
+    expect(await fetchUserIngredientSpecByName(USER_DEFINED_FRUCTOSE_SPEC.name)).toBeUndefined();
+  });
+
+  test("the rows returned belong to whoever is signed in", async () => {
+    // Both test users are seeded a spec under this name, so only the owner column tells them apart.
+    const specName = USER_DEFINED_FRUCTOSE_SPEC.name;
+    const userA = await getTestUserA();
+    const userB = await getTestUserB();
+
+    signInAs(TEST_USER_B.email);
+    expect((await fetchUserIngredientSpecByName(specName))?.user).toBe(userB.id);
+    const specsB = await fetchAllUserIngredientSpecs();
+    expect(specsB!.every((spec) => spec.user === userB.id)).toBe(true);
+
+    signInAs(TEST_USER_A.email);
+    expect((await fetchUserIngredientSpecByName(specName))?.user).toBe(userA.id);
+    const specsA = await fetchAllUserIngredientSpecs();
+    expect(specsA!.every((spec) => spec.user === userA.id)).toBe(true);
   });
 });

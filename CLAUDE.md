@@ -245,10 +245,12 @@ to keep the word. Each file drops only its own directory's word: the batch-build
   `batch_recipes` (keyed `(batch_id, position)`, holding a composite FK to `recipe_versions` for
   provenance only). The `categoryEnum` is sourced from the Rust-defined `SchemaCategory` via
   `@workspace/sci-cream/schema-category`.
-- **`lib/data/`** — every `"use server"` action, one module per domain (`users`, `ingredients`,
-  `recipes`, `batches`); each export is an endpoint a browser can POST to, so one directory keeps
-  that surface enumerable. Pure logic stays in `lib/<domain>/`. Derive identity with `requireUser()`
-  from `session.ts`, which — like `util.ts` — is not `"use server"`, so its helpers stay internal.
+- **`lib/data/`** — every `"use server"` action, one module per domain (`ingredients`, `recipes`,
+  `batches`, `comments`); each export is an endpoint a browser can POST to, keeping that surface
+  enumerable. Pure logic stays in `lib/<domain>/`. No action takes a user identifier — that would be
+  the client's claim about itself — so identity comes from the signed session, via `requireUser()`
+  in `session.ts`. Only it and `users.ts` are not `"use server"`: `users.ts` serves the pre-session
+  layer (sign-in, OAuth linking, signup), so its email lookups must not be endpoints.
 - **`lib/auth.ts`** — NextAuth v5 (beta) with GitHub + Google OAuth providers.
 - **`app/blog/`**, **`app/docs/`** — markdown-rendered content.
 

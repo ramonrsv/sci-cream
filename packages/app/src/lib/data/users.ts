@@ -1,5 +1,3 @@
-"use server";
-
 import { eq } from "drizzle-orm";
 
 import { db } from "@/lib/database/client";
@@ -7,12 +5,15 @@ import { UserSelect, UserInsert, usersTable } from "@/lib/database/schema";
 import { log as baseLog } from "@/lib/log";
 
 /**
- * Server actions for user records.
+ * Lookups for user records, keyed by email.
  *
- * @todo These actions, and those in the sibling modules, take the caller's identity as a
- * `userEmail` argument. A server action is an HTTP endpoint, so that argument is a claim the client
- * makes about itself and can name anyone. Migrate them all to `requireUser()` from `./session`,
- * which reads the signed session instead. New actions must use it from the start.
+ * Not a `"use server"` module, and deliberately so: an email here is a lookup key for the layer
+ * that runs before a session exists — credentials sign-in, OAuth account linking, signup — not a
+ * caller naming itself. Exported as endpoints they would hand any browser a password hash and a
+ * way to create users, so they stay internal, as `./session`'s helpers do.
+ *
+ * Actions that act on behalf of the signed-in user take no identifier at all; they call
+ * `requireUser()` from `./session`.
  */
 
 const log = baseLog.child({ mod: "data/users" });

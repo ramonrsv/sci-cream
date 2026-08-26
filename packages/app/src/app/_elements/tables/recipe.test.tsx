@@ -1014,14 +1014,14 @@ describe("RecipeEditor", () => {
       controls.forEach((el) => expect(el).toBeDisabled());
     });
 
-    it("calls createUserRecipe with the user email, name, and rows for a new recipe (no recipeId)", async () => {
+    it("calls createUserRecipe with the name and rows for a new recipe (no recipeId)", async () => {
       mockSignedIn();
       populateRecipe("My Recipe");
       render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
       fireEvent.click(screen.getByTitle("Save recipe"));
       await waitFor(() => {
-        expect(createUserRecipe).toHaveBeenCalledWith("a@b.c", "My Recipe", [["Whole Milk", 500]], {
+        expect(createUserRecipe).toHaveBeenCalledWith("My Recipe", [["Whole Milk", 500]], {
           evaporation: null,
         });
       });
@@ -1037,7 +1037,6 @@ describe("RecipeEditor", () => {
       fireEvent.click(screen.getByTitle("Save recipe"));
       await waitFor(() => {
         expect(createUserRecipe).toHaveBeenCalledWith(
-          "a@b.c",
           "My Recipe",
           [
             ["Whole Milk", 500],
@@ -1056,7 +1055,7 @@ describe("RecipeEditor", () => {
 
       fireEvent.click(screen.getByTitle("Save recipe"));
       await waitFor(() => {
-        expect(createUserRecipe).toHaveBeenCalledWith("a@b.c", "My Recipe", [["Whole Milk", 500]], {
+        expect(createUserRecipe).toHaveBeenCalledWith("My Recipe", [["Whole Milk", 500]], {
           evaporation: 25,
         });
       });
@@ -1074,7 +1073,7 @@ describe("RecipeEditor", () => {
         screen.getByTitle((value) => /Save changes to version 3|Saved — version 3/.test(value)),
       );
       await waitFor(() => {
-        expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, 3, {
+        expect(updateUserRecipeVersion).toHaveBeenCalledWith(7, 3, {
           recipe: [["Whole Milk", 500]],
           evaporation: null,
         });
@@ -1093,7 +1092,7 @@ describe("RecipeEditor", () => {
         screen.getByTitle((value) => /Save changes to version 3|Saved — version 3/.test(value)),
       );
       await waitFor(() => {
-        expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, 3, {
+        expect(updateUserRecipeVersion).toHaveBeenCalledWith(7, 3, {
           recipe: [["Whole Milk", 500]],
           evaporation: 25,
         });
@@ -1112,8 +1111,8 @@ describe("RecipeEditor", () => {
         screen.getByTitle((value) => /Save changes to version 1|Saved — version 1/.test(value)),
       );
       await waitFor(() => {
-        expect(renameUserRecipe).toHaveBeenCalledWith("a@b.c", 7, "My Recipe Renamed");
-        expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, 1, {
+        expect(renameUserRecipe).toHaveBeenCalledWith(7, "My Recipe Renamed");
+        expect(updateUserRecipeVersion).toHaveBeenCalledWith(7, 1, {
           recipe: [["Whole Milk", 500]],
           evaporation: null,
         });
@@ -1150,7 +1149,7 @@ describe("RecipeEditor", () => {
       await waitFor(() => {
         // A blank new-version input omits versionName so the server auto-materializes only when
         // the recipe has opted into named versions.
-        expect(createUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, [["Whole Milk", 500]], {
+        expect(createUserRecipeVersion).toHaveBeenCalledWith(7, [["Whole Milk", 500]], {
           evaporation: null,
         });
       });
@@ -1356,7 +1355,7 @@ describe("RecipeEditor", () => {
       fireEvent.change(screen.getByLabelText("New version"), { target: { value: "3.1" } });
       fireEvent.click(screen.getByRole("button", { name: "Save as new version" }));
       await waitFor(() => {
-        expect(createUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, [["Whole Milk", 500]], {
+        expect(createUserRecipeVersion).toHaveBeenCalledWith(7, [["Whole Milk", 500]], {
           versionName: "3.1",
           evaporation: null,
         });

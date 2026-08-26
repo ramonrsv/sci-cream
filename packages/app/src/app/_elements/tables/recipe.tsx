@@ -559,7 +559,7 @@ export function RecipeEditor({
    */
   const applyRenameIfNeeded = async (recipe: Recipe): Promise<boolean> => {
     if (!userEmail || recipe.savedRef === undefined || !isRecipeRenamed(recipe)) return true;
-    const renamed = await renameUserRecipe(userEmail, recipe.savedRef.recipeId, recipe.name.trim());
+    const renamed = await renameUserRecipe(recipe.savedRef.recipeId, recipe.name.trim());
     return renamed !== undefined;
   };
 
@@ -609,7 +609,7 @@ export function RecipeEditor({
       const lightRecipe = makeLightRecipeAllRows(recipe);
 
       if (recipe.savedRef === undefined) {
-        const created = await createUserRecipe(userEmail, recipe.name.trim(), lightRecipe, {
+        const created = await createUserRecipe(recipe.name.trim(), lightRecipe, {
           evaporation: recipe.evaporation || null,
         });
         return created && { recipeId: created.recipeId, versionNumber: created.version.version };
@@ -618,7 +618,7 @@ export function RecipeEditor({
       // Existing recipe: rename first if needed, then overwrite the loaded version
       if (!(await applyRenameIfNeeded(recipe))) return undefined;
       const { recipeId, versionNumber } = recipe.savedRef;
-      const updated = await updateUserRecipeVersion(userEmail, recipeId, versionNumber, {
+      const updated = await updateUserRecipeVersion(recipeId, versionNumber, {
         recipe: lightRecipe,
         evaporation: recipe.evaporation || null,
       });
@@ -648,7 +648,7 @@ export function RecipeEditor({
     await performSave(recipe, async () => {
       if (!(await applyRenameIfNeeded(recipe))) return undefined;
       const lightRecipe = makeLightRecipeAllRows(recipe);
-      const created = await createUserRecipeVersion(userEmail, recipeId, lightRecipe, {
+      const created = await createUserRecipeVersion(recipeId, lightRecipe, {
         ...(versionName !== undefined ? { versionName } : {}),
         evaporation: recipe.evaporation || null,
       });

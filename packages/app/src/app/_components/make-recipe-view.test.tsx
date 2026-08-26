@@ -39,6 +39,15 @@ vi.mock("@/lib/data/batches", () => ({
   setUserBatchFavourite: vi.fn(),
 }));
 
+// `tables/recipe` is in this tree and imports the saved-recipe actions. Stubbing them draws the
+// boundary Next.js would around a `"use server"` module; the runner otherwise loads NextAuth.
+vi.mock("@/lib/data/recipes", () => ({
+  createUserRecipe: vi.fn(),
+  createUserRecipeVersion: vi.fn(),
+  renameUserRecipe: vi.fn(),
+  updateUserRecipeVersion: vi.fn(),
+}));
+
 /** Point `useSession` at a signed-in user, or `null` for signed-out (the default). */
 function setSessionEmail(email: string | null) {
   vi.mocked(useSession).mockReturnValue({
@@ -413,7 +422,7 @@ describe("MakeRecipeView — saving a batch", () => {
 
     fireEvent.click(screen.getByTestId("save-batch-button"));
     await waitFor(() => expect(createUserBatch).toHaveBeenCalledTimes(1));
-    expect(createUserBatch).toHaveBeenCalledWith("owner@example.com", {
+    expect(createUserBatch).toHaveBeenCalledWith({
       date: expect.any(String),
       recipes: [{ name: "My Gelato", rows: [["Whole Milk", 500]], color: "Blue" }],
     });
@@ -421,7 +430,7 @@ describe("MakeRecipeView — saving a batch", () => {
     // The returned id is remembered, so the second save updates that row rather than creating anew.
     fireEvent.click(screen.getByTestId("save-batch-button"));
     await waitFor(() => expect(updateUserBatch).toHaveBeenCalledTimes(1));
-    expect(updateUserBatch).toHaveBeenCalledWith("owner@example.com", 7, expect.anything());
+    expect(updateUserBatch).toHaveBeenCalledWith(7, expect.anything());
     expect(createUserBatch).toHaveBeenCalledTimes(1);
   });
 
@@ -522,9 +531,7 @@ describe("MakeRecipeView — saving a batch", () => {
 
     // Rebound to the new copy (id 99): the primary button now updates that one.
     fireEvent.click(screen.getByTestId("save-batch-button"));
-    await waitFor(() =>
-      expect(updateUserBatch).toHaveBeenCalledWith("owner@example.com", 99, expect.anything()),
-    );
+    await waitFor(() => expect(updateUserBatch).toHaveBeenCalledWith(99, expect.anything()));
   });
 });
 
@@ -688,7 +695,7 @@ describe("MakeRecipeView — loading a saved batch", () => {
     fireEvent.click(screen.getByTestId("delete-batch-button"));
 
     expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Loaded batch"));
-    await waitFor(() => expect(deleteUserBatch).toHaveBeenCalledWith("owner@example.com", 7));
+    await waitFor(() => expect(deleteUserBatch).toHaveBeenCalledWith(7));
 
     // Unbound after delete: the status dot returns to its hidden placeholder.
     await waitFor(() =>
@@ -900,9 +907,7 @@ describe("MakeRecipeView — batch quality signals", () => {
     await waitFor(() => expect(screen.getByTestId("favourite-toggle")).toBeInTheDocument());
     fireEvent.click(screen.getByTestId("favourite-toggle"));
 
-    await waitFor(() =>
-      expect(setUserBatchFavourite).toHaveBeenCalledWith("owner@example.com", 1, true),
-    );
+    await waitFor(() => expect(setUserBatchFavourite).toHaveBeenCalledWith(1, true));
     expect(updateUserBatch).not.toHaveBeenCalled();
     expect(createUserBatch).not.toHaveBeenCalled();
   });
@@ -914,8 +919,6 @@ describe("MakeRecipeView — batch quality signals", () => {
     await waitFor(() => expect(screen.getByTestId("favourite-toggle")).toBeInTheDocument());
     fireEvent.click(screen.getByTestId("favourite-toggle"));
 
-    await waitFor(() =>
-      expect(setUserBatchFavourite).toHaveBeenCalledWith("owner@example.com", 2, false),
-    );
+    await waitFor(() => expect(setUserBatchFavourite).toHaveBeenCalledWith(2, false));
   });
 });

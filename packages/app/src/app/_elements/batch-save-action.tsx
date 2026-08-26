@@ -45,9 +45,7 @@ export function SaveBatchAction({
     try {
       const input = batchToInput(batch);
       const saved =
-        asNew || !bound
-          ? await createUserBatch(userEmail, input)
-          : await updateUserBatch(userEmail, savedBatchId, input);
+        asNew || !bound ? await createUserBatch(input) : await updateUserBatch(savedBatchId, input);
       if (saved) onSaved(saved.id);
     } finally {
       setSaving(false);

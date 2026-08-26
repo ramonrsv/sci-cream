@@ -7,10 +7,10 @@ import type { LightRecipe } from "@workspace/sci-cream";
 import type { BatchRecipeVersion } from "@/lib/batch/batch";
 import { db } from "@/lib/database/client";
 import { batchesTable, batchRecipesTable, BatchSelect } from "@/lib/database/schema";
-import { findUserByEmail } from "@/lib/data/users";
+import { requireUser } from "@/lib/data/session";
 import { log as baseLog } from "@/lib/log";
 
-/** Server actions for saved batches and their recipes. See `./users`, `userEmail` argument. */
+/** Server actions for saved batches and their recipes. Identity comes from `requireUser()`. */
 
 const log = baseLog.child({ mod: "data/batches" });
 
@@ -138,15 +138,13 @@ async function findUserBatch(userId: number, batchId: number): Promise<BatchSele
   return row;
 }
 
-/** Fetch all saved batches belonging to the given user, newest first; `undefined` if not found. */
-export async function fetchAllUserBatches(
-  userEmail: string,
-): Promise<SavedBatchJson[] | undefined> {
+/** Fetch the signed-in user's saved batches, newest first; `undefined` if nobody is signed in. */
+export async function fetchAllUserBatches(): Promise<SavedBatchJson[] | undefined> {
   log.debug({ action: "fetchAllUserBatches" }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "fetchAllUserBatches" }, "user not found");
+    log.warn({ action: "fetchAllUserBatches" }, "no signed-in user");
     return undefined;
   }
 
@@ -221,16 +219,13 @@ export async function fetchAllUserBatches(
   return result;
 }
 
-/** Create a new batch for the given user; returns the stored batch, or `undefined` if not found. */
-export async function createUserBatch(
-  userEmail: string,
-  input: BatchInput,
-): Promise<SavedBatchJson | undefined> {
+/** Create a batch for the signed-in user; returns it, or `undefined` if nobody is signed in. */
+export async function createUserBatch(input: BatchInput): Promise<SavedBatchJson | undefined> {
   log.debug({ action: "createUserBatch" }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "createUserBatch" }, "user not found");
+    log.warn({ action: "createUserBatch" }, "no signed-in user");
     return undefined;
   }
 
@@ -258,21 +253,21 @@ export async function createUserBatch(
 }
 
 /**
- * Replace the contents of a user-owned batch in place, re-numbering recipe positions from the new
- * order. Returns the updated batch, or `undefined` if the user is not found or the batch is not
- * theirs. The recipe rows are deleted and re-inserted, so any checkoff progress keyed on weighing
- * content survives only when that content is unchanged — by design.
+ * Replace the contents of a batch the signed-in user owns in place.
+ *
+ * Re-numbers recipe positions from the new order. Returns the updated batch, or `undefined` if
+ * nobody is signed in or the batch is not theirs. Recipe rows are deleted and re-inserted, so
+ * checkoff progress keyed on weighing content survives only when it is unchanged — by design.
  */
 export async function updateUserBatch(
-  userEmail: string,
   batchId: number,
   input: BatchInput,
 ): Promise<SavedBatchJson | undefined> {
   log.debug({ action: "updateUserBatch", batchId }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "updateUserBatch" }, "user not found");
+    log.warn({ action: "updateUserBatch" }, "no signed-in user");
     return undefined;
   }
 
@@ -309,20 +304,19 @@ export async function updateUserBatch(
 }
 
 /**
- * Set or clear the star on a user-owned batch. Returns the updated row, or `undefined` if the user
- * is not found or the batch is not owned by them. Kept out of {@link updateUserBatch}, which
+ * Set or clear the star on a batch the signed-in user owns. Returns the updated row, or `undefined`
+ * if nobody is signed in or the batch is not theirs. Kept out of {@link updateUserBatch}, which
  * replaces a batch wholesale and would let a stale editor copy clear the star.
  */
 export async function setUserBatchFavourite(
-  userEmail: string,
   batchId: number,
   favourite: boolean,
 ): Promise<BatchSelect | undefined> {
   log.debug({ action: "setUserBatchFavourite", batchId, favourite }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "setUserBatchFavourite" }, "user not found");
+    log.warn({ action: "setUserBatchFavourite" }, "no signed-in user");
     return undefined;
   }
 
@@ -345,18 +339,15 @@ export async function setUserBatchFavourite(
 }
 
 /**
- * Delete a user-owned batch and all of its recipes (cascade). Returns the deleted batch row, or
- * `undefined` if the user was not found or no matching batch existed.
+ * Delete a batch the signed-in user owns and all of its recipes (cascade). Returns the deleted
+ * batch row, or `undefined` if nobody is signed in or no matching batch existed.
  */
-export async function deleteUserBatch(
-  userEmail: string,
-  batchId: number,
-): Promise<BatchSelect | undefined> {
+export async function deleteUserBatch(batchId: number): Promise<BatchSelect | undefined> {
   log.debug({ action: "deleteUserBatch", batchId }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "deleteUserBatch" }, "user not found");
+    log.warn({ action: "deleteUserBatch" }, "no signed-in user");
     return undefined;
   }
 

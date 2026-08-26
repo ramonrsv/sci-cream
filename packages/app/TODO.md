@@ -131,9 +131,6 @@
 - [ ] Add a "Tools" navbar item with tools like sweeteners lookup, ingredient replacement, etc.
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
-- [ ] Migrate every action in `lib/data/` off its `userEmail` argument onto `requireUser()` from
-      `lib/data/session.ts` — a caller-supplied email is a claim the client makes about itself, so
-      today any user can read or modify another's recipes, ingredients, and batches.
 - [ ] Stop `users.name` falling back to the email address: `lib/auth.ts` inserts OAuth users as
       `{ name: user.name ?? user.email }`, and comment threads render that publicly as the byline.
       Add a user-chosen display name, resolved for every payload by one `displayNameFor(user)`.
@@ -166,6 +163,9 @@
 
 ## Completed
 
+- [x] Migrate every action in `lib/data/` off its `userEmail` argument onto `requireUser()` from
+      `lib/data/session.ts` — a caller-supplied email is a claim the client makes about itself, so
+      today any user can read or modify another's recipes, ingredients, and batches.
 - [x] Look into whether `users.email` should be encrypted or hashed; it is plaintext under a unique
       index, and `lib/data/` looks users up by the value, so any scheme has to stay deterministic.
 - [x] Cross out a recipe's `/make-recipe` column header once every cell in that column is checked.

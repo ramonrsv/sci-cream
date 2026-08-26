@@ -9,10 +9,10 @@ import { isRating, type Rating } from "@/lib/rating";
 import { hasVersionNames, isValidVersionName, nextVersionName } from "@/lib/recipe/version";
 import { verifyDefined } from "@/lib/util";
 import { recipesTable, recipeVersionsTable, RecipeSelect } from "@/lib/database/schema";
-import { findUserByEmail } from "@/lib/data/users";
+import { requireUser } from "@/lib/data/session";
 import { log as baseLog } from "@/lib/log";
 
-/** Server actions for saved recipes and their versions. See `./users`, `userEmail` argument. */
+/** Server actions for saved recipes and their versions. Identity comes from `requireUser()`. */
 
 const log = baseLog.child({ mod: "data/recipes" });
 
@@ -97,15 +97,13 @@ async function findUserRecipe(userId: number, recipeId: number): Promise<RecipeS
   return row;
 }
 
-/** Fetch all saved recipes belonging to the given user; `undefined` if the user is not found. */
-export async function fetchAllUserSavedRecipes(
-  userEmail: string,
-): Promise<SavedRecipeJson[] | undefined> {
+/** Fetch all of the signed-in user's saved recipes; `undefined` if there is no signed-in user. */
+export async function fetchAllUserSavedRecipes(): Promise<SavedRecipeJson[] | undefined> {
   log.debug({ action: "fetchAllUserSavedRecipes" }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "fetchAllUserSavedRecipes" }, "user not found");
+    log.warn({ action: "fetchAllUserSavedRecipes" }, "no signed-in user");
     return undefined;
   }
 
@@ -201,22 +199,21 @@ async function insertNextVersion(
 }
 
 /**
- * Create a new saved recipe for the given user, seeded with a single first version.
+ * Create a new saved recipe for the signed-in user, seeded with a single first version.
  *
- * Returns `undefined` if the user is not found; throws if a recipe with `name` already exists for
- * this user (the caller should disambiguate via {@link createUserRecipeVersion} instead).
+ * Returns `undefined` if there is no signed-in user; throws if a recipe with `name` already exists
+ * for them (the caller should disambiguate via {@link createUserRecipeVersion} instead).
  */
 export async function createUserRecipe(
-  userEmail: string,
   name: string,
   recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
 ): Promise<{ recipeId: number; version: SavedRecipeVersionJson } | undefined> {
   log.debug({ action: "createUserRecipe", recipeName: name }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "createUserRecipe" }, "user not found");
+    log.warn({ action: "createUserRecipe" }, "no signed-in user");
     return undefined;
   }
 
@@ -235,21 +232,19 @@ export async function createUserRecipe(
 }
 
 /**
- * Append a new version to an existing recipe owned by the user, computing `version = max + 1`.
- *
- * Returns `undefined` if the user is not found or the recipe does not belong to the user.
+ * Append a new version to a recipe the signed-in user owns, computing `version = max + 1`.
+ * Returns `undefined` if there is no signed-in user or the recipe does not belong to them.
  */
 export async function createUserRecipeVersion(
-  userEmail: string,
   recipeId: number,
   recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
 ): Promise<SavedRecipeVersionJson | undefined> {
   log.debug({ action: "createUserRecipeVersion", recipeId }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "createUserRecipeVersion" }, "user not found");
+    log.warn({ action: "createUserRecipeVersion" }, "no signed-in user");
     return undefined;
   }
 
@@ -271,21 +266,21 @@ export async function createUserRecipeVersion(
 }
 
 /**
- * Partially update an existing version of a user-owned recipe. Pass `null` in `meta` to clear the
- * corresponding field; omit a key to leave it unchanged. Returns `undefined` if the user is not
- * found, the recipe is not owned by them, or no matching version exists.
+ * Partially update an existing version of a recipe the signed-in user owns.
+ *
+ * Pass `null` in `meta` to clear the corresponding field; omit a key to leave it unchanged. Returns
+ * `undefined` if there's no signed-in user, the recipe isn't theirs, or no matching version exists.
  */
 export async function updateUserRecipeVersion(
-  userEmail: string,
   recipeId: number,
   version: number,
   updates: { recipe?: LightRecipe } & RecipeVersionMeta,
 ): Promise<SavedRecipeVersionJson | undefined> {
   log.debug({ action: "updateUserRecipeVersion", recipeId, version }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "updateUserRecipeVersion" }, "user not found");
+    log.warn({ action: "updateUserRecipeVersion" }, "no signed-in user");
     return undefined;
   }
 
@@ -327,19 +322,18 @@ export async function updateUserRecipeVersion(
 }
 
 /**
- * Rename a user-owned recipe. Returns the renamed row, or `undefined` if the user is not found or
- * the recipe is not owned by them. Throws on `(user, name)` collision with another recipe.
+ * Rename a recipe the signed-in user owns. Returns the renamed row, or `undefined` if there is no
+ * signed-in user or the recipe is not theirs. Throws on `(user, name)` collision with another.
  */
 export async function renameUserRecipe(
-  userEmail: string,
   recipeId: number,
   newName: string,
 ): Promise<RecipeSelect | undefined> {
   log.debug({ action: "renameUserRecipe", recipeId, newName }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "renameUserRecipe" }, "user not found");
+    log.warn({ action: "renameUserRecipe" }, "no signed-in user");
     return undefined;
   }
 
@@ -359,20 +353,18 @@ export async function renameUserRecipe(
 }
 
 /**
- * Set or clear the star on a user-owned recipe.
- *
- * Returns the updated row, or `undefined` if the user is not found or they don't own the recipe.
+ * Set or clear the star on a recipe the signed-in user owns.
+ * Returns the updated row, or `undefined` if there is no signed-in user or they don't own it.
  */
 export async function setUserRecipeFavourite(
-  userEmail: string,
   recipeId: number,
   favourite: boolean,
 ): Promise<RecipeSelect | undefined> {
   log.debug({ action: "setUserRecipeFavourite", recipeId, favourite }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "setUserRecipeFavourite" }, "user not found");
+    log.warn({ action: "setUserRecipeFavourite" }, "no signed-in user");
     return undefined;
   }
 
@@ -395,19 +387,15 @@ export async function setUserRecipeFavourite(
 }
 
 /**
- * Delete a saved recipe and all of its versions for the given user.
- *
- * Returns the deleted row, or `undefined` if the user was not found or no matching row existed.
+ * Delete a saved recipe and all of its versions for the signed-in user.
+ * Returns the deleted row, or `undefined` if nobody is signed in or no matching row existed.
  */
-export async function deleteUserRecipe(
-  userEmail: string,
-  recipeId: number,
-): Promise<RecipeSelect | undefined> {
+export async function deleteUserRecipe(recipeId: number): Promise<RecipeSelect | undefined> {
   log.debug({ action: "deleteUserRecipe", recipeId }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "deleteUserRecipe" }, "user not found");
+    log.warn({ action: "deleteUserRecipe" }, "no signed-in user");
     return undefined;
   }
 
@@ -420,22 +408,21 @@ export async function deleteUserRecipe(
 }
 
 /**
- * Delete a single version of a user-owned recipe. Refuses to delete the last remaining version of
- * a recipe to avoid orphaned `recipes` rows — call {@link deleteUserRecipe} for that case.
+ * Delete a single version of a recipe the signed-in user owns. Refuses to delete the last remaining
+ * version of a recipe to avoid orphaned `recipes` rows — call {@link deleteUserRecipe} for that.
  *
- * Returns the deleted version row, or `undefined` if the user was not found, the recipe is not
- * owned by them, no matching version exists, or it is the last remaining version.
+ * Returns the deleted version row, or `undefined` if nobody is signed in, the recipe is not theirs,
+ * no matching version exists, or it is the last remaining version.
  */
 export async function deleteUserRecipeVersion(
-  userEmail: string,
   recipeId: number,
   version: number,
 ): Promise<SavedRecipeVersionJson | undefined> {
   log.debug({ action: "deleteUserRecipeVersion", recipeId, version }, "start");
 
-  const user = await findUserByEmail(userEmail);
+  const user = await requireUser();
   if (!user) {
-    log.warn({ action: "deleteUserRecipeVersion" }, "user not found");
+    log.warn({ action: "deleteUserRecipeVersion" }, "no signed-in user");
     return undefined;
   }
 

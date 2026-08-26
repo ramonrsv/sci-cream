@@ -142,7 +142,7 @@ describe("RecipesPage", () => {
       render(<RecipesPage />);
       await capturedProps().onDeleteSavedRecipe!(entry);
 
-      expect(deleteUserRecipe).toHaveBeenCalledWith("a@b.c", 42);
+      expect(deleteUserRecipe).toHaveBeenCalledWith(42);
       expect(refreshUserRecipes).toHaveBeenCalled();
     });
   });
@@ -158,7 +158,7 @@ describe("RecipesPage", () => {
       render(<RecipesPage />);
       await capturedProps().onDeleteSavedRecipeVersion!(entry, version);
 
-      expect(deleteUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 42, 1);
+      expect(deleteUserRecipeVersion).toHaveBeenCalledWith(42, 1);
     });
   });
 
@@ -192,7 +192,7 @@ describe("RecipesPage", () => {
         comments: "Tasty.",
       });
 
-      expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 42, 1, {
+      expect(updateUserRecipeVersion).toHaveBeenCalledWith(42, 1, {
         versionName: "3.1",
         label: "first cut",
         comments: "Tasty.",
@@ -214,7 +214,7 @@ describe("RecipesPage", () => {
         comments: null,
       });
 
-      expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 42, 1, {
+      expect(updateUserRecipeVersion).toHaveBeenCalledWith(42, 1, {
         versionName: null,
         label: null,
         comments: null,

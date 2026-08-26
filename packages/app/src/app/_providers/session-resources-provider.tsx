@@ -38,7 +38,7 @@ export function SessionResourcesProvider({ children }: { children: ReactNode }) 
   const refreshUserIngredients = useCallback(async () => {
     if (!email) return;
 
-    const rows = (await fetchAllUserIngredientSpecs(email)) ?? [];
+    const rows = (await fetchAllUserIngredientSpecs()) ?? [];
     setUserIngredientSpecs(rows);
 
     // Reset to the embedded baseline, then overlay the user's specs overwriting any collisions.
@@ -56,14 +56,14 @@ export function SessionResourcesProvider({ children }: { children: ReactNode }) 
   const refreshUserRecipes = useCallback(async () => {
     if (!email) return;
 
-    const recipes = await fetchAllUserSavedRecipes(email);
+    const recipes = await fetchAllUserSavedRecipes();
     setSavedRecipes(recipes ?? []);
   }, [email]);
 
   const refreshUserBatches = useCallback(async () => {
     if (!email) return;
 
-    const batches = await fetchAllUserBatches(email);
+    const batches = await fetchAllUserBatches();
     setSavedBatches(batches ?? []);
   }, [email]);
 

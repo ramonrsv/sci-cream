@@ -4,7 +4,6 @@ import { hash } from "bcryptjs";
 
 import { getDatabaseUrl } from "@/lib/database/util";
 import { findUserByEmail } from "@/lib/data/users";
-import { createUserBatch, setUserBatchFavourite } from "@/lib/data/batches";
 import {
   UserInsert,
   usersTable,
@@ -13,6 +12,7 @@ import {
   recipesTable,
   recipeVersionsTable,
   batchesTable,
+  batchRecipesTable,
   commentsTable,
   commentReportsTable,
 } from "@/lib/database/schema";
@@ -163,9 +163,35 @@ async function seedUserBatches(userEmail: string, batches: SeedBatchAsset[]) {
   await db.delete(batchesTable).where(eq(batchesTable.user, user.id));
 
   for (const { favourite, ...input } of batches) {
-    const created = await createUserBatch(userEmail, input);
-    // Two calls, not one: `BatchInput` omits `favourite` so a whole-batch save can't clear a star.
-    if (favourite && created) await setUserBatchFavourite(userEmail, created.id, true);
+    const [batchRow] = await db
+      .insert(batchesTable)
+      .values({
+        user: user.id,
+        title: input.title ?? null,
+        date: input.date,
+        notes: input.notes ?? null,
+        favourite: favourite ?? false,
+      })
+      .returning();
+
+    if (input.recipes.length > 0) {
+      await db
+        .insert(batchRecipesTable)
+        .values(
+          input.recipes.map((recipe, position) => ({
+            batchId: batchRow.id,
+            position,
+            name: recipe.name,
+            rows: recipe.rows,
+            color: recipe.color ?? null,
+            recipeId: recipe.version?.ref?.recipeId ?? null,
+            versionNumber: recipe.version?.ref?.versionNumber ?? null,
+            versionName: recipe.version?.name ?? null,
+            hasSiblings: recipe.version?.hasSiblings ?? null,
+          })),
+        );
+    }
+
     console.log(`Added batch "${input.title ?? "(untitled)"}"`);
   }
 
