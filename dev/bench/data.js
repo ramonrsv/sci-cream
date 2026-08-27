@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787827517674,
+  "lastUpdate": 1787827858764,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -471877,6 +471877,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 551.38,
             "range": "6.06",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c65819c86b884d19635002b64a1c987799cc1b40",
+          "message": "Bind each data action's name to one context\n\nEvery `refuse` and log call in `lib/data/` repeated the name of the\naction it stood in, some seventy times across twenty-three actions,\nwith nothing checking the string against the function holding it.\n\nAn action now names itself once: `const act = action(\"postComment\")`.\nThat call logs the action's start, and `act.refuse` and `act.debug`\ncarry the name into everything logged after. The four modules' copies\nof `refuse` collapse into the one behind it.\n\n`verify` stays out of the context, being an assertion function: routed\nthrough an object method it would no longer narrow. `insertNextVersion`\ntakes its caller's context rather than opening one, so a version-name\ncollision logs the action a client actually called, and `comments.ts`\ngains the start line the other three modules already had.\n\n`session.ts`, `users.ts`, and the new `action.ts` move to\n`lib/data/support/`, so `lib/data/` holds endpoints and nothing else.\n\nTen doc comments still described the `undefined` these actions used to\nreturn on failure. Each now names only what a reader cannot infer,\nrefusing an anonymous or foreign caller being the contract they all\nshare.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-27T06:20:47-04:00",
+          "tree_id": "12bb0e6e093450a3f13ee1b1976e45e7a5f4164d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c65819c86b884d19635002b64a1c987799cc1b40"
+        },
+        "date": 1787827808845,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.63,
+            "range": "4.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 50.75,
+            "range": "1.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 59.63,
+            "range": "5.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2361.5,
+            "range": "34.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 322.88,
+            "range": "9.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 330.5,
+            "range": "5.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 351,
+            "range": "8.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16523.13,
+            "range": "76.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 940,
+            "range": "11.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.38,
+            "range": "1.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.88,
+            "range": "1.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.38,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 129.13,
+            "range": "3.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 83.63,
+            "range": "2.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.7,
+            "range": "0.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.98,
+            "range": "0.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 628.25,
+            "range": "7.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 695.25,
+            "range": "10.78",
             "unit": "ms"
           }
         ]
