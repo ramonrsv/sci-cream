@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787784777987,
+  "lastUpdate": 1787827120746,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -508617,6 +508617,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.93%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c65819c86b884d19635002b64a1c987799cc1b40",
+          "message": "Bind each data action's name to one context\n\nEvery `refuse` and log call in `lib/data/` repeated the name of the\naction it stood in, some seventy times across twenty-three actions,\nwith nothing checking the string against the function holding it.\n\nAn action now names itself once: `const act = action(\"postComment\")`.\nThat call logs the action's start, and `act.refuse` and `act.debug`\ncarry the name into everything logged after. The four modules' copies\nof `refuse` collapse into the one behind it.\n\n`verify` stays out of the context, being an assertion function: routed\nthrough an object method it would no longer narrow. `insertNextVersion`\ntakes its caller's context rather than opening one, so a version-name\ncollision logs the action a client actually called, and `comments.ts`\ngains the start line the other three modules already had.\n\n`session.ts`, `users.ts`, and the new `action.ts` move to\n`lib/data/support/`, so `lib/data/` holds endpoints and nothing else.\n\nTen doc comments still described the `undefined` these actions used to\nreturn on failure. Each now names only what a reader cannot infer,\nrefusing an anonymous or foreign caller being the contract they all\nshare.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-27T06:20:47-04:00",
+          "tree_id": "12bb0e6e093450a3f13ee1b1976e45e7a5f4164d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c65819c86b884d19635002b64a1c987799cc1b40"
+        },
+        "date": 1787827068996,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 59505,
+            "range": "±1.45%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 493453,
+            "range": "±0.45%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 41292,
+            "range": "±1.71%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 376799,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
