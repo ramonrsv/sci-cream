@@ -12,7 +12,7 @@ vi.mock("@/lib/auth", () => ({
   auth: vi.fn(async () => (session.email ? { user: { email: session.email } } : null)),
 }));
 
-import { findUserByEmail } from "@/lib/data/users";
+import { findUserByEmail } from "@/lib/data/support/users";
 import {
   fetchUserIngredientSpecByName,
   fetchAllUserIngredientSpecs,

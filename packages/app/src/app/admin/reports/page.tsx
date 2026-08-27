@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ReportQueue } from "@/app/_components/report-queue";
-import { requireAdmin } from "@/lib/data/session";
+import { requireAdmin } from "@/lib/data/support/session";
 
 /** A moderation queue is per-session and never cacheable. */
 export const dynamic = "force-dynamic";

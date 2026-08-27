@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 
 import authConfig from "@/../auth.config";
-import { findUserByEmail, insertUser } from "@/lib/data/users";
+import { findUserByEmail, insertUser } from "@/lib/data/support/users";
 
 /** NextAuth handlers and helpers for authentication, session management, and sign-in/sign-out. */
 export const { handlers, auth, signIn, signOut } = NextAuth({

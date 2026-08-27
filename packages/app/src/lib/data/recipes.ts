@@ -9,29 +9,15 @@ import { isRating, type Rating } from "@/lib/rating";
 import { hasVersionNames, isValidVersionName, nextVersionName } from "@/lib/recipe/version";
 import { verify } from "@/lib/util";
 import { recipesTable, recipeVersionsTable, RecipeSelect } from "@/lib/database/schema";
-import { requireUser } from "@/lib/data/session";
+import { makeAction, type ActionContext } from "@/lib/data/support/action";
+import { requireUser } from "@/lib/data/support/session";
 import { DataError, ok, type Result } from "@/lib/result";
 import { RecipeError } from "@/lib/recipe/recipe";
-import { log as baseLog } from "@/lib/log";
+import { log } from "@/lib/log";
 
 /** Server actions for saved recipes and their versions. Identity comes from `requireUser()`. */
 
-const log = baseLog.child({ mod: "data/recipes" });
-
-/**
- * Log a refusal and return it, so a guard is one line where it stands.
- *
- * Every refusal is logged, the unauthenticated one included: the UI gates each action behind
- * `signedIn`, so reaching one anonymously means the gate failed or the endpoint was called direct.
- */
-function refuse<E>(
-  action: string,
-  error: DataError | E,
-  ctx: Record<string, unknown> = {},
-): { ok: false; error: DataError | E } {
-  log.warn({ action, error, ...ctx }, "refused");
-  return { ok: false, error };
-}
+const action = makeAction(log.child({ mod: "data/recipes" }));
 
 /**
  * True for a Postgres unique-violation, which is how a name collision surfaces from a write.
@@ -104,8 +90,8 @@ function toSavedRecipeVersionJson(row: {
 }
 
 /**
- * True when every field `meta` carries is well-formed: a valid version name and a rating on the
- * scale. The database enforces both too; checking here returns `undefined` instead of throwing.
+ * True when every field `meta` carries is well-formed: a valid version name and a rating on scale.
+ * The database enforces both too; checking lets the caller refuse with {@link DataError.Invalid}.
  */
 function isValidVersionMeta(meta: RecipeVersionMeta): boolean {
   if (meta.versionName != null && !isValidVersionName(meta.versionName)) return false;
@@ -129,10 +115,10 @@ async function findUserRecipe(userId: number, recipeId: number): Promise<RecipeS
 
 /** Fetch all of the signed-in user's saved recipes; an empty list is a success, not a refusal. */
 export async function fetchAllUserSavedRecipes(): Promise<Result<SavedRecipeJson[]>> {
-  log.debug({ action: "fetchAllUserSavedRecipes" }, "start");
+  const act = action("fetchAllUserSavedRecipes");
 
   const user = await requireUser();
-  if (!user) return refuse("fetchAllUserSavedRecipes", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
   const rows = await db
     .select({
@@ -170,10 +156,7 @@ export async function fetchAllUserSavedRecipes(): Promise<Result<SavedRecipeJson
   }
 
   const result = Array.from(byId.values());
-  log.debug(
-    { action: "fetchAllUserSavedRecipes", count: result.length, userId: user.id },
-    "fetched",
-  );
+  act.debug({ count: result.length, userId: user.id }, "fetched");
   return ok(result);
 }
 
@@ -181,10 +164,11 @@ export async function fetchAllUserSavedRecipes(): Promise<Result<SavedRecipeJson
  * Internal: insert a new version row for the given recipe with `version = max(version) + 1`.
  *
  * `version` is an internal key; the displayed `versionName` follows the opt-in rule: an explicit
- * `meta.versionName` (trimmed) wins, otherwise a name is auto-materialized only once the recipe has
- * opted in (`nextVersionName`), else it stays null. Returns `undefined` on a unique-name collision.
+ * `meta.versionName` (trimmed) wins, otherwise a name is auto-materialized once the recipe has
+ * opted in (`nextVersionName`), else null. Collisions refuse {@link RecipeError.VersionNameTaken}.
  */
 async function insertNextVersion(
+  act: ActionContext,
   recipeId: number,
   recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
@@ -204,7 +188,7 @@ async function insertNextVersion(
         : null;
 
   if (versionName != null && rows.some((r) => r.versionName === versionName)) {
-    return refuse("insertNextVersion", RecipeError.VersionNameTaken, { versionName });
+    return act.refuse(RecipeError.VersionNameTaken, { versionName });
   }
 
   const [inserted] = await db
@@ -235,12 +219,12 @@ export async function createUserRecipe(
   recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
 ): Promise<Result<{ recipeId: number; version: SavedRecipeVersionJson }, RecipeError>> {
-  log.debug({ action: "createUserRecipe", recipeName: name }, "start");
+  const act = action("createUserRecipe", { recipeName: name });
 
   const user = await requireUser();
-  if (!user) return refuse("createUserRecipe", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
-  if (!isValidVersionMeta(meta)) return refuse("createUserRecipe", DataError.Invalid);
+  if (!isValidVersionMeta(meta)) return act.refuse(DataError.Invalid);
 
   // Caught, not pre-checked: a `SELECT` first still races another save, so the index arbitrates.
   let recipeRow;
@@ -248,10 +232,10 @@ export async function createUserRecipe(
     [recipeRow] = await db.insert(recipesTable).values({ name, user: user.id }).returning();
   } catch (err) {
     if (!isUniqueViolation(err)) throw err;
-    return refuse("createUserRecipe", RecipeError.NameTaken, { recipeName: name });
+    return act.refuse(RecipeError.NameTaken, { recipeName: name });
   }
 
-  const version = await insertNextVersion(recipeRow.id, recipe, meta);
+  const version = await insertNextVersion(act, recipeRow.id, recipe, meta);
 
   // A fresh recipe has no prior versions, so the name pre-check can never fire; a refusal is a bug
   verify(version.ok, "createUserRecipe: insertNextVersion refused for a new recipe");
@@ -259,51 +243,48 @@ export async function createUserRecipe(
   return ok({ recipeId: recipeRow.id, version: version.value });
 }
 
-/**
- * Append a new version to a recipe the signed-in user owns, computing `version = max + 1`.
- * Returns `undefined` if there is no signed-in user or the recipe does not belong to them.
- */
+/** Append a new version to a recipe the signed-in user owns, computing `version = max + 1`. */
 export async function createUserRecipeVersion(
   recipeId: number,
   recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
 ): Promise<Result<SavedRecipeVersionJson, RecipeError>> {
-  log.debug({ action: "createUserRecipeVersion", recipeId }, "start");
+  const act = action("createUserRecipeVersion", { recipeId });
 
   const user = await requireUser();
-  if (!user) return refuse("createUserRecipeVersion", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
-  if (!isValidVersionMeta(meta)) return refuse("createUserRecipeVersion", DataError.Invalid);
+  if (!isValidVersionMeta(meta)) return act.refuse(DataError.Invalid);
 
   const owned = await findUserRecipe(user.id, recipeId);
   if (!owned) {
-    return refuse("createUserRecipeVersion", DataError.Forbidden, { recipeId, userId: user.id });
+    return act.refuse(DataError.Forbidden, { recipeId, userId: user.id });
   }
 
-  return insertNextVersion(recipeId, recipe, meta);
+  return insertNextVersion(act, recipeId, recipe, meta);
 }
 
 /**
  * Partially update an existing version of a recipe the signed-in user owns.
  *
- * Pass `null` in `meta` to clear the corresponding field; omit a key to leave it unchanged. Returns
- * `undefined` if there's no signed-in user, the recipe isn't theirs, or no matching version exists.
+ * Pass `null` in `meta` to clear the corresponding field; omit a key to leave it unchanged.
+ * Refuses with {@link DataError.NotFound} when the recipe holds no such version.
  */
 export async function updateUserRecipeVersion(
   recipeId: number,
   version: number,
   updates: { recipe?: LightRecipe } & RecipeVersionMeta,
 ): Promise<Result<SavedRecipeVersionJson, RecipeError>> {
-  log.debug({ action: "updateUserRecipeVersion", recipeId, version }, "start");
+  const act = action("updateUserRecipeVersion", { recipeId, version });
 
   const user = await requireUser();
-  if (!user) return refuse("updateUserRecipeVersion", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
-  if (!isValidVersionMeta(updates)) return refuse("updateUserRecipeVersion", DataError.Invalid);
+  if (!isValidVersionMeta(updates)) return act.refuse(DataError.Invalid);
 
   const owned = await findUserRecipe(user.id, recipeId);
   if (!owned) {
-    return refuse("updateUserRecipeVersion", DataError.Forbidden, { recipeId, userId: user.id });
+    return act.refuse(DataError.Forbidden, { recipeId, userId: user.id });
   }
 
   const setClause: Partial<typeof recipeVersionsTable.$inferInsert> = {};
@@ -326,7 +307,7 @@ export async function updateUserRecipeVersion(
       ? await db.select().from(recipeVersionsTable).where(where)
       : await db.update(recipeVersionsTable).set(setClause).where(where).returning();
 
-  if (!row) return refuse("updateUserRecipeVersion", DataError.NotFound, { recipeId, version });
+  if (!row) return act.refuse(DataError.NotFound, { recipeId, version });
   return ok(toSavedRecipeVersionJson(row));
 }
 
@@ -338,13 +319,13 @@ export async function renameUserRecipe(
   recipeId: number,
   newName: string,
 ): Promise<Result<RecipeSelect, RecipeError>> {
-  log.debug({ action: "renameUserRecipe", recipeId, newName }, "start");
+  const act = action("renameUserRecipe", { recipeId, newName });
 
   const user = await requireUser();
-  if (!user) return refuse("renameUserRecipe", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
   const owned = await findUserRecipe(user.id, recipeId);
-  if (!owned) return refuse("renameUserRecipe", DataError.Forbidden, { recipeId, userId: user.id });
+  if (!owned) return act.refuse(DataError.Forbidden, { recipeId, userId: user.id });
 
   try {
     const [row] = await db
@@ -356,26 +337,23 @@ export async function renameUserRecipe(
     return ok(row);
   } catch (err) {
     if (!isUniqueViolation(err)) throw err;
-    return refuse("renameUserRecipe", RecipeError.NameTaken, { recipeId, newName });
+    return act.refuse(RecipeError.NameTaken, { recipeId, newName });
   }
 }
 
-/**
- * Set or clear the star on a recipe the signed-in user owns.
- * Returns the updated row, or `undefined` if there is no signed-in user or they don't own it.
- */
+/** Set or clear the star on a recipe the signed-in user owns; returns the updated row. */
 export async function setUserRecipeFavourite(
   recipeId: number,
   favourite: boolean,
 ): Promise<Result<RecipeSelect>> {
-  log.debug({ action: "setUserRecipeFavourite", recipeId, favourite }, "start");
+  const act = action("setUserRecipeFavourite", { recipeId, favourite });
 
   const user = await requireUser();
-  if (!user) return refuse("setUserRecipeFavourite", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
   const owned = await findUserRecipe(user.id, recipeId);
   if (!owned) {
-    return refuse("setUserRecipeFavourite", DataError.Forbidden, { recipeId, userId: user.id });
+    return act.refuse(DataError.Forbidden, { recipeId, userId: user.id });
   }
 
   const [row] = await db
@@ -388,14 +366,14 @@ export async function setUserRecipeFavourite(
 }
 
 /**
- * Delete a saved recipe and all of its versions for the signed-in user.
- * Returns the deleted row, or `undefined` if nobody is signed in or no matching row existed.
+ * Delete a saved recipe and all of its versions for the signed-in user. Returns the deleted row,
+ * refusing with {@link DataError.Forbidden} when no such row was theirs.
  */
 export async function deleteUserRecipe(recipeId: number): Promise<Result<RecipeSelect>> {
-  log.debug({ action: "deleteUserRecipe", recipeId }, "start");
+  const act = action("deleteUserRecipe", { recipeId });
 
   const user = await requireUser();
-  if (!user) return refuse("deleteUserRecipe", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
   const [row] = await db
     .delete(recipesTable)
@@ -403,7 +381,7 @@ export async function deleteUserRecipe(recipeId: number): Promise<Result<RecipeS
     .returning();
 
   // The `user` term in the `where` does the ownership check, so no row means it was never theirs.
-  if (!row) return refuse("deleteUserRecipe", DataError.Forbidden, { recipeId, userId: user.id });
+  if (!row) return act.refuse(DataError.Forbidden, { recipeId, userId: user.id });
   return ok(row);
 }
 
@@ -417,14 +395,14 @@ export async function deleteUserRecipeVersion(
   recipeId: number,
   version: number,
 ): Promise<Result<SavedRecipeVersionJson, RecipeError>> {
-  log.debug({ action: "deleteUserRecipeVersion", recipeId, version }, "start");
+  const act = action("deleteUserRecipeVersion", { recipeId, version });
 
   const user = await requireUser();
-  if (!user) return refuse("deleteUserRecipeVersion", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
   const owned = await findUserRecipe(user.id, recipeId);
   if (!owned) {
-    return refuse("deleteUserRecipeVersion", DataError.Forbidden, { recipeId, userId: user.id });
+    return act.refuse(DataError.Forbidden, { recipeId, userId: user.id });
   }
 
   const [{ count }] = await db
@@ -433,7 +411,7 @@ export async function deleteUserRecipeVersion(
     .where(eq(recipeVersionsTable.recipeId, recipeId));
 
   if (Number(count) <= 1) {
-    return refuse("deleteUserRecipeVersion", RecipeError.LastVersion, { recipeId });
+    return act.refuse(RecipeError.LastVersion, { recipeId });
   }
 
   const [row] = await db
@@ -444,6 +422,6 @@ export async function deleteUserRecipeVersion(
     .returning();
 
   // The recipe is already known to be theirs, so a missing version gives nothing away.
-  if (!row) return refuse("deleteUserRecipeVersion", DataError.NotFound, { recipeId, version });
+  if (!row) return act.refuse(DataError.NotFound, { recipeId, version });
   return ok(toSavedRecipeVersionJson(row));
 }

@@ -7,28 +7,14 @@ import type { LightRecipe } from "@workspace/sci-cream";
 import type { BatchRecipeVersion } from "@/lib/batch/batch";
 import { db } from "@/lib/database/client";
 import { batchesTable, batchRecipesTable, BatchSelect } from "@/lib/database/schema";
-import { requireUser } from "@/lib/data/session";
+import { makeAction } from "@/lib/data/support/action";
+import { requireUser } from "@/lib/data/support/session";
 import { DataError, ok, type Result } from "@/lib/result";
-import { log as baseLog } from "@/lib/log";
+import { log } from "@/lib/log";
 
 /** Server actions for saved batches and their recipes. Identity comes from `requireUser()`. */
 
-const log = baseLog.child({ mod: "data/batches" });
-
-/**
- * Log a refusal and return it, so a guard is one line where it stands.
- *
- * Every refusal is logged, the unauthenticated one included: the UI gates each action behind
- * `signedIn`, so reaching one anonymously means the gate failed or the endpoint was called direct.
- */
-function refuse(
-  action: string,
-  error: DataError,
-  ctx: Record<string, unknown> = {},
-): { ok: false; error: DataError } {
-  log.warn({ action, error, ...ctx }, "refused");
-  return { ok: false, error };
-}
+const action = makeAction(log.child({ mod: "data/batches" }));
 
 /**
  * One recipe within a saved batch; `rows` are the `[name, grams]` amounts exactly as weighed
@@ -156,10 +142,10 @@ async function findUserBatch(userId: number, batchId: number): Promise<BatchSele
 
 /** Fetch the signed-in user's saved batches, newest first; an empty list is a success. */
 export async function fetchAllUserBatches(): Promise<Result<SavedBatchJson[]>> {
-  log.debug({ action: "fetchAllUserBatches" }, "start");
+  const act = action("fetchAllUserBatches");
 
   const user = await requireUser();
-  if (!user) return refuse("fetchAllUserBatches", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
   const rows = await db
     .select({
@@ -228,16 +214,16 @@ export async function fetchAllUserBatches(): Promise<Result<SavedBatchJson[]>> {
   const result = Array.from(byId.values()).map(({ batch, recipes }) =>
     toSavedBatchJson(batch, recipes),
   );
-  log.debug({ action: "fetchAllUserBatches", count: result.length, userId: user.id }, "fetched");
+  act.debug({ count: result.length, userId: user.id }, "fetched");
   return ok(result);
 }
 
-/** Create a batch for the signed-in user; returns it, or `undefined` if nobody is signed in. */
+/** Create a batch for the signed-in user and return it. */
 export async function createUserBatch(input: BatchInput): Promise<Result<SavedBatchJson>> {
-  log.debug({ action: "createUserBatch" }, "start");
+  const act = action("createUserBatch");
 
   const user = await requireUser();
-  if (!user) return refuse("createUserBatch", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
   return db.transaction(async (tx) => {
     const [batch] = await tx
@@ -265,21 +251,20 @@ export async function createUserBatch(input: BatchInput): Promise<Result<SavedBa
 /**
  * Replace the contents of a batch the signed-in user owns in place.
  *
- * Re-numbers recipe positions from the new order. Returns the updated batch, or `undefined` if
- * nobody is signed in or the batch is not theirs. Recipe rows are deleted and re-inserted, so
+ * Re-numbers recipe positions from the new order. Recipe rows are deleted and re-inserted, so
  * checkoff progress keyed on weighing content survives only when it is unchanged — by design.
  */
 export async function updateUserBatch(
   batchId: number,
   input: BatchInput,
 ): Promise<Result<SavedBatchJson>> {
-  log.debug({ action: "updateUserBatch", batchId }, "start");
+  const act = action("updateUserBatch", { batchId });
 
   const user = await requireUser();
-  if (!user) return refuse("updateUserBatch", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
   const owned = await findUserBatch(user.id, batchId);
-  if (!owned) return refuse("updateUserBatch", DataError.Forbidden, { batchId, userId: user.id });
+  if (!owned) return act.refuse(DataError.Forbidden, { batchId, userId: user.id });
 
   return db.transaction(async (tx) => {
     const [batch] = await tx
@@ -308,22 +293,21 @@ export async function updateUserBatch(
 }
 
 /**
- * Set or clear the star on a batch the signed-in user owns. Returns the updated row, or `undefined`
- * if nobody is signed in or the batch is not theirs. Kept out of {@link updateUserBatch}, which
- * replaces a batch wholesale and would let a stale editor copy clear the star.
+ * Set or clear the star on a batch the signed-in user owns. Kept out of {@link updateUserBatch},
+ * which replaces a batch wholesale and would let a stale editor copy clear the star.
  */
 export async function setUserBatchFavourite(
   batchId: number,
   favourite: boolean,
 ): Promise<Result<BatchSelect>> {
-  log.debug({ action: "setUserBatchFavourite", batchId, favourite }, "start");
+  const act = action("setUserBatchFavourite", { batchId, favourite });
 
   const user = await requireUser();
-  if (!user) return refuse("setUserBatchFavourite", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
   const owned = await findUserBatch(user.id, batchId);
   if (!owned) {
-    return refuse("setUserBatchFavourite", DataError.Forbidden, { batchId, userId: user.id });
+    return act.refuse(DataError.Forbidden, { batchId, userId: user.id });
   }
 
   const [row] = await db
@@ -337,13 +321,13 @@ export async function setUserBatchFavourite(
 
 /**
  * Delete a batch the signed-in user owns and all of its recipes (cascade). Returns the deleted
- * batch row, or `undefined` if nobody is signed in or no matching batch existed.
+ * batch row, refusing with {@link DataError.Forbidden} when no such batch was theirs.
  */
 export async function deleteUserBatch(batchId: number): Promise<Result<BatchSelect>> {
-  log.debug({ action: "deleteUserBatch", batchId }, "start");
+  const act = action("deleteUserBatch", { batchId });
 
   const user = await requireUser();
-  if (!user) return refuse("deleteUserBatch", DataError.Unauthenticated);
+  if (!user) return act.refuse(DataError.Unauthenticated);
 
   const [row] = await db
     .delete(batchesTable)
@@ -351,6 +335,6 @@ export async function deleteUserBatch(batchId: number): Promise<Result<BatchSele
     .returning();
 
   // The `user` term in the `where` does the ownership check, so no row means it was never theirs.
-  if (!row) return refuse("deleteUserBatch", DataError.Forbidden, { batchId, userId: user.id });
+  if (!row) return act.refuse(DataError.Forbidden, { batchId, userId: user.id });
   return ok(row);
 }

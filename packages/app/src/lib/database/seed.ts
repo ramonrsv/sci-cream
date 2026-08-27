@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { hash } from "bcryptjs";
 
 import { getDatabaseUrl } from "@/lib/database/util";
-import { findUserByEmail } from "@/lib/data/users";
+import { findUserByEmail } from "@/lib/data/support/users";
 import {
   UserInsert,
   usersTable,

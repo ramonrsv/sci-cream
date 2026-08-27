@@ -247,10 +247,10 @@ to keep the word. Each file drops only its own directory's word: the batch-build
   `@workspace/sci-cream/schema-category`.
 - **`lib/data/`** — every `"use server"` action, one module per domain (`ingredients`, `recipes`,
   `batches`, `comments`); each export is an endpoint a browser can POST to, keeping that surface
-  enumerable. Pure logic stays in `lib/<domain>/`. No action takes a user identifier — that would be
-  the client's claim about itself — so identity comes from the signed session, via `requireUser()`
-  in `session.ts`. Only it and `users.ts` are not `"use server"`: `users.ts` serves the pre-session
-  layer (sign-in, OAuth linking, signup), so its email lookups must not be endpoints.
+  enumerable. Pure logic stays in `lib/<domain>/`. No action takes a user identifier — the client's
+  claim about itself — so identity comes from the signed session, via `requireUser()`. Every file
+  directly here is a `"use server"` module; `lib/data/support/` holds the non-endpoints they call.
+  Each action opens with `action(name, ctx)`, which logs start and binds the name into its calls.
 - **`lib/auth.ts`** — NextAuth v5 (beta) with GitHub + Google OAuth providers.
 - **`app/blog/`**, **`app/docs/`** — markdown-rendered content.
 
