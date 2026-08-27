@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787827120746,
+  "lastUpdate": 1787827125284,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -545335,6 +545335,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1035.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c65819c86b884d19635002b64a1c987799cc1b40",
+          "message": "Bind each data action's name to one context\n\nEvery `refuse` and log call in `lib/data/` repeated the name of the\naction it stood in, some seventy times across twenty-three actions,\nwith nothing checking the string against the function holding it.\n\nAn action now names itself once: `const act = action(\"postComment\")`.\nThat call logs the action's start, and `act.refuse` and `act.debug`\ncarry the name into everything logged after. The four modules' copies\nof `refuse` collapse into the one behind it.\n\n`verify` stays out of the context, being an assertion function: routed\nthrough an object method it would no longer narrow. `insertNextVersion`\ntakes its caller's context rather than opening one, so a version-name\ncollision logs the action a client actually called, and `comments.ts`\ngains the start line the other three modules already had.\n\n`session.ts`, `users.ts`, and the new `action.ts` move to\n`lib/data/support/`, so `lib/data/` holds endpoints and nothing else.\n\nTen doc comments still described the `undefined` these actions used to\nreturn on failure. Each now names only what a reader cannot infer,\nrefusing an anonymous or foreign caller being the contract they all\nshare.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-27T06:20:47-04:00",
+          "tree_id": "12bb0e6e093450a3f13ee1b1976e45e7a5f4164d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c65819c86b884d19635002b64a1c987799cc1b40"
+        },
+        "date": 1787827069658,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 875.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 812.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 654.08,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 822.53,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 626.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 627.8,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 796.25,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1035.28,
             "unit": "KB"
           },
           {
