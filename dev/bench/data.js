@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787907149496,
+  "lastUpdate": 1787907170876,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -511158,6 +511158,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.95%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "77f49e9e09950b28d660f339dcf0664badd4b761",
+          "message": "Type `isUniqueViolation` instead of casting\n\nIt walked the `cause` chain of a caught value, casting at each hop to\nreach a `code` it could only compare as `unknown`. Both\n`DrizzleQueryError` and the driver's `DatabaseError` come from\ndependencies the app already has, so the wrapper unwraps by\n`instanceof` and the SQLSTATE reads off a typed field. `unknown` stays\non the parameter, where it is honest; the casts inside are gone.\n\nThat trades a duck-typed test for an identity-based one, which a second\ncopy of `pg` would silently defeat. The name-collision tests cover both\ncall sites, so that surfaces as a red suite, not a save that throws.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-28T04:49:10-04:00",
+          "tree_id": "92a3c06d8bc743bb937f01469f4b0d98cbd808f9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/77f49e9e09950b28d660f339dcf0664badd4b761"
+        },
+        "date": 1787907128020,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 73480,
+            "range": "±0.90%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 586171,
+            "range": "±0.36%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 52795,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 485767,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
