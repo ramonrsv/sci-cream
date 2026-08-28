@@ -1,6 +1,7 @@
 "use server";
 
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, DrizzleQueryError } from "drizzle-orm";
+import { DatabaseError } from "pg";
 
 import type { LightRecipe } from "@workspace/sci-cream";
 
@@ -19,17 +20,16 @@ import { log } from "@/lib/log";
 
 const action = makeAction(log.child({ mod: "data/recipes" }));
 
+/** Postgres SQLSTATE for a unique-constraint violation. */
+const UNIQUE_VIOLATION = "23505";
+
 /**
- * True for a Postgres unique-violation, which is how a name collision surfaces from a write.
- *
- * Matches on SQLSTATE rather than the message, and walks `cause`: drizzle wraps the driver's error
- * in a `DrizzleQueryError`, so the code that names the constraint is never on the outermost one.
+ * True for a Postgres unique-violation, the way a name collision surfaces from a write. Drizzle
+ * wraps the driver's error, so the SQLSTATE is on its `cause`, not the outermost error.
  */
 function isUniqueViolation(err: unknown): boolean {
-  for (let e: unknown = err; e != null; e = (e as { cause?: unknown }).cause) {
-    if (typeof e === "object" && "code" in e && e.code === "23505") return true;
-  }
-  return false;
+  const cause = err instanceof DrizzleQueryError ? err.cause : err;
+  return cause instanceof DatabaseError && cause.code === UNIQUE_VIOLATION;
 }
 
 /** One snapshot of a saved recipe; the `recipe` is the same `[name, qty]` payload as embedded */
