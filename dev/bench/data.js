@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787911052067,
+  "lastUpdate": 1787911129652,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -570205,6 +570205,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.46,
             "range": "0.29",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cab3e0a9b9dc6266a175cb3d25f1637bdc86f8eb",
+          "message": "Throw when POSTGRES_URL is unset\n\n`process.env.POSTGRES_URL!` asserted nothing at runtime, so a missing\nvariable surfaced as `TypeError: Cannot read properties of undefined\n(reading 'replace')`, pinned to this file with no hint at the cause.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-28T05:42:27-04:00",
+          "tree_id": "42796133041a0856036df7e5256f7d1240cefc12",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cab3e0a9b9dc6266a175cb3d25f1637bdc86f8eb"
+        },
+        "date": 1787911093672,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 45.74,
+            "range": "2.08",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.11,
+            "range": "0.76",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.09,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 128.5,
+            "range": "6.76",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.46,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 128.5,
+            "range": "6.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 44.1,
+            "range": "1.95",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.84,
+            "range": "0.67",
             "unit": "ms"
           }
         ]
