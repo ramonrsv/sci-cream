@@ -1,13 +1,10 @@
 import { expect, test } from "vitest";
 
-import "dotenv/config";
-import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
-import { getDatabaseUrl } from "@/lib/database/util";
+import { db } from "@/lib/database/client";
 import { findUserByEmail } from "@/lib/data/support/users";
 import { ingredientsTable, SchemaCategory } from "@/lib/database/schema";
-import * as schema from "@/lib/database/schema";
 
 import {
   getNonAliasIngredientSpecs,
@@ -23,7 +20,10 @@ import {
 
 import { TEST_USER_A } from "@/__tests__/seed-assets";
 
-const db = drizzle(getDatabaseUrl(), { schema });
+/**
+ * Every non-alias embedded spec reaches the database as a `TEST_USER_A` ingredient, and comes
+ * back usable. Needs a seeded database: it reads what `scripts/seed.ts` wrote, not the script.
+ */
 
 test("Find TEST_USER_A", async () => {
   expect(await findUserByEmail(TEST_USER_A.email)).toBeDefined();
