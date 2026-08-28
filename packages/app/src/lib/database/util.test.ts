@@ -30,4 +30,9 @@ describe("getDatabaseUrl", () => {
     vi.stubEnv("POSTGRES_URL", "postgresql://user:pass@host:5432/db");
     expect(getDatabaseUrl()).toBe("postgresql://user:pass@host:5432/db");
   });
+
+  it("throws when POSTGRES_URL is unset", () => {
+    vi.stubEnv("POSTGRES_URL", undefined);
+    expect(() => getDatabaseUrl()).toThrow("POSTGRES_URL is not set");
+  });
 });
