@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787883817869,
+  "lastUpdate": 1787891119393,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -580637,6 +580637,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/60bae7239c468cf1e6dcf1c04a3a78da1678a0a4"
         },
         "date": 1787883159188,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.14,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.38,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1687.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d145d176c8ff75380dc55c1a8f2011252f949119",
+          "message": "Move the seeded-ingredients test into `unit/`\n\nIt sat in `scripts/` as `seed.test.ts` while importing nothing from\n`seed.ts`: what it reads is the database the script wrote. Its subject\nspans the crate's embedded specs, the Postgres JSON column, and the\nWASM converter, so it belongs to no one module and joins the other\ncross-cutting vitest tests, named for its subject as they are.\n\nIt opened a second connection with its own `drizzle()` call and\nimported the schema twice over. Both give way to the shared `db` from\n`lib/database/client`, which the module exists to provide, and which\nloads `dotenv` on its own.\n\nA header records what the name cannot: this needs a seeded database,\nso it fails as a bare `vitest run` against an empty one.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-27T22:35:50-04:00",
+          "tree_id": "4e82a47064fc533d063f612f9d00b5f9e12b5d49",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d145d176c8ff75380dc55c1a8f2011252f949119"
+        },
+        "date": 1787891067691,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
