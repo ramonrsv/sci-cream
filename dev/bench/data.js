@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787891521071,
+  "lastUpdate": 1787891880445,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -473467,6 +473467,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 554.63,
             "range": "6.96",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d145d176c8ff75380dc55c1a8f2011252f949119",
+          "message": "Move the seeded-ingredients test into `unit/`\n\nIt sat in `scripts/` as `seed.test.ts` while importing nothing from\n`seed.ts`: what it reads is the database the script wrote. Its subject\nspans the crate's embedded specs, the Postgres JSON column, and the\nWASM converter, so it belongs to no one module and joins the other\ncross-cutting vitest tests, named for its subject as they are.\n\nIt opened a second connection with its own `drizzle()` call and\nimported the schema twice over. Both give way to the shared `db` from\n`lib/database/client`, which the module exists to provide, and which\nloads `dotenv` on its own.\n\nA header records what the name cannot: this needs a seeded database,\nso it fails as a bare `vitest run` against an empty one.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-27T22:35:50-04:00",
+          "tree_id": "4e82a47064fc533d063f612f9d00b5f9e12b5d49",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d145d176c8ff75380dc55c1a8f2011252f949119"
+        },
+        "date": 1787891828008,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.88,
+            "range": "4.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 54.25,
+            "range": "2.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 61.75,
+            "range": "3.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2478.75,
+            "range": "11.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 334.38,
+            "range": "3.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 357.88,
+            "range": "4.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 361.88,
+            "range": "3.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17413,
+            "range": "67.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 900.13,
+            "range": "19.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.63,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 52.75,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.38,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.88,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 125,
+            "range": "4.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 83.13,
+            "range": "2.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.21,
+            "range": "0.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.34,
+            "range": "0.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 615.38,
+            "range": "7.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 670.75,
+            "range": "14.18",
             "unit": "ms"
           }
         ]
