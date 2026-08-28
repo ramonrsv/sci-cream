@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787883210773,
+  "lastUpdate": 1787883233450,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -509464,6 +509464,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.93%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "60bae7239c468cf1e6dcf1c04a3a78da1678a0a4",
+          "message": "Move non-application code out of `lib/database`\n\n`seed.ts` and `baseline.ts` are run by `pnpm`, never imported.\n`assets.ts` is fixture data, down to the test users' passwords. All\nthree sat beside `schema.ts` and `client.ts` with nothing saying so.\n\nThe two scripts move to `scripts/`, beside the shell scripts they work\nwith — `baseline.ts` beside `build-migration-test-db.sh`, its only\ncaller — and following `packages/sci-cream/scripts/gen-data.ts`. Being\noutside `src/` is the point: `src/` is the application.\n\n`assets.ts` becomes `src/__tests__/seed-assets.ts`. It is the contract\nbetween the seeder and the suites, nineteen test files importing it\nagainst the script's one, so it belongs with the tests rather than\nunder a production path.\n\n`eslint` and `prettier` were pointed at `./src` alone, so the move\nwould've dropped three files from both; they now take `./scripts` too.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-27T22:10:30-04:00",
+          "tree_id": "442155ec008668b5b115054bc696df62acf9bbd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/60bae7239c468cf1e6dcf1c04a3a78da1678a0a4"
+        },
+        "date": 1787883192293,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 73217,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 643110,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 52200,
+            "range": "±0.85%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 494971,
+            "range": "±0.80%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
