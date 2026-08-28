@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787907510370,
+  "lastUpdate": 1787907950157,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -474262,6 +474262,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 670.75,
             "range": "14.18",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "77f49e9e09950b28d660f339dcf0664badd4b761",
+          "message": "Type `isUniqueViolation` instead of casting\n\nIt walked the `cause` chain of a caught value, casting at each hop to\nreach a `code` it could only compare as `unknown`. Both\n`DrizzleQueryError` and the driver's `DatabaseError` come from\ndependencies the app already has, so the wrapper unwraps by\n`instanceof` and the SQLSTATE reads off a typed field. `unknown` stays\non the parameter, where it is honest; the casts inside are gone.\n\nThat trades a duck-typed test for an identity-based one, which a second\ncopy of `pg` would silently defeat. The name-collision tests cover both\ncall sites, so that surfaces as a red suite, not a save that throws.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-28T04:49:10-04:00",
+          "tree_id": "92a3c06d8bc743bb937f01469f4b0d98cbd808f9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/77f49e9e09950b28d660f339dcf0664badd4b761"
+        },
+        "date": 1787907899719,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.38,
+            "range": "3.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52.75,
+            "range": "4.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 62.25,
+            "range": "3.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2555.75,
+            "range": "30.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 323.88,
+            "range": "5.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 335,
+            "range": "4.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 352.88,
+            "range": "3.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16796.5,
+            "range": "99.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 917.5,
+            "range": "18.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.63,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.88,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.5,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43.88,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 128.63,
+            "range": "3.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 89.25,
+            "range": "2.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.78,
+            "range": "0.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 43.58,
+            "range": "0.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 656.13,
+            "range": "5.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 707.13,
+            "range": "16.62",
             "unit": "ms"
           }
         ]
