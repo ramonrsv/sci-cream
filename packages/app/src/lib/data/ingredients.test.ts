@@ -32,7 +32,7 @@ import {
   OnConflict,
 } from "@workspace/sci-cream";
 
-import { TEST_USER_A, TEST_USER_B, USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/assets";
+import { TEST_USER_A, TEST_USER_B, USER_DEFINED_FRUCTOSE_SPEC } from "@/__tests__/seed-assets";
 
 type SpecAsset = typeof USER_DEFINED_FRUCTOSE_SPEC;
 

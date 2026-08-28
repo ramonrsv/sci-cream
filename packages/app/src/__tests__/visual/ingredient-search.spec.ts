@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 
-import { TEST_USER_B } from "@/lib/database/assets";
+import { TEST_USER_B } from "@/__tests__/seed-assets";
 import { captureFullContent } from "@/__tests__/visual/util";
 import {
   goToPageAndWaitFor,

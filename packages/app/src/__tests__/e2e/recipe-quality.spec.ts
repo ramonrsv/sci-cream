@@ -2,7 +2,7 @@ import { test, expect, Page } from "@playwright/test";
 
 import { goToPageAndWaitFor, loginAsTestUserWithCredentials } from "@/__tests__/e2e/util";
 
-import { TEST_USER_B } from "@/lib/database/assets";
+import { TEST_USER_B } from "@/__tests__/seed-assets";
 import { RATING_GLYPHS, Rating } from "@/lib/rating";
 import {
   RatingFilter,

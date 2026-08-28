@@ -61,9 +61,9 @@ pnpm test:e2e            # Playwright e2e (all browsers)
 pnpm test:e2e:chromium   # Playwright chromium only (faster iteration)
 pnpm test:visual         # Visual regression tests
 pnpm test:visual:update  # Update visual snapshots
-pnpm lint                # ESLint, --max-warnings=0
+pnpm lint                # ESLint over src/ and scripts/, --max-warnings=0
 pnpm lint:sql            # Squawk migration linter; config + rationale in .squawk.toml
-pnpm seed-db             # db:migrate + run src/lib/database/seed.ts
+pnpm seed-db             # db:migrate + run scripts/seed.ts
 pnpm db:generate         # Write a migration from the current schema.ts
 pnpm db:migrate          # Apply pending migrations
 pnpm db:baseline         # Record migrations as applied without executing their SQL
@@ -239,9 +239,9 @@ to keep the word. Each file drops only its own directory's word: the batch-build
   need `id`/`name`/`mixProperties` can take the slim shape.
 - **`lib/sci-cream/sci-cream.ts`** — small helpers around `@workspace/sci-cream` types
   (`isCompKeyQuantity`, `isPropKeyQuantity`, `getAcceptablePropertyRange`).
-- **`lib/database/`** — Drizzle ORM schema (`schema.ts`), seed (`seed.ts`), and migration baselining
-  (`baseline.ts`). Six tables: `users`, `ingredients` (user-defined specs stored as JSON),
-  `recipes` with `recipe_versions` (keyed `(recipe_id, version)`), and `batches` with
+- **`lib/database/`** — Drizzle ORM schema (`schema.ts`), connection (`client.ts`), and the URL
+  helper both share (`util.ts`). Six tables: `users`, `ingredients` (user-defined specs stored as
+  JSON), `recipes` with `recipe_versions` (keyed `(recipe_id, version)`), and `batches` with
   `batch_recipes` (keyed `(batch_id, position)`, holding a composite FK to `recipe_versions` for
   provenance only). The `categoryEnum` is sourced from the Rust-defined `SchemaCategory` via
   `@workspace/sci-cream/schema-category`.
@@ -251,6 +251,8 @@ to keep the word. Each file drops only its own directory's word: the batch-build
   claim about itself — so identity comes from the signed session, via `requireUser()`. Every file
   directly here is a `"use server"` module; `lib/data/support/` holds the non-endpoints they call.
   Each action opens with `action(name, ctx)`, which logs start and binds the name into its calls.
+- **`scripts/`** — run by `pnpm`, never imported by the app: `seed.ts`, `baseline.ts`, `*.sh`.
+- **`src/__tests__/seed-assets.ts`** — what `scripts/seed.ts` writes and the suites assert against.
 - **`lib/auth.ts`** — NextAuth v5 (beta) with GitHub + Google OAuth providers.
 - **`app/blog/`**, **`app/docs/`** — markdown-rendered content.
 

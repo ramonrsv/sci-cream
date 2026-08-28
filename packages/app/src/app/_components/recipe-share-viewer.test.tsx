@@ -7,7 +7,7 @@ import { render, screen, cleanup, fireEvent, act } from "@testing-library/react"
 import type { LightRecipe } from "@workspace/sci-cream";
 
 import { ShareViewer } from "./recipe-share-viewer";
-import { USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/assets";
+import { USER_DEFINED_FRUCTOSE_SPEC } from "@/__tests__/seed-assets";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import {
   MAX_ENCODED_CHARS,

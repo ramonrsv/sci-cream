@@ -7,7 +7,7 @@ import type { LightRecipe } from "@workspace/sci-cream";
 
 import { ShareRecipeAction } from "./recipe-share-dialog";
 import { useSessionResources, type SessionResources } from "@/lib/resources/session";
-import { USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/assets";
+import { USER_DEFINED_FRUCTOSE_SPEC } from "@/__tests__/seed-assets";
 import { decodeSharePayload, type SharePayload } from "@/lib/recipe/share";
 
 // ---------------------------------------------------------------------------

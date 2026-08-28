@@ -36,7 +36,7 @@ const { COMMENT_RATE_LIMIT, MAX_COMMENT_BODY_CHARS, CommentDeletion, CommentErro
 const { DataError } = await import("@/lib/result");
 const { commentReportsTable, commentsTable, usersTable } = await import("@/lib/database/schema");
 const { db } = await import("@/lib/database/client");
-const { TEST_USER_A, TEST_USER_B } = await import("@/lib/database/assets");
+const { TEST_USER_A, TEST_USER_B } = await import("@/__tests__/seed-assets");
 
 type CommentSubject = import("@/lib/comments/subject").CommentSubject;
 

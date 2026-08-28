@@ -154,7 +154,7 @@ cd ./packages/app
 
 # Individual steps
 npx drizzle-kit migrate
-pnpm tsx ./src/lib/database/seed.ts
+pnpm tsx ./scripts/seed.ts
 
 # Or the equivalent
 pnpm seed-db
@@ -274,7 +274,7 @@ for tag in $(jq -r '.entries[].tag' drizzle/meta/_journal.json); do
   psql "$POSTGRES_URL" -q -v ON_ERROR_STOP=1 -f "drizzle/$tag.sql"
 done
 
-pnpm tsx ./src/lib/database/seed.ts
+pnpm tsx ./scripts/seed.ts
 pg_dump "$POSTGRES_URL" --data-only --schema=public --no-owner --no-privileges \
   > drizzle/fixtures/<new_tag>.sql
 dropdb sci_cream_fixture

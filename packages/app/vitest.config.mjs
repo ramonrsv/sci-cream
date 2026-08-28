@@ -19,7 +19,7 @@ export default defineConfig({
       "docs/**",
     ],
     coverage: {
-      exclude: [...coverageConfigDefaults.exclude, "**/__tests__/**", "src/lib/database/seed.ts"],
+      exclude: [...coverageConfigDefaults.exclude, "**/__tests__/**", "scripts/seed.ts"],
     },
   },
 });

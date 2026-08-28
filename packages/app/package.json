@@ -16,9 +16,9 @@
     "test:e2e:ui": "pnpm test:e2e --ui",
     "test:visual": "playwright test --project visual",
     "test:visual:update": "pnpm test:visual --update-snapshots",
-    "lint": "eslint ./src --max-warnings=0",
+    "lint": "eslint ./src ./scripts --max-warnings=0",
     "lint:sql": "squawk drizzle/*.sql",
-    "prettier": "prettier --check ./src",
+    "prettier": "prettier --check ./src ./scripts",
     "coverage": "vitest run --coverage",
     "bench": "pnpm bench:unit && pnpm bench:bundle && pnpm bench:e2e && pnpm bench:web-vitals",
     "bench:unit": "node --import tsx src/__benches__/unit/run-all.ts",
@@ -31,8 +31,8 @@
     "start": "next start",
     "db:generate": "npx drizzle-kit generate",
     "db:migrate": "npx drizzle-kit migrate",
-    "db:baseline": "pnpm tsx ./src/lib/database/baseline.ts",
-    "seed-db": "pnpm db:migrate && pnpm tsx ./src/lib/database/seed.ts",
+    "db:baseline": "pnpm tsx ./scripts/baseline.ts",
+    "seed-db": "pnpm db:migrate && pnpm tsx ./scripts/seed.ts",
     "doc": "tsc --noEmit false --outDir ./dist && npx jsdoc -c ./jsdoc.config.json"
   },
   "dependencies": {

@@ -3,7 +3,7 @@ import { test, expect, type Page } from "@playwright/test";
 import type { Batch } from "@/lib/batch/batch";
 import type { RecipeStore } from "@/lib/recipe/recipe";
 import { goToPageAndWaitFor, loginAsTestUserWithCredentials } from "@/__tests__/e2e/util";
-import { TEST_USER_B } from "@/lib/database/assets";
+import { TEST_USER_B } from "@/__tests__/seed-assets";
 import { parkCursor, setViewportHeightForAllAppContentScreenshot } from "@/__tests__/visual/util";
 import {
   VIEWPORT_MOBILE_LARGE_PORTRAIT,

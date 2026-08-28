@@ -1,3 +1,13 @@
+/**
+ * Load a development database with the two test users and everything the suites assert against.
+ *
+ * Destructive where it seeds: comments are cleared wholesale, and a user's ingredients, recipes,
+ * and batches are replaced. The content itself lives in `@/__tests__/seed-assets`, so a test can
+ * name the same rows this writes.
+ *
+ * Usage: `pnpm seed-db`, which migrates first.
+ */
+
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq } from "drizzle-orm";
 import { hash } from "bcryptjs";
@@ -36,7 +46,7 @@ import {
   type SeedBatchAsset,
   type SeedCommentAsset,
   type SeedRecipeAsset,
-} from "@/lib/database/assets";
+} from "@/__tests__/seed-assets";
 
 /** Shape of a test-user asset constant (email, password, name) */
 type UserAsset = typeof TEST_USER_A;

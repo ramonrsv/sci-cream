@@ -2,7 +2,7 @@ import { test, expect, type Locator, type Page } from "@playwright/test";
 import { inArray } from "drizzle-orm";
 
 import { goToPageAndWaitFor, loginAsTestUserWithCredentials } from "@/__tests__/e2e/util";
-import { TEST_USER_A, TEST_USER_B } from "@/lib/database/assets";
+import { TEST_USER_A, TEST_USER_B } from "@/__tests__/seed-assets";
 import { db } from "@/lib/database/client";
 import { commentsTable } from "@/lib/database/schema";
 

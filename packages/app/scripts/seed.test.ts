@@ -7,7 +7,7 @@ import { eq, and } from "drizzle-orm";
 import { getDatabaseUrl } from "@/lib/database/util";
 import { findUserByEmail } from "@/lib/data/support/users";
 import { ingredientsTable, SchemaCategory } from "@/lib/database/schema";
-import * as schema from "./schema";
+import * as schema from "@/lib/database/schema";
 
 import {
   getNonAliasIngredientSpecs,
@@ -21,7 +21,7 @@ import {
   getIndependentIngredientSpecs,
 } from "@workspace/sci-cream";
 
-import { TEST_USER_A } from "@/lib/database/assets";
+import { TEST_USER_A } from "@/__tests__/seed-assets";
 
 const db = drizzle(getDatabaseUrl(), { schema });
 

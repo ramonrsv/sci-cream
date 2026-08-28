@@ -9,7 +9,7 @@ import {
   goToPageAndWaitFor,
   loginAsTestUserWithCredentials,
 } from "@/__tests__/e2e/util";
-import { TEST_USER_B } from "@/lib/database/assets";
+import { TEST_USER_B } from "@/__tests__/seed-assets";
 import { encodeSharePayload, makeSharePayload, type SharePayload } from "@/lib/recipe/share";
 
 // Filling recipes involves many UI updates; generous timeout for parallel/underpowered runs.

@@ -16,7 +16,7 @@ import {
 
 import { sleep_ms } from "@/lib/util";
 
-import { TEST_USER_B } from "@/lib/database/assets";
+import { TEST_USER_B } from "@/__tests__/seed-assets";
 
 /** True for a Next.js server-action POST: the user-data fetch the stall simulates as slow. */
 const isUserDataServerAction = (req: Request) =>

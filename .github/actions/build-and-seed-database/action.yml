@@ -11,4 +11,4 @@ runs:
       run: |
         cd ./packages/app
         npx drizzle-kit migrate
-        pnpm tsx ./src/lib/database/seed.ts
+        pnpm tsx ./scripts/seed.ts

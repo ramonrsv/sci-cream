@@ -38,7 +38,7 @@ import {
   TEST_USER_B,
   RECIPE_INVALID_INGREDIENT,
   TEST_USER_B_RECIPES,
-} from "@/lib/database/assets";
+} from "@/__tests__/seed-assets";
 
 /** Sign in as the given test user for the rest of the test; no argument signs out. */
 function signInAs(email?: string) {

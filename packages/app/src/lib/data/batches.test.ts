@@ -29,7 +29,7 @@ import {
 import { db } from "@/lib/database/client";
 import { batchRecipesTable } from "@/lib/database/schema";
 
-import { TEST_USER_A, TEST_USER_B } from "@/lib/database/assets";
+import { TEST_USER_A, TEST_USER_B } from "@/__tests__/seed-assets";
 import { DataError } from "@/lib/result";
 
 /** Sign in as the given test user for the rest of the test; no argument signs out. */

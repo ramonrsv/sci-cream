@@ -4,6 +4,13 @@ import type { BatchInput } from "@/lib/data/batches";
 import { Rating } from "@/lib/rating";
 import { getLightRecipe, RecipeID } from "@/__tests__/assets";
 
+/**
+ * What `scripts/seed.ts` writes, and what the suites assert against.
+ *
+ * One set, not two: a test that checks a seeded row has to name the same data the seeder wrote,
+ * so the fixtures and the seed content are the same thing.
+ */
+
 /** Credentials for test user A, used in seeding and integration tests. */
 export const TEST_USER_A = {
   name: "SciCream Tester A",
