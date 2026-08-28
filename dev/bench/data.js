@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787911048071,
+  "lastUpdate": 1787911052067,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -576524,6 +576524,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/77f49e9e09950b28d660f339dcf0664badd4b761"
         },
         "date": 1787907177115,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cab3e0a9b9dc6266a175cb3d25f1637bdc86f8eb",
+          "message": "Throw when POSTGRES_URL is unset\n\n`process.env.POSTGRES_URL!` asserted nothing at runtime, so a missing\nvariable surfaced as `TypeError: Cannot read properties of undefined\n(reading 'replace')`, pinned to this file with no hint at the cause.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-28T05:42:27-04:00",
+          "tree_id": "42796133041a0856036df7e5256f7d1240cefc12",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cab3e0a9b9dc6266a175cb3d25f1637bdc86f8eb"
+        },
+        "date": 1787911050951,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
