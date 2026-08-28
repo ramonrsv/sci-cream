@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787883613764,
+  "lastUpdate": 1787883817869,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -472672,6 +472672,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 695.25,
             "range": "10.78",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "60bae7239c468cf1e6dcf1c04a3a78da1678a0a4",
+          "message": "Move non-application code out of `lib/database`\n\n`seed.ts` and `baseline.ts` are run by `pnpm`, never imported.\n`assets.ts` is fixture data, down to the test users' passwords. All\nthree sat beside `schema.ts` and `client.ts` with nothing saying so.\n\nThe two scripts move to `scripts/`, beside the shell scripts they work\nwith — `baseline.ts` beside `build-migration-test-db.sh`, its only\ncaller — and following `packages/sci-cream/scripts/gen-data.ts`. Being\noutside `src/` is the point: `src/` is the application.\n\n`assets.ts` becomes `src/__tests__/seed-assets.ts`. It is the contract\nbetween the seeder and the suites, nineteen test files importing it\nagainst the script's one, so it belongs with the tests rather than\nunder a production path.\n\n`eslint` and `prettier` were pointed at `./src` alone, so the move\nwould've dropped three files from both; they now take `./scripts` too.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-27T22:10:30-04:00",
+          "tree_id": "442155ec008668b5b115054bc696df62acf9bbd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/60bae7239c468cf1e6dcf1c04a3a78da1678a0a4"
+        },
+        "date": 1787883775429,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 35.88,
+            "range": "3.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 38,
+            "range": "2.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 46.5,
+            "range": "2.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1838,
+            "range": "81.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 244.5,
+            "range": "6.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 250.5,
+            "range": "2.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 265.75,
+            "range": "4.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 12642.25,
+            "range": "68.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 780,
+            "range": "35.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 41.75,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 44.25,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 32.75,
+            "range": "1.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 33.38,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 106.13,
+            "range": "5.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 61.25,
+            "range": "2.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 39.79,
+            "range": "0.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.76,
+            "range": "0.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 516,
+            "range": "9.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 554.63,
+            "range": "6.96",
             "unit": "ms"
           }
         ]
