@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787907177959,
+  "lastUpdate": 1787907253726,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -569180,6 +569180,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.49,
             "range": "0.31",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "77f49e9e09950b28d660f339dcf0664badd4b761",
+          "message": "Type `isUniqueViolation` instead of casting\n\nIt walked the `cause` chain of a caught value, casting at each hop to\nreach a `code` it could only compare as `unknown`. Both\n`DrizzleQueryError` and the driver's `DatabaseError` come from\ndependencies the app already has, so the wrapper unwraps by\n`instanceof` and the SQLSTATE reads off a typed field. `unknown` stays\non the parameter, where it is honest; the casts inside are gone.\n\nThat trades a duck-typed test for an identity-based one, which a second\ncopy of `pg` would silently defeat. The name-collision tests cover both\ncall sites, so that surfaces as a red suite, not a save that throws.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-28T04:49:10-04:00",
+          "tree_id": "92a3c06d8bc743bb937f01469f4b0d98cbd808f9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/77f49e9e09950b28d660f339dcf0664badd4b761"
+        },
+        "date": 1787907203499,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 66.21,
+            "range": "13.54",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.34,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.31,
+            "range": "0.51",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 182.5,
+            "range": "17.66",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.48,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 182.5,
+            "range": "17.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.4,
+            "range": "13.44",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.46,
+            "range": "0.29",
             "unit": "ms"
           }
         ]
