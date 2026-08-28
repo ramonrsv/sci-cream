@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787883233450,
+  "lastUpdate": 1787883241492,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -546276,6 +546276,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1035.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "60bae7239c468cf1e6dcf1c04a3a78da1678a0a4",
+          "message": "Move non-application code out of `lib/database`\n\n`seed.ts` and `baseline.ts` are run by `pnpm`, never imported.\n`assets.ts` is fixture data, down to the test users' passwords. All\nthree sat beside `schema.ts` and `client.ts` with nothing saying so.\n\nThe two scripts move to `scripts/`, beside the shell scripts they work\nwith — `baseline.ts` beside `build-migration-test-db.sh`, its only\ncaller — and following `packages/sci-cream/scripts/gen-data.ts`. Being\noutside `src/` is the point: `src/` is the application.\n\n`assets.ts` becomes `src/__tests__/seed-assets.ts`. It is the contract\nbetween the seeder and the suites, nineteen test files importing it\nagainst the script's one, so it belongs with the tests rather than\nunder a production path.\n\n`eslint` and `prettier` were pointed at `./src` alone, so the move\nwould've dropped three files from both; they now take `./scripts` too.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-27T22:10:30-04:00",
+          "tree_id": "442155ec008668b5b115054bc696df62acf9bbd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/60bae7239c468cf1e6dcf1c04a3a78da1678a0a4"
+        },
+        "date": 1787883190219,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 875.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 812.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 654.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 822.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 626.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 627.8,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 796.25,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1035.27,
             "unit": "KB"
           },
           {
