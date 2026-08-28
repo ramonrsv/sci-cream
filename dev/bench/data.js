@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787907170876,
+  "lastUpdate": 1787907174500,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -548158,6 +548158,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1035.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "77f49e9e09950b28d660f339dcf0664badd4b761",
+          "message": "Type `isUniqueViolation` instead of casting\n\nIt walked the `cause` chain of a caught value, casting at each hop to\nreach a `code` it could only compare as `unknown`. Both\n`DrizzleQueryError` and the driver's `DatabaseError` come from\ndependencies the app already has, so the wrapper unwraps by\n`instanceof` and the SQLSTATE reads off a typed field. `unknown` stays\non the parameter, where it is honest; the casts inside are gone.\n\nThat trades a duck-typed test for an identity-based one, which a second\ncopy of `pg` would silently defeat. The name-collision tests cover both\ncall sites, so that surfaces as a red suite, not a save that throws.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-28T04:49:10-04:00",
+          "tree_id": "92a3c06d8bc743bb937f01469f4b0d98cbd808f9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/77f49e9e09950b28d660f339dcf0664badd4b761"
+        },
+        "date": 1787907118255,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 706.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 875.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 643.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 812.19,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 654.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 822.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 626.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 794.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 627.79,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 796.24,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1035.27,
             "unit": "KB"
           },
           {
