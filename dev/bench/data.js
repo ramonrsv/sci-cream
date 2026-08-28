@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787891144261,
+  "lastUpdate": 1787891232793,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -568155,6 +568155,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.2,
             "range": "0.28",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d145d176c8ff75380dc55c1a8f2011252f949119",
+          "message": "Move the seeded-ingredients test into `unit/`\n\nIt sat in `scripts/` as `seed.test.ts` while importing nothing from\n`seed.ts`: what it reads is the database the script wrote. Its subject\nspans the crate's embedded specs, the Postgres JSON column, and the\nWASM converter, so it belongs to no one module and joins the other\ncross-cutting vitest tests, named for its subject as they are.\n\nIt opened a second connection with its own `drizzle()` call and\nimported the schema twice over. Both give way to the shared `db` from\n`lib/database/client`, which the module exists to provide, and which\nloads `dotenv` on its own.\n\nA header records what the name cannot: this needs a seeded database,\nso it fails as a bare `vitest run` against an empty one.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-27T22:35:50-04:00",
+          "tree_id": "4e82a47064fc533d063f612f9d00b5f9e12b5d49",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d145d176c8ff75380dc55c1a8f2011252f949119"
+        },
+        "date": 1787891181212,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.4,
+            "range": "8.78",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.34,
+            "range": "0.51",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.28,
+            "range": "0.52",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 168.5,
+            "range": "10.85",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 168.5,
+            "range": "10.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.63,
+            "range": "8.54",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.49,
+            "range": "0.31",
             "unit": "ms"
           }
         ]
