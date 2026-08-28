@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787883245213,
+  "lastUpdate": 1787883350588,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -567130,6 +567130,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.39,
             "range": "0.24",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "60bae7239c468cf1e6dcf1c04a3a78da1678a0a4",
+          "message": "Move non-application code out of `lib/database`\n\n`seed.ts` and `baseline.ts` are run by `pnpm`, never imported.\n`assets.ts` is fixture data, down to the test users' passwords. All\nthree sat beside `schema.ts` and `client.ts` with nothing saying so.\n\nThe two scripts move to `scripts/`, beside the shell scripts they work\nwith — `baseline.ts` beside `build-migration-test-db.sh`, its only\ncaller — and following `packages/sci-cream/scripts/gen-data.ts`. Being\noutside `src/` is the point: `src/` is the application.\n\n`assets.ts` becomes `src/__tests__/seed-assets.ts`. It is the contract\nbetween the seeder and the suites, nineteen test files importing it\nagainst the script's one, so it belongs with the tests rather than\nunder a production path.\n\n`eslint` and `prettier` were pointed at `./src` alone, so the move\nwould've dropped three files from both; they now take `./scripts` too.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-27T22:10:30-04:00",
+          "tree_id": "442155ec008668b5b115054bc696df62acf9bbd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/60bae7239c468cf1e6dcf1c04a3a78da1678a0a4"
+        },
+        "date": 1787883300049,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.69,
+            "range": "8.83",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.2,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.16,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 175.5,
+            "range": "12.07",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.49,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 175.5,
+            "range": "12.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.17,
+            "range": "7.46",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.2,
+            "range": "0.28",
             "unit": "ms"
           }
         ]
