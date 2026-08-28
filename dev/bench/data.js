@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787911023544,
+  "lastUpdate": 1787911039305,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -512005,6 +512005,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cab3e0a9b9dc6266a175cb3d25f1637bdc86f8eb",
+          "message": "Throw when POSTGRES_URL is unset\n\n`process.env.POSTGRES_URL!` asserted nothing at runtime, so a missing\nvariable surfaced as `TypeError: Cannot read properties of undefined\n(reading 'replace')`, pinned to this file with no hint at the cause.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-28T05:42:27-04:00",
+          "tree_id": "42796133041a0856036df7e5256f7d1240cefc12",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cab3e0a9b9dc6266a175cb3d25f1637bdc86f8eb"
+        },
+        "date": 1787910986982,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 57700,
+            "range": "±0.85%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 500410,
+            "range": "±0.48%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 42937,
+            "range": "±1.83%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 381939,
+            "range": "±1.15%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
