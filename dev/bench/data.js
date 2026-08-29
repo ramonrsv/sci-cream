@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787989253478,
+  "lastUpdate": 1787989257496,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -577526,6 +577526,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/cab3e0a9b9dc6266a175cb3d25f1637bdc86f8eb"
         },
         "date": 1787911050951,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e674aaf338248c48342000d2c702c6fbbcefbbb8",
+          "message": "Persist the recipe baseline in localStorage\n\n`RecipeBaseline` lived only on the in-memory `Recipe`, so the calculator\nre-derived it from the store on every mount. The autosave writes the\nedited rows back, which made those edits the new baseline: navigating\naway from /calculator and back showed a modified recipe as clean, and a\npending rename was silently forgotten.\n\nStore the baseline beside `savedRef` and prefer it on load, falling back\nto a fresh capture when absent so first loads and pre-existing stores\nbehave as before. The paste path passes it through the store rather than\npatching it on afterwards.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-29T03:22:43-04:00",
+          "tree_id": "9ed9eb8944e733a0320a23dd2508f2a7427a40b8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e674aaf338248c48342000d2c702c6fbbcefbbb8"
+        },
+        "date": 1787989256328,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
