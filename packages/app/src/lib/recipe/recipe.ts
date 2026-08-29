@@ -123,6 +123,8 @@ export interface RecipeStore {
   lockedRows?: number[];
   /** Grams of water evaporated. Sidecar like `lockedRows` — kept out of `serializedRows` */
   evaporation?: number;
+  /** Snapshot of the loaded version, so dirty-detection survives a reload. Set with `savedRef` */
+  baseline?: RecipeBaseline;
 }
 
 /** Top-level context holding all recipe slots; passed as shared state through the component tree */
@@ -466,13 +468,14 @@ export function updateMixProperties(recipe: Recipe, resources: WasmResources) {
   }
 }
 
-/** Serialize a `Recipe` to a `RecipeStore` object, preserving any saved-recipe identity and locks */
+/** Serialize a `Recipe` to a `RecipeStore` obj, preserving any saved-recipe identity and locks */
 export function stringifyRecipeToStore(recipe: Recipe): RecipeStore {
   const lockedRows = recipe.ingredientRows.filter((row) => row.locked).map((row) => row.index);
   return {
     name: recipe.name,
     serializedRows: stringifyRecipe(recipe),
     ...(recipe.savedRef !== undefined && { savedRef: recipe.savedRef }),
+    ...(recipe.baseline !== undefined && { baseline: recipe.baseline }),
     ...(lockedRows.length > 0 && { lockedRows }),
     ...(recipe.evaporation ? { evaporation: recipe.evaporation } : {}),
   };
@@ -568,8 +571,9 @@ export function makeUpdatedRow(
 /**
  * Parse a `RecipeStore` object and apply it to a `Recipe`, returning the updated recipe.
  *
- * Carries through the store's optional `savedRef` onto the resulting recipe and captures a fresh
- * `baseline` so dirty-detection starts clean after the load.
+ * Carries through the store's optional `savedRef` onto the resulting recipe. A `baseline` already
+ * in the store wins — it belongs to the version being edited, and the rows beside it may be
+ * mid-edit. Absent one, a fresh baseline is captured, so a first load starts clean.
  */
 export function makeUpdatedRecipeFromStore(
   currentRecipe: Recipe,
@@ -599,7 +603,10 @@ export function makeUpdatedRecipeFromStore(
   );
 
   // Only saved-recipe loads get a baseline; anonymous loads (no savedRef) stay free of dirty state
-  updated.baseline = recipeStore.savedRef !== undefined ? makeRecipeBaseline(updated) : undefined;
+  updated.baseline =
+    recipeStore.savedRef === undefined
+      ? undefined
+      : (recipeStore.baseline ?? makeRecipeBaseline(updated));
   return updated;
 }
 

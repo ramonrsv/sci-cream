@@ -513,12 +513,10 @@ export function RecipeEditor({
         serializedRows,
         savedRef: current.savedRef,
         evaporation: current.evaporation,
+        baseline: current.baseline,
       },
       wasmResources,
     );
-    // `makeUpdatedRecipeFromStore` recaptures the baseline from the pasted rows; restore the slot's
-    // original baseline so dirty-detection compares against the saved version, not the paste.
-    pasted.baseline = current.baseline;
     updateRecipes([pasted]);
   };
 
