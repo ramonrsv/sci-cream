@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787989257496,
+  "lastUpdate": 1787989272222,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -512852,6 +512852,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.15%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e674aaf338248c48342000d2c702c6fbbcefbbb8",
+          "message": "Persist the recipe baseline in localStorage\n\n`RecipeBaseline` lived only on the in-memory `Recipe`, so the calculator\nre-derived it from the store on every mount. The autosave writes the\nedited rows back, which made those edits the new baseline: navigating\naway from /calculator and back showed a modified recipe as clean, and a\npending rename was silently forgotten.\n\nStore the baseline beside `savedRef` and prefer it on load, falling back\nto a fresh capture when absent so first loads and pre-existing stores\nbehave as before. The paste path passes it through the store rather than\npatching it on afterwards.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-29T03:22:43-04:00",
+          "tree_id": "9ed9eb8944e733a0320a23dd2508f2a7427a40b8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e674aaf338248c48342000d2c702c6fbbcefbbb8"
+        },
+        "date": 1787989217758,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 57064,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 502654,
+            "range": "±0.44%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 41534,
+            "range": "±1.33%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 393379,
+            "range": "±0.89%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
