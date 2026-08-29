@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787989272222,
+  "lastUpdate": 1787989322837,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -571230,6 +571230,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.84,
             "range": "0.67",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e674aaf338248c48342000d2c702c6fbbcefbbb8",
+          "message": "Persist the recipe baseline in localStorage\n\n`RecipeBaseline` lived only on the in-memory `Recipe`, so the calculator\nre-derived it from the store on every mount. The autosave writes the\nedited rows back, which made those edits the new baseline: navigating\naway from /calculator and back showed a modified recipe as clean, and a\npending rename was silently forgotten.\n\nStore the baseline beside `savedRef` and prefer it on load, falling back\nto a fresh capture when absent so first loads and pre-existing stores\nbehave as before. The paste path passes it through the store rather than\npatching it on afterwards.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-29T03:22:43-04:00",
+          "tree_id": "9ed9eb8944e733a0320a23dd2508f2a7427a40b8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e674aaf338248c48342000d2c702c6fbbcefbbb8"
+        },
+        "date": 1787989272704,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 59.15,
+            "range": "9.45",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.16,
+            "range": "0.67",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.13,
+            "range": "0.68",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 161.5,
+            "range": "11.30",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 161.5,
+            "range": "11.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 55.9,
+            "range": "9.21",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.54,
+            "range": "0.38",
             "unit": "ms"
           }
         ]
