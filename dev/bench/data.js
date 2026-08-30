@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787990020568,
+  "lastUpdate": 1788078712573,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -585149,6 +585149,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1889.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7650eb302d24506e08a630c1008e910618fd2b25",
+          "message": "Document dextrose POD, add glucose powder entries\n\n* Document the derivation of `pod::GLUCOSE`. Goff & Hartel cite 74 on\n  an as-is product basis for dextrose with 92% solids, which is ~80 on\n  a dry solids basis, agreeing with Hull's value of 80. Add the Hull\n  reference alongside Goff & Hartel.\n\n* Source the 'Glucose Syrup' alias comment, replacing an @todo.\n\n* Add 'Glucose Powder 37 DE', a copy of 'Glucose Syrup 37 DE' with the\n  solids content adjusted to 95%, and a 'Glucose Powder' alias for\n  'Glucose Powder 42 DE'.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-30T03:49:17-04:00",
+          "tree_id": "0a1c0ede65e794b3fb7e991a857ed691538ed48f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7650eb302d24506e08a630c1008e910618fd2b25"
+        },
+        "date": 1788078662494,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.43,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.41,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1689.3,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.41,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.45,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1891.01,
             "unit": "KB"
           }
         ]
