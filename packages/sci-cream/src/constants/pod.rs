@@ -4,8 +4,14 @@
 
 /// Also known by the name 'dextrose', commonly sold as dextrose monohydrate powder.
 ///
-/// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
+/// Goff & Hartel cites a relative sweetness of 74 _"on an as is or product basis"_ for dextrose
+/// with 92% solids, which works out to ~80 on a dry solids basis. Hull cites a relative sweetness
+/// of 80, inferred to be on a dry solids basis; see the [analysis](crate::docs#sweetness-values)
+/// for this inference and the consolidation of different sources for the sweetness values.
+///
+/// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2], (Hull, 2010, Appendix C.3, p. 323)[^15]
 #[doc = include_str!("../../docs/references/index/2.md")]
+#[doc = include_str!("../../docs/references/index/15.md")]
 pub const GLUCOSE: f64 = 80.0;
 /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
 #[doc = include_str!("../../docs/references/index/2.md")]

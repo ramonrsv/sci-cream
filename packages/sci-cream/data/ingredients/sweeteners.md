@@ -469,8 +469,13 @@ glucose syrups and powders.
 { "for": "Glucose Syrup 42 DE" }
 ```
 
-'Glucose Syrup 42 DE' is the most common general-purpose glucose syrup, particularly of those
-available to home cooks, and is often referred to as just 'Glucose Syrup'. @todo Source needed.
+'Glucose Syrup 42 DE' is the most common general-purpose glucose syrup, the result of "regular
+conversion". Originally, it was the only type of glucose syrup, also known as 'Confectioners
+Glucose' (Goff & Hartel, 2013, p. 67)[^2], (Hull, 2010, p. 7, 26, 270)[^15]. Nowadays often referred
+to as simply 'Glucose Syrup', it is the most widely available glucose syrup, particularly to home
+cooks, e.g. ['Glucose Syrup 42DE'](https://bulkmart.ca/products/glucose-syrup-42de-27-22-kg),
+['Glucose Powder
+42DE'](https://bulkmart.ca/products/glucose-powder-42de-fine-corn-syrup-solids-22-68-kg).
 
 ## High Fructose Corn Syrup 42
 
@@ -569,6 +574,24 @@ glucose syrup - 80% FX', the closest in C.1 and C.2, respectively.
 This is a copy of 'Glucose Syrup 25 DE' but with the solids content adjusted to 95% to reflect spray
 dried powder form. See the comments there for more details.
 
+## Glucose Powder 37 DE
+
+```json
+{
+  "category": "Sweetener",
+  "SweetenerSpec": {
+    "sweeteners": { "sugars": { "glucose": 11.0, "maltose": 12.0 } },
+    "other_carbohydrates": 77,
+    "ByDryWeight": { "solids": 95 },
+    "pod": { "OfSolids": 45 },
+    "pac": { "OfSolids": { "molar_mass": 486 } }
+  }
+}
+```
+
+This is a copy of 'Glucose Syrup 37 DE' but with the solids content adjusted to 95% to reflect spray
+dried powder form. See the comments there for more details.
+
 ## Glucose Powder 42 DE
 
 ```json
@@ -586,6 +609,16 @@ dried powder form. See the comments there for more details.
 
 This is a copy of 'Glucose Syrup 42 DE' but with the solids content adjusted to 95% to reflect spray
 dried powder form. See the comments there for more details.
+
+## Glucose Powder
+
+```json
+{ "for": "Glucose Powder 42 DE" }
+```
+
+'Glucose Powder 42 DE', being the spray dried form of 'Glucose Syrup 42 DE', is the most commonly
+available general purpose glucose powder, often referred to as just 'Glucose Powder'. See the
+comments in the 'Glucose Syrup' alias for more details.
 
 ## Inulin Powder
 

@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 284  (non-alias: 240, independent: 232)
+"total: 286  (non-alias: 241, independent: 233)
 
             0% Milk
             1% Milk
@@ -83,7 +83,9 @@ exports[`Embedded spec entries 1`] = `
             Gelatin
             Ghirardelli 100% Unsweetened Cocoa Powder
             Gin
+[alias]     Glucose Powder
             Glucose Powder 25 DE
+            Glucose Powder 37 DE
             Glucose Powder 42 DE
 [alias]     Glucose Syrup
             Glucose Syrup 20 DE
