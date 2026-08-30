@@ -103,6 +103,7 @@ its features, nor the other entries in this list.
 - [Gelatodemy](https://gelatodemy.com/en/ice-cream-balancing-software/)
 - [Dairy Science Mix Calculator](https://www.dairyscience.info/calculator1/index.php)
 - [Owl Software](https://owlsoft.com/)
+- [Scoopulator](https://scoopulator.app/)
 
 ## Books
 
@@ -145,6 +146,7 @@ I just may not have had a chance to explore them yet. If and when I do, I will a
 - [Omni Calculator](https://www.omnicalculator.com/food/ice-cream)
 - [jhermann/ice-creamery](https://github.com/jhermann/ice-creamery)
 - [Gelatodemy](https://gelatodemy.com/en/)
+- [Polar Ice Creamery](https://www.youtube.com/@PolarIceCreamery)
 
 Last but not least, there is the [r/icecreamery](https://www.reddit.com/r/icecreamery/) subreddit;
 it's what it says on the tin:
