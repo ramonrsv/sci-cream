@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788078712573,
+  "lastUpdate": 1788078722362,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -513699,6 +513699,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.89%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7650eb302d24506e08a630c1008e910618fd2b25",
+          "message": "Document dextrose POD, add glucose powder entries\n\n* Document the derivation of `pod::GLUCOSE`. Goff & Hartel cite 74 on\n  an as-is product basis for dextrose with 92% solids, which is ~80 on\n  a dry solids basis, agreeing with Hull's value of 80. Add the Hull\n  reference alongside Goff & Hartel.\n\n* Source the 'Glucose Syrup' alias comment, replacing an @todo.\n\n* Add 'Glucose Powder 37 DE', a copy of 'Glucose Syrup 37 DE' with the\n  solids content adjusted to 95%, and a 'Glucose Powder' alias for\n  'Glucose Powder 42 DE'.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-30T03:49:17-04:00",
+          "tree_id": "0a1c0ede65e794b3fb7e991a857ed691538ed48f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7650eb302d24506e08a630c1008e910618fd2b25"
+        },
+        "date": 1788078683610,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76244,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 690441,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 57787,
+            "range": "±0.64%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 611535,
+            "range": "±0.59%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
