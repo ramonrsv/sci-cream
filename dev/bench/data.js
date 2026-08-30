@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788121672090,
+  "lastUpdate": 1788121732245,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -573280,6 +573280,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.84,
             "range": "0.28",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "31575b81ce28938a44693ee48eba8596e6fff9b8",
+          "message": "Add Scoopulator and Polar Ice Creamery resources\n\n* Add Scoopulator to the list of calculators.\n\n* Add the Polar Ice Creamery YouTube channel to the list of other\n  resources that don't yet have a dedicated Sources entry.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-30T04:46:54-04:00",
+          "tree_id": "0d340740706278d27a2de6c5a088027e5a825919",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/31575b81ce28938a44693ee48eba8596e6fff9b8"
+        },
+        "date": 1788121695147,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 49.99,
+            "range": "6.99",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.81,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.74,
+            "range": "0.98",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 134.5,
+            "range": "7.73",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.41,
+            "range": "0.03",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 134.5,
+            "range": "7.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 47.95,
+            "range": "6.50",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.21,
+            "range": "0.70",
             "unit": "ms"
           }
         ]
