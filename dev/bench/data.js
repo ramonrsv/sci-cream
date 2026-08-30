@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788121663191,
+  "lastUpdate": 1788121667136,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -514544,6 +514544,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 611535,
             "range": "±0.59%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "31575b81ce28938a44693ee48eba8596e6fff9b8",
+          "message": "Add Scoopulator and Polar Ice Creamery resources\n\n* Add Scoopulator to the list of calculators.\n\n* Add the Polar Ice Creamery YouTube channel to the list of other\n  resources that don't yet have a dedicated Sources entry.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-30T04:46:54-04:00",
+          "tree_id": "0d340740706278d27a2de6c5a088027e5a825919",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/31575b81ce28938a44693ee48eba8596e6fff9b8"
+        },
+        "date": 1788121608566,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 57829,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 496564,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 41174,
+            "range": "±1.35%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 385387,
+            "range": "±0.94%",
             "unit": "ops/sec",
             "extra": "94 samples"
           }
