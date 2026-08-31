@@ -143,3 +143,7 @@
 [^70]: Palacios, L. E. & Wang, T. (2005) _Egg-Yolk Lipid Fractionation and Lecithin Characterization_. Department of Food Science and Human Nutrition, Center for Crops Utilization Research, Iowa State University.
 
 [^71]: Ramachandra, R. & Ravishankar, G. (2000). _Review - Vanilla flavour: production by conventional and biotechnological routes_. <https://www.researchgate.net/publication/230047388_Vanilla_flavour_Production_by_conventional_and_biotechnological_routes>
+
+[^72]: Falkowitz, Max. (2023, April). _For Smoother Ice Cream and Sorbet, Use Corn Syrup_. Serious Eats. <https://www.seriouseats.com/the-deal-with-corn-syrup-makes-better-sorbet-why-use-invert-sugars>
+
+[^73]: Chef Adam. _The Differences Between Light and Dark Corn Syrup_. Bakers Authority. Retrieved 2026, August. <https://www.bakersauthority.com/blogs/the-beginners-guide-to-baking-1/the-differences-between-light-and-dark-corn-syrup>

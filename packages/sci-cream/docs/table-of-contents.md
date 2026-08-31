@@ -7,6 +7,8 @@
   - [Artificial Sweeteners](crate::docs#artificial-sweeteners)
   - [Fibers](crate::docs#fibers)
   - [Glucose Syrups and Powders](crate::docs#glucose-syrups-and-powders)
+    - [Nomenclature](crate::docs#nomenclature)
+    - [Retail Corn Syrups](crate::docs#retail-corn-syrups)
     - [Sweetness Values](crate::docs#sweetness-values)
 - [Freezing Point Depression](crate::docs#freezing-point-depression)
   - [PAC, AFP, FPDF, SE](crate::docs#pac-afp-fpdf-se)
