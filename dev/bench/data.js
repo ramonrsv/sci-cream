@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788209278840,
+  "lastUpdate": 1788209283983,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -552863,6 +552863,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1035.63,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9e88749ace7aebc8ecf1f540a0c7f8f7899973dd",
+          "message": "Document glucose syrups and retail corn syrups\n\n* Replace the 'Glucose Syrup is...' placeholder with the hydrolysis\n  and DE background, Hull's technical definition, and a Nomenclature\n  section on the corn/maize, HFGS/HFCS, and glucose/dextrose splits.\n\n* Add a Retail Corn Syrups section. Retail products sold under a\n  'light', 'dark', 'white', or 'golden' prefix are sweeter, wetter,\n  and more heavily flavoured than bulk glucose syrup, so they are not\n  a 1:1 substitute. Karo and Crown are listed as examples.\n\n* Add the Falkowitz and Bakers Authority references backing that\n  section, and list the two new sections in the table of contents.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-31T12:21:08-04:00",
+          "tree_id": "3e32dc654ded8517bde60cf348569bb7712f50e3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9e88749ace7aebc8ecf1f540a0c7f8f7899973dd"
+        },
+        "date": 1788209227919,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 707.02,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 875.47,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 644.08,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 812.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 654.4,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 822.85,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 626.63,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 795.08,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 628.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 796.56,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1035.65,
             "unit": "KB"
           },
           {
