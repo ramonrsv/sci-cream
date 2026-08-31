@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788209287681,
+  "lastUpdate": 1788209354526,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -574305,6 +574305,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.21,
             "range": "0.70",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9e88749ace7aebc8ecf1f540a0c7f8f7899973dd",
+          "message": "Document glucose syrups and retail corn syrups\n\n* Replace the 'Glucose Syrup is...' placeholder with the hydrolysis\n  and DE background, Hull's technical definition, and a Nomenclature\n  section on the corn/maize, HFGS/HFCS, and glucose/dextrose splits.\n\n* Add a Retail Corn Syrups section. Retail products sold under a\n  'light', 'dark', 'white', or 'golden' prefix are sweeter, wetter,\n  and more heavily flavoured than bulk glucose syrup, so they are not\n  a 1:1 substitute. Karo and Crown are listed as examples.\n\n* Add the Falkowitz and Bakers Authority references backing that\n  section, and list the two new sections in the table of contents.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-31T12:21:08-04:00",
+          "tree_id": "3e32dc654ded8517bde60cf348569bb7712f50e3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9e88749ace7aebc8ecf1f540a0c7f8f7899973dd"
+        },
+        "date": 1788209301055,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.94,
+            "range": "9.05",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.18,
+            "range": "0.88",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.14,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 172,
+            "range": "12.81",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.39,
+            "range": "0.03",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 172,
+            "range": "12.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.74,
+            "range": "9.46",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.4,
+            "range": "0.29",
             "unit": "ms"
           }
         ]
