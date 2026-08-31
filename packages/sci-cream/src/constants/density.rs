@@ -165,11 +165,11 @@ pub struct MixDensityParams {
 
 /// Estimate the density (g/mL) of an aqueous mixture from its component masses and densities.
 ///
-/// `ethanol` and `water` are combined at their real (non-additive) [`ethanol_solution_density`];
-/// `sugar` (at its own density, commonly [`sugars::SUCROSE`]), `fat` (at its own density, commonly
-/// [`dairy::MILK_FAT`]), and `other_solids` (at its own density, commonly
-/// [`OTHER_DISSOLVED_SOLIDS`], or [`dairy::MSNF`]) then add by volume. Masses are in grams per
-/// 100g. The mixture must have an ethanol-water base, i.e. `ethanol + water > 0`.
+/// `ethanol` and `water` are combined at their real (non-additive)
+/// [`ethanol_solution_density_by_abw`]; `sugar` (at its own density, commonly [`sugars::SUCROSE`]),
+/// `fat` (at its own density, commonly [`dairy::MILK_FAT`]), and `other_solids` (at its own
+/// density, commonly [`OTHER_DISSOLVED_SOLIDS`], or [`dairy::MSNF`]) then add by volume. Masses are
+/// in grams per 100g. The mixture must have an ethanol-water base, i.e. `ethanol + water > 0`.
 ///
 /// # Errors
 ///
@@ -192,7 +192,7 @@ pub fn mixture_density(mix_params: MixDensityParams) -> Result<f64> {
     verify_is_100_percent(ethanol + water + sugar + fat + other_solids)?;
 
     let eth_sol_mass = ethanol + water;
-    let eth_sol_vol = eth_sol_mass / ethanol_solution_density(100.0 * ethanol / eth_sol_mass);
+    let eth_sol_vol = eth_sol_mass / ethanol_solution_density_by_abw(100.0 * ethanol / eth_sol_mass);
 
     let sugar_vol = sugar / sugar_d;
     let fat_vol = fat / fat_d;
@@ -310,7 +310,7 @@ fn solve_dairy_serving_grams_iters(ml: f64, sucrose: f64, msnf: f64, fat_at: imp
 /// [`abv_to_abw`] would not be an exact inverse.
 #[must_use]
 pub fn abw_to_abv(abw: f64) -> f64 {
-    interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abw, abw_to_f64, abv_from_abw_and_density)
+    interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abw, abw_from_pair, abv_from_pair)
 }
 
 /// Convert alcohol by volume (ABV, % v/v) to alcohol by weight (ABW, % w/w) at 20°C.
@@ -319,7 +319,7 @@ pub fn abw_to_abv(abw: f64) -> f64 {
 /// row in [`ETHANOL_SOLUTIONS_DENSITY`], since the table is keyed by weight percent.
 #[must_use]
 pub fn abv_to_abw(abv: f64) -> f64 {
-    interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abv, abv_from_abw_and_density, abw_to_f64)
+    interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abv, abv_from_pair, abw_from_pair)
 }
 
 /// Density (g/mL) of an ethanol-water solution at the given alcohol by weight (ABW, % w/w), 20°C.
@@ -327,8 +327,29 @@ pub fn abv_to_abw(abv: f64) -> f64 {
 /// Interpolates the solution density tabulated in [`ETHANOL_SOLUTIONS_DENSITY`], which is keyed by
 /// weight percent, so [`fast_interpolate_pairs`] applies.
 #[must_use]
-pub fn ethanol_solution_density(abw: f64) -> f64 {
+pub fn ethanol_solution_density_by_abw(abw: f64) -> f64 {
     fast_interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abw)
+}
+
+/// Density (g/mL) of an ethanol-water solution at the given alcohol by volume (ABV, % v/v), 20°C.
+///
+/// Interpolates the solution density in [`ETHANOL_SOLUTIONS_DENSITY`] against the ABV implied by
+/// each `(ABW, density)` row; cannot use [`fast_interpolate_pairs`] due to non-uniform ABV steps.
+#[must_use]
+pub fn ethanol_solution_density_by_abv(abv: f64) -> f64 {
+    interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abv, abv_from_pair, density_from_pair)
+}
+
+/// Trivially get the ABW value from a `(u32, f64)` pair of [`ETHANOL_SOLUTIONS_DENSITY`], as `f64`
+#[must_use]
+fn abw_from_pair(abw_density: &(u32, f64)) -> f64 {
+    f64::from(abw_density.0)
+}
+
+/// Trivially get the density value from a `(u32, f64)` pair of [`ETHANOL_SOLUTIONS_DENSITY`]
+#[must_use]
+const fn density_from_pair(abw_density: &(u32, f64)) -> f64 {
+    abw_density.1
 }
 
 /// Alcohol by weight (ABW, % w/w) and solution density (g/mL) to alcohol by volume (ABV, % v/v)
@@ -336,15 +357,9 @@ pub fn ethanol_solution_density(abw: f64) -> f64 {
 /// Direct conversion using the formula `ABV = ABW · ρ_solution / ρ_ethanol`. Internal function;
 /// parameters are `(u32, f64)` pairs of `(ABW, density)` to match [`ETHANOL_SOLUTIONS_DENSITY`].
 #[must_use]
-fn abv_from_abw_and_density(abw_density: &(u32, f64)) -> f64 {
+fn abv_from_pair(abw_density: &(u32, f64)) -> f64 {
     let (abw, density) = *abw_density;
     f64::from(abw) * density / ETHANOL
-}
-
-/// Trivial `u32` to `f64` conversion for the `(u32, f64)` pairs of [`ETHANOL_SOLUTIONS_DENSITY`]
-#[must_use]
-fn abw_to_f64(abw: &(u32, f64)) -> f64 {
-    f64::from(abw.0)
 }
 
 /// Coefficients for a quadratic polynomial line of best fit over [`FRESH_DAIRY_DENSITIES`].
@@ -541,7 +556,7 @@ mod tests {
 
     use super::*;
     use crate::{
-        constants::composition::dairy::STD_MINERALS_IN_MSNF,
+        constants::{COMPOSITION_EPSILON, composition::dairy::STD_MINERALS_IN_MSNF},
         util::{
             fast_interpolate_pairs, interpolate_pairs, table_supports_fast_interpolation, table_supports_interpolation,
         },
@@ -620,13 +635,13 @@ mod tests {
 
     #[test]
     fn abw_to_solution_density_table_supports_fast_interpolation() {
-        assert_true!(table_supports_interpolation(&ETHANOL_SOLUTIONS_DENSITY, abw_to_f64));
+        assert_true!(table_supports_interpolation(&ETHANOL_SOLUTIONS_DENSITY, abw_from_pair));
         assert_true!(table_supports_fast_interpolation(&ETHANOL_SOLUTIONS_DENSITY));
     }
 
     #[test]
     fn abw_to_solution_density_table_supports_interpolation_via_implied_abv() {
-        assert_true!(table_supports_interpolation(&ETHANOL_SOLUTIONS_DENSITY, abv_from_abw_and_density));
+        assert_true!(table_supports_interpolation(&ETHANOL_SOLUTIONS_DENSITY, abv_from_pair));
     }
 
     #[test]
@@ -740,19 +755,33 @@ mod tests {
         for x in [-5.0, -0.25, 0.0, 0.5, 12.5, 33.0, 33.5, 50.0, 67.0, 99.75, 100.0, 104.2] {
             assert_eq!(
                 fast_interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, x),
-                interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, x, abw_to_f64, |&(_, density)| density),
+                interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, x, abw_from_pair, density_from_pair),
             );
         }
     }
 
     #[test]
     fn ethanol_solution_density() {
-        assert_eq_flt_test!(super::ethanol_solution_density(0.0), WATER);
-        assert_eq_flt_test!(super::ethanol_solution_density(100.0), ETHANOL);
-        assert_eq_flt_test!(super::ethanol_solution_density(33.0), 0.94860);
-        assert_eq_flt_test!(super::ethanol_solution_density(35.0), 0.94494);
-        assert_eq_flt_test!(super::ethanol_solution_density(40.0), 0.93518);
-        assert_eq_flt_test!(super::ethanol_solution_density(43.0), 0.92897);
+        // Probes are product strengths: 35% vanilla extract, 40% vodka/gin/rum, 43% whiskey.
+        assert_eq_flt_test!(ethanol_solution_density_by_abv(0.0), WATER);
+        assert_eq_flt_test!(ethanol_solution_density_by_abv(100.0), ETHANOL);
+        assert_eq_flt_test!(ethanol_solution_density_by_abv(33.0), 0.95839);
+        assert_eq_flt_test!(ethanol_solution_density_by_abv(35.0), 0.95563);
+        assert_eq_flt_test!(ethanol_solution_density_by_abv(40.0), 0.94805);
+        assert_eq_flt_test!(ethanol_solution_density_by_abv(43.0), 0.94308);
+    }
+
+    #[test]
+    fn ethanol_solution_density_by_abv_matches_conversion_via_abw() {
+        // Both paths interpolate the same bracket, so converting to ABW and reading the density
+        // there reproduces the direct ABV lookup, up to the round-off of rebuilding ABW.
+        for abv in [0.0, 12.5, 33.0, 35.0, 40.0, 43.0, 45.0, 90.0, 100.0] {
+            assert_abs_diff_eq!(
+                ethanol_solution_density_by_abv(abv),
+                ethanol_solution_density_by_abw(super::abv_to_abw(abv)),
+                epsilon = COMPOSITION_EPSILON
+            );
+        }
     }
 
     #[test]
@@ -770,7 +799,7 @@ mod tests {
                 other_solids: None,
             })
             .unwrap(),
-            super::ethanol_solution_density(abw)
+            ethanol_solution_density_by_abw(abw)
         );
 
         // Dissolving sucrose (denser than the solution) raises the density.
@@ -783,7 +812,7 @@ mod tests {
                 other_solids: None,
             })
             .unwrap(),
-            super::ethanol_solution_density(abw)
+            ethanol_solution_density_by_abw(abw)
         );
     }
 
