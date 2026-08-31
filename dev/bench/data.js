@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788209236674,
+  "lastUpdate": 1788209278840,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -515393,6 +515393,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.94%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9e88749ace7aebc8ecf1f540a0c7f8f7899973dd",
+          "message": "Document glucose syrups and retail corn syrups\n\n* Replace the 'Glucose Syrup is...' placeholder with the hydrolysis\n  and DE background, Hull's technical definition, and a Nomenclature\n  section on the corn/maize, HFGS/HFCS, and glucose/dextrose splits.\n\n* Add a Retail Corn Syrups section. Retail products sold under a\n  'light', 'dark', 'white', or 'golden' prefix are sweeter, wetter,\n  and more heavily flavoured than bulk glucose syrup, so they are not\n  a 1:1 substitute. Karo and Crown are listed as examples.\n\n* Add the Falkowitz and Bakers Authority references backing that\n  section, and list the two new sections in the table of contents.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-31T12:21:08-04:00",
+          "tree_id": "3e32dc654ded8517bde60cf348569bb7712f50e3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9e88749ace7aebc8ecf1f540a0c7f8f7899973dd"
+        },
+        "date": 1788209227398,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 48504,
+            "range": "±1.32%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 516952,
+            "range": "±0.38%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33861,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 390259,
+            "range": "±1.12%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
