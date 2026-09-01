@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788239190701,
+  "lastUpdate": 1788304353307,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -557029,6 +557029,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1035.63,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f1db4c5ac1fccb2c52971faefe4d6deed82f3a3d",
+          "message": "Add emulsifier ingredients and their `CompKeys`\n\n* Add seven emulsifier ingredients: lecithin (plain, soy, sunflower and\n  egg yolk), gum arabic, mono- and diglycerides, distilled\n  monoglycerides, and polysorbate 80.\n\n* Add a `CompKey` per emulsifier component, so each is readable through\n  `Composition::get` and sits under `TotalEmulsifiers` in both the\n  structural and display hierarchies. `TotalEmulsifiers` is a\n  residual-free roll-up, so until now a mix containing any emulsifier\n  other than lecithin failed the structural invariant.\n\n* Give the two long names the `MDG` and `DMG` short forms, as `CMC` and\n  `LBG` already do for the stabilizers.\n\n@todo:\n - `EMULSIFIER_STRENGTH_DISTILLED_MONOGLYCERIDES` is still a placeholder\n   at 1.0, so 'Distilled Monoglycerides' currently models as far weaker\n   than mono- and diglycerides rather than stronger.\n - Lecithin entries likewise assume a de-oiled grade at 100% lecithin.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T18:54:47-04:00",
+          "tree_id": "3fefe1addf088c0faa1640eea519fa3bfb982048",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f1db4c5ac1fccb2c52971faefe4d6deed82f3a3d"
+        },
+        "date": 1788304299915,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 708.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 876.57,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 645.17,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 813.62,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 655.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 823.95,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 627.73,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 796.18,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 629.22,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 797.66,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1036.75,
             "unit": "KB"
           },
           {
