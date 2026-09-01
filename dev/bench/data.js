@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788306308121,
+  "lastUpdate": 1788306736645,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -482812,6 +482812,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 672.75,
             "range": "17.43",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "47b51d265264648ca0d6ea9bcf94278afe716316",
+          "message": "Add lecithin purity grades to emulsifier specs\n\n* Add `EmulsifierSpec::other_solids`, so an emulsifier ingredient can\n  carry the non-emulsifier remainder of a real product. The emulsifier\n  fields and `other_solids` must now sum to 100 together, rather than\n  the emulsifier fields alone.\n\n* Split the lecithin entries by grade. 'Soy Lecithin Powder' and\n  'Sunflower Lecithin Powder' are de-oiled at ~95% acetone-insolubles\n  with the balance as fat; 'Liquid Soy Lecithin' and 'Liquid Sunflower\n  Lecithin' sit at the 60% regulatory minimum. 'Lecithin' stays at 100%\n  as a theoretical pure reference, now documented as such.\n\n* Rename 'Soy Lecithin' to 'Soy Lecithin Powder' across the underbelly\n  recipes, the stabilizer blend, and `EMULSIFIER_ING`.\n\n* Add the EFSA re-evaluation of E 322 as `[^75]`, and the East Harbour\n  and Konsonet lecithin datasheets as `[^122]` and `[^123]`.\n\n@todo:\n - Gum arabic, mono- and diglycerides, distilled monoglycerides and\n   polysorbate 80 are still not mapped into the solids breakdown, so\n   they model as 100% water with zero energy.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T18:54:54-04:00",
+          "tree_id": "0937bb446da2720249b425ccde9204038bc26e76",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/47b51d265264648ca0d6ea9bcf94278afe716316"
+        },
+        "date": 1788306683128,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.75,
+            "range": "5.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 50.5,
+            "range": "2.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 56.75,
+            "range": "3.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2407.75,
+            "range": "21.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 332.25,
+            "range": "4.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 342.88,
+            "range": "6.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 354.38,
+            "range": "2.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17590.88,
+            "range": "216.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 900.38,
+            "range": "27.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 50.5,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 53.38,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.13,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.25,
+            "range": "1.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 126.5,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 81.25,
+            "range": "2.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.57,
+            "range": "0.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.84,
+            "range": "0.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 605.13,
+            "range": "4.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 675.75,
+            "range": "12.18",
             "unit": "ms"
           }
         ]
