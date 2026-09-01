@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788305932976,
+  "lastUpdate": 1788305955736,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -593304,6 +593304,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1895.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "47b51d265264648ca0d6ea9bcf94278afe716316",
+          "message": "Add lecithin purity grades to emulsifier specs\n\n* Add `EmulsifierSpec::other_solids`, so an emulsifier ingredient can\n  carry the non-emulsifier remainder of a real product. The emulsifier\n  fields and `other_solids` must now sum to 100 together, rather than\n  the emulsifier fields alone.\n\n* Split the lecithin entries by grade. 'Soy Lecithin Powder' and\n  'Sunflower Lecithin Powder' are de-oiled at ~95% acetone-insolubles\n  with the balance as fat; 'Liquid Soy Lecithin' and 'Liquid Sunflower\n  Lecithin' sit at the 60% regulatory minimum. 'Lecithin' stays at 100%\n  as a theoretical pure reference, now documented as such.\n\n* Rename 'Soy Lecithin' to 'Soy Lecithin Powder' across the underbelly\n  recipes, the stabilizer blend, and `EMULSIFIER_ING`.\n\n* Add the EFSA re-evaluation of E 322 as `[^75]`, and the East Harbour\n  and Konsonet lecithin datasheets as `[^122]` and `[^123]`.\n\n@todo:\n - Gum arabic, mono- and diglycerides, distilled monoglycerides and\n   polysorbate 80 are still not mapped into the solids breakdown, so\n   they model as 100% water with zero energy.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T18:54:54-04:00",
+          "tree_id": "0937bb446da2720249b425ccde9204038bc26e76",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/47b51d265264648ca0d6ea9bcf94278afe716316"
+        },
+        "date": 1788305900212,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1094.33,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 332.36,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1700.33,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 525.8,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 573,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1903.2,
             "unit": "KB"
           }
         ]
