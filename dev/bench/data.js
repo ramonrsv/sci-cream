@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788236093008,
+  "lastUpdate": 1788236119490,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -589768,6 +589768,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/b110a016047a159e0c079c7d7067406e4111afe2"
         },
         "date": 1788235844580,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1090.43,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 330.41,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1689.3,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 520.41,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 567.45,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1891.01,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bb0b8910be9bad3f22bc222baeb8d546ae820854",
+          "message": "Add `constants::units` for measure conversions\n\n* New `constants::units` module, with a `nist` submodule for the exact\n  US customary measures and a `label` submodule for the rounded values\n  a US nutrition panel means by them. Each links to the other, so\n  neither reads as the default: label reconciliation wants `label`,\n  everything else wants `nist`.\n\n* Add the NIST SP 811 Appendix B.8 conversion factors as `[^74]`, and\n  point `[^52]` at the Title 21 landing page rather than the eCFR root.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T00:10:13-04:00",
+          "tree_id": "edfbf901acd54a20967bb7437afce973986f101e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bb0b8910be9bad3f22bc222baeb8d546ae820854"
+        },
+        "date": 1788236065976,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
