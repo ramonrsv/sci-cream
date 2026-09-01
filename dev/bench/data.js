@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788236493169,
+  "lastUpdate": 1788236692699,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -480613,6 +480613,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 718.5,
             "range": "23.62",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b110a016047a159e0c079c7d7067406e4111afe2",
+          "message": "Split ethanol solution density by ABW and ABV\n\n* Rename `ethanol_solution_density` to `ethanol_solution_density_by_abw`\n  and add `ethanol_solution_density_by_abv`. The table is keyed by\n  weight percent, so the by-ABV lookup interpolates against the ABV\n  implied by each row and cannot use the evenly-spaced fast path.\n\n* Rename the pair accessors to `abw_from_pair` and `abv_from_pair`, and\n  add `density_from_pair` for the by-ABV lookup.\n\n* The density test probed 33/35/40/43 as if they were product strengths\n  — 35% vanilla extract, 40% vodka, 43% whiskey — but read them as ABW,\n  which is 39/42/47/50% ABV. Point it at the by-ABV lookup, with the\n  values for those strengths.\n\n* Add a test that the by-ABV lookup agrees with converting through\n  `abv_to_abw`: both interpolate the same bracket, so they differ only\n  by the round-off of rebuilding ABW, at worst 1.1e-16 over the range.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-31T18:32:48-04:00",
+          "tree_id": "6327d7bafaac789b795451cda894abbbe9a2381f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b110a016047a159e0c079c7d7067406e4111afe2"
+        },
+        "date": 1788236638389,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 44.13,
+            "range": "1.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52.13,
+            "range": "2.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57.38,
+            "range": "2.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2471.88,
+            "range": "56.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 330.13,
+            "range": "5.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 342.63,
+            "range": "3.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 368.25,
+            "range": "14.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17968.25,
+            "range": "71.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 924,
+            "range": "14.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.63,
+            "range": "2.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.5,
+            "range": "2.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 144.75,
+            "range": "4.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 103.38,
+            "range": "6.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 67.13,
+            "range": "3.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 50.13,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 700.88,
+            "range": "25.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 768.13,
+            "range": "24.86",
             "unit": "ms"
           }
         ]
