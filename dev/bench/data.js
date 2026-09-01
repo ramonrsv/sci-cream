@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788235918260,
+  "lastUpdate": 1788235987024,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -576259,6 +576259,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "TTFB",
             "value": 3.4,
+            "range": "0.29",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b110a016047a159e0c079c7d7067406e4111afe2",
+          "message": "Split ethanol solution density by ABW and ABV\n\n* Rename `ethanol_solution_density` to `ethanol_solution_density_by_abw`\n  and add `ethanol_solution_density_by_abv`. The table is keyed by\n  weight percent, so the by-ABV lookup interpolates against the ABV\n  implied by each row and cannot use the evenly-spaced fast path.\n\n* Rename the pair accessors to `abw_from_pair` and `abv_from_pair`, and\n  add `density_from_pair` for the by-ABV lookup.\n\n* The density test probed 33/35/40/43 as if they were product strengths\n  — 35% vanilla extract, 40% vodka, 43% whiskey — but read them as ABW,\n  which is 39/42/47/50% ABV. Point it at the by-ABV lookup, with the\n  values for those strengths.\n\n* Add a test that the by-ABV lookup agrees with converting through\n  `abv_to_abw`: both interpolate the same bracket, so they differ only\n  by the round-off of rebuilding ABW, at worst 1.1e-16 over the range.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-31T18:32:48-04:00",
+          "tree_id": "6327d7bafaac789b795451cda894abbbe9a2381f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b110a016047a159e0c079c7d7067406e4111afe2"
+        },
+        "date": 1788235942939,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 55.25,
+            "range": "8.46",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.28,
+            "range": "0.82",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.23,
+            "range": "0.80",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 149,
+            "range": "9.11",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.42,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 149,
+            "range": "9.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 52.45,
+            "range": "8.24",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.26,
             "range": "0.29",
             "unit": "ms"
           }
