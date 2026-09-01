@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 293  (non-alias: 248, independent: 240)
+total: 295  (non-alias: 250, independent: 242)
 
             0% Milk
             1% Milk
@@ -173,6 +173,8 @@ total: 293  (non-alias: 248, independent: 240)
             Lindt EXCELLENCE 70% Cacao Dark Chocolate
             Lindt EXCELLENCE 85% Cacao Dark Chocolate
             Lindt EXCELLENCE 95% Cacao Dark Chocolate
+            Liquid Soy Lecithin
+            Liquid Sunflower Lecithin
             Locust Bean Gum
             Maltitol
             Maltodextrin 10 DE
@@ -228,7 +230,7 @@ total: 293  (non-alias: 248, independent: 240)
             Sodium Alginate
 [alias]     Sorbet Stabilizer Blend
             Sorbitol
-            Soy Lecithin
+            Soy Lecithin Powder
 [alias]     Spearmint Essential Oil
             Splenda (Monk Fruit)
             Splenda (Stevia)
@@ -239,7 +241,7 @@ total: 293  (non-alias: 248, independent: 240)
             Strawberry
             Sucrose
             Sugar Twin
-            Sunflower Lecithin
+            Sunflower Lecithin Powder
             SweetLeaf Stevia
 [alias]     Table Cream
             Tapioca Starch

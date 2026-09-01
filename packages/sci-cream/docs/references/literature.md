@@ -149,3 +149,5 @@
 [^73]: Chef Adam. _The Differences Between Light and Dark Corn Syrup_. Bakers Authority. Retrieved 2026, August. <https://www.bakersauthority.com/blogs/the-beginners-guide-to-baking-1/the-differences-between-light-and-dark-corn-syrup>
 
 [^74]: National Institute of Standards and Technology. (2025, August). _NIST Guide to the SI, Appendix B.8: Factors for Units Listed Alphabetically_. Special Publication 811. <https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b8>
+
+[^75]: EFSA Panel on Food Additives and Nutrient Sources added to Food (ANS), et al. (2017, April). _Re-evaluation of lecithins (E 322) as a food additive_. EFSA Journal, 15(4), e04742. <https://doi.org/10.2903/j.efsa.2017.4742>

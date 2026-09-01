@@ -498,7 +498,7 @@ const STABILIZER_AND_SUCROSE_ING: &[&str] = &["3.25% Milk", "40% Cream", "Stabil
 
 /// Dairy plus an emulsifier source, for [`RatioKey::EmulsifiersPerFat`] (fat-denominated) ratio
 /// tests: Soy Lecithin supplies emulsifier while milk and cream supply the fat denominator.
-const EMULSIFIER_ING: &[&str] = &["3.25% Milk", "40% Cream", "Soy Lecithin"];
+const EMULSIFIER_ING: &[&str] = &["3.25% Milk", "40% Cream", "Soy Lecithin Powder"];
 
 // --- Exact balancing targets ---
 

@@ -3,19 +3,20 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Composition, Emulsifiers, Fats, Micro, Solids, SolidsBreakdown, ToComposition},
+    composition::{
+        Composition, Emulsifiers, Fats, Micro, ScaleComponents, SimpleSolids, Solids, SolidsBreakdown, ToComposition,
+    },
     error::{Error, Result},
-    util::collect_fields_copied_as,
     validate::{Validate, verify_are_positive, verify_is_100_percent},
 };
 
 /// Spec for emulsifier ingredients, e.g. lecithin
 ///
 /// These ingredients are assumed to be 100% solids, and all the populated fields of [`Emulsifiers`]
-/// must add up to 100. If field [`Emulsifiers::other`](field@Emulsifiers::other) is populated, it
-/// is counted as other solids non-fat non-sugar. All the other fields represent known emulsifier
-/// components, e.g. lecithin, and the specific breakdown of solids will be reflected in the
-/// composition.
+/// plus the total of [`other_solids`](Self::other_solids) must add up to 100. If field
+/// [`Emulsifiers::other`](field@Emulsifiers::other) is populated, it is counted as other solids
+/// non-fat non-sugar. All the other fields represent known emulsifier components, e.g. lecithin,
+/// and the specific breakdown of solids will be reflected in the composition.
 ///
 /// The [`strength`](Self::strength) field represents the relative strength of the emulsifier as a
 /// percentage of a reference. If not populated it is automatically calculated from the known
@@ -37,7 +38,7 @@ use crate::{
 pub struct EmulsifierSpec {
     /// Breakdown of the constituent emulsifier components of the ingredient
     ///
-    /// These must add up to 100, and the ingredient is assumed to be 100% solids. If field
+    /// The total of these and [`other_solids`](Self::other_solids) must add up to 100. If field
     /// [`Emulsifiers::other`](field@Emulsifiers::other) is populated, it is counted as other solids
     /// non-fat non-sugar, and the [`strength`](EmulsifierSpec::strength) field must be provided.
     /// All the other fields represent known emulsifier components, e.g. lecithin,
@@ -52,26 +53,46 @@ pub struct EmulsifierSpec {
     /// values of known emulsifier components.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub strength: Option<f64>,
+    /// Breakdown of the other solids in the ingredient that aren't the emulsifier components
+    ///
+    /// For example, lecithin powders contain ~95% acetone insoluble substances (lecithin) and ~5%
+    /// mostly triglycerides (fats) (EFSA et al., 2017, 3.1.1 Identity of the substance)[^75].
+    ///
+    /// The total of these and [`emulsifiers`](Self::emulsifiers) must add up to 100.
+    #[doc = include_str!("../../docs/references/index/75.md")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub other_solids: Option<SimpleSolids>,
 }
 
 impl ToComposition for EmulsifierSpec {
     fn to_composition(&self) -> Result<Composition> {
-        let lecithin = self.emulsifiers.lecithin;
-        let other = self.emulsifiers.other;
+        let Self {
+            emulsifiers,
+            strength,
+            other_solids,
+        } = *self;
 
-        verify_are_positive(&collect_fields_copied_as::<f64, _>(&self.emulsifiers))?;
-        verify_is_100_percent(self.emulsifiers.total())?;
-        verify_are_positive(&[self.strength.unwrap_or(0.0)])?;
+        let other_solids = other_solids.unwrap_or_else(SimpleSolids::new);
 
-        if self.emulsifiers.other > 0.0 && self.strength.is_none() {
+        emulsifiers.validate()?;
+        other_solids.validate()?;
+
+        verify_is_100_percent(emulsifiers.total() + other_solids.total())?;
+        verify_are_positive(&[strength.unwrap_or(0.0)])?;
+
+        if emulsifiers.other > 0.0 && strength.is_none() {
             return Err(Error::InvalidSpec(
                 "Strength must be provided if 'other' emulsifiers are specified".to_string(),
             ));
         }
 
-        let solids = SolidsBreakdown::new().fats(Fats::new().total(lecithin)).others(other);
-        let micro = Micro::new().emulsifiers(self.emulsifiers);
-        let texture = self.emulsifiers.to_texture(self.strength)?;
+        let solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(emulsifiers.lecithin))
+            .others(emulsifiers.other)
+            .add(&other_solids);
+
+        let micro = Micro::new().emulsifiers(emulsifiers);
+        let texture = emulsifiers.to_texture(strength)?;
 
         Composition::new()
             .energy(solids.energy()?)
@@ -95,48 +116,52 @@ pub(crate) mod tests {
     use super::*;
     use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
 
-    pub(crate) const ING_SPEC_EMULSIFIER_SOY_LECITHIN_STR: &str = r#"{
-      "name": "Soy Lecithin",
+    pub(crate) const ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER_STR: &str = r#"{
+      "name": "Soy Lecithin Powder",
       "category": "Emulsifier",
       "EmulsifierSpec": {
-        "emulsifiers": {
-          "lecithin": 100.0
-        }
+        "emulsifiers": { "lecithin": 95.0 },
+        "other_solids": { "fats": { "total": 5.0 } }
       }
     }"#;
 
-    pub(crate) static ING_SPEC_EMULSIFIER_SOY_LECITHIN: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Soy Lecithin".to_string(),
-        category: Category::Emulsifier,
-        spec: EmulsifierSpec {
-            emulsifiers: Emulsifiers::new().lecithin(100.0),
-            strength: None,
-        }
-        .into(),
-    });
+    pub(crate) static ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Soy Lecithin Powder".to_string(),
+            category: Category::Emulsifier,
+            spec: EmulsifierSpec {
+                emulsifiers: Emulsifiers::new().lecithin(95.0),
+                strength: None,
+                other_solids: Some(SimpleSolids::new().fats(Fats::new().total(5.0))),
+            }
+            .into(),
+        });
 
     #[test]
-    fn to_composition_emulsifier_soy_lecithin() {
-        let comp = ING_SPEC_EMULSIFIER_SOY_LECITHIN.spec.to_composition().unwrap();
+    fn to_composition_emulsifier_soy_lecithin_powder() {
+        let comp = ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 900.0);
         assert_eq!(comp.get(CompKey::TotalFats), 100.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 100.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 95.0);
 
-        assert_eq!(comp.micro.emulsifiers, Emulsifiers::new().lecithin(100.0));
-        assert_eq!(comp.texture.emulsification, 100.0);
+        assert_eq!(comp.micro.emulsifiers, Emulsifiers::new().lecithin(95.0));
+        assert_eq!(comp.texture.emulsification, 95.0);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_EMULSIFIERS: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
-        LazyLock::new(|| vec![(ING_SPEC_EMULSIFIER_SOY_LECITHIN_STR, ING_SPEC_EMULSIFIER_SOY_LECITHIN.clone(), None)]);
+        LazyLock::new(|| {
+            vec![(ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER_STR, ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER.clone(), None)]
+        });
 
     #[test]
     fn to_composition_err_on_negative_strength() {
         let neg_cases = [EmulsifierSpec {
             emulsifiers: Emulsifiers::new().lecithin(100.0),
             strength: Some(-1.0),
+            other_solids: None,
         }];
         for spec in neg_cases {
             assert!(matches!(spec.to_composition(), Err(Error::CompositionNotPositive(_))));

@@ -152,7 +152,7 @@ as 0.1%. For a lighter ice cream, or one that needs a long shelf life, you could
   "category": "Stabilizer",
   "CompositeSpec": {
     "ByParts": [
-      ["Soy Lecithin", 4],
+      ["Soy Lecithin Powder", 4],
       ["Locust Bean Gum", 4],
       ["Guar Gum", 2],
       ["Lambda Carrageenan", 1]
