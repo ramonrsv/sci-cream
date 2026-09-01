@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788304365125,
+  "lastUpdate": 1788304450368,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -578775,6 +578775,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.2,
             "range": "0.30",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f1db4c5ac1fccb2c52971faefe4d6deed82f3a3d",
+          "message": "Add emulsifier ingredients and their `CompKeys`\n\n* Add seven emulsifier ingredients: lecithin (plain, soy, sunflower and\n  egg yolk), gum arabic, mono- and diglycerides, distilled\n  monoglycerides, and polysorbate 80.\n\n* Add a `CompKey` per emulsifier component, so each is readable through\n  `Composition::get` and sits under `TotalEmulsifiers` in both the\n  structural and display hierarchies. `TotalEmulsifiers` is a\n  residual-free roll-up, so until now a mix containing any emulsifier\n  other than lecithin failed the structural invariant.\n\n* Give the two long names the `MDG` and `DMG` short forms, as `CMC` and\n  `LBG` already do for the stabilizers.\n\n@todo:\n - `EMULSIFIER_STRENGTH_DISTILLED_MONOGLYCERIDES` is still a placeholder\n   at 1.0, so 'Distilled Monoglycerides' currently models as far weaker\n   than mono- and diglycerides rather than stronger.\n - Lecithin entries likewise assume a de-oiled grade at 100% lecithin.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T18:54:47-04:00",
+          "tree_id": "3fefe1addf088c0faa1640eea519fa3bfb982048",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f1db4c5ac1fccb2c52971faefe4d6deed82f3a3d"
+        },
+        "date": 1788304397878,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.39,
+            "range": "8.81",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.87,
+            "range": "0.81",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.86,
+            "range": "0.79",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 182.5,
+            "range": "10.76",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 40,
+            "range": "8.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 182.5,
+            "range": "10.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.89,
+            "range": "8.73",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.44,
+            "range": "0.35",
             "unit": "ms"
           }
         ]
