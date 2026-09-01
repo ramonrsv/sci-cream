@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788304361284,
+  "lastUpdate": 1788304365125,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -519329,6 +519329,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.28%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f1db4c5ac1fccb2c52971faefe4d6deed82f3a3d",
+          "message": "Add emulsifier ingredients and their `CompKeys`\n\n* Add seven emulsifier ingredients: lecithin (plain, soy, sunflower and\n  egg yolk), gum arabic, mono- and diglycerides, distilled\n  monoglycerides, and polysorbate 80.\n\n* Add a `CompKey` per emulsifier component, so each is readable through\n  `Composition::get` and sits under `TotalEmulsifiers` in both the\n  structural and display hierarchies. `TotalEmulsifiers` is a\n  residual-free roll-up, so until now a mix containing any emulsifier\n  other than lecithin failed the structural invariant.\n\n* Give the two long names the `MDG` and `DMG` short forms, as `CMC` and\n  `LBG` already do for the stabilizers.\n\n@todo:\n - `EMULSIFIER_STRENGTH_DISTILLED_MONOGLYCERIDES` is still a placeholder\n   at 1.0, so 'Distilled Monoglycerides' currently models as far weaker\n   than mono- and diglycerides rather than stronger.\n - Lecithin entries likewise assume a de-oiled grade at 100% lecithin.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T18:54:47-04:00",
+          "tree_id": "3fefe1addf088c0faa1640eea519fa3bfb982048",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f1db4c5ac1fccb2c52971faefe4d6deed82f3a3d"
+        },
+        "date": 1788304309845,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 57113,
+            "range": "±1.72%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 428170,
+            "range": "±1.25%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 35432,
+            "range": "±1.22%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 332038,
+            "range": "±0.90%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
