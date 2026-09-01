@@ -398,8 +398,19 @@ pub enum CompKey {
     // @todo Introduce `Emulsification` as a separate key, representing the overall emulsification
     // strength of the mix from all sources, as tracked in [`Texture::emulsification`]
     TotalEmulsifiers,
-    /// Total lecithin content, a subset of emulsifiers, tracked in [`Emulsifiers`]
+    /// Total lecithin content, a subset of emulsifiers, tracked in [`Emulsifiers::lecithin`]
     Lecithin,
+    /// Total gum arabic content, a subset of emulsifiers, tracked in [`Emulsifiers::gum_arabic`]
+    GumArabic,
+    /// Total mono- and diglycerides content, a subset of emulsifiers, tracked in
+    /// [`Emulsifiers::mono_and_diglycerides`]
+    MonoAndDiglycerides,
+    /// Total distilled monoglycerides content, a subset of emulsifiers, tracked in
+    /// [`Emulsifiers::distilled_monoglycerides`]
+    DistilledMonoglycerides,
+    /// Total polysorbate 80 content, a subset of emulsifiers, tracked in
+    /// [`Emulsifiers::polysorbate_80`]
+    Polysorbate80,
 
     // Alcohol
     // -------
@@ -667,6 +678,10 @@ impl Composition {
 
             CompKey::TotalEmulsifiers => self.micro.emulsifiers.total(),
             CompKey::Lecithin => self.micro.emulsifiers.lecithin,
+            CompKey::GumArabic => self.micro.emulsifiers.gum_arabic,
+            CompKey::MonoAndDiglycerides => self.micro.emulsifiers.mono_and_diglycerides,
+            CompKey::DistilledMonoglycerides => self.micro.emulsifiers.distilled_monoglycerides,
+            CompKey::Polysorbate80 => self.micro.emulsifiers.polysorbate_80,
 
             CompKey::TotalStabilizers => self.micro.stabilizers.total(),
             CompKey::Cornstarch => self.micro.stabilizers.cornstarch,
@@ -1069,7 +1084,14 @@ mod tests {
             .micro(
                 Micro::new()
                     .salt(0.3)
-                    .emulsifiers(Emulsifiers::new().lecithin(0.6))
+                    .emulsifiers(
+                        Emulsifiers::new()
+                            .lecithin(0.6)
+                            .gum_arabic(0.1)
+                            .mono_and_diglycerides(0.2)
+                            .distilled_monoglycerides(0.3)
+                            .polysorbate_80(0.4),
+                    )
                     .stabilizers(
                         Stabilizers::new()
                             .cornstarch(0.01)
@@ -1166,7 +1188,11 @@ mod tests {
             (CompKey::ABV,                  abv),
             (CompKey::Salt,                 0.3),
             (CompKey::Lecithin,             0.6),
-            (CompKey::TotalEmulsifiers,          0.6),
+            (CompKey::GumArabic,            0.1),
+            (CompKey::MonoAndDiglycerides,  0.2),
+            (CompKey::DistilledMonoglycerides, 0.3),
+            (CompKey::Polysorbate80,        0.4),
+            (CompKey::TotalEmulsifiers,     1.6),   // 0.6+0.1+0.2+0.3+0.4
             (CompKey::Cornstarch,           0.01),
             (CompKey::TapiocaStarch,        0.02),
             (CompKey::Pectin,               0.03),
@@ -1197,7 +1223,7 @@ mod tests {
         CompKey::iter().for_each(|key| assert_eq_flt_test!(c.get(key), *expected.get(&key).unwrap()));
 
         // Ratio keys are read via `get_ratio`, not `get`; assert them separately.
-        assert_eq_flt_test!(c.get_ratio(RatioKey::EmulsifiersPerFat), 5.0); // 0.6 / 12.0 * 100
+        assert_eq_flt_test!(c.get_ratio(RatioKey::EmulsifiersPerFat), 1.6 / 12.0 * 100.0);
         assert_eq_flt_test!(c.get_ratio(RatioKey::StabilizersPerWater), 0.66 / 59.0 * 100.0);
         assert_eq_flt_test!(c.get_ratio(RatioKey::AbsPAC), 9.5 / 59.0 * 100.0);
     }

@@ -40,6 +40,8 @@ impl KeyAsStrings for CompKey {
             Self::TotalCarbohydrates => "Carbs",
             Self::LocustBeanGum => "LBG",
             Self::CarboxymethylCellulose => "CMC",
+            Self::MonoAndDiglycerides => "MDG",
+            Self::DistilledMonoglycerides => "DMG",
             Self::SaturatedFat => "Sat. Fat",
             _ => self.as_med_str(),
         }
@@ -132,6 +134,10 @@ impl KeyAsStrings for CompKey {
 
             Self::TotalEmulsifiers => "Emulsifiers",
             Self::Lecithin => "Lecithin",
+            Self::GumArabic => "Gum Arabic",
+            Self::MonoAndDiglycerides => "Mono- and Diglycerides",
+            Self::DistilledMonoglycerides => "Distilled Monoglycerides",
+            Self::Polysorbate80 => "Polysorbate 80",
 
             Self::Alcohol => "Alcohol",
             Self::ABV => "ABV",
@@ -550,6 +556,8 @@ mod tests {
             ("Carbs", CompKey::TotalCarbohydrates),
             ("LBG", CompKey::LocustBeanGum),
             ("CMC", CompKey::CarboxymethylCellulose),
+            ("MDG", CompKey::MonoAndDiglycerides),
+            ("DMG", CompKey::DistilledMonoglycerides),
             ("Sat. Fat", CompKey::SaturatedFat),
         ];
         for (expected, key) in some_expected {

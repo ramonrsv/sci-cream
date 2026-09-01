@@ -233,7 +233,16 @@ pub(crate) mod subtrees {
 
     // --- Emulsifiers --------------------------
     pub(crate) fn total_emulsifiers() -> N<CompKey> {
-        N::br(TotalEmulsifiers, leaves(&[Lecithin]))
+        N::br(
+            TotalEmulsifiers,
+            leaves(&[
+                Lecithin,
+                GumArabic,
+                MonoAndDiglycerides,
+                DistilledMonoglycerides,
+                Polysorbate80,
+            ]),
+        )
     }
 }
 

@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 286  (non-alias: 241, independent: 233)
+total: 293  (non-alias: 248, independent: 240)
 
             0% Milk
             1% Milk
@@ -65,11 +65,13 @@ total: 286  (non-alias: 241, independent: 233)
             Devon Cream Company Double Cream
             Dextrose
             Dillon's Orange Bitters
+            Distilled Monoglycerides
 [alias]     Double Cream
             Eagle Brand Dulce de Leche Caramel Flavoured Sauce
             Eagle Brand Low Fat Sweetened Condensed Milk
             Eagle Brand Original Sweetened Condensed Milk
             Egg Yolk
+            Egg Yolk Lecithin
 [alias]     Eggless Ice Cream Stabilizer Blend
             Erythritol
             Essential Oil
@@ -121,6 +123,7 @@ total: 286  (non-alias: 241, independent: 233)
 [alias]     Grand Marnier
             Grand Marnier Cordon Rouge
             Guar Gum
+            Gum Arabic
 [alias]     HFCS 42
 [alias]     HFCS 55
 [alias]     HFCS 90
@@ -161,6 +164,7 @@ total: 286  (non-alias: 241, independent: 233)
             Lambda Carrageenan
 [alias]     Lavender Essential Oil
             Leanfit Sport Whey Isolate
+            Lecithin
 [alias]     Lemon Essential Oil
 [alias]     Lemon Extract
             Lemon Juice
@@ -180,6 +184,7 @@ total: 286  (non-alias: 241, independent: 233)
             Marsala Wine
             Medallion Skim Milk Powder
             Medallion Whole Milk Powder
+            Mono- and Diglycerides
             MyProtein Clear Whey Isolate
             MyProtein Impact Whey Protein
             MyProtein Slow-Release Casein
@@ -205,6 +210,7 @@ total: 286  (non-alias: 241, independent: 233)
 [alias]     Peppermint Essential Oil
 [alias]     Peppermint Extract
             Pistachio
+            Polysorbate 80
             Roasted Pistachio
 [alias]     Rose Essential Oil
             Salt
@@ -233,6 +239,7 @@ total: 286  (non-alias: 241, independent: 233)
             Strawberry
             Sucrose
             Sugar Twin
+            Sunflower Lecithin
             SweetLeaf Stevia
 [alias]     Table Cream
             Tapioca Starch
