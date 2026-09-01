@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788305955736,
+  "lastUpdate": 1788305959446,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -558022,6 +558022,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1036.75,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "47b51d265264648ca0d6ea9bcf94278afe716316",
+          "message": "Add lecithin purity grades to emulsifier specs\n\n* Add `EmulsifierSpec::other_solids`, so an emulsifier ingredient can\n  carry the non-emulsifier remainder of a real product. The emulsifier\n  fields and `other_solids` must now sum to 100 together, rather than\n  the emulsifier fields alone.\n\n* Split the lecithin entries by grade. 'Soy Lecithin Powder' and\n  'Sunflower Lecithin Powder' are de-oiled at ~95% acetone-insolubles\n  with the balance as fat; 'Liquid Soy Lecithin' and 'Liquid Sunflower\n  Lecithin' sit at the 60% regulatory minimum. 'Lecithin' stays at 100%\n  as a theoretical pure reference, now documented as such.\n\n* Rename 'Soy Lecithin' to 'Soy Lecithin Powder' across the underbelly\n  recipes, the stabilizer blend, and `EMULSIFIER_ING`.\n\n* Add the EFSA re-evaluation of E 322 as `[^75]`, and the East Harbour\n  and Konsonet lecithin datasheets as `[^122]` and `[^123]`.\n\n@todo:\n - Gum arabic, mono- and diglycerides, distilled monoglycerides and\n   polysorbate 80 are still not mapped into the solids breakdown, so\n   they model as 100% water with zero energy.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T18:54:54-04:00",
+          "tree_id": "0937bb446da2720249b425ccde9204038bc26e76",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/47b51d265264648ca0d6ea9bcf94278afe716316"
+        },
+        "date": 1788305903757,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 712.02,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 880.46,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 649.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 817.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 659.4,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 827.85,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 631.62,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 800.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 633.11,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 801.56,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1040.64,
             "unit": "KB"
           },
           {
