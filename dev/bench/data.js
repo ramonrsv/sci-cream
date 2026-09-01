@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788306281930,
+  "lastUpdate": 1788306308121,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -81256,6 +81256,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "47b51d265264648ca0d6ea9bcf94278afe716316",
+          "message": "Add lecithin purity grades to emulsifier specs\n\n* Add `EmulsifierSpec::other_solids`, so an emulsifier ingredient can\n  carry the non-emulsifier remainder of a real product. The emulsifier\n  fields and `other_solids` must now sum to 100 together, rather than\n  the emulsifier fields alone.\n\n* Split the lecithin entries by grade. 'Soy Lecithin Powder' and\n  'Sunflower Lecithin Powder' are de-oiled at ~95% acetone-insolubles\n  with the balance as fat; 'Liquid Soy Lecithin' and 'Liquid Sunflower\n  Lecithin' sit at the 60% regulatory minimum. 'Lecithin' stays at 100%\n  as a theoretical pure reference, now documented as such.\n\n* Rename 'Soy Lecithin' to 'Soy Lecithin Powder' across the underbelly\n  recipes, the stabilizer blend, and `EMULSIFIER_ING`.\n\n* Add the EFSA re-evaluation of E 322 as `[^75]`, and the East Harbour\n  and Konsonet lecithin datasheets as `[^122]` and `[^123]`.\n\n@todo:\n - Gum arabic, mono- and diglycerides, distilled monoglycerides and\n   polysorbate 80 are still not mapped into the solids breakdown, so\n   they model as 100% water with zero energy.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T18:54:54-04:00",
+          "tree_id": "0937bb446da2720249b425ccde9204038bc26e76",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/47b51d265264648ca0d6ea9bcf94278afe716316"
+        },
+        "date": 1788306264448,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3638,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 140099,
+            "range": "± 5345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2148,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 136403,
+            "range": "± 1392",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4027,
+            "range": "± 269",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 3943,
+            "range": "± 123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4204,
+            "range": "± 563",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4241,
+            "range": "± 553",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4291,
+            "range": "± 535",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4400,
+            "range": "± 698",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 92501,
+            "range": "± 606",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 95645,
+            "range": "± 2733",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 151113975,
+            "range": "± 397702",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 499714,
+            "range": "± 28167",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 5640,
+            "range": "± 85",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 44,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 5399,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 83722,
+            "range": "± 2153",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 79939,
+            "range": "± 1289",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 132439,
+            "range": "± 593",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 133909,
+            "range": "± 830",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 291902,
+            "range": "± 1538",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 11501,
+            "range": "± 371",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 557,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 11,
             "range": "± 0",
             "unit": "ns/iter"
           }
