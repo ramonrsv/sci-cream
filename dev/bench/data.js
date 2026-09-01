@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788304763615,
+  "lastUpdate": 1788305109906,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -482017,6 +482017,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 679.75,
             "range": "24.39",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f1db4c5ac1fccb2c52971faefe4d6deed82f3a3d",
+          "message": "Add emulsifier ingredients and their `CompKeys`\n\n* Add seven emulsifier ingredients: lecithin (plain, soy, sunflower and\n  egg yolk), gum arabic, mono- and diglycerides, distilled\n  monoglycerides, and polysorbate 80.\n\n* Add a `CompKey` per emulsifier component, so each is readable through\n  `Composition::get` and sits under `TotalEmulsifiers` in both the\n  structural and display hierarchies. `TotalEmulsifiers` is a\n  residual-free roll-up, so until now a mix containing any emulsifier\n  other than lecithin failed the structural invariant.\n\n* Give the two long names the `MDG` and `DMG` short forms, as `CMC` and\n  `LBG` already do for the stabilizers.\n\n@todo:\n - `EMULSIFIER_STRENGTH_DISTILLED_MONOGLYCERIDES` is still a placeholder\n   at 1.0, so 'Distilled Monoglycerides' currently models as far weaker\n   than mono- and diglycerides rather than stronger.\n - Lecithin entries likewise assume a de-oiled grade at 100% lecithin.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T18:54:47-04:00",
+          "tree_id": "3fefe1addf088c0faa1640eea519fa3bfb982048",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f1db4c5ac1fccb2c52971faefe4d6deed82f3a3d"
+        },
+        "date": 1788305054678,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.13,
+            "range": "4.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49.5,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 60.88,
+            "range": "3.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2485.25,
+            "range": "35.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 334.63,
+            "range": "4.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 343.5,
+            "range": "4.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 370.88,
+            "range": "8.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17353.75,
+            "range": "66.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 904.88,
+            "range": "32.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.38,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 52.63,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.75,
+            "range": "1.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 128.75,
+            "range": "5.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 85.75,
+            "range": "4.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 56.41,
+            "range": "1.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.27,
+            "range": "0.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 623.38,
+            "range": "13.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 672.75,
+            "range": "17.43",
             "unit": "ms"
           }
         ]
