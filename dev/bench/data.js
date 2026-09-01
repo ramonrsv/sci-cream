@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788236160632,
+  "lastUpdate": 1788236240322,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -576490,6 +576490,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.26,
             "range": "0.29",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bb0b8910be9bad3f22bc222baeb8d546ae820854",
+          "message": "Add `constants::units` for measure conversions\n\n* New `constants::units` module, with a `nist` submodule for the exact\n  US customary measures and a `label` submodule for the rounded values\n  a US nutrition panel means by them. Each links to the other, so\n  neither reads as the default: label reconciliation wants `label`,\n  everything else wants `nist`.\n\n* Add the NIST SP 811 Appendix B.8 conversion factors as `[^74]`, and\n  point `[^52]` at the Title 21 landing page rather than the eCFR root.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T00:10:13-04:00",
+          "tree_id": "edfbf901acd54a20967bb7437afce973986f101e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bb0b8910be9bad3f22bc222baeb8d546ae820854"
+        },
+        "date": 1788236185606,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 59.92,
+            "range": "8.26",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.46,
+            "range": "0.32",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.44,
+            "range": "0.30",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 164.5,
+            "range": "9.68",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.4,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 164.5,
+            "range": "9.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 54.89,
+            "range": "6.60",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.2,
+            "range": "0.30",
             "unit": "ms"
           }
         ]
