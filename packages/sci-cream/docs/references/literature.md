@@ -104,7 +104,7 @@
 
 [^51]: Moro, et al.(1985). _Total Solids and Density Measurements of Dulce de Leche, a Typical Argentine Dairy Product_. Dairy Foods Research Papers.
 
-[^52]: U.S. Food & Drug Administration. _CFR - Code of Federal Regulations Title 21_. <https://www.ecfr.gov/>
+[^52]: U.S. Food & Drug Administration. _CFR - Code of Federal Regulations Title 21_. <https://www.ecfr.gov/current/title-21>
 
 [^53]: Perry, R. H., & Green, D. W. (2008). _Perry's Chemical Engineers' Handbook_ (8th ed.). McGraw-Hill
 
@@ -147,3 +147,5 @@
 [^72]: Falkowitz, Max. (2023, April). _For Smoother Ice Cream and Sorbet, Use Corn Syrup_. Serious Eats. <https://www.seriouseats.com/the-deal-with-corn-syrup-makes-better-sorbet-why-use-invert-sugars>
 
 [^73]: Chef Adam. _The Differences Between Light and Dark Corn Syrup_. Bakers Authority. Retrieved 2026, August. <https://www.bakersauthority.com/blogs/the-beginners-guide-to-baking-1/the-differences-between-light-and-dark-corn-syrup>
+
+[^74]: National Institute of Standards and Technology. (2025, August). _NIST Guide to the SI, Appendix B.8: Factors for Units Listed Alphabetically_. Special Publication 811. <https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b8>
