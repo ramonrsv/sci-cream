@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     composition::{
-        Composition, Emulsifiers, Fats, Micro, ScaleComponents, SimpleSolids, Solids, SolidsBreakdown, ToComposition,
+        Carbohydrates, Composition, Emulsifiers, Fats, Fibers, Micro, ScaleComponents, SimpleSolids, Solids,
+        SolidsBreakdown, ToComposition,
     },
     error::{Error, Result},
     validate::{Validate, verify_are_positive, verify_is_100_percent},
@@ -88,6 +89,7 @@ impl ToComposition for EmulsifierSpec {
 
         let solids = SolidsBreakdown::new()
             .fats(Fats::new().total(emulsifiers.lecithin))
+            .carbohydrates(Carbohydrates::new().fiber(Fibers::new().other(emulsifiers.gum_arabic)))
             .others(emulsifiers.other)
             .add(&other_solids);
 
@@ -151,9 +153,48 @@ pub(crate) mod tests {
         assert_eq!(comp.texture.emulsification, 95.0);
     }
 
+    pub(crate) const ING_SPEC_EMULSIFIER_GUM_ARABIC_STR: &str = r#"{
+      "name": "Gum Arabic",
+      "category": "Emulsifier",
+      "EmulsifierSpec": {
+        "emulsifiers": { "gum_arabic": 100.0 }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_EMULSIFIER_GUM_ARABIC: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Gum Arabic".to_string(),
+        category: Category::Emulsifier,
+        spec: EmulsifierSpec {
+            emulsifiers: Emulsifiers::new().gum_arabic(100.0),
+            strength: None,
+            other_solids: None,
+        }
+        .into(),
+    });
+
+    #[test]
+    fn to_composition_emulsifier_gum_arabic() {
+        let comp = ING_SPEC_EMULSIFIER_GUM_ARABIC.spec.to_composition().unwrap();
+
+        // Fiber `other` carries no sourced caloric value, so gum arabic contributes no energy.
+        assert_eq!(comp.get(CompKey::Energy), 0.0);
+        assert_eq!(comp.get(CompKey::TotalFats), 0.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
+        assert_eq!(comp.get(CompKey::TotalFiber), 100.0);
+        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 100.0);
+
+        assert_eq!(comp.micro.emulsifiers, Emulsifiers::new().gum_arabic(100.0));
+        assert_eq!(comp.texture.emulsification, 217.0);
+    }
+
     pub(crate) static INGREDIENT_ASSETS_TABLE_EMULSIFIERS: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
-            vec![(ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER_STR, ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER.clone(), None)]
+            vec![
+                (ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER_STR, ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER.clone(), None),
+                (ING_SPEC_EMULSIFIER_GUM_ARABIC_STR, ING_SPEC_EMULSIFIER_GUM_ARABIC.clone(), None),
+            ]
         });
 
     #[test]

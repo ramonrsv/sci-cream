@@ -15,6 +15,8 @@
 - [ ] Add `CompKey`s and ingredient for the known emulsifiers, e.g. `gum_arabic`/"Gum Arabic".
 - [ ] Switch the hard-coded FPD calculation `PacToFpdMethod` from `Interpolation` to `Polynomial`.
 - [ ] Add a 'Corn Syrup' definition, most likely an alias to a specific glucose syrup entry.
+- [ ] Review the 'Egg Yolk Lecithin' ingredient; it's still 100% lecithin, but food-grade
+      products are ~40% phospholipid powders - acetone insolubles aren't a proxy for egg.
 
 ## Up Next
 

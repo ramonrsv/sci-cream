@@ -6,8 +6,8 @@
 Emulsifiers are substances that produce a stable suspension of two liquids that do not mix naturally
 (are immiscible), typically oil and water. They are two-faced molecules that have both a hydrophilic
 (water-attracting) and an oleophilic (fat-attracting) side, also labelled hydrophobic
-(water-repelling). They are common in nature, e.g. in egg yolks, milk, etc. (Clarke, 2004, p.
-48)[^4], (Goff & Hartel, 2025, p. 84)[^20], (Raphaelson, 2023, January)[^38], (Ice Cream Science,
+(water-repelling). They are common in nature, e.g. in egg yolks, milk, etc. (Clarke, 2004,
+p. 48)[^4], (Goff & Hartel, 2025, p. 84)[^20], (Raphaelson, 2023, January)[^38], (Ice Cream Science,
 2026, May, "Why are emulsifiers used in ice cream?")[^45], (Carl, 2024, April)[^46].
 
 Due to the proteins in milk and cream, chiefly casein which makes up about 80% of milk proteins, ice
@@ -15,8 +15,8 @@ cream mixes are already adequately emulsified, so emulsifiers are not needed for
 in the classic sense. Instead, emulsifiers are used to lower the fat/water interfacial tension in
 the mix, resulting in protein displacement from the fat globule surface. In turn, this reduces the
 stability of the fat globule allowing partial coalescence during the whipping and freezing process.
-In a sense, emulsifiers are used to _weaken_ or _destabilize_ the emulsion (Goff & Hartel, 2025, p.
-84), (Raphaelson, 2023, January)[^38].
+In a sense, emulsifiers are used to _weaken_ or _destabilize_ the emulsion (Goff & Hartel, 2025,
+p. 84)[^20], (Raphaelson, 2023, January)[^38].
 
 The effect of emulsifiers noted above serves several purposes in ice cream formulations. They
 promote fat nucleation during aging (reducing aging time), improve whipping quality by stabilizing
@@ -35,8 +35,8 @@ documented here can be found at [`constants::emulsification`](crate::constants::
   the butterfat and water emulsion in milk and cream, and thus are the main emulsifier components in
   ice cream mixes. Casein proteins actually make dairy-based ice cream mixes over-emulsified, making
   them too stable and requiring the use of additional emulsifiers to _destabilize_ the emulsion and
-  partial coalescence of fat globules during whipping and freezing (Goff & Hartel, 2025, p.
-  84)[^20], (Raphaelson, 2023, January)[^38].
+  partial coalescence of fat globules during whipping and freezing (Goff & Hartel, 2025,
+  p. 84)[^20], (Raphaelson, 2023, January)[^38].
 
 - <a id="emulsifier-whey-proteins"></a>**Whey proteins**, which make up ~20% of milk proteins (see
   [`STD_WHEY_PROTEIN_IN_MSNF_PROTEIN`]), have an emulsifying effect when partially denatured. Unlike
@@ -89,12 +89,14 @@ documented here can be found at [`constants::emulsification`](crate::constants::
 
   This component is tracked in [`field@Emulsifiers::lecithin`].
 
-- <a id="gum-arabic"></a>**Gum Arabic**, also known as Gum Acadia, is an all natural emulsifier
-  derived from acadia trees in sub-Saharan Africa. It is derived from two types of acadia trees,
-  Acacia Senegal and Acacia Seyal. It has the benefit of being an all natural emulsifier. Its
-  effectiveness as an emulsifier depends on the type and sample. Some commercial Gum Arabic products
-  claim that it is a 1:1 substitute for mono- and diglycerides, which itself has a recommended
-  dosage of 1-2g/kg (Raphaelson, 2023, January)[^38].
+- <a id="gum-arabic"></a>**Gum Arabic**, also known as Gum Acacia, is an all natural emulsifier
+  derived from two types of acacia trees in sub-Saharan Africa, Acacia Senegal and Acacia Seyal. It
+  consists mainly of high molecular weight polysaccharides and their salts; it's a dietary fiber
+  with little caloric value. Its effectiveness as an emulsifier depends on the type and sample. Some
+  commercial Gum Arabic products claim that it is a 1:1 substitute for mono- and diglycerides, which
+  itself has a recommended dosage of 1-2g/kg (Raphaelson, 2023, January)[^38], (The European
+  Commission, 2025, E414)[^10], (Goff & Hartel, 2013, p. 440)[^2], (Phillips, 1998,
+  "Abstract")[^76], (U.S. Food and Drug Administration, 2021)[^77].
 
   This component is tracked in [`field@Emulsifiers::gum_arabic`].
 
@@ -130,8 +132,8 @@ documented here can be found at [`constants::emulsification`](crate::constants::
   glycerol esters, such as glycerol monostearate (or a blend of saturated monoglycerides) or
   glycerol monooleate (or a blend of unsaturated monoglycerides). These are more effective
   emulsifiers, and can be used in much smaller quantities, but are more expensive to process than
-  the usual mono- and diglycerides mixtures (Clarke, 2004, p. 48)[^4], (Goff & Hartel, 2025, p.
-  85)[^20], (Raphaelson, 2023, January)[^38], (Ice Cream Science, 2026, May, "Why are emulsifiers
+  the usual mono- and diglycerides mixtures (Clarke, 2004, p. 48)[^4], (Goff & Hartel, 2025,
+  p. 85)[^20], (Raphaelson, 2023, January)[^38], (Ice Cream Science, 2026, May, "Why are emulsifiers
   used in ice cream?")[^45].
 
   This component is tracked in [`field@Emulsifiers::distilled_monoglycerides`].

@@ -151,3 +151,7 @@
 [^74]: National Institute of Standards and Technology. (2025, August). _NIST Guide to the SI, Appendix B.8: Factors for Units Listed Alphabetically_. Special Publication 811. <https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b8>
 
 [^75]: EFSA Panel on Food Additives and Nutrient Sources added to Food (ANS), et al. (2017, April). _Re-evaluation of lecithins (E 322) as a food additive_. EFSA Journal, 15(4), e04742. <https://doi.org/10.2903/j.efsa.2017.4742>
+
+[^76]: Phillips, G. O. (1998, April). _Acacia gum (Gum Arabic): a nutritional fibre; metabolism and calorific value_. Food Additives and Contaminants, 15(3), 251-264. <https://doi.org/10.1080/02652039809374639>
+
+[^77]: U.S. Food and Drug Administration. (2021, December). _FDA Grants Citizen Petition on Acacia (Gum Arabic) as a Dietary Fiber_. <https://www.fda.gov/food/hfp-constituent-updates/fda-grants-citizen-petition-acacia-gum-arabic-dietary-fiber>

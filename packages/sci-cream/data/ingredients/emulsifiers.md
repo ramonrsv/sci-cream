@@ -90,6 +90,11 @@ of liquid soy lecithin (EFSA et al., 2017, Table 2)[^75].
 { "category": "Emulsifier", "EmulsifierSpec": { "emulsifiers": { "gum_arabic": 100 } } }
 ```
 
+By EU regulation, gum arabic (E414) products can have up to 17% water and 4% ash (The European
+Commission, 2025, E414)[^10]. Here it is modeled as 100% `gum_arabic` since "gum arabic" products
+aren't sold at a range of purity grades, and aside from emulsification the solids composition has no
+meaningful effect in the ice cream formulation at normal usage levels.
+
 ## Mono- and Diglycerides
 
 ```json
