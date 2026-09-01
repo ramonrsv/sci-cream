@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788235987024,
+  "lastUpdate": 1788236093008,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -517220,6 +517220,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 385793,
             "range": "±1.10%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bb0b8910be9bad3f22bc222baeb8d546ae820854",
+          "message": "Add `constants::units` for measure conversions\n\n* New `constants::units` module, with a `nist` submodule for the exact\n  US customary measures and a `label` submodule for the rounded values\n  a US nutrition panel means by them. Each links to the other, so\n  neither reads as the default: label reconciliation wants `label`,\n  everything else wants `nist`.\n\n* Add the NIST SP 811 Appendix B.8 conversion factors as `[^74]`, and\n  point `[^52]` at the Title 21 landing page rather than the eCFR root.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T00:10:13-04:00",
+          "tree_id": "edfbf901acd54a20967bb7437afce973986f101e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bb0b8910be9bad3f22bc222baeb8d546ae820854"
+        },
+        "date": 1788236047375,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 59060,
+            "range": "±18.92%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 621536,
+            "range": "±0.92%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 46595,
+            "range": "±1.06%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 520872,
+            "range": "±1.28%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
