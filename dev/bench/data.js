@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788318223749,
+  "lastUpdate": 1788318243949,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -558963,6 +558963,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1040.64,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "abd5a08861063fa5c21f19c750efc0aaa6347221",
+          "message": "Model gum arabic as a dietary fiber\n\n* Map `Emulsifiers::gum_arabic` into the solids breakdown as\n  `Carbohydrates::fiber.other`, so 'Gum Arabic' no longer resolves as\n  100% water. E414 defines acacia gum as mainly high molecular weight\n  polysaccharides, and `fiber.other` claims no energy, matching how\n  the crate treats fibers with no sourced caloric value.\n\n* Add Phillips (1998) as `[^76]` and the FDA's 2021 citizen petition\n  response as `[^77]`, which back the dietary fiber classification.\n  Neither pins a caloric value: the FDA's own figure is 1.7 kcal/g,\n  against the EU's 2 kcal/g for fiber generally.\n\n* Note E414's 17% water and 4% ash allowance on the ingredient entry,\n  and why it is still modelled as 100% gum arabic.\n\n* Fix the Acacia misspellings in the emulsifier docs, restore a\n  dropped `[^20]` marker, and keep \"p.\" with its page number.\n\n@todo:\n - Mono- and diglycerides, distilled monoglycerides and polysorbate 80\n   are still not mapped into the solids breakdown, so they model as\n   100% water with zero energy.\n - 'Egg Yolk Lecithin' is still 100% lecithin; tracked in `TODO.md`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T19:49:33-04:00",
+          "tree_id": "fa0a358af3051e88c7325f72c5b10631b530113f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/abd5a08861063fa5c21f19c750efc0aaa6347221"
+        },
+        "date": 1788318199606,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 712.34,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 880.79,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 649.4,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 817.85,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 659.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 828.17,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 631.95,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 800.4,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 633.44,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 801.89,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1040.96,
             "unit": "KB"
           },
           {
