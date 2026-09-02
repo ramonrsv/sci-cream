@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 298  (non-alias: 251, independent: 243)
+"total: 297  (non-alias: 250, independent: 242)
 
             0% Milk
             1% Milk
@@ -166,7 +166,6 @@ exports[`Embedded spec entries 1`] = `
             Lambda Carrageenan
 [alias]     Lavender Essential Oil
             Leanfit Sport Whey Isolate
-            Lecithin
 [alias]     Lemon Essential Oil
 [alias]     Lemon Extract
             Lemon Juice

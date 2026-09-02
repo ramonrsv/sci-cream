@@ -1,17 +1,5 @@
 <!-- markdownlint-disable MD041 -- files are used to generate JSON, may also be concatenated -->
 
-## Lecithin
-
-```json
-{ "category": "Emulsifier", "EmulsifierSpec": { "emulsifiers": { "lecithin": 100 } } }
-```
-
-This is a theoretical pure lecithin, not representing any commercial product - it can be used in a
-[`CompositeSpec`] to define ingredients that model real products. It's relatively close to lecithin
-powders which have > 95% purity (acetone insoluble substances, i.e. phospholipids), but well above
-liquid lecithins with a minimum 60% of substances insoluble in acetone (EFSA et al., 2017, 3.1.1
-Identity of the substance)[^75], (The European Commission, 2025, E322)[^10].
-
 ## Soy Lecithin Powder
 
 ```json
