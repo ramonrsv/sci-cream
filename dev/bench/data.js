@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788328529552,
+  "lastUpdate": 1788328584676,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -581850,6 +581850,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.39,
             "range": "0.50",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "81385e31613eab1bca9b5da8af7f1bd0083bd97a",
+          "message": "Map remaining emulsifiers into solids\n\n* Map the last three emulsifier components into the solids breakdown,\n  so no emulsifier ingredient resolves as 100% water. The glycerides\n  are wholly fat; polysorbate 80 goes to unclassified solids, its\n  composition untracked and negligible at its 0.1% cap.\n\n* Add tests for polysorbate 80 and the two glyceride grades.\n\n* Record a TODO on ethanol in `Composition::evaporate`, which\n  concentrates alcohol rather than boiling it off, so `deevaporate`\n  reformulates towards an overstated target.\n\n@todo:\n - `EMULSIFIER_STRENGTH_DISTILLED_MONOGLYCERIDES` is still a\n   placeholder at 1.0, so 'Distilled Monoglycerides' models as weaker\n   than mono- and diglycerides rather than stronger.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-02T01:31:42-04:00",
+          "tree_id": "03dcf9dc81ddc35686e4777a5fe13cb51dca1b60",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/81385e31613eab1bca9b5da8af7f1bd0083bd97a"
+        },
+        "date": 1788328532097,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 68.91,
+            "range": "16.03",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.61,
+            "range": "1.26",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.57,
+            "range": "1.28",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 190.5,
+            "range": "26.38",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.54,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 190.5,
+            "range": "26.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 62.74,
+            "range": "13.40",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.76,
+            "range": "0.53",
             "unit": "ms"
           }
         ]
