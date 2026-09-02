@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788388155202,
+  "lastUpdate": 1788388238885,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -81989,6 +81989,192 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 635,
             "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0d58887fdf18ff93e5063587000a3ee6248bffb3",
+          "message": "Document the as-is basis of strength values\n\n* Record in `constants::{stabilization,emulsification}` that strength\n  values describe the commercial product as a whole, since for most\n  gums, starches and emulsifiers no more concentrated product is\n  purchasable, so any experiment determining a strength would\n  necessarily use the product as-is.\n\n* Carve out the cases where the distinction matters: lecithin, whose\n  purity varies from egg yolk to liquid to powder, and stabilizer\n  blends cut with fillers, which belong in a `CompositeSpec`. Note\n  that `EMULSIFIER_STRENGTH_LECITHIN` is a pure-lecithin value.\n\n* Note on the 'Pectin' entry that it models pure E440 pectin, not\n  retail products, which list dextrose ahead of the pectin itself.\n  Add the Sure-Jell ingredient declaration as `[^124]`.\n\n@todo:\n - It is unclear whether Cree's ~1g/kg pectin dosage is for a retail\n   product or for pure pectin. If the former, then\n   `STABILIZER_STRENGTH_PECTIN` would need to be much higher.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-02T17:56:13-04:00",
+          "tree_id": "93003842b091601da6e789f446275db89a48a473",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0d58887fdf18ff93e5063587000a3ee6248bffb3"
+        },
+        "date": 1788388186162,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4037,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 158291,
+            "range": "± 2044",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2401,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 155744,
+            "range": "± 4346",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4548,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4684,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4586,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4648,
+            "range": "± 217",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4589,
+            "range": "± 112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4759,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 109465,
+            "range": "± 3256",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 113431,
+            "range": "± 5034",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 183334603,
+            "range": "± 1466111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 630655,
+            "range": "± 3421",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6608,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 56,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6935,
+            "range": "± 223",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 96641,
+            "range": "± 459",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 93597,
+            "range": "± 1056",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 154529,
+            "range": "± 977",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 152707,
+            "range": "± 2280",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 330181,
+            "range": "± 5343",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14416,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 2",
             "unit": "ns/iter"
           },
           {
