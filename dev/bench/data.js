@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788367494993,
+  "lastUpdate": 1788367517268,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -561310,6 +561310,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1040.99,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3ccfd405e9c98139ffb89a8ac2d1a56335e42343",
+          "message": "Add a 'Glycerol Monostearate' ingredient\n\n* Add 'Glycerol Monostearate' as mono- and diglycerides. Products under\n  that name span a standard grade at 40-55% monoglycerides and a\n  distilled grade above 90%, and both are sold as E471, so the name\n  alone does not pick one. Ph. Eur. names the standard grade _Glycerol\n  Monostearate 40-55_, which is what 'Louis Francois Stab 2000' lists\n  as \"E471 (monostearate de glycerol)\".\n\n* Note on 'Distilled Monoglycerides' that it is the above-90% grade,\n  and alias `GMS` and `DMG` to the two entries.\n\n* Add the Ph. Eur. and USP-NF monographs as `[^78]` and `[^79]`, and\n  the grade descriptions as `[^80]`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-02T12:26:01-04:00",
+          "tree_id": "c0c2813d14bb8740614832d780d0160ee4ff2675",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3ccfd405e9c98139ffb89a8ac2d1a56335e42343"
+        },
+        "date": 1788367461804,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 713.05,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 881.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 650.1,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 818.55,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 660.43,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 828.88,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 632.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 801.1,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 634.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 802.59,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1041.66,
             "unit": "KB"
           },
           {
