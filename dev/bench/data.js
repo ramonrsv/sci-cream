@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788388791502,
+  "lastUpdate": 1788389264623,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -487252,6 +487252,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 534.63,
             "range": "11.15",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0b183f18f0d6a32d46aebfed7aef837cf16e3844",
+          "message": "Drop the theoretical pure 'Lecithin' ingredient\n\n* Remove the 'Lecithin' entry, which modeled a 100% pure phospholipid\n  that no commercial product matches, and pointed at `CompositeSpec`\n  as the way to model real ones. `EmulsifierSpec::other_solids` is\n  that mechanism now: an intrinsic, inseparable fraction of a base\n  ingredient belongs there, while `CompositeSpec` is for genuine\n  combinations of atomic ingredients.\n\n* The four graded lecithin entries already carry their carrier oil in\n  `other_solids`, and nothing referenced the pure entry, so this is a\n  removal only. `EMULSIFIER_STRENGTH_LECITHIN` documents the pure\n  reference the strength values are expressed against.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-02T18:24:20-04:00",
+          "tree_id": "c1c33bc923b6feb43fa4874aabd8d88b1bc8d3fd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0b183f18f0d6a32d46aebfed7aef837cf16e3844"
+        },
+        "date": 1788389208282,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 53.5,
+            "range": "5.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 54.88,
+            "range": "4.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 63.5,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2502.38,
+            "range": "25.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 336.88,
+            "range": "6.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 344.88,
+            "range": "4.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 361.75,
+            "range": "3.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17315.5,
+            "range": "58.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 936.38,
+            "range": "15.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 55,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56.25,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.5,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.5,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 132.5,
+            "range": "3.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 92.38,
+            "range": "3.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 64.34,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 45.65,
+            "range": "0.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 647.13,
+            "range": "10.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 718.75,
+            "range": "11.43",
             "unit": "ms"
           }
         ]
