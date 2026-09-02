@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788306736645,
+  "lastUpdate": 1788318215467,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -594370,6 +594370,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1903.2,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "abd5a08861063fa5c21f19c750efc0aaa6347221",
+          "message": "Model gum arabic as a dietary fiber\n\n* Map `Emulsifiers::gum_arabic` into the solids breakdown as\n  `Carbohydrates::fiber.other`, so 'Gum Arabic' no longer resolves as\n  100% water. E414 defines acacia gum as mainly high molecular weight\n  polysaccharides, and `fiber.other` claims no energy, matching how\n  the crate treats fibers with no sourced caloric value.\n\n* Add Phillips (1998) as `[^76]` and the FDA's 2021 citizen petition\n  response as `[^77]`, which back the dietary fiber classification.\n  Neither pins a caloric value: the FDA's own figure is 1.7 kcal/g,\n  against the EU's 2 kcal/g for fiber generally.\n\n* Note E414's 17% water and 4% ash allowance on the ingredient entry,\n  and why it is still modelled as 100% gum arabic.\n\n* Fix the Acacia misspellings in the emulsifier docs, restore a\n  dropped `[^20]` marker, and keep \"p.\" with its page number.\n\n@todo:\n - Mono- and diglycerides, distilled monoglycerides and polysorbate 80\n   are still not mapped into the solids breakdown, so they model as\n   100% water with zero energy.\n - 'Egg Yolk Lecithin' is still 100% lecithin; tracked in `TODO.md`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T19:49:33-04:00",
+          "tree_id": "fa0a358af3051e88c7325f72c5b10631b530113f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/abd5a08861063fa5c21f19c750efc0aaa6347221"
+        },
+        "date": 1788318162137,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1094.36,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 332.37,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1700.87,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 526.21,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 573.37,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1903.75,
             "unit": "KB"
           }
         ]
