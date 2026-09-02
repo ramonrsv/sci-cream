@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788388421219,
+  "lastUpdate": 1788388424597,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -592034,6 +592034,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/0d58887fdf18ff93e5063587000a3ee6248bffb3"
         },
         "date": 1788387828708,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0b183f18f0d6a32d46aebfed7aef837cf16e3844",
+          "message": "Drop the theoretical pure 'Lecithin' ingredient\n\n* Remove the 'Lecithin' entry, which modeled a 100% pure phospholipid\n  that no commercial product matches, and pointed at `CompositeSpec`\n  as the way to model real ones. `EmulsifierSpec::other_solids` is\n  that mechanism now: an intrinsic, inseparable fraction of a base\n  ingredient belongs there, while `CompositeSpec` is for genuine\n  combinations of atomic ingredients.\n\n* The four graded lecithin entries already carry their carrier oil in\n  `other_solids`, and nothing referenced the pure entry, so this is a\n  removal only. `EMULSIFIER_STRENGTH_LECITHIN` documents the pure\n  reference the strength values are expressed against.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-02T18:24:20-04:00",
+          "tree_id": "c1c33bc923b6feb43fa4874aabd8d88b1bc8d3fd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0b183f18f0d6a32d46aebfed7aef837cf16e3844"
+        },
+        "date": 1788388423811,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
