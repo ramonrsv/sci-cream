@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788318638852,
+  "lastUpdate": 1788318972889,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -483607,6 +483607,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 675.75,
             "range": "12.18",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "abd5a08861063fa5c21f19c750efc0aaa6347221",
+          "message": "Model gum arabic as a dietary fiber\n\n* Map `Emulsifiers::gum_arabic` into the solids breakdown as\n  `Carbohydrates::fiber.other`, so 'Gum Arabic' no longer resolves as\n  100% water. E414 defines acacia gum as mainly high molecular weight\n  polysaccharides, and `fiber.other` claims no energy, matching how\n  the crate treats fibers with no sourced caloric value.\n\n* Add Phillips (1998) as `[^76]` and the FDA's 2021 citizen petition\n  response as `[^77]`, which back the dietary fiber classification.\n  Neither pins a caloric value: the FDA's own figure is 1.7 kcal/g,\n  against the EU's 2 kcal/g for fiber generally.\n\n* Note E414's 17% water and 4% ash allowance on the ingredient entry,\n  and why it is still modelled as 100% gum arabic.\n\n* Fix the Acacia misspellings in the emulsifier docs, restore a\n  dropped `[^20]` marker, and keep \"p.\" with its page number.\n\n@todo:\n - Mono- and diglycerides, distilled monoglycerides and polysorbate 80\n   are still not mapped into the solids breakdown, so they model as\n   100% water with zero energy.\n - 'Egg Yolk Lecithin' is still 100% lecithin; tracked in `TODO.md`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-01T19:49:33-04:00",
+          "tree_id": "fa0a358af3051e88c7325f72c5b10631b530113f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/abd5a08861063fa5c21f19c750efc0aaa6347221"
+        },
+        "date": 1788318920779,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.75,
+            "range": "2.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 50.5,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 59.38,
+            "range": "2.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2372.25,
+            "range": "34.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 324.25,
+            "range": "2.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 332.88,
+            "range": "4.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 349,
+            "range": "5.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16853.13,
+            "range": "119.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 926.75,
+            "range": "12.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.75,
+            "range": "1.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.63,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 132.88,
+            "range": "3.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 86.75,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.38,
+            "range": "1.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.5,
+            "range": "0.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 644.63,
+            "range": "14.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 694.13,
+            "range": "12.28",
             "unit": "ms"
           }
         ]
