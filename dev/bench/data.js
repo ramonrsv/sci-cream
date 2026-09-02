@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788367520975,
+  "lastUpdate": 1788367609822,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -583340,6 +583340,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.76,
             "range": "0.53",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3ccfd405e9c98139ffb89a8ac2d1a56335e42343",
+          "message": "Add a 'Glycerol Monostearate' ingredient\n\n* Add 'Glycerol Monostearate' as mono- and diglycerides. Products under\n  that name span a standard grade at 40-55% monoglycerides and a\n  distilled grade above 90%, and both are sold as E471, so the name\n  alone does not pick one. Ph. Eur. names the standard grade _Glycerol\n  Monostearate 40-55_, which is what 'Louis Francois Stab 2000' lists\n  as \"E471 (monostearate de glycerol)\".\n\n* Note on 'Distilled Monoglycerides' that it is the above-90% grade,\n  and alias `GMS` and `DMG` to the two entries.\n\n* Add the Ph. Eur. and USP-NF monographs as `[^78]` and `[^79]`, and\n  the grade descriptions as `[^80]`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-02T12:26:01-04:00",
+          "tree_id": "c0c2813d14bb8740614832d780d0160ee4ff2675",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3ccfd405e9c98139ffb89a8ac2d1a56335e42343"
+        },
+        "date": 1788367557033,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.79,
+            "range": "10.75",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.01,
+            "range": "0.52",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.95,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 175.5,
+            "range": "14.20",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.43,
+            "range": "0.10",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 175.5,
+            "range": "14.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.64,
+            "range": "10.67",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.21,
+            "range": "0.27",
             "unit": "ms"
           }
         ]
