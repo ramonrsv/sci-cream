@@ -110,6 +110,17 @@ meaningful effect in the ice cream formulation at normal usage levels.
 }
 ```
 
+High-purity distilled monoglycerides (DMG) - such as glycerol monostearate or glycerol monooleate,
+above 90% monoglycerides, produced via molecular distillation under vacuum of the standard 40-55%
+grade (Food Ingredients Asia, 2026)[^80]. See 'Glycerol Monostearate' for the standard grade, which
+is sold under the same E471 designation.
+
+## DMG
+
+```json
+{ "for": "Distilled Monoglycerides" }
+```
+
 ## Polysorbate 80
 
 ```json
@@ -121,3 +132,22 @@ minute quantities - at most 0.1% of the finished frozen dessert (U.S. FDA, CFR 2
 that its composition is negligible in formulations. As such, it is deliberately not tracked here,
 modeled as unclassified solids; they are a closer approximation than water, since the compounds are
 non-volatile.
+
+## Glycerol Monostearate
+
+```json
+{ "category": "Emulsifier", "EmulsifierSpec": { "emulsifiers": { "mono_and_diglycerides": 100 } } }
+```
+
+Glycerol monostearate (GMS) is available in standard grades (40-55% monoglycerides content) and
+distilled grades (above 90% monoglycerides content), also referred to as 'Distilled Monoglycerides'
+or DMG; both are sold under the same E471 designation (Food Ingredients Asia, 2026)[^80]. This entry
+is the standard grade (British Pharmacopoeia Commission, 2013)[^78]; see 'Distilled Monoglycerides'
+for the high-purity above 90% grade. Note that USP-NF reserves _Glyceryl Monostearate_ for the >90%
+grade (United States Pharmacopeia)[^79].
+
+## GMS
+
+```json
+{ "for": "Glycerol Monostearate" }
+```

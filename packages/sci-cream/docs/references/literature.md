@@ -155,3 +155,9 @@
 [^76]: Phillips, G. O. (1998, April). _Acacia gum (Gum Arabic): a nutritional fibre; metabolism and calorific value_. Food Additives and Contaminants, 15(3), 251-264. <https://doi.org/10.1080/02652039809374639>
 
 [^77]: U.S. Food and Drug Administration. (2021, December). _FDA Grants Citizen Petition on Acacia (Gum Arabic) as a Dietary Fiber_. <https://www.fda.gov/food/hfp-constituent-updates/fda-grants-citizen-petition-acacia-gum-arabic-dietary-fiber>
+
+[^78]: British Pharmacopoeia Commission. (2013). _Glycerol Monostearate 40-55_. British Pharmacopoeia, Ph. Eur. monograph 0495. <https://www.drugfuture.com/Pharmacopoeia/BP2013/data/7561.html>
+
+[^79]: United States Pharmacopeia. _Glyceryl Monostearate_. USP-NF. Retrieved 2026, September. <https://doi.usp.org/USPNF/USPNF_M35490_03_01.html>
+
+[^80]: _Glycerol Monostearate_. Food Ingredients Asia. Retrieved 2026, September. <https://www.foodingredientsasia.com/en/learning-center/product-based-knowledge/glycerol-monostearate>

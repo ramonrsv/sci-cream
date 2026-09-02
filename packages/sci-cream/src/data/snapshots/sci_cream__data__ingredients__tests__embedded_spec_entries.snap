@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 295  (non-alias: 250, independent: 242)
+total: 298  (non-alias: 251, independent: 243)
 
             0% Milk
             1% Milk
@@ -60,6 +60,7 @@ total: 295  (non-alias: 250, independent: 242)
             Cocoa Powder, 22% Fat
 [alias]     Coffee Extract
             Cornstarch
+[alias]     DMG
             Dark Rum
             Devon Cream Company Clotted Cream
             Devon Cream Company Double Cream
@@ -83,6 +84,7 @@ total: 295  (non-alias: 250, independent: 242)
 [alias]     Fresh Peppermint
 [alias]     Fresh Spearmint
             Fructose
+[alias]     GMS
             Gelatin
             Ghirardelli 100% Unsweetened Cocoa Powder
             Gin
@@ -100,6 +102,7 @@ total: 295  (non-alias: 250, independent: 242)
             Glucose Syrup 49 DE
             Glucose Syrup 55 DE
             Glucose Syrup 63 DE
+            Glycerol Monostearate
             Goff & Hartel 10% Condensed Milk
             Goff & Hartel 18% Cream
             Goff & Hartel 3% Milk
