@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788367475328,
+  "lastUpdate": 1788367494993,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -523182,6 +523182,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.91%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3ccfd405e9c98139ffb89a8ac2d1a56335e42343",
+          "message": "Add a 'Glycerol Monostearate' ingredient\n\n* Add 'Glycerol Monostearate' as mono- and diglycerides. Products under\n  that name span a standard grade at 40-55% monoglycerides and a\n  distilled grade above 90%, and both are sold as E471, so the name\n  alone does not pick one. Ph. Eur. names the standard grade _Glycerol\n  Monostearate 40-55_, which is what 'Louis Francois Stab 2000' lists\n  as \"E471 (monostearate de glycerol)\".\n\n* Note on 'Distilled Monoglycerides' that it is the above-90% grade,\n  and alias `GMS` and `DMG` to the two entries.\n\n* Add the Ph. Eur. and USP-NF monographs as `[^78]` and `[^79]`, and\n  the grade descriptions as `[^80]`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-02T12:26:01-04:00",
+          "tree_id": "c0c2813d14bb8740614832d780d0160ee4ff2675",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3ccfd405e9c98139ffb89a8ac2d1a56335e42343"
+        },
+        "date": 1788367439251,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 56354,
+            "range": "±1.12%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 437087,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 41507,
+            "range": "±1.31%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 325167,
+            "range": "±0.92%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
