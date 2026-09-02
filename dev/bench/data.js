@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788387848728,
+  "lastUpdate": 1788387919729,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -584365,6 +584365,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.21,
             "range": "0.27",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0d58887fdf18ff93e5063587000a3ee6248bffb3",
+          "message": "Document the as-is basis of strength values\n\n* Record in `constants::{stabilization,emulsification}` that strength\n  values describe the commercial product as a whole, since for most\n  gums, starches and emulsifiers no more concentrated product is\n  purchasable, so any experiment determining a strength would\n  necessarily use the product as-is.\n\n* Carve out the cases where the distinction matters: lecithin, whose\n  purity varies from egg yolk to liquid to powder, and stabilizer\n  blends cut with fillers, which belong in a `CompositeSpec`. Note\n  that `EMULSIFIER_STRENGTH_LECITHIN` is a pure-lecithin value.\n\n* Note on the 'Pectin' entry that it models pure E440 pectin, not\n  retail products, which list dextrose ahead of the pectin itself.\n  Add the Sure-Jell ingredient declaration as `[^124]`.\n\n@todo:\n - It is unclear whether Cree's ~1g/kg pectin dosage is for a retail\n   product or for pure pectin. If the former, then\n   `STABILIZER_STRENGTH_PECTIN` would need to be much higher.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-02T17:56:13-04:00",
+          "tree_id": "93003842b091601da6e789f446275db89a48a473",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0d58887fdf18ff93e5063587000a3ee6248bffb3"
+        },
+        "date": 1788387863948,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.91,
+            "range": "9.24",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.15,
+            "range": "0.44",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.1,
+            "range": "0.47",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 172.5,
+            "range": "12.56",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 172.5,
+            "range": "12.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.74,
+            "range": "7.34",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.55,
+            "range": "0.42",
             "unit": "ms"
           }
         ]
