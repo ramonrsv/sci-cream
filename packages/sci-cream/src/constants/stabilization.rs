@@ -23,6 +23,17 @@
 //! strength of other stabilizers is estimated by comparing their recommended dosages to that of
 //! Locust Bean Gum, e.g. cornstarch has a recommended dosage of ~10g/kg (Cree, 2017, Cornstarch, p.
 //! 69)[^6], so its strength is estimated as 100 * (2 / 10) = 20.
+//!
+//! Unless otherwise stated, these strength values are on an as-is basis, describing the product as
+//! a whole, including any typical moisture content and diluents. For most stabilizers, like gums,
+//! starches, gelatin, etc., the commercial product is usually close to 100% of the active component
+//! and there is no practical way to get a more concentrated product. As such, any experiments to
+//! determine the strength of the effects would necessarily involve using the commercial product
+//! as-is, making the distinction between as-is and pure component strength largely irrelevant.
+//!
+//! Note that the above does not apply to commercial blends of stabilizers that may also include
+//! fillers like maltodextrin, dextrose, etc. In these cases the ingredients should be defined
+//! using a [`CompositeSpec`] including the individual stabilizer components.
 //
 // @todo Find a better way to estimate the relative strength of other stabilizers, ideally from
 // literature, and without referencing the recommended dosages, as those can vary significantly
@@ -31,6 +42,9 @@
 #![doc = include_str!("../../docs/references/index/6.md")]
 #![doc = include_str!("../../docs/references/index/20.md")]
 #![doc = include_str!("../../docs/references/index/37.md")]
+
+#[cfg(doc)]
+use crate::specs::CompositeSpec;
 
 /// Stabilizer strength for Locust Bean Gum (LBG), set to 100 as the reference stabilizer
 ///
@@ -64,6 +78,10 @@ pub const STABILIZER_STRENGTH_TAPIOCA_STARCH: f64 = 40.0;
 ///
 /// Pectin, with a recommended dosage of ~1g/kg, has a stabilizer strength of ~200 (Cree, 2017,
 /// Pectin, p. 72)[^6].
+///
+/// @todo It is unclear if Cree is stating a recommended dosage for a typical retail product, which
+/// contain significant amounts of filler, or for pure pectin. If the former, then this value would
+/// need to be adjusted to be for pure pectin, and it would need to be much higher.
 #[doc = include_str!("../../docs/references/index/6.md")]
 pub const STABILIZER_STRENGTH_PECTIN: f64 = 200.0;
 

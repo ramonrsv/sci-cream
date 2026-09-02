@@ -49,3 +49,5 @@
 [^122]: Lecithin, Technical Specification TDS-145-V2. (2026). In _East Harbour Group_. <https://www.eastharbourgroup.com/storage/download-files/lecithin/Lecithin-TDS-145-V2.pdf>
 
 [^123]: Soya Lecithin Liquid GMO - SLLGM-60. (2026). In _Konsonet_. <https://konsonet.eu/wp-content/uploads/2024/05/specifications-soya-lecithin-liquid-SLLGM-60-gmo-Konsonet.pdf>
+
+[^124]: Sure-Jell Original Premium Fruit Pectin. (2026). In _Kraft Heinz_. <https://www.kraftheinz.com/sure-jell/products/00043000293201-original-premium-fruit-pectin>

@@ -16,6 +16,18 @@
 //! a recommended dosage of ~3.25g/kg (Raphaelson, 2016, Standard Base)[^5]. The relative strength
 //! of other emulsifiers is estimated by comparing their recommended dosages to that of Lecithin, or
 //! via cited equivalencies to Lecithin or other emulsifiers.
+//!
+//! Unless otherwise stated, these strength values are on an as-is basis, describing the product as
+//! a whole, including any typical diluents. For most emulsifiers, e.g. gum arabic, polysorbate,
+//! etc. the commercial product is usually close to 100% of the active component and there is no
+//! practical way to get a more concentrated product. As such, any experiments to determine the
+//! strength of the effects would necessarily involve using the commercial product as-is, making the
+//! distinction between as-is and pure component strength largely irrelevant.
+//!
+//! Note, however, that the above is a meaningful distinction for some emulsifiers, for example
+//! lecithin products, where the proportion of pure lecithin varies greatly between egg yolk, liquid
+//! and powder soy lecithin, etc. A spec that declares less than 100% of a component scales its
+//! emulsification down accordingly.
 //
 // @todo Find a better way to estimate the relative strength of other emulsifiers, ideally from
 // literature, and without referencing the recommended dosages, as those can vary significantly
@@ -29,6 +41,9 @@
 ///
 /// Lecithin, with a recommended dosage of ~3.25g/kg, is taken as the reference emulsifier,
 /// and has an emulsifier strength of 100 (Raphaelson, 2016, Standard Base)[^5].
+///
+/// Note that this value is for pure lecithin, in order to accurately quantify the contributions of
+/// different lecithin-containing ingredients, like egg yolk, powder and liquid soy lecithin, etc.
 #[doc = include_str!("../../docs/references/index/5.md")]
 pub const EMULSIFIER_STRENGTH_LECITHIN: f64 = 100.0;
 

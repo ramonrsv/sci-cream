@@ -18,6 +18,13 @@
 { "category": "Stabilizer", "StabilizerSpec": { "stabilizers": { "pectin": 100 } } }
 ```
 
+This models pure pectin E440, which requires a minimum of 65% galacturonic acid on the ash-free and
+anhydrous basis, and allows up to 12% water (The European Commission, 2025, E440)[^10]. Unlike the
+other entries of individual stabilizers, it does _not_ model most retail pectin products, which
+typically include fillers like dextrose, often at higher proportions than the active pectin (Kraft
+Heinz, 2026, "Sure-Jell")[^124]. Those should be modeled via [`CompositeSpec`] including pure pectin
+and fillers as separate ingredients.
+
 ## Gelatin
 
 ```json
