@@ -50,6 +50,9 @@
 - [ ] Explore `Recipe::deevaporate`'s target-key set: it targets all balanceable keys, up-weighting
       the ratios' constituents. Test extensive-only vs. curated alternatives in degenerate cases,
       tied into the extensive/intensive key classification.
+- [ ] Investigate ethanol in `Composition::evaporate`, which concentrates alcohol along with the
+      solids. Ethanol boils off faster than water, so cooked mixes overstate alcohol, its PAC and
+      its energy, and `deevaporate` then reformulates towards that overstated target.
 - [ ] Consider adding support for step-aware balancing, to support whole unit ingredients (e.g. egg
       yolks are 17g per unit), and to improve balancing drift due to app-side qty step rounding.
 - [ ] Consider adding support for balancing ceilings, e.g. 'Lactose' < 10%, but no specific target.

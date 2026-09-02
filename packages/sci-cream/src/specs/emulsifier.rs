@@ -87,10 +87,13 @@ impl ToComposition for EmulsifierSpec {
             ));
         }
 
+        let fats = Fats::new()
+            .total(emulsifiers.lecithin + emulsifiers.mono_and_diglycerides + emulsifiers.distilled_monoglycerides);
+
         let solids = SolidsBreakdown::new()
-            .fats(Fats::new().total(emulsifiers.lecithin))
+            .fats(fats)
             .carbohydrates(Carbohydrates::new().fiber(Fibers::new().other(emulsifiers.gum_arabic)))
-            .others(emulsifiers.other)
+            .others(emulsifiers.other + emulsifiers.polysorbate_80)
             .add(&other_solids);
 
         let micro = Micro::new().emulsifiers(emulsifiers);
@@ -189,11 +192,73 @@ pub(crate) mod tests {
         assert_eq!(comp.texture.emulsification, 217.0);
     }
 
+    pub(crate) const ING_SPEC_EMULSIFIER_POLYSORBATE_80_STR: &str = r#"{
+      "name": "Polysorbate 80",
+      "category": "Emulsifier",
+      "EmulsifierSpec": {
+        "emulsifiers": { "polysorbate_80": 100.0 }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_EMULSIFIER_POLYSORBATE_80: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Polysorbate 80".to_string(),
+        category: Category::Emulsifier,
+        spec: EmulsifierSpec {
+            emulsifiers: Emulsifiers::new().polysorbate_80(100.0),
+            strength: None,
+            other_solids: None,
+        }
+        .into(),
+    });
+
+    #[test]
+    fn to_composition_emulsifier_polysorbate_80() {
+        let comp = ING_SPEC_EMULSIFIER_POLYSORBATE_80.spec.to_composition().unwrap();
+
+        // Its composition is deliberately untracked, and unclassified solids claim no energy.
+        assert_eq!(comp.get(CompKey::Energy), 0.0);
+        assert_eq!(comp.get(CompKey::TotalFats), 0.0);
+        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::Water), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 100.0);
+
+        assert_eq!(comp.micro.emulsifiers, Emulsifiers::new().polysorbate_80(100.0));
+        assert_eq!(comp.texture.emulsification, 1000.0);
+    }
+
+    #[test]
+    fn to_composition_emulsifier_glycerides() {
+        let cases = [
+            (Emulsifiers::new().mono_and_diglycerides(100.0), 217.0),
+            (Emulsifiers::new().distilled_monoglycerides(100.0), 1.0 /* @todo */),
+        ];
+
+        for (emulsifiers, strength) in cases {
+            let spec = EmulsifierSpec {
+                emulsifiers,
+                strength: None,
+                other_solids: None,
+            };
+            let comp = spec.to_composition().unwrap();
+
+            assert_eq!(comp.get(CompKey::Energy), 900.0);
+            assert_eq!(comp.get(CompKey::TotalFats), 100.0);
+            assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
+            assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+            assert_eq!(comp.get(CompKey::TotalEmulsifiers), 100.0);
+
+            assert_eq!(comp.micro.emulsifiers, emulsifiers);
+            assert_eq!(comp.texture.emulsification, strength);
+        }
+    }
+
     pub(crate) static INGREDIENT_ASSETS_TABLE_EMULSIFIERS: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             vec![
                 (ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER_STR, ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER.clone(), None),
                 (ING_SPEC_EMULSIFIER_GUM_ARABIC_STR, ING_SPEC_EMULSIFIER_GUM_ARABIC.clone(), None),
+                (ING_SPEC_EMULSIFIER_POLYSORBATE_80_STR, ING_SPEC_EMULSIFIER_POLYSORBATE_80.clone(), None),
             ]
         });
 

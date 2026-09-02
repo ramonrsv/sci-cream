@@ -115,3 +115,9 @@ meaningful effect in the ice cream formulation at normal usage levels.
 ```json
 { "category": "Emulsifier", "EmulsifierSpec": { "emulsifiers": { "polysorbate_80": 100 } } }
 ```
+
+This library does not support modelling the compounds in Polysorbate 80. However, it is used in such
+minute quantities - at most 0.1% of the finished frozen dessert (U.S. FDA, CFR 21, 172.840)[^52] -
+that its composition is negligible in formulations. As such, it is deliberately not tracked here,
+modeled as unclassified solids; they are a closer approximation than water, since the compounds are
+non-volatile.
