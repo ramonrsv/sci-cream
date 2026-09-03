@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 299  (non-alias: 252, independent: 243)
+total: 301  (non-alias: 253, independent: 243)
 
             0% Milk
             1% Milk
@@ -60,6 +60,7 @@ total: 299  (non-alias: 252, independent: 243)
             Cocoa Powder, 20% Fat
             Cocoa Powder, 22% Fat
 [alias]     Coffee Extract
+[alias]     Commercial Stabilizers
             Cornstarch
 [alias]     DMG
             Dark Rum
@@ -180,6 +181,7 @@ total: 299  (non-alias: 252, independent: 243)
             Liquid Sunflower Lecithin
             Locust Bean Gum
 [composite] Louis Francois Stab 2000
+[composite] Louis Francois Super Neutrose
             Maltitol
             Maltodextrin 10 DE
             Maltodextrin 15 DE

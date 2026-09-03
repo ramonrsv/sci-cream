@@ -257,6 +257,65 @@ sorbets."_
 { "for": "Underbelly General Purpose Stabilizer Blend" }
 ```
 
+## Louis Francois Super Neutrose
+
+```json
+{
+  "category": "Stabilizer",
+  "CompositeSpec": {
+    "ByPercentage": [
+      ["Glucose Powder 42 DE", 45],
+      ["Locust Bean Gum", 30],
+      ["Sodium Alginate", 17],
+      ["Carrageenan", 8]
+    ]
+  }
+}
+```
+
+The recipe for [Louis Francois Super Neutrose](https://louisfrancois.com/en/produit/super-neutrose/)
+is expectedly not published, so this is an estimation based on the ingredient list, their relative
+order, and the manufacturer recommended dosage:
+
+> **Description**
+>
+> Super Neutrose absorbs residual water from mixes: it has anti-crystallization properties, corrects
+> the viscosity of mixes, improves velvety texture and smoothness, and adds creaminess. It also
+> provides a significant increase in overrun and delays the melting of popsicles. \
+> Super Neutrose is mainly used for sorbets, but can also be used for ice creams intended for
+> low-foam applications.
+>
+> **Dosage**
+>
+> 2 to 5g/L - 0.2 to 0.5%.
+
+The manufacturer's website information is also corroborated by the technical datasheet, with some
+additional composition clarifications and expanded dosage information (Louis Francois, 2014, "Super
+Neutrose Gallia")[^125]:
+
+> **Composition**
+>
+> Sirop de Glucose déshydraté \
+> Epaississant : Farine de graines de Caroube E410 \
+> Gélifiants : Alginates de Sodium E401, Carraghénanes de Sodium E407
+>
+> **Doses conseillées**
+>
+> Glaces Parfums usuels - 2 à 3 g/l \
+> Sorbets aux fruits - 4 à 5 g/l \
+> Chantilly - 5 g/l
+
+At _"2 to 3g/L [for] ice creams"_ (0.2 to 0.3%), the recommended dose is comparable to that of a
+blend of pure gums, e.g. "Underbelly General Purpose Stabilizer Blend", indicating a composition
+with a majority of active ingredients. 'Glucose powder' (_"Sirop de Glucose déshydraté"_) is the
+first ingredient, so we model it as 45%, the rest being primarily gums. "Glucose Powder 42 DE" is
+used as it is the most common and "regular" glucose powder - see the ingredient comments for more
+details. "Locust Bean Gum" as the primary gum is typical of stabilizer blends for ice cream (Clarke,
+2004, p. 52)[^4], so it's modeled at 30%. A gelling carrageenan is typically included in ice cream
+formulations at about 0.02% (Clarke, 2004, p. 51)[^4], which works out to ~8% of the blend at the
+recommended dosage. The remaining 17% is taken up by the "Sodium Alginate" (_"Alginates de Sodium
+E401"_), which is consistent with the ingredient order.
+
 ## Louis Francois Stab 2000
 
 ```json
@@ -291,17 +350,26 @@ order, and the manufacturer recommended dosage:
 > Low-fat ice creams (less than 7.5%): 4 to 5g/L - 0.4 to 0.5%. \
 > High-fat ice creams (10 to 12%): 2 to 3g/L - 0.2 to 0.3%.
 
-At _"2 to 3g/L - 0.2 to 0.3% [for] high-fat ice creams"_, the recommended dose is comparable to that
-of a blend of pure gums, e.g. "Underbelly General Purpose Stabilizer Blend", indicating a majority
-of active ingredients. 'Glucose syrup' is the first ingredient, so we model it as 45%, the rest
-being primarily gums. The product is a powder, so 'glucose syrup' is probably a labeling quirk and
-it's actually glucose powder, modeled here as "Glucose Powder 42 DE", the most common and "regular"
-glucose powder - see the ingredient comments for more details. "Locust Bean Gum" as the primary gum
-is typical of stabilizer blends for ice cream (Clarke, 2004, p. 52)[^4], so it's modeled at 30%. A
-gelling carrageenan is typically included in ice cream formulations at about 0.02% (Clarke, 2004,
-p. 51)[^4], which works out to ~8% of the blend at the recommended dosage. It's difficult to
-estimate the emulsifying effect of the blend, and therefore the proportion of "Glycerol
-Monostearate". However, any amount that respects the ingredient list order would make it
-insufficient to be a primary emulsifier, so the contribution must be minimal, nominally modeled here
-at 1%. The remaining 16% is taken up by the 'alginate', assumed to be "Sodium Alginate", which is
-consistent with the ingredient order.
+At _"2 to 3g/L - 0.2 to 0.3% [for] high-fat ice creams"_, the recommended dosage is the same as that
+of 'Louis Francois Super Neutrose', and the ingredient list is identical bar the emulsifier, so the
+proportions are estimated the same way - see that entry for the reasoning. The product is a powder,
+so 'glucose syrup' is probably a labeling quirk and it's actually glucose powder, explicitly so in
+Neutrose's datasheet (_"Sirop de Glucose déshydraté"_) - modeled here as "Glucose Powder 42 DE" for
+the same reasons. It's difficult to estimate the emulsifying effect of the blend, and therefore the
+proportion of "Glycerol Monostearate". However, any amount that respects the ingredient list order
+would make it insufficient to be a primary emulsifier, so the contribution must be minimal,
+nominally modeled here at 1%. "Alginate" is assumed to be "Sodium Alginate", also explicit in
+Neutrose's datasheet (_"Alginates de Sodium E401"_). Its proportion is reduced by the above 1%,
+since the value was determined via a remainder in the estimated formulation for Neutrose.
+
+## Commercial Stabilizers
+
+```json
+{ "for": "Louis Francois Super Neutrose" }
+```
+
+A generic commercial stabilizer blend, i.e. gums cut with a filler, and no emulsifier. Commercial
+blends vary in how much filler they carry: "Louis Francois Super Neutrose" leads with it, whereas
+_"Modernist Pantry Perfect Ice Cream"_ declares "Guar Gum, Dextrose, Carrageenan, ..." in that
+order, so its filler is a minority (Modernist Pantry, 2026, "Perfect Ice Cream")[^126]. As such, the
+aliased ingredient is just an example of a popular commercial product, not a principled "standard".

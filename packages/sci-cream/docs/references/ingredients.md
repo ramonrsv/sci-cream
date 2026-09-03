@@ -51,3 +51,7 @@
 [^123]: Soya Lecithin Liquid GMO - SLLGM-60. (2026). In _Konsonet_. <https://konsonet.eu/wp-content/uploads/2024/05/specifications-soya-lecithin-liquid-SLLGM-60-gmo-Konsonet.pdf>
 
 [^124]: Sure-Jell Original Premium Fruit Pectin. (2026). In _Kraft Heinz_. <https://www.kraftheinz.com/sure-jell/products/00043000293201-original-premium-fruit-pectin>
+
+[^125]: Super Neutrose Gallia, Fiche Technique CO-SP-004. (2014). In _Louis Francois_. <https://cdn.laboutiquedeschefs.fr/7768/ft_super-neutrose-1492696363.pdf>
+
+[^126]: Perfect Ice Cream. (2026). In _Modernist Pantry_. <https://modernistpantry.com/products/perfect-ice-cream.html>
