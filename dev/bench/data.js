@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788412179381,
+  "lastUpdate": 1788412183328,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -564133,6 +564133,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1041.78,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5339321725e01b8ac0626abe0ee9a519f3174823",
+          "message": "Add a 'Louis Francois Stab 2000' ingredient\n\n* Add 'Louis Francois Stab 2000' as a `CompositeSpec`, estimated from\n  the declared ingredient list and the manufacturer's dosage. The\n  order is declared but the proportions are not: glucose powder leads\n  at 45%, locust bean gum is the dominant gum at 30%, carrageenan is\n  set from its ~0.02% usage in ice cream, and the sodium alginate\n  takes the remaining 16%.\n\n* Add a generic 'Carrageenan' entry, since the product declares an\n  unqualified carrageenan, grouped as a gelling agent. Move the 'CMC'\n  alias next to 'Carboxymethyl Cellulose'.\n\n* Drop the claim that Stab 2000 has an emulsifier strength of 100.\n  Its E471 is declared last, so no label-compatible amount reaches a\n  primary emulsifier dose; strength 100 would need ~46% of the blend\n  to be glycerol monostearate.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-03T00:49:58-04:00",
+          "tree_id": "06a2f99dd41f41bd2dff082add6a88768048f67a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5339321725e01b8ac0626abe0ee9a519f3174823"
+        },
+        "date": 1788412126438,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 714.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 882.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 651.37,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 819.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 661.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 830.15,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 633.92,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 802.37,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 635.41,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 803.86,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1042.92,
             "unit": "KB"
           },
           {
