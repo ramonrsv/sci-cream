@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788454340929,
+  "lastUpdate": 1788454344268,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -594328,6 +594328,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/5339321725e01b8ac0626abe0ee9a519f3174823"
         },
         "date": 1788412186322,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3102fe39e883eb1dba467f2cef34c0ba83fb5bed",
+          "message": "Fix updated screenshot missed in previous commit",
+          "timestamp": "2026-09-03T12:48:17-04:00",
+          "tree_id": "260af00fb3dbf99918a1b1927be81d6f0b7c09f8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3102fe39e883eb1dba467f2cef34c0ba83fb5bed"
+        },
+        "date": 1788454343535,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
