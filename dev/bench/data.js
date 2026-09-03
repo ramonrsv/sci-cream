@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788389264623,
+  "lastUpdate": 1788412159490,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -600425,6 +600425,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1906.26,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5339321725e01b8ac0626abe0ee9a519f3174823",
+          "message": "Add a 'Louis Francois Stab 2000' ingredient\n\n* Add 'Louis Francois Stab 2000' as a `CompositeSpec`, estimated from\n  the declared ingredient list and the manufacturer's dosage. The\n  order is declared but the proportions are not: glucose powder leads\n  at 45%, locust bean gum is the dominant gum at 30%, carrageenan is\n  set from its ~0.02% usage in ice cream, and the sodium alginate\n  takes the remaining 16%.\n\n* Add a generic 'Carrageenan' entry, since the product declares an\n  unqualified carrageenan, grouped as a gelling agent. Move the 'CMC'\n  alias next to 'Carboxymethyl Cellulose'.\n\n* Drop the claim that Stab 2000 has an emulsifier strength of 100.\n  Its E471 is declared last, so no label-compatible amount reaches a\n  primary emulsifier dose; strength 100 would need ~46% of the blend\n  to be glycerol monostearate.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-03T00:49:58-04:00",
+          "tree_id": "06a2f99dd41f41bd2dff082add6a88768048f67a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5339321725e01b8ac0626abe0ee9a519f3174823"
+        },
+        "date": 1788412120590,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1094.8,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 332.55,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1706.21,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 527.91,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 575.13,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1909.19,
             "unit": "KB"
           }
         ]
