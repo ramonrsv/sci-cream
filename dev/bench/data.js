@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788455114458,
+  "lastUpdate": 1788470596098,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -602847,6 +602847,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1909.39,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a74e11990e8c5c3a953be0ccbbac16a06af969ac",
+          "message": "Add a 'Louis Francois Super Neutrose' ingredient\n\n* Add 'Louis Francois Super Neutrose', an emulsifier-free stabilizer\n  blend from the same manufacturer as 'Louis Francois Stab 2000', and\n  alias it as 'Commercial Stabilizers'. Its technical sheet gives the\n  composition and per-application dosages directly, so it carries the\n  estimation reasoning and Stab 2000 now states only its delta.\n\n* Resolve two assumptions in the 'Louis Francois Stab 2000' entry: the\n  retail label says only \"sirop de glucose\" and \"alginate\", while the\n  sheet names them _sirop de glucose déshydraté_ and _alginates de\n  sodium_ E401, confirming the glucose powder and sodium alginate.\n\n* Add the Fiche Technique as `[^125]` and Modernist Pantry's\n  'Perfect Ice Cream' as `[^126]`, the latter to show that commercial\n  blends differ in whether filler or gum leads the declaration.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-03T17:20:28-04:00",
+          "tree_id": "b95abbb1ff7a2dd496ac93d6db91618a3b5c882e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a74e11990e8c5c3a953be0ccbbac16a06af969ac"
+        },
+        "date": 1788470541508,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1095.21,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 332.87,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1709.92,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 529.87,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 577.06,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1912.98,
             "unit": "KB"
           }
         ]
