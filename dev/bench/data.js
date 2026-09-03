@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788412579705,
+  "lastUpdate": 1788412971069,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -488047,6 +488047,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 718.75,
             "range": "11.43",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5339321725e01b8ac0626abe0ee9a519f3174823",
+          "message": "Add a 'Louis Francois Stab 2000' ingredient\n\n* Add 'Louis Francois Stab 2000' as a `CompositeSpec`, estimated from\n  the declared ingredient list and the manufacturer's dosage. The\n  order is declared but the proportions are not: glucose powder leads\n  at 45%, locust bean gum is the dominant gum at 30%, carrageenan is\n  set from its ~0.02% usage in ice cream, and the sodium alginate\n  takes the remaining 16%.\n\n* Add a generic 'Carrageenan' entry, since the product declares an\n  unqualified carrageenan, grouped as a gelling agent. Move the 'CMC'\n  alias next to 'Carboxymethyl Cellulose'.\n\n* Drop the claim that Stab 2000 has an emulsifier strength of 100.\n  Its E471 is declared last, so no label-compatible amount reaches a\n  primary emulsifier dose; strength 100 would need ~46% of the blend\n  to be glycerol monostearate.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-03T00:49:58-04:00",
+          "tree_id": "06a2f99dd41f41bd2dff082add6a88768048f67a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5339321725e01b8ac0626abe0ee9a519f3174823"
+        },
+        "date": 1788412917490,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 48.63,
+            "range": "2.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 57.38,
+            "range": "2.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 65.88,
+            "range": "4.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2483.75,
+            "range": "30.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 326.25,
+            "range": "4.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 335.25,
+            "range": "4.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 352.13,
+            "range": "3.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16788.13,
+            "range": "54.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 938.88,
+            "range": "7.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.63,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.13,
+            "range": "1.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.5,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.13,
+            "range": "2.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 128.88,
+            "range": "3.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 88.63,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 56.68,
+            "range": "0.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 43.07,
+            "range": "0.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 631.13,
+            "range": "9.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 692.38,
+            "range": "12.23",
             "unit": "ms"
           }
         ]
