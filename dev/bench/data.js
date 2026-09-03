@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788470623273,
+  "lastUpdate": 1788470627229,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -595382,6 +595382,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/3102fe39e883eb1dba467f2cef34c0ba83fb5bed"
         },
         "date": 1788454343535,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a74e11990e8c5c3a953be0ccbbac16a06af969ac",
+          "message": "Add a 'Louis Francois Super Neutrose' ingredient\n\n* Add 'Louis Francois Super Neutrose', an emulsifier-free stabilizer\n  blend from the same manufacturer as 'Louis Francois Stab 2000', and\n  alias it as 'Commercial Stabilizers'. Its technical sheet gives the\n  composition and per-application dosages directly, so it carries the\n  estimation reasoning and Stab 2000 now states only its delta.\n\n* Resolve two assumptions in the 'Louis Francois Stab 2000' entry: the\n  retail label says only \"sirop de glucose\" and \"alginate\", while the\n  sheet names them _sirop de glucose déshydraté_ and _alginates de\n  sodium_ E401, confirming the glucose powder and sodium alginate.\n\n* Add the Fiche Technique as `[^125]` and Modernist Pantry's\n  'Perfect Ice Cream' as `[^126]`, the latter to show that commercial\n  blends differ in whether filler or gum leads the declaration.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-03T17:20:28-04:00",
+          "tree_id": "b95abbb1ff7a2dd496ac93d6db91618a3b5c882e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a74e11990e8c5c3a953be0ccbbac16a06af969ac"
+        },
+        "date": 1788470626178,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
