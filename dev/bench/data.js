@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788471008337,
+  "lastUpdate": 1788471378007,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -489823,6 +489823,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 671.38,
             "range": "17.78",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a74e11990e8c5c3a953be0ccbbac16a06af969ac",
+          "message": "Add a 'Louis Francois Super Neutrose' ingredient\n\n* Add 'Louis Francois Super Neutrose', an emulsifier-free stabilizer\n  blend from the same manufacturer as 'Louis Francois Stab 2000', and\n  alias it as 'Commercial Stabilizers'. Its technical sheet gives the\n  composition and per-application dosages directly, so it carries the\n  estimation reasoning and Stab 2000 now states only its delta.\n\n* Resolve two assumptions in the 'Louis Francois Stab 2000' entry: the\n  retail label says only \"sirop de glucose\" and \"alginate\", while the\n  sheet names them _sirop de glucose déshydraté_ and _alginates de\n  sodium_ E401, confirming the glucose powder and sodium alginate.\n\n* Add the Fiche Technique as `[^125]` and Modernist Pantry's\n  'Perfect Ice Cream' as `[^126]`, the latter to show that commercial\n  blends differ in whether filler or gum leads the declaration.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-03T17:20:28-04:00",
+          "tree_id": "b95abbb1ff7a2dd496ac93d6db91618a3b5c882e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a74e11990e8c5c3a953be0ccbbac16a06af969ac"
+        },
+        "date": 1788471321629,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 47.63,
+            "range": "2.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 58.75,
+            "range": "4.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 67.13,
+            "range": "5.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2499.25,
+            "range": "42.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 336,
+            "range": "2.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 345.25,
+            "range": "5.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 363.38,
+            "range": "3.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17352.88,
+            "range": "68.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 918.5,
+            "range": "21.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.63,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.5,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43.25,
+            "range": "2.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 128,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 89,
+            "range": "3.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 59.37,
+            "range": "0.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 44.86,
+            "range": "0.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 651.25,
+            "range": "7.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 729.88,
+            "range": "15.39",
             "unit": "ms"
           }
         ]
