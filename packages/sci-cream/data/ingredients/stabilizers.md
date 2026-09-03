@@ -43,6 +43,12 @@ and fillers as separate ingredients.
 { "category": "Stabilizer", "StabilizerSpec": { "stabilizers": { "guar_gum": 100 } } }
 ```
 
+## Carrageenan
+
+```json
+{ "category": "Stabilizer", "StabilizerSpec": { "stabilizers": { "carrageenans": 100 } } }
+```
+
 ## Lambda Carrageenan
 
 ```json
@@ -86,6 +92,12 @@ and fillers as separate ingredients.
 
 ```json
 { "category": "Stabilizer", "StabilizerSpec": { "stabilizers": { "tara_gum": 100 } } }
+```
+
+## CMC
+
+```json
+{ "for": "Carboxymethyl Cellulose" }
 ```
 
 ## Underbelly Easy-to-find Stabilizer Blend
@@ -221,12 +233,6 @@ nut butters, olive oil or other fatty ingredients, you may get smoother results 
 lecithin (maybe start with 1g / Liter). We’ll look at all this in greater depth in a future post on
 sorbets."_
 
-## CMC
-
-```json
-{ "for": "Carboxymethyl Cellulose" }
-```
-
 ## Ice Cream Stabilizer Blend
 
 ```json
@@ -250,3 +256,52 @@ sorbets."_
 ```json
 { "for": "Underbelly General Purpose Stabilizer Blend" }
 ```
+
+## Louis Francois Stab 2000
+
+```json
+{
+  "category": "Stabilizer",
+  "CompositeSpec": {
+    "ByPercentage": [
+      ["Glucose Powder 42 DE", 45],
+      ["Locust Bean Gum", 30],
+      ["Sodium Alginate", 16],
+      ["Carrageenan", 8],
+      ["Glycerol Monostearate", 1]
+    ]
+  }
+}
+```
+
+The recipe for [Louis Francois Stab 2000](https://louisfrancois.com/en/produit/stab-2000/) is
+expectedly not published, so this is an estimation based on the ingredient list, their relative
+order, and the manufacturer recommended dosage:
+
+> **Description**
+>
+> Stab 2000 stabilizes the structure by preventing the formation of ice crystals. \
+> It is also used to improve the body and texture of finished products. \
+> It lends creaminess, promotes overrun, improves fat dispersion and emulsifies the various
+> constituents of mixes.
+>
+> **Dosage**
+>
+> Between 2 and 5g/L - 0.2 to 0.5% \
+> Low-fat ice creams (less than 7.5%): 4 to 5g/L - 0.4 to 0.5%. \
+> High-fat ice creams (10 to 12%): 2 to 3g/L - 0.2 to 0.3%.
+
+At _"2 to 3g/L - 0.2 to 0.3% [for] high-fat ice creams"_, the recommended dose is comparable to that
+of a blend of pure gums, e.g. "Underbelly General Purpose Stabilizer Blend", indicating a majority
+of active ingredients. 'Glucose syrup' is the first ingredient, so we model it as 45%, the rest
+being primarily gums. The product is a powder, so 'glucose syrup' is probably a labeling quirk and
+it's actually glucose powder, modeled here as "Glucose Powder 42 DE", the most common and "regular"
+glucose powder - see the ingredient comments for more details. "Locust Bean Gum" as the primary gum
+is typical of stabilizer blends for ice cream (Clarke, 2004, p. 52)[^4], so it's modeled at 30%. A
+gelling carrageenan is typically included in ice cream formulations at about 0.02% (Clarke, 2004,
+p. 51)[^4], which works out to ~8% of the blend at the recommended dosage. It's difficult to
+estimate the emulsifying effect of the blend, and therefore the proportion of "Glycerol
+Monostearate". However, any amount that respects the ingredient list order would make it
+insufficient to be a primary emulsifier, so the contribution must be minimal, nominally modeled here
+at 1%. The remaining 16% is taken up by the 'alginate', assumed to be "Sodium Alginate", which is
+consistent with the ingredient order.

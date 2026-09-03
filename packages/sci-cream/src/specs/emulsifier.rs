@@ -30,9 +30,7 @@ use crate::{
 /// very weak and very strong ingredients.
 ///
 /// Lecithin is taken as the reference emulsifier with a strength of 100, with a recommended dosage
-/// of ~3.25g/kg (Raphaelson, 2016, Standard Base)[^5]. Something like _"Louis Francois Stab 2000"_
-/// has a similar recommended dosage for its emulsifier component, so it also has a a relative
-/// emulsifier strength of 100.
+/// of ~3.25g/kg (Raphaelson, 2016, Standard Base)[^5].
 #[doc = include_str!("../../docs/references/index/5.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
