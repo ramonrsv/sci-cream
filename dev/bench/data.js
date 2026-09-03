@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788470596098,
+  "lastUpdate": 1788470623273,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -566149,6 +566149,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1043.94,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a74e11990e8c5c3a953be0ccbbac16a06af969ac",
+          "message": "Add a 'Louis Francois Super Neutrose' ingredient\n\n* Add 'Louis Francois Super Neutrose', an emulsifier-free stabilizer\n  blend from the same manufacturer as 'Louis Francois Stab 2000', and\n  alias it as 'Commercial Stabilizers'. Its technical sheet gives the\n  composition and per-application dosages directly, so it carries the\n  estimation reasoning and Stab 2000 now states only its delta.\n\n* Resolve two assumptions in the 'Louis Francois Stab 2000' entry: the\n  retail label says only \"sirop de glucose\" and \"alginate\", while the\n  sheet names them _sirop de glucose déshydraté_ and _alginates de\n  sodium_ E401, confirming the glucose powder and sodium alginate.\n\n* Add the Fiche Technique as `[^125]` and Modernist Pantry's\n  'Perfect Ice Cream' as `[^126]`, the latter to show that commercial\n  blends differ in whether filler or gum leads the declaration.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-03T17:20:28-04:00",
+          "tree_id": "b95abbb1ff7a2dd496ac93d6db91618a3b5c882e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a74e11990e8c5c3a953be0ccbbac16a06af969ac"
+        },
+        "date": 1788470577629,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 716.35,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 884.79,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 653.41,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 821.85,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 663.73,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 832.18,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 635.96,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 804.4,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 637.44,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 805.89,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1044.97,
             "unit": "KB"
           },
           {
