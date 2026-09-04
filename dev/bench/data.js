@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788550400673,
+  "lastUpdate": 1788550405027,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -569489,6 +569489,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1046.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "308fbbfb36b0bfe02eec57317e61b8f9ca113c8c",
+          "message": "Add Dana Cree reference recipes\n\n* Add two reference recipes from 'Hello, My Name Is Ice Cream', the\n  'Blank Slate Custard Ice Cream' and 'Vanilla Ice Cream', with a\n  preamble documenting how the book's ingredients map to Sci-Cream\n  ones, and where its composition assumptions differ from ours.\n\n* Add '4% Milk' and '6% Cream' ingredients. Cree is explicit that the\n  book's milk is 4% and its cream 40% butterfat, and uses those values\n  in her calculations, so the recipes use exact matches rather than the\n  nearer '3.25% Milk' and '36% Cream'. '6% Cream' completes the ladder;\n  it is a real product sold in Canada.\n\n* Model the \"2 tablespoons vanilla extract\" option at 25g, a middle\n  ground between Cree's own 2 tbsp : 20g equivalency and the ~28g that\n  the NIST tablespoon volume and the density of a 35% ABV solution give.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-04T15:25:50-04:00",
+          "tree_id": "8f67a129762f29dc5a098067c107e61fc81b8cde",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/308fbbfb36b0bfe02eec57317e61b8f9ca113c8c"
+        },
+        "date": 1788550347134,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 717.9,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 886.35,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 654.95,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 823.4,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 665.28,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 833.73,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 637.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 805.95,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 638.99,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 807.44,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1046.52,
             "unit": "KB"
           },
           {
