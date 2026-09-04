@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788550409063,
+  "lastUpdate": 1788550509071,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -592191,6 +592191,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.36,
             "range": "0.39",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "308fbbfb36b0bfe02eec57317e61b8f9ca113c8c",
+          "message": "Add Dana Cree reference recipes\n\n* Add two reference recipes from 'Hello, My Name Is Ice Cream', the\n  'Blank Slate Custard Ice Cream' and 'Vanilla Ice Cream', with a\n  preamble documenting how the book's ingredients map to Sci-Cream\n  ones, and where its composition assumptions differ from ours.\n\n* Add '4% Milk' and '6% Cream' ingredients. Cree is explicit that the\n  book's milk is 4% and its cream 40% butterfat, and uses those values\n  in her calculations, so the recipes use exact matches rather than the\n  nearer '3.25% Milk' and '36% Cream'. '6% Cream' completes the ladder;\n  it is a real product sold in Canada.\n\n* Model the \"2 tablespoons vanilla extract\" option at 25g, a middle\n  ground between Cree's own 2 tbsp : 20g equivalency and the ~28g that\n  the NIST tablespoon volume and the density of a 35% ABV solution give.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-04T15:25:50-04:00",
+          "tree_id": "8f67a129762f29dc5a098067c107e61fc81b8cde",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/308fbbfb36b0bfe02eec57317e61b8f9ca113c8c"
+        },
+        "date": 1788550455092,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.06,
+            "range": "9.88",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.35,
+            "range": "1.03",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.31,
+            "range": "1.04",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 171.5,
+            "range": "13.03",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 171.5,
+            "range": "13.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.9,
+            "range": "9.81",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.35,
+            "range": "0.44",
             "unit": "ms"
           }
         ]
