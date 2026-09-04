@@ -3,7 +3,6 @@
 ## Next Release
 
 - [ ] Add code example doc tests to all specs that don't already have them.
-- [ ] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
 - [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [ ] Add TS-side unit tests for the `wasm::Recipe` functionality; it's independent from `Bridge`.
@@ -12,7 +11,6 @@
 - [ ] Add optional `total_amount` input to `Bridge::validate_balancing_targets`, same as `balance`.
 - [ ] `assert_eq_flt_test`, with epsilon `TESTS_EPSILON = 0.0001`, is too loose for many use cases.
       Consider tightening to `COMPOSITION_EPSILON` and/or adding a tighter/loser assert variant.
-- [ ] Add `CompKey`s and ingredient for the known emulsifiers, e.g. `gum_arabic`/"Gum Arabic".
 - [ ] Switch the hard-coded FPD calculation `PacToFpdMethod` from `Interpolation` to `Polynomial`.
 - [ ] Add a 'Corn Syrup' definition, most likely an alias to a specific glucose syrup entry.
 - [ ] Review the 'Egg Yolk Lecithin' ingredient; it's still 100% lecithin, but food-grade
@@ -129,6 +127,8 @@
 
 ## Completed
 
+- [x] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
+- [x] Add `CompKey`s and ingredient for the known emulsifiers, e.g. `gum_arabic`/"Gum Arabic".
 - [x] Rename 'HFCS 42' to 'High Fructose Corn Syrup 42' and add 'HFCS 42' alias; same for others.
 - [x] Investigate how to support markdown for the data recipe and ingredient comments. It's
       difficult to do in JSON, but doing it in separate `.md` files would be a maintenance issues.
