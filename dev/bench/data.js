@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788471378007,
+  "lastUpdate": 1788493204971,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -528450,6 +528450,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.49%",
             "unit": "ops/sec",
             "extra": "86 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "dc4f7af80cd8332785824cb10a704d1574b74da6",
+          "message": "Add generic stabilizer blend ingredients\n\n* Add four `CompositeSpec` stabilizer blends whose names encode their\n  composition, so the ratios are fixed by the name and the entries stay\n  independent of the Underbelly blends they are derived from:\n  'Stabilizers, LBG-GG-LC 4:2:1' for general purpose ice cream, '4:3:2'\n  for eggless, '5:2:1' for formulations containing alcohol, and\n  'Stabilizers, CMC-GG-LC 2:1:1' for sorbet. The gum set is joined into\n  a single token so the ratio reads as the trailing element that is the\n  only difference between entries.\n\n* Document a recommended dosage for each, as a percentage of the total\n  mix weight. The sources give the sorbet figure on a water basis, so\n  it is converted, spanning 0.35-0.45% of the total across the water\n  contents typical of sorbets.\n\n* Point the 'Ice Cream Stabilizer Blend' alias at the general purpose\n  blend rather than the easy-to-find one, and drop the 'Eggless Ice\n  Cream Stabilizer Blend' alias.\n\n* Add Underbelly's chocolate and booze recipes as `[^81]` and `[^82]`,\n  which back the 4:3:2 and 5:2:1 ratios.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-03T23:37:03-04:00",
+          "tree_id": "c9bd8a99f4513676f47946a6fb5652c968fab593",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/dc4f7af80cd8332785824cb10a704d1574b74da6"
+        },
+        "date": 1788493161199,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 68186,
+            "range": "±13.58%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 576065,
+            "range": "±0.66%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 52515,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 434601,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
