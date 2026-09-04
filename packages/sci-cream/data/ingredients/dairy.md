@@ -30,10 +30,22 @@
 { "category": "Dairy", "DairySimpleSpec": { "fat": 3.5 } }
 ```
 
+## 4% Milk
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 4 } }
+```
+
 ## 5% Cream
 
 ```json
 { "category": "Dairy", "DairySimpleSpec": { "fat": 5 } }
+```
+
+## 6% Cream
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 6 } }
 ```
 
 ## 10% Cream

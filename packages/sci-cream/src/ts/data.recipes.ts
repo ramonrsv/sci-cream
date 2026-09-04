@@ -1,6 +1,7 @@
 // Generated from the `data/recipes/*.md` sources by `scripts/gen-data.ts` (`pnpm gen:data`).
 // These carry `comments` (with footnote definitions resolved inline); do not edit by hand.
 import underbellyJson from "../../data/recipes/generated/full/underbelly.json";
+import danaCreeJson from "../../data/recipes/generated/full/dana-cree.json";
 import iceCreamScienceJson from "../../data/recipes/generated/full/ice-cream-science.json";
 
 import { LightRecipe } from "./light-recipe";
@@ -29,7 +30,7 @@ function flattenLists(jsonLists: InferredRecipeEntryJson[][]): RecipeEntryJson[]
 }
 
 /** All built-in recipe entries aggregated from every recipe JSON file. */
-export const allRecipeEntries = flattenLists([underbellyJson, iceCreamScienceJson]);
+export const allRecipeEntries = flattenLists([underbellyJson, danaCreeJson, iceCreamScienceJson]);
 
 /** Returns the ID of a recipe entry, meant to match `RecipeEntry::gen_id`. */
 export function recipeEntryId(entry: RecipeEntryJson): string {

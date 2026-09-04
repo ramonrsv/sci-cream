@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 304  (non-alias: 257, independent: 243)
+"total: 306  (non-alias: 259, independent: 245)
 
             0% Milk
             1% Milk
@@ -14,6 +14,7 @@ exports[`Embedded spec entries 1`] = `
             3.5% Milk
             35% Cream
             36% Cream
+            4% Milk
             40% ABV Spirit
             40% Cream
             43% ABV Spirit
@@ -21,6 +22,7 @@ exports[`Embedded spec entries 1`] = `
             48% Cream
             5% Cream
             55% Cream
+            6% Cream
             60% Dark Chocolate
             65% Dark Chocolate
             70% Dark Chocolate

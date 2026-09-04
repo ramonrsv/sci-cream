@@ -20,6 +20,7 @@ use crate::recipe::Recipe;
 /// `generated/full/*.json` (which the app consumes), never in this embedded binary copy.
 const EMBEDDED_RECIPES_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
     ("underbelly.json", include_str!("../../data/recipes/generated/min/underbelly.json")),
+    ("dana-cree.json", include_str!("../../data/recipes/generated/min/dana-cree.json")),
     ("ice-cream-science.json", include_str!("../../data/recipes/generated/min/ice-cream-science.json")),
 ];
 

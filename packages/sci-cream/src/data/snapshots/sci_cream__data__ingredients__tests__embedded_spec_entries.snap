@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 304  (non-alias: 257, independent: 243)
+total: 306  (non-alias: 259, independent: 245)
 
             0% Milk
             1% Milk
@@ -15,6 +15,7 @@ total: 304  (non-alias: 257, independent: 243)
             3.5% Milk
             35% Cream
             36% Cream
+            4% Milk
             40% ABV Spirit
             40% Cream
             43% ABV Spirit
@@ -22,6 +23,7 @@ total: 304  (non-alias: 257, independent: 243)
             48% Cream
             5% Cream
             55% Cream
+            6% Cream
             60% Dark Chocolate
             65% Dark Chocolate
             70% Dark Chocolate
