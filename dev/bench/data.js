@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788493752275,
+  "lastUpdate": 1788493937344,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -490618,6 +490618,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 729.88,
             "range": "15.39",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "dc4f7af80cd8332785824cb10a704d1574b74da6",
+          "message": "Add generic stabilizer blend ingredients\n\n* Add four `CompositeSpec` stabilizer blends whose names encode their\n  composition, so the ratios are fixed by the name and the entries stay\n  independent of the Underbelly blends they are derived from:\n  'Stabilizers, LBG-GG-LC 4:2:1' for general purpose ice cream, '4:3:2'\n  for eggless, '5:2:1' for formulations containing alcohol, and\n  'Stabilizers, CMC-GG-LC 2:1:1' for sorbet. The gum set is joined into\n  a single token so the ratio reads as the trailing element that is the\n  only difference between entries.\n\n* Document a recommended dosage for each, as a percentage of the total\n  mix weight. The sources give the sorbet figure on a water basis, so\n  it is converted, spanning 0.35-0.45% of the total across the water\n  contents typical of sorbets.\n\n* Point the 'Ice Cream Stabilizer Blend' alias at the general purpose\n  blend rather than the easy-to-find one, and drop the 'Eggless Ice\n  Cream Stabilizer Blend' alias.\n\n* Add Underbelly's chocolate and booze recipes as `[^81]` and `[^82]`,\n  which back the 4:3:2 and 5:2:1 ratios.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-03T23:37:03-04:00",
+          "tree_id": "c9bd8a99f4513676f47946a6fb5652c968fab593",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/dc4f7af80cd8332785824cb10a704d1574b74da6"
+        },
+        "date": 1788493883695,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.38,
+            "range": "3.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49.63,
+            "range": "3.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 59.75,
+            "range": "4.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2364.38,
+            "range": "42.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 321,
+            "range": "5.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 335.5,
+            "range": "2.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 343.5,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16563,
+            "range": "21.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 912.88,
+            "range": "24.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.13,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 53.25,
+            "range": "1.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.38,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.5,
+            "range": "2.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 128.5,
+            "range": "3.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 84,
+            "range": "3.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.22,
+            "range": "0.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.45,
+            "range": "0.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 618,
+            "range": "6.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 668.13,
+            "range": "18.30",
             "unit": "ms"
           }
         ]
