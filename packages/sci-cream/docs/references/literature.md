@@ -161,3 +161,7 @@
 [^79]: United States Pharmacopeia. _Glyceryl Monostearate_. USP-NF. Retrieved 2026, September. <https://doi.usp.org/USPNF/USPNF_M35490_03_01.html>
 
 [^80]: _Glycerol Monostearate_. Food Ingredients Asia. Retrieved 2026, September. <https://www.foodingredientsasia.com/en/learning-center/product-based-knowledge/glycerol-monostearate>
+
+[^81]: Raphaelson, Paul. (2018, Sep). _Ice Cream Flavor: Chocolate_. <https://under-belly.org/ice-cream-flavor-chocolate/>
+
+[^82]: Raphaelson, Paul. (2016, Dec). _Booze Flavored Ice Cream_. <https://under-belly.org/booze-flavored-ice-cream/>

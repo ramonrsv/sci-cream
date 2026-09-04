@@ -236,13 +236,7 @@ sorbets."_
 ## Ice Cream Stabilizer Blend
 
 ```json
-{ "for": "Underbelly Easy-to-find Stabilizer Blend" }
-```
-
-## Eggless Ice Cream Stabilizer Blend
-
-```json
-{ "for": "Underbelly Eggless Ice Cream Stabilizer Blend" }
+{ "for": "Underbelly General Purpose Stabilizer Blend" }
 ```
 
 ## Sorbet Stabilizer Blend
@@ -256,6 +250,137 @@ sorbets."_
 ```json
 { "for": "Underbelly General Purpose Stabilizer Blend" }
 ```
+
+## Stabilizers, LBG-GG-LC 4:2:1
+
+```json
+{
+  "category": "Stabilizer",
+  "CompositeSpec": {
+    "ByParts": [
+      ["Locust Bean Gum", 4],
+      ["Guar Gum", 2],
+      ["Lambda Carrageenan", 1]
+    ]
+  }
+}
+```
+
+_Ice Cream - General Purpose_ \
+_Dosage: 0.1-0.25%_
+
+A stabilizer blend of Locust Bean Gum, Guar Gum, and Lambda Carrageenan. This is a common
+combination of gums, where LBG is the predominant stabilizer - it is arguably the best ice cream
+stabilizer - and shows synergistic effects in combination with Guar Gum and Carrageenan (Clarke,
+2004, p. 51-52)[^4], (Goff & Hartel, 2025, p. 80-81)[^20], (Raphaelson, 2023, January)[^37].
+
+The precise 4:2:1 ratios are based on Underbelly's [Blend 2: General
+Purpose](https://under-belly.org/ice-cream-stabilizers/), also included as "Underbelly General
+Purpose Stabilizer Blend". Use this blend at 0.1-0.25% of the total mix weight, depending on the
+specific formulation (Cree, 2017, Locust Bean Gum, p. 71)[^6], (Raphaelson, 2023, January)[^37].
+
+This is a general-purpose ice cream blend, appropriate for most formulations, requiring only total
+amount tailoring. Note that this blend does not contain any emulsifiers; those should be added
+separately depending on the formulation and other sources of emulsifiers, e.g. egg yolk.
+
+## Stabilizers, LBG-GG-LC 4:3:2
+
+```json
+{
+  "category": "Stabilizer",
+  "CompositeSpec": {
+    "ByParts": [
+      ["Locust Bean Gum", 4],
+      ["Guar Gum", 3],
+      ["Lambda Carrageenan", 2]
+    ]
+  }
+}
+```
+
+_Ice Cream - Eggless_ \
+_Dosage: 0.15-0.2%_
+
+A stabilizer blend of Locust Bean Gum, Guar Gum, and Lambda Carrageenan. This is a common
+combination of gums, where LBG is the predominant stabilizer - it is arguably the best ice cream
+stabilizer - and shows synergistic effects in combination with Guar Gum and Carrageenan (Clarke,
+2004, p. 51-52)[^4], (Goff & Hartel, 2025, p. 80-81)[^20], (Raphaelson, 2023, January)[^37].
+
+The precise 4:3:2 ratios are based on Underbelly's [Light
+Variation](https://under-belly.org/basic-ice-cream-recipe-examples/) and
+[Chocolate](https://under-belly.org/ice-cream-flavor-chocolate/) recipes. Use this blend at
+0.15-0.2% of the total mix weight, depending on the specific formulation (Raphaelson, 2023,
+January)[^37], (Raphaelson, 2016, Light Variation)[^5], (Raphaelson, 2018, Double Origin
+Chocolate)[^81].
+
+This is a blend tailored for eggless formulations, e.g. light plain variations or chocolate recipes.
+Note that, despite being tailored for eggless formulations, this blend does not include any
+emulsifiers; those should be added separately, and are crucial when egg yolks are not present.
+
+## Stabilizers, LBG-GG-LC 5:2:1
+
+```json
+{
+  "category": "Stabilizer",
+  "CompositeSpec": {
+    "ByParts": [
+      ["Locust Bean Gum", 5],
+      ["Guar Gum", 2],
+      ["Lambda Carrageenan", 1]
+    ]
+  }
+}
+```
+
+_Ice Cream - Booze_ \
+_Dosage: 0.15-0.17%_
+
+A stabilizer blend of Locust Bean Gum, Guar Gum, and Lambda Carrageenan. This is a common
+combination of gums, where LBG is the predominant stabilizer - it is arguably the best ice cream
+stabilizer - and shows synergistic effects in combination with Guar Gum and Carrageenan (Clarke,
+2004, p. 51-52)[^4], (Goff & Hartel, 2025, p. 80-81)[^20], (Raphaelson, 2023, January)[^37].
+
+The precise 5:2:1 ratios are based on Underbelly's [Grand Marnier Ice
+Cream](https://under-belly.org/booze-flavored-ice-cream/) recipe. Use this blend at 0.15-0.17% of
+the total mix weight, depending on the specific formulation (Raphaelson, 2023, January)[^37],
+(Raphaelson, 2016, Grand Marnier)[^82].
+
+This is a blend tailored for formulations containing alcohol, e.g. 'Grand Marnier' recipes. Note
+that this blend does not contain any emulsifiers; those should be added separately depending on the
+formulation and other sources of emulsifiers, e.g. egg yolk.
+
+## Stabilizers, CMC-GG-LC 2:1:1
+
+```json
+{
+  "category": "Stabilizer",
+  "CompositeSpec": {
+    "ByParts": [
+      ["Carboxymethyl Cellulose", 2],
+      ["Guar Gum", 1],
+      ["Lambda Carrageenan", 1]
+    ]
+  }
+}
+```
+
+_Sorbet_ \
+_Dosage: 0.35-0.45%_
+
+A stabilizer blend similar to a blend of Locust Bean Gum, Guar Gum, and Lambda Carrageenan, but with
+the Locust Bean Gum replaced with Carboxymethyl Cellulose. The latter has similar properties, but
+does not require heating to hydrate, which is desirable for sorbet formulations using fresh fruit
+juices (Clarke, 2004, p. 52)[^4], (Raphaelson, 2023, January)[^37].
+
+The precise 2:1:1 ratios are based on Underbelly's [Blend 4:
+Sorbet](https://under-belly.org/ice-cream-stabilizers/), also included as "Underbelly Sorbet
+Stabilizer Blend". Use this blend at 0.35-0.45% of the total mix weight, depending on the specific
+formulation (Raphaelson, 2023, January)[^37], (Raphaelson, 2019, July)[^35].
+
+This is a blend tailored for sorbet formulations and does not require heating. This blend does not
+contain any emulsifiers, which are usually not needed in sorbets. If making a sorbet of fatty
+ingredients like chocolate or nut butters, it may be required to use some emulsifiers (Raphaelson,
+2023, January)[^37].
 
 ## Louis Francois Super Neutrose
 

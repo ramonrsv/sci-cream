@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 301  (non-alias: 253, independent: 243)
+"total: 304  (non-alias: 257, independent: 243)
 
             0% Milk
             1% Milk
@@ -74,7 +74,6 @@ exports[`Embedded spec entries 1`] = `
             Eagle Brand Original Sweetened Condensed Milk
             Egg Yolk
             Egg Yolk Lecithin
-[alias]     Eggless Ice Cream Stabilizer Blend
             Erythritol
             Essential Oil
 [alias]     Eucalyptus Essential Oil
@@ -241,6 +240,10 @@ exports[`Embedded spec entries 1`] = `
             Splenda (Stevia)
             Splenda (Sucralose)
 [alias]     Stabilizer Blend
+[composite] Stabilizers, CMC-GG-LC 2:1:1
+[composite] Stabilizers, LBG-GG-LC 4:2:1
+[composite] Stabilizers, LBG-GG-LC 4:3:2
+[composite] Stabilizers, LBG-GG-LC 5:2:1
             Stevia In The Raw (Bakers Bag)
             Stevia In The Raw (Packets)
             Strawberry
