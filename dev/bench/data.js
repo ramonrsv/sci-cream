@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788493223031,
+  "lastUpdate": 1788493228373,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -567142,6 +567142,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1044.97,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "dc4f7af80cd8332785824cb10a704d1574b74da6",
+          "message": "Add generic stabilizer blend ingredients\n\n* Add four `CompositeSpec` stabilizer blends whose names encode their\n  composition, so the ratios are fixed by the name and the entries stay\n  independent of the Underbelly blends they are derived from:\n  'Stabilizers, LBG-GG-LC 4:2:1' for general purpose ice cream, '4:3:2'\n  for eggless, '5:2:1' for formulations containing alcohol, and\n  'Stabilizers, CMC-GG-LC 2:1:1' for sorbet. The gum set is joined into\n  a single token so the ratio reads as the trailing element that is the\n  only difference between entries.\n\n* Document a recommended dosage for each, as a percentage of the total\n  mix weight. The sources give the sorbet figure on a water basis, so\n  it is converted, spanning 0.35-0.45% of the total across the water\n  contents typical of sorbets.\n\n* Point the 'Ice Cream Stabilizer Blend' alias at the general purpose\n  blend rather than the easy-to-find one, and drop the 'Eggless Ice\n  Cream Stabilizer Blend' alias.\n\n* Add Underbelly's chocolate and booze recipes as `[^81]` and `[^82]`,\n  which back the 4:3:2 and 5:2:1 ratios.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-03T23:37:03-04:00",
+          "tree_id": "c9bd8a99f4513676f47946a6fb5652c968fab593",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/dc4f7af80cd8332785824cb10a704d1574b74da6"
+        },
+        "date": 1788493170658,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 717.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 886.1,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 654.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 823.15,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 665.03,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 833.48,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 637.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 805.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 638.74,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 807.19,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1046.28,
             "unit": "KB"
           },
           {
