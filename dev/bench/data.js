@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788589782659,
+  "lastUpdate": 1788589901082,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -594562,6 +594562,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.33,
             "range": "0.35",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f69d2b5dfbc3e6953ca67567e0962d69a4aada72",
+          "message": "Fix broken doc link to recipe balancing\n\nThe link targeted crate::docs#automatic-recipe-balancing, but the\nheading lives on the crate root page rather than the docs module, so\nthe anchor never resolved. Point at the local anchor, matching the\nsibling links in the same paragraph.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-05T02:20:04-04:00",
+          "tree_id": "76a07f50bbd33346d03c8777ab1730650a237e85",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f69d2b5dfbc3e6953ca67567e0962d69a4aada72"
+        },
+        "date": 1788589846654,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 66.68,
+            "range": "8.72",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.24,
+            "range": "0.67",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.19,
+            "range": "0.63",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 181,
+            "range": "11.45",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 181,
+            "range": "11.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.99,
+            "range": "8.95",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.46,
+            "range": "0.44",
             "unit": "ms"
           }
         ]
