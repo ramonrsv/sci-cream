@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788589771085,
+  "lastUpdate": 1788589782659,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -532624,6 +532624,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.05%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f69d2b5dfbc3e6953ca67567e0962d69a4aada72",
+          "message": "Fix broken doc link to recipe balancing\n\nThe link targeted crate::docs#automatic-recipe-balancing, but the\nheading lives on the crate root page rather than the docs module, so\nthe anchor never resolved. Point at the local anchor, matching the\nsibling links in the same paragraph.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-05T02:20:04-04:00",
+          "tree_id": "76a07f50bbd33346d03c8777ab1730650a237e85",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f69d2b5dfbc3e6953ca67567e0962d69a4aada72"
+        },
+        "date": 1788589726349,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 46110,
+            "range": "±1.13%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 432836,
+            "range": "±0.47%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32229,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 334847,
+            "range": "±1.14%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
