@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788589314616,
+  "lastUpdate": 1788589352393,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -593681,6 +593681,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.35,
             "range": "0.44",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5e4800e44b2189993ccd1fe60778768e01293a4b",
+          "message": "Link reference titles in bibliography\n\nReference entries showed the URL as a visible autolink. The title now\ncarries the link, following Wikipedia's convention, and the URL is not\ndisplayed.\n\nNormalize all 109 entries to one shape:\n\n  [^N]: <Author>. (<date>). [_<Title>_](<url>). <Container>.\n\nDrop the \"In _Site_\" form, italicize every title, add (n.d.) where\nundated, comma-join author lists, spell out abbreviated months, and\neven up terminal punctuation. Drop the bare domains from the Lindt\nand Ghirardelli containers. Fix a duplicated forename in [^11] and a\nmalformed author in [^23]. Name the journal for [^71] rather than the\nrepository hosting the PDF.\n\nAdd a print rule appending each href, so the URLs the linked titles\nhide are restored on paper.\n\nRecord the convention in CLAUDE.md.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-05T02:03:34-04:00",
+          "tree_id": "ac849f747fdc9d3ad48769ac72d8c4166180fa3e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5e4800e44b2189993ccd1fe60778768e01293a4b"
+        },
+        "date": 1788589297584,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.63,
+            "range": "9.34",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.36,
+            "range": "0.92",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.31,
+            "range": "0.90",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 180,
+            "range": "13.71",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.46,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 180,
+            "range": "13.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.29,
+            "range": "8.15",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.33,
+            "range": "0.35",
             "unit": "ms"
           }
         ]
