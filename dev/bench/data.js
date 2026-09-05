@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788589767952,
+  "lastUpdate": 1788589771085,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -601438,6 +601438,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/5e4800e44b2189993ccd1fe60778768e01293a4b"
         },
         "date": 1788589287924,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f69d2b5dfbc3e6953ca67567e0962d69a4aada72",
+          "message": "Fix broken doc link to recipe balancing\n\nThe link targeted crate::docs#automatic-recipe-balancing, but the\nheading lives on the crate root page rather than the docs module, so\nthe anchor never resolved. Point at the local anchor, matching the\nsibling links in the same paragraph.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-05T02:20:04-04:00",
+          "tree_id": "76a07f50bbd33346d03c8777ab1730650a237e85",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f69d2b5dfbc3e6953ca67567e0962d69a4aada72"
+        },
+        "date": 1788589770401,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
