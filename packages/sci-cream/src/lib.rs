@@ -6,7 +6,7 @@ specifications](#ingredient-specifications), an expansive collection of [ingredi
 definitions][data/ingredients] that can optionally be included as embedded data, an in-memory
 ingredient database that can be used to look up ingredient definitions, a system to calculate
 the properties of ice cream mixes based on their composition, and an [automatic recipe balancing
-feature](crate::docs#automatic-recipe-balancing) that facilitates formulating mixes to meet specific
+feature](#automatic-recipe-balancing) that facilitates formulating mixes to meet specific
 compositional targets. It has [support for WebAssembly](#wasm-interoperability), including
 TypeScript bindings and utilities to facilitate JS <-> WASM interoperability, allowing it to be used
 in web applications. Lastly, it includes [documentation and literature references](crate::docs) for
