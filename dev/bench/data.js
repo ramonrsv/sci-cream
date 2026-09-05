@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788589289054,
+  "lastUpdate": 1788589314616,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -531921,6 +531921,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.98%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5e4800e44b2189993ccd1fe60778768e01293a4b",
+          "message": "Link reference titles in bibliography\n\nReference entries showed the URL as a visible autolink. The title now\ncarries the link, following Wikipedia's convention, and the URL is not\ndisplayed.\n\nNormalize all 109 entries to one shape:\n\n  [^N]: <Author>. (<date>). [_<Title>_](<url>). <Container>.\n\nDrop the \"In _Site_\" form, italicize every title, add (n.d.) where\nundated, comma-join author lists, spell out abbreviated months, and\neven up terminal punctuation. Drop the bare domains from the Lindt\nand Ghirardelli containers. Fix a duplicated forename in [^11] and a\nmalformed author in [^23]. Name the journal for [^71] rather than the\nrepository hosting the PDF.\n\nAdd a print rule appending each href, so the URLs the linked titles\nhide are restored on paper.\n\nRecord the convention in CLAUDE.md.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-05T02:03:34-04:00",
+          "tree_id": "ac849f747fdc9d3ad48769ac72d8c4166180fa3e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5e4800e44b2189993ccd1fe60778768e01293a4b"
+        },
+        "date": 1788589257127,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 55519,
+            "range": "±1.15%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 438981,
+            "range": "±0.58%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 40702,
+            "range": "±1.23%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 337407,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
