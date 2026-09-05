@@ -143,6 +143,32 @@ JSON files in `packages/sci-cream/data/ingredients/<category>.json` are the sour
 embedded data. After editing, rebuild WASM (`pnpm build:package`) and re-run `pnpm seed-db` in the
 app to refresh the database copy.
 
+#### Reference bibliography style
+
+`docs/references/{literature,ingredients}.md` hold the shared `[^N]` footnote definitions cited by
+`data/**/*.md` comments and by `#[doc]` attributes. One entry per line — `split-ref-footnotes.sh`
+matches line-by-line.
+
+APA, with Wikipedia's link convention: the title carries the link and the URL is not displayed.
+
+```text
+[^N]: <Author>. (<date>). [_<Title>_](<url>). <Container>.
+```
+
+- **Author** — `Last, F. M.`, multiple joined `A, B, & C`; or the organization. Omit where there is
+  none and lead with the title.
+- **Date** — `(YYYY, Month)` or `(YYYY)`, months spelled out; `(n.d.)` when undated.
+- **Title** — italic for every work type, and the entry's only link. One ending in `?` or `!` takes
+  no extra period.
+- **Container** — journal, site, or publisher; plain, never italic. Omit where it would only repeat
+  the author, and never a bare domain. `In Wikipedia` is the one "In", per APA's wiki form.
+- Entries with no URL take the same shape, unlinked.
+
+Edit the source `.md`, never a generated copy. Three render targets: rustdoc via
+`docs/references/index/<N>.md` (`pnpm --filter sci-cream split-ref-footnotes`), GitHub, and the app
+via the `comments` resolved into `data/**/generated/full/*.json` (`pnpm gen:data`). Run both after
+editing; the app's print stylesheet appends each `href`.
+
 #### Default vs. reference dairy ingredients
 
 The brand- and country-neutral `DairySimpleSpec` milk/cream entries (`0% Milk`, `3.25% Milk`,

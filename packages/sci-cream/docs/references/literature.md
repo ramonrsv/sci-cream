@@ -2,166 +2,166 @@
 
 <!-- Literature references, using APA-ish style -->
 
-[^1]: Raphaelson, Paul. (2023, February). _Sugars in Ice Cream_. <https://under-belly.org/sugars-in-ice-cream/>
+[^1]: Raphaelson, Paul. (2023, February). [_Sugars in Ice Cream_](https://under-belly.org/sugars-in-ice-cream/). Underbelly.
 
-[^2]: Goff & Hartel. (2013). _Ice Cream_ (7th ed.). Springer
+[^2]: Goff & Hartel. (2013). _Ice Cream_ (7th ed.). Springer.
 
-[^3]: Corvitto, A. (2005). _Secrets of Ice-Cream. Ice-Cream Without Secrets_. Vilbo Ediciones Y Publicidad
+[^3]: Corvitto, A. (2005). _Secrets of Ice-Cream. Ice-Cream Without Secrets_. Vilbo Ediciones Y Publicidad.
 
-[^4]: Clarke, C. (2004). _The Science of Ice Cream_. RSC Paperbacks
+[^4]: Clarke, C. (2004). _The Science of Ice Cream_. RSC Paperbacks.
 
-[^5]: Raphaelson, Paul. (2016, May). _Basic Ice Cream Recipe Examples_. <https://under-belly.org/basic-ice-cream-recipe-examples/>
+[^5]: Raphaelson, Paul. (2016, May). [_Basic Ice Cream Recipe Examples_](https://under-belly.org/basic-ice-cream-recipe-examples/). Underbelly.
 
-[^6]: Cree, Dana. (2017). _Hello, My Name Is Ice Cream_. Clarkson Potter
+[^6]: Cree, Dana. (2017). _Hello, My Name Is Ice Cream_. Clarkson Potter.
 
-[^7]: Raphaelson, Paul. (2016, May). _How to Build an Ice Cream Recipe_. <https://under-belly.org/how-to-build-an-ice-cream-recipe/>
+[^7]: Raphaelson, Paul. (2016, May). [_How to Build an Ice Cream Recipe_](https://under-belly.org/how-to-build-an-ice-cream-recipe/). Underbelly.
 
-[^8]: Alcohol by volume. (2025, December). In _Wikipedia_. <https://en.wikipedia.org/w/index.php?title=Alcohol_by_volume&oldid=1329682113>
+[^8]: [_Alcohol by volume_](https://en.wikipedia.org/w/index.php?title=Alcohol_by_volume&oldid=1329682113). (2025, December). In Wikipedia.
 
-[^9]: Spillane, W. J. (2006). _Optimising sweet taste in foods_. CRC Press
+[^9]: Spillane, W. J. (2006). _Optimising sweet taste in foods_. CRC Press.
 
-[^10]: The European Commission. (2025). _Commission Regulation (EU) No 231/2012_. <https://eur-lex.europa.eu/eli/reg/2012/231/oj>
+[^10]: The European Commission. (2025). [_Commission Regulation (EU) No 231/2012_](https://eur-lex.europa.eu/eli/reg/2012/231/oj).
 
-[^11]: Roberto Castro-Muñoz, Roberto, et al. (2022). _Natural sweeteners: Sources, extraction and current uses in foods and food industries_. Food Chemistry. 370. <https://www.sciencedirect.com/science/article/abs/pii/S030881462101997X>
+[^11]: Castro-Muñoz, Roberto, et al. (2022). [_Natural sweeteners: Sources, extraction and current uses in foods and food industries_](https://www.sciencedirect.com/science/article/abs/pii/S030881462101997X). Food Chemistry. 370.
 
-[^12]: Board on Agriculture and Renewable Resources, et al. (1974, December). _Fat Content and Composition of Animal Products_. Proceedings of a Symposium Washington, D.C. <https://www.nationalacademies.org/read/22>
+[^12]: Board on Agriculture and Renewable Resources, et al. (1974, December). [_Fat Content and Composition of Animal Products_](https://www.nationalacademies.org/read/22). Proceedings of a Symposium Washington, D.C.
 
-[^13]: United States Department of Agriculture. (2016, September). _National Nutrient Database for Standard Reference_. Release 28
+[^13]: United States Department of Agriculture. (2016, September). _National Nutrient Database for Standard Reference_. Release 28.
 
-[^14]: Charrondiere, U. R., et al. (2011, July). _FAO/INFOODS Density Database version 1.0_ <https://www.fao.org/fileadmin/templates/food_composition/documents/upload/Density_databse_v1_final.pdf>
+[^14]: Charrondiere, U. R., et al. (2011, July). [_FAO/INFOODS Density Database version 1.0_](https://www.fao.org/fileadmin/templates/food_composition/documents/upload/Density_databse_v1_final.pdf).
 
-[^15]: Hull, Peter. (2010). _Glucose Syrups: Technology and Applications_. Wiley-Blackwell <https://www.academia.edu/49026265/Glucose_Syrups_Technology_and_Applications>
+[^15]: Hull, Peter. (2010). [_Glucose Syrups: Technology and Applications_](https://www.academia.edu/49026265/Glucose_Syrups_Technology_and_Applications). Wiley-Blackwell.
 
-[^16]: The Sweetness of Glucose Syrup. (2025, December). In _Nguyen Starch_. <https://nguyenstarch.com/the-sweetness-of-glucose-syrup/>
+[^16]: [_The Sweetness of Glucose Syrup_](https://nguyenstarch.com/the-sweetness-of-glucose-syrup/). (2025, December). Nguyen Starch.
 
-[^17]: Belitz, H.-D., et al. (2009). _Food Chemistry_ (4th revised and extended Edition). Springer
+[^17]: Belitz, H.-D., et al. (2009). _Food Chemistry_ (4th revised and extended Edition). Springer.
 
-[^18]: U.S. Department of Agriculture. (2013, August). _Composition of Foods. Raw, Processed, Prepared. USDA National Nutrient Database for Standard Reference, Release 26. Documentation and User Guide_. <https://www.ars.usda.gov/ARSUserFiles/80400525/Data/SR26/sr26_doc.pdf>
+[^18]: U.S. Department of Agriculture. (2013, August). [_Composition of Foods. Raw, Processed, Prepared. USDA National Nutrient Database for Standard Reference, Release 26. Documentation and User Guide_](https://www.ars.usda.gov/ARSUserFiles/80400525/Data/SR26/sr26_doc.pdf).
 
-[^19]: European Association of Polyol Producers. (2026). _Polyols_. <https://polyols-eu.org/polyols/>
+[^19]: European Association of Polyol Producers. (2026). [_Polyols_](https://polyols-eu.org/polyols/).
 
-[^20]: Goff & Hartel. (2025). _Ice Cream_ (8th ed.). Springer
+[^20]: Goff & Hartel. (2025). _Ice Cream_ (8th ed.). Springer.
 
-[^21]: International Food Information Council. (2019, July). In _All About Aspartame_. <https://ific.org/resources/articles/all-about-aspartame>
+[^21]: International Food Information Council. (2019, July). [_All About Aspartame_](https://ific.org/resources/articles/all-about-aspartame).
 
-[^22]: American Diabetes Association. (2014, April). In _Common Terms: S-Z_. <https://web.archive.org/web/20151128211136/https://www.diabetes.org/diabetes-basics/common-terms/common-terms-s-z.html>
+[^22]: American Diabetes Association. (2014, April). [_Common Terms: S-Z_](https://web.archive.org/web/20151128211136/https://www.diabetes.org/diabetes-basics/common-terms/common-terms-s-z.html).
 
-[^23]: Schiffman, Susan, S. et al. (2013, November). _Sucralose, A Synthetic Organochlorine Sweetener: Overview of Biological Issues_. <https://pmc.ncbi.nlm.nih.gov/articles/PMC3856475/>
+[^23]: Schiffman, Susan S., et al. (2013, November). [_Sucralose, A Synthetic Organochlorine Sweetener: Overview of Biological Issues_](https://pmc.ncbi.nlm.nih.gov/articles/PMC3856475/). The National Library of Medicine.
 
-[^24]: Niness, Kathy R. (1999, July). _Inulin and Oligofructose: What are They?_. The Journal of Nutrition, 129(7), pages 1402S-1406S. <https://www.sciencedirect.com/science/article/pii/S0022316623021053>
+[^24]: Niness, Kathy R. (1999, July). [_Inulin and Oligofructose: What are They?_](https://www.sciencedirect.com/science/article/pii/S0022316623021053) The Journal of Nutrition, 129(7), pages 1402S-1406S.
 
-[^25]: Roberfoid, Marcel B. (1999, July). _Caloric Value of Inulin and Oligofructose_. The Journal of Nutrition, 129(7), pages 1436S-1437S. <https://www.sciencedirect.com/science/article/pii/S0022316623021132>
+[^25]: Roberfoid, Marcel B. (1999, July). [_Caloric Value of Inulin and Oligofructose_](https://www.sciencedirect.com/science/article/pii/S0022316623021132). The Journal of Nutrition, 129(7), pages 1436S-1437S.
 
-[^26]: Ronkart, et al. (2006, December). _Determination of total water content in inulin using the volumetric Karl Fischer titration_. Talanta, 70(5), pages 1006-1010. <https://www.sciencedirect.com/science/article/abs/pii/S0039914006001548>
+[^26]: Ronkart, et al. (2006, December). [_Determination of total water content in inulin using the volumetric Karl Fischer titration_](https://www.sciencedirect.com/science/article/abs/pii/S0039914006001548). Talanta, 70(5), pages 1006-1010.
 
-[^27]: Porto, Ruben. (2026, January). _Why is inulin used in ice cream?_ Ice Cream Science. <https://www.icecreamscience.com/blog/why-is-inulin-used-in-ice-cream>
+[^27]: Porto, Ruben. (2026, January). [_Why is inulin used in ice cream?_](https://www.icecreamscience.com/blog/why-is-inulin-used-in-ice-cream) Ice Cream Science.
 
-[^28]: Priscilla, et al. (2018, July). _Stevia Leaf to Stevia Sweetener: Exploring Its Science, Benefits, and Future Potential_. The Journal of Nutrition, 148(7), pages 1186S-1205S. <https://www.sciencedirect.com/science/article/pii/S0022316622163650>
+[^28]: Priscilla, et al. (2018, July). [_Stevia Leaf to Stevia Sweetener: Exploring Its Science, Benefits, and Future Potential_](https://www.sciencedirect.com/science/article/pii/S0022316622163650). The Journal of Nutrition, 148(7), pages 1186S-1205S.
 
-[^29]: Murata, et al. (2010, March). _Digestion and absorption of Siraitia grosvenori triterpenoids in the rat_. The National Library of Medicine. <https://pubmed.ncbi.nlm.nih.gov/20208371/>
+[^29]: Murata, et al. (2010, March). [_Digestion and absorption of Siraitia grosvenori triterpenoids in the rat_](https://pubmed.ncbi.nlm.nih.gov/20208371/). The National Library of Medicine.
 
-[^30]: International Food Information Council. (2021, October). _Everything You Need To Know About Monk Fruit Sweeteners_. <https://ific.org/insights/everything-you-need-to-know-about-monk-fruit-sweeteners/>
+[^30]: International Food Information Council. (2021, October). [_Everything You Need To Know About Monk Fruit Sweeteners_](https://ific.org/insights/everything-you-need-to-know-about-monk-fruit-sweeteners/).
 
-[^31]: Anderson, Laura. (2020, December). _How to convert grams of sugars into teaspoons_. Michigan State University. <https://www.canr.msu.edu/news/how_to_convert_grams_of_sugars_into_teaspoons>
+[^31]: Anderson, Laura. (2020, December). [_How to convert grams of sugars into teaspoons_](https://www.canr.msu.edu/news/how_to_convert_grams_of_sugars_into_teaspoons). Michigan State University.
 
-[^32]: Lawrence, J. F. (2003). _Cyclamates_. Encyclopedia of Food Sciences and Nutrition (Second Edition), pages 1712-1714. <https://www.sciencedirect.com/science/chapter/referencework/abs/pii/B012227055X003187>
+[^32]: Lawrence, J. F. (2003). [_Cyclamates_](https://www.sciencedirect.com/science/chapter/referencework/abs/pii/B012227055X003187). Encyclopedia of Food Sciences and Nutrition (Second Edition), pages 1712-1714.
 
-[^33]: Merrill, A. L, Watt, B. K. (1973). _Energy Value of Foods ...basis and derivation_ Agriculture Handbook No. 74. Agricultural Research Service, United States Department of Agriculture. <https://www.ars.usda.gov/ARSUserFiles/80400525/Data/Classics/ah74.pdf>
+[^33]: Merrill, A. L., & Watt, B. K. (1973). [_Energy Value of Foods ...basis and derivation_](https://www.ars.usda.gov/ARSUserFiles/80400525/Data/Classics/ah74.pdf). Agriculture Handbook No. 74. Agricultural Research Service, United States Department of Agriculture.
 
-[^34]: Higdon, et al. (2019, March). _Fiber_. Oregon State University, Linus Pauling Institute, Micronutrient Information Center. <https://lpi.oregonstate.edu/mic/other-nutrients/fiber>
+[^34]: Higdon, et al. (2019, March). [_Fiber_](https://lpi.oregonstate.edu/mic/other-nutrients/fiber). Oregon State University, Linus Pauling Institute, Micronutrient Information Center.
 
-[^35]: Raphaelson, Paul. (2019, July). _Sample Sorbet Recipe: Strawberry_. <https://under-belly.org/sample-sorbet-recipe/>
+[^35]: Raphaelson, Paul. (2019, July). [_Sample Sorbet Recipe: Strawberry_](https://under-belly.org/sample-sorbet-recipe/). Underbelly.
 
-[^36]: Furia, T.E. (1972). _Handbook of Food Additives_ (2nd ed.). CRC Press
+[^36]: Furia, T.E. (1972). _Handbook of Food Additives_ (2nd ed.). CRC Press.
 
-[^37]: Raphaelson, Paul. (2023, January). _Ice Cream Stabilizers_. <https://under-belly.org/ice-cream-stabilizers/>
+[^37]: Raphaelson, Paul. (2023, January). [_Ice Cream Stabilizers_](https://under-belly.org/ice-cream-stabilizers/). Underbelly.
 
-[^38]: Raphaelson, Paul. (2023, January). _Ice Cream Emulsifiers_. <https://under-belly.org/ice-cream-emulsifiers/>
+[^38]: Raphaelson, Paul. (2023, January). [_Ice Cream Emulsifiers_](https://under-belly.org/ice-cream-emulsifiers/). Underbelly.
 
-[^39]: Williams, et al. (2003). _11 - The use of hydrocolloids to improve food texture_. Texture in Food, Volume 1: Semi-Solid Foods, pages 251-274. <https://www.sciencedirect.com/science/chapter/edited-volume/abs/pii/B9781855736733500163>
+[^39]: Williams, et al. (2003). [_11 - The use of hydrocolloids to improve food texture_](https://www.sciencedirect.com/science/chapter/edited-volume/abs/pii/B9781855736733500163). Texture in Food, Volume 1: Semi-Solid Foods, pages 251-274.
 
-[^40]: Chin, Tim. (2024, September). _A Guide to Cornstarch_. Serious Eats. <https://www.seriouseats.com/what-is-cornstarch-5324865>
+[^40]: Chin, Tim. (2024, September). [_A Guide to Cornstarch_](https://www.seriouseats.com/what-is-cornstarch-5324865). Serious Eats.
 
-[^41]: Pikosky, Matt. (2016, July). _What Is The Difference Between Whey and Casein Protein?_ Undeniably Dairy. <https://www.usdairy.com/news-articles/whats-the-difference-between-casein-and-whey>
+[^41]: Pikosky, Matt. (2016, July). [_What Is The Difference Between Whey and Casein Protein?_](https://www.usdairy.com/news-articles/whats-the-difference-between-casein-and-whey) Undeniably Dairy.
 
-[^42]: Ice Cream Science. (2026, April). _Why are stabilizers used in ice cream?_. <https://www.icecreamscience.com/blog/stabilizers-ice-cream>
+[^42]: Ice Cream Science. (2026, April). [_Why are stabilizers used in ice cream?_](https://www.icecreamscience.com/blog/stabilizers-ice-cream)
 
-[^43]: Carl. (2024, April). _How to use stabilizers in ice cream_. Dream Scoops <https://www.dreamscoops.com/ice-cream-science/using-stabilizers-ice-cream/>
+[^43]: Carl. (2024, April). [_How to use stabilizers in ice cream_](https://www.dreamscoops.com/ice-cream-science/using-stabilizers-ice-cream/). Dream Scoops.
 
-[^44]: Drugs.com (2025, July). _Carboxymethylcellulose_. <https://www.drugs.com/inactive/carboxymethylcellulose-589>
+[^44]: Drugs.com. (2025, July). [_Carboxymethylcellulose_](https://www.drugs.com/inactive/carboxymethylcellulose-589).
 
-[^45]: Ice Cream Science. (2026, May). _Why are emulsifiers used in ice cream?_. <https://www.icecreamscience.com/blog/why-are-emulsifiers-used-in-ice-cream>
+[^45]: Ice Cream Science. (2026, May). [_Why are emulsifiers used in ice cream?_](https://www.icecreamscience.com/blog/why-are-emulsifiers-used-in-ice-cream)
 
-[^46]: Carl. (2024, April). _How to use emulsifiers in ice cream_. Dream Scoops <https://www.dreamscoops.com/ice-cream-science/using-emulsifiers-ice-cream/>
+[^46]: Carl. (2024, April). [_How to use emulsifiers in ice cream_](https://www.dreamscoops.com/ice-cream-science/using-emulsifiers-ice-cream/). Dream Scoops.
 
-[^47]: Health Canada. (2017, May). _Sugar Alcohols (Polyols) and Polydextrose Used as Sweeteners in Foods - Food Safety - Health Canada_. <https://www.canada.ca/en/health-canada/services/food-nutrition/food-safety/food-additives/sugar-substitutes/sugar-alcohols-polyols-polydextrose-used-sweeteners-foods-food-safety.html>
+[^47]: Health Canada. (2017, May). [_Sugar Alcohols (Polyols) and Polydextrose Used as Sweeteners in Foods - Food Safety - Health Canada_](https://www.canada.ca/en/health-canada/services/food-nutrition/food-safety/food-additives/sugar-substitutes/sugar-alcohols-polyols-polydextrose-used-sweeteners-foods-food-safety.html).
 
-[^48]: Nabors, Lyn O'Brien. (2012). _Alternative Sweeteners_ (4th ed.). CRC Press
+[^48]: Nabors, Lyn O'Brien. (2012). _Alternative Sweeteners_ (4th ed.). CRC Press.
 
-[^49]: Lewis, Michael. (2023). _Food Process Engineering Principles and Data_. Elsevier
+[^49]: Lewis, Michael. (2023). _Food Process Engineering Principles and Data_. Elsevier.
 
-[^50]: Rodrigues, et al. (2017). _Characterization of physicochemical composition, microbiology, sensory evaluation and microscopical attributes of sweetened condensed milk_. Food Science and Technology. <https://www.researchgate.net/publication/320627963_Characterization_of_physicochemical_composition_microbiology_sensory_evaluation_and_microscopical_attributes_of_sweetened_condensed_milk>
+[^50]: Rodrigues, et al. (2017). [_Characterization of physicochemical composition, microbiology, sensory evaluation and microscopical attributes of sweetened condensed milk_](https://www.researchgate.net/publication/320627963_Characterization_of_physicochemical_composition_microbiology_sensory_evaluation_and_microscopical_attributes_of_sweetened_condensed_milk). Food Science and Technology.
 
-[^51]: Moro, et al.(1985). _Total Solids and Density Measurements of Dulce de Leche, a Typical Argentine Dairy Product_. Dairy Foods Research Papers.
+[^51]: Moro, et al. (1985). _Total Solids and Density Measurements of Dulce de Leche, a Typical Argentine Dairy Product_. Dairy Foods Research Papers.
 
-[^52]: U.S. Food & Drug Administration. _CFR - Code of Federal Regulations Title 21_. <https://www.ecfr.gov/current/title-21>
+[^52]: U.S. Food & Drug Administration. (n.d.). [_CFR - Code of Federal Regulations Title 21_](https://www.ecfr.gov/current/title-21).
 
-[^53]: Perry, R. H., & Green, D. W. (2008). _Perry's Chemical Engineers' Handbook_ (8th ed.). McGraw-Hill
+[^53]: Perry, R. H., & Green, D. W. (2008). _Perry's Chemical Engineers' Handbook_ (8th ed.). McGraw-Hill.
 
-[^54]: Mini Industry. (2026, June). _Ethanol density table for ethanol water mixture at 20C_. <https://www.miniindustry.com/d/ethanol-density-20c>
+[^54]: Mini Industry. (2026, June). [_Ethanol density table for ethanol water mixture at 20C_](https://www.miniindustry.com/d/ethanol-density-20c).
 
-[^55]: PubChem, US National Library of Medicine. _Glucose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/5793>
+[^55]: PubChem, US National Library of Medicine. (n.d.). [_Glucose_](https://pubchem.ncbi.nlm.nih.gov/compound/5793). Retrieved 2026, June.
 
-[^56]: PubChem, US National Library of Medicine. _Fructose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/2723872>
+[^56]: PubChem, US National Library of Medicine. (n.d.). [_Fructose_](https://pubchem.ncbi.nlm.nih.gov/compound/2723872). Retrieved 2026, June.
 
-[^57]: PubChem, US National Library of Medicine. _Galactose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/6036>
+[^57]: PubChem, US National Library of Medicine. (n.d.). [_Galactose_](https://pubchem.ncbi.nlm.nih.gov/compound/6036). Retrieved 2026, June.
 
-[^58]: PubChem, US National Library of Medicine. _Sucrose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/5988>
+[^58]: PubChem, US National Library of Medicine. (n.d.). [_Sucrose_](https://pubchem.ncbi.nlm.nih.gov/compound/5988). Retrieved 2026, June.
 
-[^59]: PubChem, US National Library of Medicine. _Lactose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/440995>
+[^59]: PubChem, US National Library of Medicine. (n.d.). [_Lactose_](https://pubchem.ncbi.nlm.nih.gov/compound/440995). Retrieved 2026, June.
 
-[^60]: PubChem, US National Library of Medicine. _Maltose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/439186>
+[^60]: PubChem, US National Library of Medicine. (n.d.). [_Maltose_](https://pubchem.ncbi.nlm.nih.gov/compound/439186). Retrieved 2026, June.
 
-[^61]: PubChem, US National Library of Medicine. _Trehalose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/7427>
+[^61]: PubChem, US National Library of Medicine. (n.d.). [_Trehalose_](https://pubchem.ncbi.nlm.nih.gov/compound/7427). Retrieved 2026, June.
 
-[^62]: Goff, H. D. & Hill, A. & Ferrer, M. A. _Dairy Science and Technology eBook_. University of Guelph. Retrieved 2026, June. <https://books.lib.uoguelph.ca/dairyscienceandtechnologyebook/front-matter/334/>
+[^62]: Goff, H. D., Hill, A., & Ferrer, M. A. (n.d.). [_Dairy Science and Technology eBook_](https://books.lib.uoguelph.ca/dairyscienceandtechnologyebook/front-matter/334/). University of Guelph. Retrieved 2026, June.
 
-[^63]: PubChem, US National Library of Medicine. _Limonene_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/22311>
+[^63]: PubChem, US National Library of Medicine. (n.d.). [_Limonene_](https://pubchem.ncbi.nlm.nih.gov/compound/22311). Retrieved 2026, June.
 
-[^64]: PubChem, US National Library of Medicine._Benzaldehyde_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/240>
+[^64]: PubChem, US National Library of Medicine. (n.d.). [_Benzaldehyde_](https://pubchem.ncbi.nlm.nih.gov/compound/240). Retrieved 2026, June.
 
-[^65]: European Pharmacopoeia. _Peppermint oil (04/2008:0405)_. Retrieved 2026, June. <http://www.uspbpep.com/ep60/peppermint%20oil%200405e.pdf>
+[^65]: European Pharmacopoeia. (n.d.). [_Peppermint oil (04/2008:0405)_](http://www.uspbpep.com/ep60/peppermint%20oil%200405e.pdf). Retrieved 2026, June.
 
-[^66]: Ontario Wealth. _Cocoa Butter_. Retrieved 2026, June. <https://ontariowealth.ca/product/cocoa-butter/>
+[^66]: Ontario Wealth. (n.d.). [_Cocoa Butter_](https://ontariowealth.ca/product/cocoa-butter/). Retrieved 2026, June.
 
-[^67]: Ariga, S. R. & Aisyah, Y. & Patria, A. & Arpi, N. & Yunita, D. (2018) _Physicochemical Characterization of Oil from Roasted Coffee_. Proceeding of the 8th AIC: Health and Life Sciences, Syiah Kuala University, pages 94-102. Retrieved 2026, June. <https://www.academia.edu/75282549/Physicochemical_Characterization_of_Oil_from_Roasted_Coffee>
+[^67]: Ariga, S. R., Aisyah, Y., Patria, A., Arpi, N., & Yunita, D. (2018). [_Physicochemical Characterization of Oil from Roasted Coffee_](https://www.academia.edu/75282549/Physicochemical_Characterization_of_Oil_from_Roasted_Coffee). Proceeding of the 8th AIC: Health and Life Sciences, Syiah Kuala University, pages 94-102. Retrieved 2026, June.
 
-[^68]: Manley, D. (2000) _Technology of Biscuits, Crackers and Cookies_ (3rd ed.). Woodhead Publishing
+[^68]: Manley, D. (2000). _Technology of Biscuits, Crackers and Cookies_ (3rd ed.). Woodhead Publishing.
 
-[^69]: Zhao, F. & Li, R. & Liu, Y. & Chen, H. (2023) _Perspectives on lecithin from egg yolk: Extraction, physicochemical properties, modification, and applications_. <https://pmc.ncbi.nlm.nih.gov/articles/PMC9853391/#B3>
+[^69]: Zhao, F., Li, R., Liu, Y., & Chen, H. (2023). [_Perspectives on lecithin from egg yolk: Extraction, physicochemical properties, modification, and applications_](https://pmc.ncbi.nlm.nih.gov/articles/PMC9853391/#B3). The National Library of Medicine.
 
-[^70]: Palacios, L. E. & Wang, T. (2005) _Egg-Yolk Lipid Fractionation and Lecithin Characterization_. Department of Food Science and Human Nutrition, Center for Crops Utilization Research, Iowa State University.
+[^70]: Palacios, L. E., & Wang, T. (2005). _Egg-Yolk Lipid Fractionation and Lecithin Characterization_. Department of Food Science and Human Nutrition, Center for Crops Utilization Research, Iowa State University.
 
-[^71]: Ramachandra, R. & Ravishankar, G. (2000). _Review - Vanilla flavour: production by conventional and biotechnological routes_. <https://www.researchgate.net/publication/230047388_Vanilla_flavour_Production_by_conventional_and_biotechnological_routes>
+[^71]: Ramachandra, R., & Ravishankar, G. (2000). [_Review - Vanilla flavour: production by conventional and biotechnological routes_](https://www.researchgate.net/publication/230047388_Vanilla_flavour_Production_by_conventional_and_biotechnological_routes). Journal of the Science of Food and Agriculture, 80(3), pages 289-304.
 
-[^72]: Falkowitz, Max. (2023, April). _For Smoother Ice Cream and Sorbet, Use Corn Syrup_. Serious Eats. <https://www.seriouseats.com/the-deal-with-corn-syrup-makes-better-sorbet-why-use-invert-sugars>
+[^72]: Falkowitz, Max. (2023, April). [_For Smoother Ice Cream and Sorbet, Use Corn Syrup_](https://www.seriouseats.com/the-deal-with-corn-syrup-makes-better-sorbet-why-use-invert-sugars). Serious Eats.
 
-[^73]: Chef Adam. _The Differences Between Light and Dark Corn Syrup_. Bakers Authority. Retrieved 2026, August. <https://www.bakersauthority.com/blogs/the-beginners-guide-to-baking-1/the-differences-between-light-and-dark-corn-syrup>
+[^73]: Chef Adam. (n.d.). [_The Differences Between Light and Dark Corn Syrup_](https://www.bakersauthority.com/blogs/the-beginners-guide-to-baking-1/the-differences-between-light-and-dark-corn-syrup). Bakers Authority. Retrieved 2026, August.
 
-[^74]: National Institute of Standards and Technology. (2025, August). _NIST Guide to the SI, Appendix B.8: Factors for Units Listed Alphabetically_. Special Publication 811. <https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b8>
+[^74]: National Institute of Standards and Technology. (2025, August). [_NIST Guide to the SI, Appendix B.8: Factors for Units Listed Alphabetically_](https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b8). Special Publication 811.
 
-[^75]: EFSA Panel on Food Additives and Nutrient Sources added to Food (ANS), et al. (2017, April). _Re-evaluation of lecithins (E 322) as a food additive_. EFSA Journal, 15(4), e04742. <https://doi.org/10.2903/j.efsa.2017.4742>
+[^75]: EFSA Panel on Food Additives and Nutrient Sources added to Food (ANS), et al. (2017, April). [_Re-evaluation of lecithins (E 322) as a food additive_](https://doi.org/10.2903/j.efsa.2017.4742). EFSA Journal, 15(4), e04742.
 
-[^76]: Phillips, G. O. (1998, April). _Acacia gum (Gum Arabic): a nutritional fibre; metabolism and calorific value_. Food Additives and Contaminants, 15(3), 251-264. <https://doi.org/10.1080/02652039809374639>
+[^76]: Phillips, G. O. (1998, April). [_Acacia gum (Gum Arabic): a nutritional fibre; metabolism and calorific value_](https://doi.org/10.1080/02652039809374639). Food Additives and Contaminants, 15(3), 251-264.
 
-[^77]: U.S. Food and Drug Administration. (2021, December). _FDA Grants Citizen Petition on Acacia (Gum Arabic) as a Dietary Fiber_. <https://www.fda.gov/food/hfp-constituent-updates/fda-grants-citizen-petition-acacia-gum-arabic-dietary-fiber>
+[^77]: U.S. Food and Drug Administration. (2021, December). [_FDA Grants Citizen Petition on Acacia (Gum Arabic) as a Dietary Fiber_](https://www.fda.gov/food/hfp-constituent-updates/fda-grants-citizen-petition-acacia-gum-arabic-dietary-fiber).
 
-[^78]: British Pharmacopoeia Commission. (2013). _Glycerol Monostearate 40-55_. British Pharmacopoeia, Ph. Eur. monograph 0495. <https://www.drugfuture.com/Pharmacopoeia/BP2013/data/7561.html>
+[^78]: British Pharmacopoeia Commission. (2013). [_Glycerol Monostearate 40-55_](https://www.drugfuture.com/Pharmacopoeia/BP2013/data/7561.html). British Pharmacopoeia, Ph. Eur. monograph 0495.
 
-[^79]: United States Pharmacopeia. _Glyceryl Monostearate_. USP-NF. Retrieved 2026, September. <https://doi.usp.org/USPNF/USPNF_M35490_03_01.html>
+[^79]: United States Pharmacopeia. (n.d.). [_Glyceryl Monostearate_](https://doi.usp.org/USPNF/USPNF_M35490_03_01.html). USP-NF. Retrieved 2026, September.
 
-[^80]: _Glycerol Monostearate_. Food Ingredients Asia. Retrieved 2026, September. <https://www.foodingredientsasia.com/en/learning-center/product-based-knowledge/glycerol-monostearate>
+[^80]: [_Glycerol Monostearate_](https://www.foodingredientsasia.com/en/learning-center/product-based-knowledge/glycerol-monostearate). (n.d.). Food Ingredients Asia. Retrieved 2026, September.
 
-[^81]: Raphaelson, Paul. (2018, Sep). _Ice Cream Flavor: Chocolate_. <https://under-belly.org/ice-cream-flavor-chocolate/>
+[^81]: Raphaelson, Paul. (2018, September). [_Ice Cream Flavor: Chocolate_](https://under-belly.org/ice-cream-flavor-chocolate/). Underbelly.
 
-[^82]: Raphaelson, Paul. (2016, Dec). _Booze Flavored Ice Cream_. <https://under-belly.org/booze-flavored-ice-cream/>
+[^82]: Raphaelson, Paul. (2016, December). [_Booze Flavored Ice Cream_](https://under-belly.org/booze-flavored-ice-cream/). Underbelly.

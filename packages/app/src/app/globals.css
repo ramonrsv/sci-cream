@@ -648,6 +648,15 @@ body {
     background-color: color-mix(in oklab, var(--cat) 30%, transparent);
     border-color: color-mix(in oklab, var(--cat) 65%, var(--cat-ink));
   }
+
+  /* Reference links carry the title, not the URL, so print appends the href the way Wikipedia
+     does. `break-all` because a URL is one long token wherever it lacks a hyphen. */
+  @media print {
+    .prose a[href^="http"]::after {
+      content: " (" attr(href) ")";
+      word-break: break-all;
+    }
+  }
 }
 
 /* Unlayered, because each rule below has to beat a stylesheet no layer can outrank: the imported

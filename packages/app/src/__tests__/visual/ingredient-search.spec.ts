@@ -50,7 +50,7 @@ test.describe("Visual Regression: Ingredient Search", () => {
     const detailPanel = page.locator(".search-detail-panel");
     // The 'comments' field is removed; the full text renders as a paragraph below
     await expect(detailPanel.getByRole("tree")).not.toContainText("comments");
-    // The URL in the comments should be auto-linked. Scoped to the comments prose because the
+    // The reference footnote links its title. Scoped to the comments prose because the
     // spec's docs.rs links sit in the same panel.
     await expect(detailPanel.locator(".prose").getByRole("link")).toBeVisible();
     // The spec type links to its rustdoc page
