@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788589901082,
+  "lastUpdate": 1788590061402,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -493933,6 +493933,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 570.75,
             "range": "17.28",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5e4800e44b2189993ccd1fe60778768e01293a4b",
+          "message": "Link reference titles in bibliography\n\nReference entries showed the URL as a visible autolink. The title now\ncarries the link, following Wikipedia's convention, and the URL is not\ndisplayed.\n\nNormalize all 109 entries to one shape:\n\n  [^N]: <Author>. (<date>). [_<Title>_](<url>). <Container>.\n\nDrop the \"In _Site_\" form, italicize every title, add (n.d.) where\nundated, comma-join author lists, spell out abbreviated months, and\neven up terminal punctuation. Drop the bare domains from the Lindt\nand Ghirardelli containers. Fix a duplicated forename in [^11] and a\nmalformed author in [^23]. Name the journal for [^71] rather than the\nrepository hosting the PDF.\n\nAdd a print rule appending each href, so the URLs the linked titles\nhide are restored on paper.\n\nRecord the convention in CLAUDE.md.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-05T02:03:34-04:00",
+          "tree_id": "ac849f747fdc9d3ad48769ac72d8c4166180fa3e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5e4800e44b2189993ccd1fe60778768e01293a4b"
+        },
+        "date": 1788590004380,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.5,
+            "range": "4.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52.63,
+            "range": "3.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 63.63,
+            "range": "5.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2439.38,
+            "range": "41.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 330.25,
+            "range": "7.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 342.25,
+            "range": "4.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 357.38,
+            "range": "3.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17225.25,
+            "range": "93.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 903.13,
+            "range": "21.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.63,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.88,
+            "range": "1.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43.5,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 125.5,
+            "range": "4.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 86.88,
+            "range": "2.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 58.6,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.84,
+            "range": "0.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 629.88,
+            "range": "9.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 709.38,
+            "range": "12.69",
             "unit": "ms"
           }
         ]
