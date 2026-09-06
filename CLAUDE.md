@@ -46,6 +46,7 @@ pnpm fmt:check           # cargo fmt --check then prettier --check
 pnpm coverage            # cargo-llvm-cov (Rust) + vitest --coverage (JS)
 pnpm bench               # cargo criterion + benches/ts/run-all.ts
 pnpm doc                 # cargo doc --all-features
+pnpm gen:doc-links       # Rebuild docs, rescrape docs/generated/link-map.json (tracked)
 
 # Cargo directly (only when pnpm can't express it):
 cargo test --all-features <test_name>        # Run a single Rust test
@@ -169,6 +170,25 @@ Edit the source `.md`, never a generated copy. Three render targets: rustdoc via
 via the `comments` resolved into `data/**/generated/full/*.json` (`pnpm gen:data`). Run both after
 editing; the app's print stylesheet appends each `href`.
 
+#### Intra-doc links outside rustdoc
+
+`docs/*.md` and `data/**/*.md` cite crate items the way rustdoc resolves them — ``[`Fibers`]``,
+``[`field@Sugars::sucrose`]``, `[pac](crate::constants::pac)`, `[POD](crate::docs#pod)`. Outside
+rustdoc those are dead links, so `gen-data.ts` rewrites them to absolute docs.rs URLs when it
+resolves the `comments` into `generated/full/`.
+
+Each file directly in the crate's `scripts/` is something `pnpm` runs; `scripts/lib/` holds the
+modules they import, such as the link resolver.
+
+The targets are not hand-maintained. `pnpm gen:doc-links` builds the docs and scrapes the hrefs
+rustdoc already resolved out of the three authored pages (`docs`, `docs::ingredients`,
+`docs::recipes`), inverting each into the path an author would write; the result is the tracked
+`docs/generated/link-map.json`. `rustdoc::all` is `warn` and CI sets `RUSTDOCFLAGS: -D warnings`,
+so `broken_intra_doc_links` guarantees every mapped target exists.
+
+Rerun `gen:doc-links` after moving or renaming any item the docs cite — CI's `gen_doc_links_check`
+fails on a stale map, and an unresolvable citation fails `gen:data` rather than shipping dead links.
+
 #### Default vs. reference dairy ingredients
 
 The brand- and country-neutral `DairySimpleSpec` milk/cream entries (`0% Milk`, `3.25% Milk`,
@@ -278,6 +298,7 @@ to keep the word. Each file drops only its own directory's word: the batch-build
   directly here is a `"use server"` module; `lib/data/support/` holds the non-endpoints they call.
   Each action opens with `action(name, ctx)`, which logs start and binds the name into its calls.
 - **`scripts/`** — run by `pnpm`, never imported by the app: `seed.ts`, `baseline.ts`, `*.sh`.
+  Helpers they share, rather than entry points, live in `scripts/lib/` — as they do in the crate.
 - **`src/__tests__/seed-assets.ts`** — what `scripts/seed.ts` writes and the suites assert against.
 - **`lib/auth.ts`** — NextAuth v5 (beta) with GitHub + Google OAuth providers.
 - **`app/blog/`**, **`app/docs/`** — markdown-rendered content.

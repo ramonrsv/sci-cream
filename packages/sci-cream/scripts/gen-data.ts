@@ -18,6 +18,10 @@
  * Footnote definitions are pulled from `docs/references/{literature,ingredients}.md`; a citation
  * with no matching definition is a hard error.
  *
+ * Comments also cite crate items the way rustdoc resolves them, e.g. `[POD](crate::docs#pod)`.
+ * Those are rewritten to absolute docs.rs URLs via `lib/doc-links.ts`, since the app renders
+ * comments outside rustdoc, where an unresolved path is a dead link. Unresolvable is a hard error.
+ *
  * Run: `node --import tsx scripts/gen-data.ts [--check]`. With no flag it writes both variants;
  * `--check` regenerates both (validating parsing and footnotes) without writing, and verifies the
  * tracked `min/` files are up to date.
@@ -25,6 +29,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { marked } from "marked";
+
+import { loadLinkMap, resolveDocLinks } from "./lib/doc-links";
 
 const PKG_ROOT = path.resolve(import.meta.dirname, "..");
 const SOURCE_DIRS = ["ingredients", "recipes"] as const;
@@ -133,6 +139,7 @@ type Kind = "full" | "min";
 /** Compute the requested generated files' paths and content without touching disk. */
 function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
   const defs = loadFootnoteDefs();
+  const links = loadLinkMap();
   const outputs = new Map<string, string>();
 
   for (const dir of SOURCE_DIRS) {
@@ -147,11 +154,13 @@ function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
       const stem = file.replace(/\.md$/, "");
 
       if (kinds.has("full")) {
-        const full = raw.map((e) =>
-          e.comments === undefined
-            ? e
-            : { ...e, comments: resolveFootnotes(entryLabel(e), e.comments, defs) },
-        );
+        const full = raw.map((e) => {
+          if (e.comments === undefined) return e;
+          const label = entryLabel(e);
+          /** Links first, so the resolver sees prose and never the appended bibliography. */
+          const linked = resolveDocLinks(label, e.comments, links);
+          return { ...e, comments: resolveFootnotes(label, linked, defs) };
+        });
         outputs.set(
           path.join(base, "generated", "full", `${stem}.json`),
           `${JSON.stringify(full, null, 2)}\n`,

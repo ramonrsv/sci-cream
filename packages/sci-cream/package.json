@@ -25,6 +25,8 @@
     "build:rust": "cargo build --all-features --all-targets",
     "gen:data": "node --import tsx scripts/gen-data.ts",
     "gen:data:check": "node --import tsx scripts/gen-data.ts --check",
+    "gen:doc-links": "node --import tsx scripts/gen-doc-links.ts",
+    "gen:doc-links:check": "node --import tsx scripts/gen-doc-links.ts --check",
     "build:package": "pnpm gen:data && pnpm build:wasm && pnpm build:js",
     "build:wasm": "pnpm set-crate-type:cdylib && pnpm build:wasm-pack && pnpm set-crate-type:rlib",
     "build:wasm-pack": "wasm-pack build --out-dir wasm --out-name index -- --features \"wasm,data,database\"",

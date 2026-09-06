@@ -105,6 +105,16 @@ jobs:
       - name: Run data generation check
         run: pnpm run gen:data:check
 
+  gen_doc_links_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-rust
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Run doc link map check
+        run: pnpm run gen:doc-links:check
+
   eslint:
     runs-on: ubuntu-latest
     steps:
