@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788590433983,
+  "lastUpdate": 1788675575698,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -610485,6 +610485,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1922.6,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "19e15fb4541f307e8a6bba86b2d4e38cd24fbbb9",
+          "message": "Render ingredient and recipe data in rustdoc\n\nAdd `docs::ingredients` and `docs::recipes`, including the ingredient\nand recipe markdown as module documentation along with the footnote\ndefinitions they cite. Link both from the table of contents; they are\ntoo long to fold into the single `crate::docs` page.\n\nGive each recipe file a top-level heading and an intro, so a module\npage opens with its source and scope.\n\nFix what rustdoc surfaced once those files were rendered: backtick the\nitem links, escape literal square brackets that were being read as\nintra-doc links, and rewrap citations so a page number never dangles\nat a line end.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-06T01:48:58-04:00",
+          "tree_id": "71f1740fd1b3d3e230b7f28d2a21c3504c6c62e5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/19e15fb4541f307e8a6bba86b2d4e38cd24fbbb9"
+        },
+        "date": 1788675518833,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1096.27,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 333.01,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1719.28,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 531.51,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 578.81,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1922.64,
             "unit": "KB"
           }
         ]
