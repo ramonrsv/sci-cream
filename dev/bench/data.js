@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788675633979,
+  "lastUpdate": 1788675663320,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -595731,6 +595731,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.46,
             "range": "0.44",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "19e15fb4541f307e8a6bba86b2d4e38cd24fbbb9",
+          "message": "Render ingredient and recipe data in rustdoc\n\nAdd `docs::ingredients` and `docs::recipes`, including the ingredient\nand recipe markdown as module documentation along with the footnote\ndefinitions they cite. Link both from the table of contents; they are\ntoo long to fold into the single `crate::docs` page.\n\nGive each recipe file a top-level heading and an intro, so a module\npage opens with its source and scope.\n\nFix what rustdoc surfaced once those files were rendered: backtick the\nitem links, escape literal square brackets that were being read as\nintra-doc links, and rewrap citations so a page number never dangles\nat a line end.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-06T01:48:58-04:00",
+          "tree_id": "71f1740fd1b3d3e230b7f28d2a21c3504c6c62e5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/19e15fb4541f307e8a6bba86b2d4e38cd24fbbb9"
+        },
+        "date": 1788675618078,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 49.98,
+            "range": "7.70",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.46,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.45,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 131,
+            "range": "10.54",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.36,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 131,
+            "range": "10.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 47.45,
+            "range": "7.36",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.89,
+            "range": "0.25",
             "unit": "ms"
           }
         ]
