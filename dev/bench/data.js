@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788675630235,
+  "lastUpdate": 1788675633979,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -602688,6 +602688,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/f69d2b5dfbc3e6953ca67567e0962d69a4aada72"
         },
         "date": 1788589770401,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "19e15fb4541f307e8a6bba86b2d4e38cd24fbbb9",
+          "message": "Render ingredient and recipe data in rustdoc\n\nAdd `docs::ingredients` and `docs::recipes`, including the ingredient\nand recipe markdown as module documentation along with the footnote\ndefinitions they cite. Link both from the table of contents; they are\ntoo long to fold into the single `crate::docs` page.\n\nGive each recipe file a top-level heading and an intro, so a module\npage opens with its source and scope.\n\nFix what rustdoc surfaced once those files were rendered: backtick the\nitem links, escape literal square brackets that were being read as\nintra-doc links, and rewrap citations so a page number never dangles\nat a line end.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-06T01:48:58-04:00",
+          "tree_id": "71f1740fd1b3d3e230b7f28d2a21c3504c6c62e5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/19e15fb4541f307e8a6bba86b2d4e38cd24fbbb9"
+        },
+        "date": 1788675633019,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
