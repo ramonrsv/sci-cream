@@ -54,8 +54,8 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
 
   One drawback of cornstarch is that it begins to deteriorate when frozen, making it less ideal for
   protecting ice creams from the freeze-thaw cycle. It's typically used in concentrations of 1% by
-  weight (Cree, 2017, Cornstarch, p. 69)[^6], (Cree, 2017, Blank Slate Custard Ice Cream, p.
-  115)[^6].
+  weight (Cree, 2017, Cornstarch, p. 69)[^6], (Cree, 2017, Blank Slate Custard Ice Cream,
+  p. 115)[^6].
 
   Cornstarch generally gives better flavor release than custard, but not as good as gums
   (Raphaelson, 2023, January)[^37].
@@ -80,17 +80,18 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   material, usually citrus peel or apple pomace. It is a polysaccharide consisting of linear chains
   of galacturonic acid and galacturonic acid methyl ester units. Pectin is classified according to
   its degree of esterification. High methoxy (>50% esterified) and low methoxy (<50%) pectins
-  possess different properties (Clarke, 2004, p. 53)[^4], (The European Commission, 2025, E440)[^10].
+  possess different properties (Clarke, 2004, p. 53)[^4], (The European Commission, 2025,
+  E440)[^10].
 
   Low-methoxy pectin, widely available to home consumers, is most suitable for ice cream
   formulations. It requires calcium ions to form a gel, which are abundant in dairy ice cream
-  formulations. It is typically used in concentrations of 0.1% by weight (Cree, 2017, Pectin, p.
-  72)[^6].
+  formulations. It is typically used in concentrations of 0.1% by weight (Cree, 2017, Pectin,
+  p. 72)[^6].
 
   Pectin is commonly used in sorbet formulations, which generally call for fruit and/or fruit juice
   at 30-50% by weight (sometimes as high as 75%). As such, fruits that contain a lot of pectin
-  require special adjustments to the stabilizer use in sorbet formulations (Goff & Hartel, 2025, p.
-  432)[^20], (Raphaelson, 2019, July)[^35].
+  require special adjustments to the stabilizer use in sorbet formulations (Goff & Hartel, 2025,
+  p. 432)[^20], (Raphaelson, 2019, July)[^35].
 
   This component is tracked in [`field@Stabilizers::pectin`].
 
@@ -101,8 +102,8 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   replaced by polysaccharide stabilizers, it is still a good stabilizer, forming a weak gel that
   melts readily in the mouth giving no impression of gumminess, with ice crystal suppression and
   texture arguably superior to starches. It's also more available to home consumers than most gums
-  (Clarke, 2004, p. 54)[^4], (The European Commission, 2025, E441)[^10],(Goff & Hartel, 2025, p.
-  80)[^20], (Raphaelson, 2023, January)[^37].
+  (Clarke, 2004, p. 54)[^4], (The European Commission, 2025, E441)[^10],(Goff & Hartel, 2025,
+  p. 80)[^20], (Raphaelson, 2023, January)[^37].
 
   The strength of gelatin available on the market can vary significantly, so it may require some
   trial and error to find the right concentration for a formulation. A common starting point is 0.4%
@@ -162,9 +163,9 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
 
   Similarly to Locust Bean Gum, a drawback of Guar Gum is its incompatibility with milk proteins
   which causes 'wheying off'. This issue can be mitigated by using Guar Gum in combination with
-  small amounts of Carrageenans, which help reduce or prevent wheying off (Clarke, 2004, p. 51,
-  145)[^4], (Goff & Hartel, 2025, p. 80)[^20], (Raphaelson, 2023, January)[^37], (Ice Cream Science,
-  2026, April, "Why are stabilizers used in ice cream?")[^42].
+  small amounts of Carrageenans, which help reduce or prevent wheying off (Clarke, 2004,
+  p. 51, 145)[^4], (Goff & Hartel, 2025, p. 80)[^20], (Raphaelson, 2023, January)[^37], (Ice Cream
+  Science, 2026, April, "Why are stabilizers used in ice cream?")[^42].
 
   Guar Gum can have a strong flavour that is detectable in ice creams, which is undesirable in most
   applications. Some market products claim to have removed this flavour (Carl, 2024, April)[^43],
@@ -282,7 +283,7 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   Bean Gum and Guar Gum, its solutions being less viscous than those of Guar Gum, but more than
   those of Locust Bean Gum. This makes it an attractive, one-ingredient stabilizer that offers good
   ice crystal suppression and thick, creamy consistency. Most Tara Gums need to be heated to around
-  80°C (176°F) to fully hydrate (The European Commission, 2025, E417)[^10], (Goff & Hartel, 2025, p.
-  82)[^20], (Raphaelson, 2023, January)[^37].
+  80°C (176°F) to fully hydrate (The European Commission, 2025, E417)[^10], (Goff & Hartel, 2025,
+  p. 82)[^20], (Raphaelson, 2023, January)[^37].
 
   This component is tracked in [`field@Stabilizers::tara_gum`].

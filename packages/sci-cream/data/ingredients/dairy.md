@@ -1270,8 +1270,8 @@ Added Sugars"_
 ```
 
 From [nutrition facts table](https://www.tesco.com/shop/en-GB/products/252207566). Protein content
-estimated as 35% [STD_PROTEIN_IN_MSNF] of the MSNF, which itself is estimated as 1/54.5%
-[STD_LACTOSE_IN_MSNF] of the lactose content (Goff & Hartel, 2013, p.181)[^2].
+estimated as 35% [`STD_PROTEIN_IN_MSNF`] of the MSNF, which itself is estimated as 1/54.5%
+[`STD_LACTOSE_IN_MSNF`] of the lactose content (Goff & Hartel, 2013, p.181)[^2].
 
 ## Tesco British Double Cream
 
@@ -1290,8 +1290,8 @@ estimated as 35% [STD_PROTEIN_IN_MSNF] of the MSNF, which itself is estimated as
 ```
 
 From [nutrition facts table](https://www.tesco.com/shop/en-GB/products/262479533). Protein content
-estimated as 35% [STD_PROTEIN_IN_MSNF] of the MSNF, which itself is estimated as 1/54.5%
-[STD_LACTOSE_IN_MSNF] of the lactose content (Goff & Hartel, 2013, p.181)[^2].
+estimated as 35% [`STD_PROTEIN_IN_MSNF`] of the MSNF, which itself is estimated as 1/54.5%
+[`STD_LACTOSE_IN_MSNF`] of the lactose content (Goff & Hartel, 2013, p.181)[^2].
 
 ## Carnation Condensed Milk (UK)
 
@@ -1313,8 +1313,8 @@ estimated as 35% [STD_PROTEIN_IN_MSNF] of the MSNF, which itself is estimated as
 From [nutrition facts
 table](https://www.carnation.co.uk/products/condensed-milk-and-caramel/condensed-milk-tin/).
 "Minimum 8% milk fat. 20% milk solids not fat." Protein content estimated as 35%
-[STD_PROTEIN_IN_MSNF] of the 20% milk solids not fat (Goff & Hartel, 2013, p.181)[^2]. Sucrose
-content estimated as `sugars - lactose`, with lactose estimated as 54.5% [STD_LACTOSE_IN_MSNF] of
+[`STD_PROTEIN_IN_MSNF`] of the 20% milk solids not fat (Goff & Hartel, 2013, p.181)[^2]. Sucrose
+content estimated as `sugars - lactose`, with lactose estimated as 54.5% [`STD_LACTOSE_IN_MSNF`] of
 the 20% milk solids not fat (Goff & Hartel, 2013, p.181)[^2]
 
 ## Devon Cream Company Double Cream

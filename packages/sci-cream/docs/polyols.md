@@ -17,8 +17,8 @@ sweeteners`](crate::docs#artificial-sweeteners) for more details on those.
 
 The detailed breakdown of sugar alcohols in a mix is tracked in [`Polyols`]. [Potere Anti-Congelante
 (PAC)](crate::docs#pac-afp-fpdf-se) and [Potere Dolcificante (POD)](crate::docs#pod) values for all
-sugars documented here can be found at [constants::pac](crate::constants::pac) and
-[constants::pod](crate::constants::pod), respectively.
+sugars documented here can be found at [`constants::pac`](crate::constants::pac) and
+[`constants::pod`](crate::constants::pod), respectively.
 
 - <a id="erythritol"></a>**Erythritol** is a sugar alcohol that occurs naturally in some fruits and
   fermented foods. It is about 70% as sweet as sucrose, but has almost no caloric value (0.2

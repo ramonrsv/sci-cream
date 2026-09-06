@@ -99,7 +99,7 @@ From [ingredients list and nutrition facts
 table](https://www.bakemart.com.hk/item/%E6%97%A5%E6%9C%AC%E6%AD%A3%E6%A6%AE%E9%96%8B%E5%BF%83%E6%9E%9C%E9%86%AC-Shoei-Pistachio-Paste%2CJapan/5899160460591104?srsltid=AfmBOordWXRqDwgvc_In2rr-n7ESlHgt68YB2-5c9XNFkPmvbsz2nLMw).
 
 Ingredients: _"Pistachio nuts (USA), sugar, vegetable oil, corn syrup/emulsifier, coloring (Yellow
-4, Blue 1, REd 2)"_ \
+4, Blue 1, Red 2)"_ \
 Nutrition facts table: _"Per 100g: energy 559kcal, protein 13.3g, lipid 38.0g, carbohydrates 44.2g"_
 
 The components and their percentages are balanced to produce a similar composition to the nutrition
@@ -139,5 +139,5 @@ Ingredients: _"Pistachio nuts, food coloring (turmeric, gardenia blue), salt (0.
 Nutrition facts table: _"Per 100g: energy 2745 kJ, protein 24.4g, fat 55.3g, carbohydrates 16.7g"_
 
 The calculated energy content of 622kcal/100g is off by 5% compared to the label value of
-656kcal/100g. Some of the unspecified NutSpec values were estimated from the USDA FoodData Central
-pistachio ingredients. @todo Convert to a user-saved ingredient once the App supports it.
+656kcal/100g. Some of the unspecified [`NutSpec`] values were estimated from the USDA FoodData
+Central pistachio ingredients. @todo Convert to a user-saved ingredient once the App supports it.

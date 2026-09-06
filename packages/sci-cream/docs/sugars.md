@@ -20,8 +20,8 @@ more details on these.
 
 The detailed breakdown of sugars (mono and disaccharides) in a mix is tracked in [`Sugars`]. [Potere
 Anti-Congelante (PAC)](crate::docs#pac-afp-fpdf-se) and [Potere Dolcificante (POD)](crate::docs#pod)
-values for all sugars documented here can be found at [constants::pac](crate::constants::pac) and
-[constants::pod](crate::constants::pod), respectively.
+values for all sugars documented here can be found at [`constants::pac`](crate::constants::pac) and
+[`constants::pod`](crate::constants::pod), respectively.
 
 - <a id="sucrose"></a>**Sucrose**, or table sugar, is the most common sugar used in ice cream
   formulations, and is often the baseline for sweetness, freezing point depression, and other
@@ -55,14 +55,14 @@ values for all sugars documented here can be found at [constants::pac](crate::co
 
   This component is tracked in [`field@Sugars::fructose`], accessible via [`CompKey::Fructose`].
 
-- <a id="lactose"></a>**Lactose**  is a disaccharide composed of one glucose molecule and one
+- <a id="lactose"></a>**Lactose** is a disaccharide composed of one glucose molecule and one
   galactose molecule. Lactose is the sugar that is present in dairy ingredients. It has the same
   freezing point depression as sucrose, but is less than 20% as sweet, so it is very useful for
   increasing solids and freezing point depression independently of sweetness. It is also excellent
   for controlling ice crystal formation, being able to absorb six times its weight in water
   (Raphaelson, 2023, February)[^1]. However, lactose has limited solubility in water, which limits
-  how much can be added to a formulation before it starts to crystallize (Spillane, 2006, p.
-  264)[^9]. It's also usually not an option in dairy-free formulations like sorbets.
+  how much can be added to a formulation before it starts to crystallize (Spillane, 2006,
+  p. 264)[^9]. It's also usually not an option in dairy-free formulations like sorbets.
 
   This component is tracked in [`field@Sugars::lactose`], accessible via [`CompKey::Lactose`].
 

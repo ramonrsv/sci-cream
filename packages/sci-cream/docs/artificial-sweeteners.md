@@ -21,7 +21,8 @@ different functional properties and are used in different quantities. See
 The detailed breakdown of artificial sweeteners in a mix is tracked in [`ArtificialSweeteners`].
 [Potere Anti-Congelante (PAC)](crate::docs#pac-afp-fpdf-se) and [Potere Dolcificante
 (POD)](crate::docs#pod) values for all sugars documented here can be found at
-[constants::pac](crate::constants::pac) and [constants::pod](crate::constants::pod), respectively.
+[`constants::pac`](crate::constants::pac) and [`constants::pod`](crate::constants::pod),
+respectively.
 
 - <a id="aspartame"></a>**Aspartame** is a common non-saccharide high-intensity artificial
   sweetener. It is a methyl ester of aspartic acid and phenylalanine. It is approximately 200 times
@@ -29,9 +30,9 @@ The detailed breakdown of artificial sweeteners in a mix is tracked in [`Artific
   potency it is used in such small quantities that its energy contribution is negligible. It is one
   of the most studied food additives and has been deemed safe for human consumption by numerous
   regulatory agencies worldwide (The European Commission, 2025, E951)[^10], (International Food
-  Information Council Foundation, 2019, "What is aspartame?")[^21], (Spillane, 2006, Table 9.3, p.
-  179)[^9], (Spillane, 2006, Table 9.4, p. 187)[^9]. It is found in various brand-name products such
-  as Equal and Canderel.
+  Information Council Foundation, 2019, "What is aspartame?")[^21], (Spillane, 2006, Table 9.3,
+  p. 179)[^9], (Spillane, 2006, Table 9.4, p. 187)[^9]. It is found in various brand-name products
+  such as Equal and Canderel.
 
   This component is tracked in [`field@ArtificialSweeteners::aspartame`].
 
@@ -58,8 +59,8 @@ The detailed breakdown of artificial sweeteners in a mix is tracked in [`Artific
   sweeteners in terms of taste, stability, and safety profile, and is one of the most commonly used
   artificial sweeteners, found in products such as Splenda. It is widely approved for use in many
   countries, including in the US and EU (E955) (Spillane, 2006, Table 9.3, p. 184)[^9], (The
-  European Commission, 2025, E955)[^10], (Castro-Muñoz, 2022)[^11]), (Hull, 2010, Appendix C.3, p.
-  324)[^15], (Schiffman, 2013, "Abstract")[^23].
+  European Commission, 2025, E955)[^10], (Castro-Muñoz, 2022)[^11]), (Hull, 2010, Appendix C.3,
+  p. 324)[^15], (Schiffman, 2013, "Abstract")[^23].
 
   This component is tracked in [`field@ArtificialSweeteners::sucralose`].
 

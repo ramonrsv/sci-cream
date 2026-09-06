@@ -5,7 +5,7 @@ Dana Cree. There are a few things to note regarding the ingredients used in the 
 mappings to Sci-Cream ingredients used here. The author makes a few clarifications (Cree, 2017, "A
 Few Things to Know When Making These Recipes", p. 107-108)[^6]:
 
-- **Milk:** _"The recipes [use] homogenized whole milk (the standard 4% butterfat)."_
+- **Milk:** _"The recipes \[use\] homogenized whole milk (the standard 4% butterfat)."_
 - **Cream:** _"All cream in this book is heavy cream, with 40% butterfat content."_
 - **Buttermilk:** _"... the recipes in this book use standard, cultured low-fat buttermilk."_
 - **Cream cheese:** _"When cream cheese is called for ..., use blocks of full-fat cream cheese."_

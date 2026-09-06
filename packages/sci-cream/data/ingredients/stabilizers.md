@@ -430,7 +430,7 @@ Neutrose Gallia")[^125]:
 > Sorbets aux fruits - 4 à 5 g/l \
 > Chantilly - 5 g/l
 
-At _"2 to 3g/L [for] ice creams"_ (0.2 to 0.3%), the recommended dose is comparable to that of a
+At _"2 to 3g/L \[for\] ice creams"_ (0.2 to 0.3%), the recommended dose is comparable to that of a
 blend of pure gums, e.g. "Underbelly General Purpose Stabilizer Blend", indicating a composition
 with a majority of active ingredients. 'Glucose powder' (_"Sirop de Glucose déshydraté"_) is the
 first ingredient, so we model it as 45%, the rest being primarily gums. "Glucose Powder 42 DE" is
@@ -475,17 +475,17 @@ order, and the manufacturer recommended dosage:
 > Low-fat ice creams (less than 7.5%): 4 to 5g/L - 0.4 to 0.5%. \
 > High-fat ice creams (10 to 12%): 2 to 3g/L - 0.2 to 0.3%.
 
-At _"2 to 3g/L - 0.2 to 0.3% [for] high-fat ice creams"_, the recommended dosage is the same as that
-of 'Louis Francois Super Neutrose', and the ingredient list is identical bar the emulsifier, so the
-proportions are estimated the same way - see that entry for the reasoning. The product is a powder,
-so 'glucose syrup' is probably a labeling quirk and it's actually glucose powder, explicitly so in
-Neutrose's datasheet (_"Sirop de Glucose déshydraté"_) - modeled here as "Glucose Powder 42 DE" for
-the same reasons. It's difficult to estimate the emulsifying effect of the blend, and therefore the
-proportion of "Glycerol Monostearate". However, any amount that respects the ingredient list order
-would make it insufficient to be a primary emulsifier, so the contribution must be minimal,
-nominally modeled here at 1%. "Alginate" is assumed to be "Sodium Alginate", also explicit in
-Neutrose's datasheet (_"Alginates de Sodium E401"_). Its proportion is reduced by the above 1%,
-since the value was determined via a remainder in the estimated formulation for Neutrose.
+At _"2 to 3g/L - 0.2 to 0.3% \[for\] high-fat ice creams"_, the recommended dosage is the same as
+that of 'Louis Francois Super Neutrose', and the ingredient list is identical bar the emulsifier, so
+the proportions are estimated the same way - see that entry for the reasoning. The product is a
+powder, so 'glucose syrup' is probably a labeling quirk and it's actually glucose powder, explicitly
+so in Neutrose's datasheet (_"Sirop de Glucose déshydraté"_) - modeled here as "Glucose Powder 42
+DE" for the same reasons. It's difficult to estimate the emulsifying effect of the blend, and
+therefore the proportion of "Glycerol Monostearate". However, any amount that respects the
+ingredient list order would make it insufficient to be a primary emulsifier, so the contribution
+must be minimal, nominally modeled here at 1%. "Alginate" is assumed to be "Sodium Alginate", also
+explicit in Neutrose's datasheet (_"Alginates de Sodium E401"_). Its proportion is reduced by the
+above 1%, since the value was determined via a remainder in the estimated formulation for Neutrose.
 
 ## Commercial Stabilizers
 

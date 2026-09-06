@@ -29,8 +29,8 @@ Isomerization is the process of converting a dextrose syrup into fructose syrup.
 using immobilized enzymes, this enables the production of high-fructose syrups that contain a higher
 proportion of fructose monosaccharides and are therefore sweeter than the starting glucose syrup.
 Isomerization alone can produce syrups with up to 42% fructose. Further processing via
-chromatography enrichment can produce fructose syrups containing up to 80% fructose (Hull, 2010, p.
-26, 40-42)[^15].
+chromatography enrichment can produce fructose syrups containing up to 80% fructose (Hull, 2010,
+p. 26, 40-42)[^15].
 
 Dry 'glucose syrup solids' or 'glucose powders' can be produced by spray drying glucose syrup.
 Crystalline dextrose is made by crystallizing the dextrose out of a 95 DE syrup. This purification
@@ -43,8 +43,8 @@ the mouth decreases. This makes it possible to use glucose syrups as sweeteners 
 the properties of ice cream formulations. Notably, the use of glucose syrup solids is generally
 perceived to provide enhanced smoothness by contributing to a firmer and more chewy texture, to
 provide better meltdown characteristics, etc. A typical conventional sweetener blend for an ice
-cream mix usually includes 10-12% sucrose and 3-5% glucose syrup solids (Goff & Hartel, 2013, p.
-64-65)[^2].
+cream mix usually includes 10-12% sucrose and 3-5% glucose syrup solids (Goff & Hartel, 2013,
+p. 64-65)[^2].
 
 ### Nomenclature
 

@@ -18,3 +18,6 @@
 - [Stabilizers](crate::docs#stabilizers)
 - [Emulsifiers](crate::docs#emulsifiers)
 - [Chocolate](crate::docs#chocolate)
+- Database
+  - [Ingredients](crate::docs::ingredients)
+  - [Recipes](crate::docs::recipes)

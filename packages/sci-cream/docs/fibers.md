@@ -12,8 +12,8 @@ functional properties along with several health-promoting properties (Porto, 202
 
 The detailed breakdown of fibers in a mix is tracked in [`Fibers`]. [Potere Anti-Congelante
 (PAC)](crate::docs#pac-afp-fpdf-se) and [Potere Dolcificante (POD)](crate::docs#pod) values for all
-sugars documented here can be found at [constants::pac](crate::constants::pac) and
-[constants::pod](crate::constants::pod), respectively.
+sugars documented here can be found at [`constants::pac`](crate::constants::pac) and
+[`constants::pod`](crate::constants::pod), respectively.
 
 - <a id="inulin"></a>**Inulin** is a type of soluble fiber found in many plants, with useful
   functional properties. It is commonly extracted from chicory root for use in food products. It

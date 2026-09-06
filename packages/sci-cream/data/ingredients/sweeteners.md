@@ -473,7 +473,7 @@ glucose syrups and powders.
 conversion". Originally, it was the only type of glucose syrup, also known as 'Confectioners
 Glucose' (Goff & Hartel, 2013, p. 67)[^2], (Hull, 2010, p. 7, 26, 270)[^15]. Nowadays often referred
 to as simply 'Glucose Syrup', it is the most widely available glucose syrup, particularly to home
-cooks, e.g. ['Glucose Syrup 42DE'](https://bulkmart.ca/products/glucose-syrup-42de-27-22-kg),
+cooks, e.g. [Glucose Syrup 42DE](https://bulkmart.ca/products/glucose-syrup-42de-27-22-kg),
 ['Glucose Powder
 42DE'](https://bulkmart.ca/products/glucose-powder-42de-fine-corn-syrup-solids-22-68-kg).
 
@@ -648,11 +648,11 @@ Minor POD and PAC contributions are automatically calculated from the small suga
 ```
 
 High-Performance (HP) Inulin Powder. _'This product is manufactured by removing the shorter-chain
-molecules [in standard inulin]. (...) [It] provides almost twice the fat mimetic characteristics of
-standard inulin with no sweetness contribution.'_ Properties taken from _Inulin and Oligofructose:
-What are they?_ (Niness, 1999)[^24], and moisture content of commercial inulin powders from
-_Determination of total water content in inulin powder..._ (Ronkart, 2006)[^26]. Energy is
-calculated internally from values from the same sources (1.5kcal/g).
+molecules [in standard inulin]. (...) \[It\] provides almost twice the fat mimetic characteristics
+of standard inulin with no sweetness contribution.'_ Properties taken from _Inulin and
+Oligofructose: What are they?_ (Niness, 1999)[^24], and moisture content of commercial inulin
+powders from _Determination of total water content in inulin powder..._ (Ronkart, 2006)[^26]. Energy
+is calculated internally from values from the same sources (1.5kcal/g).
 
 ## Oligofructose Powder
 

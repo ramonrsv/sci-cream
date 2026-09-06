@@ -9,6 +9,7 @@
 #![doc = include_str!("../docs/stabilizers.md")]
 #![doc = include_str!("../docs/emulsifiers.md")]
 #![doc = include_str!("../docs/chocolate.md")]
+// References
 #![doc = include_str!("../docs/references/literature.md")]
 #![doc = include_str!("../docs/references/index/116.md")]
 
@@ -77,3 +78,41 @@ macro_rules! recipe_for_balancing {
 pub use assert_eq_float;
 pub use main_recipe;
 pub use recipe_for_balancing;
+
+#[expect(clippy::doc_markdown)] // _FoodData_ false positives
+pub mod ingredients {
+    #![doc = include_str!("../data/ingredients/alcohol.md")]
+    #![doc = include_str!("../data/ingredients/chocolates.md")]
+    #![doc = include_str!("../data/ingredients/dairy.md")]
+    #![doc = include_str!("../data/ingredients/eggs.md")]
+    #![doc = include_str!("../data/ingredients/emulsifiers.md")]
+    #![doc = include_str!("../data/ingredients/flavourings.md")]
+    #![doc = include_str!("../data/ingredients/fruits.md")]
+    #![doc = include_str!("../data/ingredients/miscellaneous.md")]
+    #![doc = include_str!("../data/ingredients/nuts.md")]
+    #![doc = include_str!("../data/ingredients/stabilizers.md")]
+    #![doc = include_str!("../data/ingredients/sweeteners.md")]
+    // References
+    #![doc = include_str!("../docs/references/literature.md")]
+    #![doc = include_str!("../docs/references/index/117.md")]
+    #![doc = include_str!("../docs/references/index/119.md")]
+    #![doc = include_str!("../docs/references/index/122.md")]
+    #![doc = include_str!("../docs/references/index/123.md")]
+    #![doc = include_str!("../docs/references/index/124.md")]
+    #![doc = include_str!("../docs/references/index/125.md")]
+    #![doc = include_str!("../docs/references/index/126.md")]
+
+    #[cfg(doc)]
+    use crate::{
+        constants::composition::dairy::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MSNF},
+        specs::{CompositeSpec, NutSpec},
+    };
+}
+
+pub mod recipes {
+    #![doc = include_str!("../data/recipes/underbelly.md")]
+    #![doc = include_str!("../data/recipes/dana-cree.md")]
+    #![doc = include_str!("../data/recipes/ice-cream-science.md")]
+    // References
+    #![doc = include_str!("../docs/references/literature.md")]
+}
