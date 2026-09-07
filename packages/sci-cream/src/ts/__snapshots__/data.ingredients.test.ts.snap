@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 308  (non-alias: 260, independent: 246)
+"total: 310  (non-alias: 262, independent: 248)
 
             0% Milk
             1% Milk
@@ -297,6 +297,8 @@ exports[`Embedded spec entries 1`] = `
 [composite] Underbelly Eggless Ice Cream Stabilizer Blend
 [composite] Underbelly General Purpose Stabilizer Blend
 [composite] Underbelly Sorbet Stabilizer Blend
+            Valrhona Guanaja 70% Dark Chocolate
+            Valrhona Unsweetened Cocoa Powder
 [alias]     Vanilla Bean Paste
             Vanilla Bean Pod (5g/pod)
             Vanilla Extract

@@ -105,7 +105,7 @@ pub mod ingredients {
     #[cfg(doc)]
     use crate::{
         constants::composition::dairy::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MSNF},
-        specs::{CompositeSpec, NutSpec},
+        specs::{ChocolateSpec, CompositeSpec, NutSpec},
     };
 }
 

@@ -181,6 +181,20 @@ table](https://www.lindt.ca/en/lindt-excellence-95-cacao-dark-chocolate-bar-80g)
 table](https://www.lindt.ca/en/lindt-excellence-100-cacao-bar-50g): 27g/50g fat => 54% cocoa butter,
 0g sugars.
 
+## Valrhona Guanaja 70% Dark Chocolate
+
+```json
+{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 70, "sugars": 30 } }
+```
+
+From the
+[manufacturer](https://www.valrhona.com/en/our-products/for-consumers/gourmets-range/cooking-range/for-baking/cooking-range-guanaja-70-dark-chocolate)
+and vendor product listing for [_VALRHONA Guanaja 70% Dark Chocolate
+Couverture_](https://supplies.gusta.ca/products/valrhona-guanaja-70-dark-chocolate-couverture).
+
+Neither of the two listings above gave any additional information other than _"70%"_, so the
+ingredient is modeled as a simple 70% dark chocolate.
+
 ## USDA Unsweetened Cocoa Powder
 
 ```json
@@ -219,3 +233,24 @@ table](https://www.kraftheinz.com/en-CA/bakers/products/00066188008405-100-pure-
 100% cocoa solids from the label. From the [nutrition facts
 table](https://www.hersheyland.com/products/hersheys-cocoa-100-cacao-natural-unsweetened-8-oz-can.html):
 0.5g/5g fat => 10% cocoa butter, 0g sugars.
+
+## Valrhona Unsweetened Cocoa Powder
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": { "cacao_solids": 93, "cocoa_butter": 21, "other_solids": 7 }
+}
+```
+
+From the manufacturer's [technical
+information](https://www.valrhona.com/en/our-products/for-professionals/chocolate-co/100-cocoa/cocoa-powder/cocoa-powder)
+and vendor product listing for [_VALRHONA Unsweetened Dutch-Processed Cocoa
+Powder_](https://supplies.gusta.ca/products/valrhona-dutch-processed-cocoa-powder).
+
+> Dutch Processed Cocoa Powder (processed with alkali) gives a pure and intense cocoa taste with a
+> very warm red mahogany color.
+
+The manufacturer cites the composition as _"Cocoa 93% (min), Fat 21%"_. The potential remaining 7%
+is presumably water and ash introduced by the Dutch processing. [`ChocolateSpec`] currently does not
+support specifying a water content, so the whole 7% is modeled as `other_solids`.
