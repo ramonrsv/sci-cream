@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788766578673,
+  "lastUpdate": 1788825355043,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -617193,6 +617193,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1925.7,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9fac315fb77a3731a7a26c6a5997498f5bebdb06",
+          "message": "Add Valrhona cocoa powder and Guanaja chocolate\n\nTwo named-source reference entries, alongside the existing Lindt,\nGhirardelli and USDA data.\n\nThe cocoa powder's technical information gives \"Cocoa 93% (min), Fat\n21%\". The unaccounted 7% is presumably water and the ash the Dutch\nprocessing introduces, so it is modeled as `other_solids`. Folding it\ninto `cacao_solids` instead would inflate the cocoa protein, fibre and\nash by ~10%, whereas `other_solids` contributes no energy.\n\nGuanaja is modeled as a plain 70% dark chocolate: neither Valrhona nor\nthe vendor publishes fat or sugar figures for it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T19:29:04-04:00",
+          "tree_id": "8fe2e41b93bedec8756f4c1596ea69ff499e4b14",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9fac315fb77a3731a7a26c6a5997498f5bebdb06"
+        },
+        "date": 1788825304775,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1096.77,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 333.12,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1723.87,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 532.4,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 579.81,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1927.76,
             "unit": "KB"
           }
         ]
