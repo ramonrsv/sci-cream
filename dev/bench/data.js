@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788765744142,
+  "lastUpdate": 1788765748164,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -607111,6 +607111,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/9474fddfc2b62f976260a4f4d646f0c60c2c31a4"
         },
         "date": 1788765648132,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9baaa3f3e2435796203fef4a22d3781dd542ab7e",
+          "message": "Drop redundant Cargo homepage and readme\n\n`homepage` duplicated `repository` character-for-character, so crates.io\nrendered two identical sidebar links. `readme` restated the value Cargo\nalready infers from the README.md in the package root.\n\nNeither is required by `cargo_common_metadata`, which checks\ndescription, license, repository, readme, keywords, and categories — and\nstill sees the inferred README.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T03:19:11-04:00",
+          "tree_id": "4b95f0507f2ba1ed27936520bfe114ac8dccec94",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9baaa3f3e2435796203fef4a22d3781dd542ab7e"
+        },
+        "date": 1788765747160,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
