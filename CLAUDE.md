@@ -166,9 +166,9 @@ APA, with Wikipedia's link convention: the title carries the link and the URL is
 - Entries with no URL take the same shape, unlinked.
 
 Edit the source `.md`, never a generated copy. Three render targets: rustdoc via
-`docs/references/index/<N>.md` (`pnpm --filter sci-cream split-ref-footnotes`), GitHub, and the app
-via the `comments` resolved into `data/**/generated/full/*.json` (`pnpm gen:data`). Run both after
-editing; the app's print stylesheet appends each `href`.
+`docs/references/index/<N>.md` (`pnpm gen:footnotes`), GitHub, and the app via the `comments`
+resolved into `data/**/generated/full/*.json` (`pnpm gen:data`). Run `pnpm gen:all` after editing;
+the app's print stylesheet appends each `href`.
 
 #### Intra-doc links outside rustdoc
 

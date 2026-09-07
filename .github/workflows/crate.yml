@@ -96,24 +96,21 @@ jobs:
       - name: Run `vitest` tests
         run: pnpm run test:js
 
-  gen_data_check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: ./.github/actions/setup-pnpm
-
-      - name: Run data generation check
-        run: pnpm run gen:data:check
-
-  gen_doc_links_check:
+  gen_check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-rust
       - uses: ./.github/actions/setup-pnpm
 
+      - name: Run footnotes generation check
+        run: pnpm run gen:footnotes:check
+
       - name: Run doc link map check
         run: pnpm run gen:doc-links:check
+
+      - name: Run data generation check
+        run: pnpm run gen:data:check
 
   eslint:
     runs-on: ubuntu-latest
