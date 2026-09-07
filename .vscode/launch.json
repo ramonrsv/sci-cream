@@ -1,37 +1,49 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Next.js: debug client-side",
-            "type": "chrome",
-            "request": "launch",
-            "url": "http://localhost:3000"
-        },
-        {
-            "name": "Next.js: debug server-side",
-            "type": "node-terminal",
-            "request": "launch",
-            "command": "npm run dev"
-        },
-        {
-            "name": "Vitest",
-            "type": "node",
-            "request": "launch",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run",
-                "test"
-            ],
-            "args": [
-                "--inspect-brk",
-                "--threads",
-                "false"
-            ],
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "skipFiles": [
-                "<node_internals>/**"
-            ]
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: client-side",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000"
+    },
+    {
+      "name": "Next.js: server-side",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev"
+    },
+    {
+      "name": "Vitest: crate",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/packages/sci-cream/node_modules/vitest/vitest.mjs",
+      "args": ["run", "--no-file-parallelism", "--coverage.enabled=false"],
+      "cwd": "${workspaceFolder}/packages/sci-cream",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Vitest: app",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/packages/app/node_modules/vitest/vitest.mjs",
+      "args": ["run", "--no-file-parallelism"],
+      "cwd": "${workspaceFolder}/packages/app",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Vitest: open file",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd \"${workspaceFolder}/$(echo \"${relativeFile}\" | cut -d/ -f1,2)\" && npx vitest run --no-file-parallelism --coverage.enabled=false \"${file}\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "tsx: open file",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd \"${workspaceFolder}/$(echo \"${relativeFile}\" | cut -d/ -f1,2)\" && node --import tsx \"${file}\"",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
 }
