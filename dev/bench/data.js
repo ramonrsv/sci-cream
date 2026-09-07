@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788765755329,
+  "lastUpdate": 1788765759843,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -537055,6 +537055,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.98%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9baaa3f3e2435796203fef4a22d3781dd542ab7e",
+          "message": "Drop redundant Cargo homepage and readme\n\n`homepage` duplicated `repository` character-for-character, so crates.io\nrendered two identical sidebar links. `readme` restated the value Cargo\nalready infers from the README.md in the package root.\n\nNeither is required by `cargo_common_metadata`, which checks\ndescription, license, repository, readme, keywords, and categories — and\nstill sees the inferred README.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T03:19:11-04:00",
+          "tree_id": "4b95f0507f2ba1ed27936520bfe114ac8dccec94",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9baaa3f3e2435796203fef4a22d3781dd542ab7e"
+        },
+        "date": 1788765702379,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 45103,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 441370,
+            "range": "±3.20%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31663,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 342255,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
