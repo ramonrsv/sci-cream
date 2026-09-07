@@ -123,6 +123,32 @@ fresh](https://fdc.nal.usda.gov/food-details/173475/nutrients).
 { "for": "USDA Fresh Spearmint" }
 ```
 
+## USDA Fresh Basil
+
+```json
+{
+  "category": "Flavouring",
+  "FruitSpec": {
+    "water": 92.1,
+    "energy": 23,
+    "protein": 3.15,
+    "fat": 0.64,
+    "fiber": 1.6,
+    "carbohydrate": 2.65,
+    "sugars": { "glucose": 0.02, "fructose": 0.02, "galactose": 0.27 }
+  }
+}
+```
+
+USDA FoodData Central - SR Legacy - [Basil,
+fresh](https://fdc.nal.usda.gov/food-details/172232/nutrients).
+
+## Fresh Basil
+
+```json
+{ "for": "USDA Fresh Basil" }
+```
+
 ## Nielsen-Massey Pure Vanilla Extract
 
 ```json

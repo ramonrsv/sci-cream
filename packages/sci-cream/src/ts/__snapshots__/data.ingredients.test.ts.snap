@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 306  (non-alias: 259, independent: 245)
+"total: 308  (non-alias: 260, independent: 246)
 
             0% Milk
             1% Milk
@@ -83,6 +83,7 @@ exports[`Embedded spec entries 1`] = `
             Fairlife Fat Free Ultra-Filtered Lactose-Free Milk
             Fairlife Whole Ultra-Filtered Lactose-Free Milk
             Fancy Molasses
+[alias]     Fresh Basil
 [alias]     Fresh Peppermint
 [alias]     Fresh Spearmint
             Fructose
@@ -271,6 +272,7 @@ exports[`Embedded spec entries 1`] = `
             USDA Dried Whole Egg
             USDA Fat-Free (Skim) Milk
             USDA Fat-Free Evaporated Milk
+            USDA Fresh Basil
             USDA Fresh Peppermint
             USDA Fresh Spearmint
             USDA Frozen Pasteurized Raw Egg White
