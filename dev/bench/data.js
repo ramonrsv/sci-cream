@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788676412819,
+  "lastUpdate": 1788763347389,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -573666,6 +573666,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1046.61,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2d25580ff42270deda5101e7d632618406c1c7bb",
+          "message": "Resolve rustdoc intra-doc links for the app\n\nThe guide and the ingredient/recipe data cite crate items the way\nrustdoc resolves them — [`Fibers`], [`field@Sugars::sucrose`],\n[POD](crate::docs#pod). Only rustdoc resolves those, so everywhere\nelse, the app included, they render as dead links.\n\nRather than re-implement the resolver, scrape the hrefs `cargo doc`\nalready produced. `gen-doc-links.ts` reads the three authored pages\nand records each target under its full crate path, emitting the\ntracked `docs/generated/link-map.json`; a citation using a shorter\npath is matched by tail at lookup. `gen-data.ts` rewrites comments\nthrough it, and an unresolvable citation throws rather than shipping\na dead link.\n\nKeep the map tracked rather than rebuilt by `build:package`, so\n`cargo doc` stays out of the app build path; `gen_doc_links_check`\ncatches staleness in CI instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T02:18:11-04:00",
+          "tree_id": "9d36faa0459f030244557825376fe3cc1aa36f2f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2d25580ff42270deda5101e7d632618406c1c7bb"
+        },
+        "date": 1788763302723,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 718.09,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 886.54,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 655.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 823.59,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 665.47,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 833.92,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 637.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 806.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 639.18,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 807.63,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1046.73,
             "unit": "KB"
           },
           {
