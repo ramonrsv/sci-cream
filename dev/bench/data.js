@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788763448451,
+  "lastUpdate": 1788763701917,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -84232,6 +84232,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2d25580ff42270deda5101e7d632618406c1c7bb",
+          "message": "Resolve rustdoc intra-doc links for the app\n\nThe guide and the ingredient/recipe data cite crate items the way\nrustdoc resolves them — [`Fibers`], [`field@Sugars::sucrose`],\n[POD](crate::docs#pod). Only rustdoc resolves those, so everywhere\nelse, the app included, they render as dead links.\n\nRather than re-implement the resolver, scrape the hrefs `cargo doc`\nalready produced. `gen-doc-links.ts` reads the three authored pages\nand records each target under its full crate path, emitting the\ntracked `docs/generated/link-map.json`; a citation using a shorter\npath is matched by tail at lookup. `gen-data.ts` rewrites comments\nthrough it, and an unresolvable citation throws rather than shipping\na dead link.\n\nKeep the map tracked rather than rebuilt by `build:package`, so\n`cargo doc` stays out of the app build path; `gen_doc_links_check`\ncatches staleness in CI instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T02:18:11-04:00",
+          "tree_id": "9d36faa0459f030244557825376fe3cc1aa36f2f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2d25580ff42270deda5101e7d632618406c1c7bb"
+        },
+        "date": 1788763660454,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 2547,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 85995,
+            "range": "± 3037",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1381,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 84859,
+            "range": "± 3783",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 2526,
+            "range": "± 227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 2421,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 2674,
+            "range": "± 210",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 2496,
+            "range": "± 139",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 2518,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 2663,
+            "range": "± 165",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 63878,
+            "range": "± 832",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 65169,
+            "range": "± 3676",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 127337935,
+            "range": "± 3966540",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 393033,
+            "range": "± 11607",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 3524,
+            "range": "± 131",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 40,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 3662,
+            "range": "± 194",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 52473,
+            "range": "± 2412",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 49548,
+            "range": "± 406",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 82880,
+            "range": "± 5524",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 81387,
+            "range": "± 1128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 197728,
+            "range": "± 8284",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 10872,
+            "range": "± 141",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 410,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 10,
             "range": "± 0",
             "unit": "ns/iter"
           }
