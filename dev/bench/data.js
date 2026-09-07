@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788764295177,
+  "lastUpdate": 1788764673688,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -497764,6 +497764,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 573.38,
             "range": "13.69",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6a4555102ff99aba21dce7f96c61b2d32ed1b8ba",
+          "message": "Fix and extend VS Code debug configurations\n\nThe `Vitest` entry ran `npm run test`, which at the workspace root\nis the recursive script — cargo tests, Playwright e2e and visual\nincluded — and npm swallowed `--inspect-brk` for want of a `--`, so\nnothing was debuggable anyway. Replace it with per-package entries\nlaunching `vitest.mjs` directly, with `--no-file-parallelism` (the\ncurrent name for the stale `--threads false`) so breakpoints bind.\n\nAdd two `node-terminal` entries that act on the open file, deriving\nits package as `packages/<name>` from the relative path: one runs\nthat file's tests, the other runs it under tsx.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T02:40:48-04:00",
+          "tree_id": "b7ef67f106542f690d0b76a46fa82c4e33eed64b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6a4555102ff99aba21dce7f96c61b2d32ed1b8ba"
+        },
+        "date": 1788764638569,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 32.88,
+            "range": "3.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 37.88,
+            "range": "2.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 41.63,
+            "range": "3.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1711.88,
+            "range": "48.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 193,
+            "range": "5.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 205,
+            "range": "4.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 220.5,
+            "range": "7.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 10086.88,
+            "range": "63.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 767.75,
+            "range": "47.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 36.75,
+            "range": "2.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 38.88,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 29,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 32.75,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 110.88,
+            "range": "5.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 67.38,
+            "range": "3.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 45.04,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.61,
+            "range": "0.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 527,
+            "range": "15.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 543.25,
+            "range": "17.94",
             "unit": "ms"
           }
         ]
