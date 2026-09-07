@@ -8,8 +8,6 @@ authors = ["Ramon Sibello <ramon@sibello.ca>"]
 
 description = "Library that facilitates the mathematical analysis of ice cream mixes and their properties."
 
-readme = "README.md"
-homepage = "https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream"
 repository = "https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream"
 license = "MIT OR Apache-2.0"
 keywords = ["ice-cream", "food-science", "webassembly", "wasm"]
