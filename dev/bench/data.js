@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788825399942,
+  "lastUpdate": 1788825476720,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -601881,6 +601881,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.9,
             "range": "0.25",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9fac315fb77a3731a7a26c6a5997498f5bebdb06",
+          "message": "Add Valrhona cocoa powder and Guanaja chocolate\n\nTwo named-source reference entries, alongside the existing Lindt,\nGhirardelli and USDA data.\n\nThe cocoa powder's technical information gives \"Cocoa 93% (min), Fat\n21%\". The unaccounted 7% is presumably water and the ash the Dutch\nprocessing introduces, so it is modeled as `other_solids`. Folding it\ninto `cacao_solids` instead would inflate the cocoa protein, fibre and\nash by ~10%, whereas `other_solids` contributes no energy.\n\nGuanaja is modeled as a plain 70% dark chocolate: neither Valrhona nor\nthe vendor publishes fat or sugar figures for it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T19:29:04-04:00",
+          "tree_id": "8fe2e41b93bedec8756f4c1596ea69ff499e4b14",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9fac315fb77a3731a7a26c6a5997498f5bebdb06"
+        },
+        "date": 1788825419634,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.39,
+            "range": "9.19",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.11,
+            "range": "0.57",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.11,
+            "range": "0.57",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 177,
+            "range": "13.82",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.46,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 177,
+            "range": "13.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.95,
+            "range": "9.12",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.25,
+            "range": "0.40",
             "unit": "ms"
           }
         ]
