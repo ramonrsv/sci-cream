@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788763381598,
+  "lastUpdate": 1788763448451,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -596756,6 +596756,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.89,
             "range": "0.25",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2d25580ff42270deda5101e7d632618406c1c7bb",
+          "message": "Resolve rustdoc intra-doc links for the app\n\nThe guide and the ingredient/recipe data cite crate items the way\nrustdoc resolves them — [`Fibers`], [`field@Sugars::sucrose`],\n[POD](crate::docs#pod). Only rustdoc resolves those, so everywhere\nelse, the app included, they render as dead links.\n\nRather than re-implement the resolver, scrape the hrefs `cargo doc`\nalready produced. `gen-doc-links.ts` reads the three authored pages\nand records each target under its full crate path, emitting the\ntracked `docs/generated/link-map.json`; a citation using a shorter\npath is matched by tail at lookup. `gen-data.ts` rewrites comments\nthrough it, and an unresolvable citation throws rather than shipping\na dead link.\n\nKeep the map tracked rather than rebuilt by `build:package`, so\n`cargo doc` stays out of the app build path; `gen_doc_links_check`\ncatches staleness in CI instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T02:18:11-04:00",
+          "tree_id": "9d36faa0459f030244557825376fe3cc1aa36f2f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2d25580ff42270deda5101e7d632618406c1c7bb"
+        },
+        "date": 1788763390541,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.21,
+            "range": "9.94",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.61,
+            "range": "0.40",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.59,
+            "range": "0.41",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 171,
+            "range": "13.23",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.43,
+            "range": "0.10",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 171,
+            "range": "13.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.48,
+            "range": "8.84",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.26,
+            "range": "0.23",
             "unit": "ms"
           }
         ]
