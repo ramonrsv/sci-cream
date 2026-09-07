@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788764159809,
+  "lastUpdate": 1788764179701,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -598662,6 +598662,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.49,
             "range": "0.55",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6a4555102ff99aba21dce7f96c61b2d32ed1b8ba",
+          "message": "Fix and extend VS Code debug configurations\n\nThe `Vitest` entry ran `npm run test`, which at the workspace root\nis the recursive script — cargo tests, Playwright e2e and visual\nincluded — and npm swallowed `--inspect-brk` for want of a `--`, so\nnothing was debuggable anyway. Replace it with per-package entries\nlaunching `vitest.mjs` directly, with `--no-file-parallelism` (the\ncurrent name for the stale `--threads false`) so breakpoints bind.\n\nAdd two `node-terminal` entries that act on the open file, deriving\nits package as `packages/<name>` from the relative path: one runs\nthat file's tests, the other runs it under tsx.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T02:40:48-04:00",
+          "tree_id": "b7ef67f106542f690d0b76a46fa82c4e33eed64b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6a4555102ff99aba21dce7f96c61b2d32ed1b8ba"
+        },
+        "date": 1788764119930,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 69.03,
+            "range": "11.83",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.93,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.88,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 183,
+            "range": "21.61",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 183,
+            "range": "21.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 62.79,
+            "range": "8.20",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.56,
+            "range": "0.51",
             "unit": "ms"
           }
         ]
