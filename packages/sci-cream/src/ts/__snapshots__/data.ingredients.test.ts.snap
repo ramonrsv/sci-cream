@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 310  (non-alias: 262, independent: 248)
+"total: 311  (non-alias: 263, independent: 249)
 
             0% Milk
             1% Milk
@@ -220,6 +220,7 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Peppermint Extract
             Pistachio
             Polysorbate 80
+            Purest Natural Cocoa Powder
             Roasted Pistachio
 [alias]     Rose Essential Oil
             Salt

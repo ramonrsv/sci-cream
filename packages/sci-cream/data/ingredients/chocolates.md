@@ -254,3 +254,13 @@ Powder_](https://supplies.gusta.ca/products/valrhona-dutch-processed-cocoa-powde
 The manufacturer cites the composition as _"Cocoa 93% (min), Fat 21%"_. The potential remaining 7%
 is presumably water and ash introduced by the Dutch processing. [`ChocolateSpec`] currently does not
 support specifying a water content, so the whole 7% is modeled as `other_solids`.
+
+## Purest Natural Cocoa Powder
+
+```json
+{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 12.5 } }
+```
+
+From the nutrition facts table in a [vendor
+listing](https://www.amazon.ca/PUREST-NATURAL-Cocoa-Powder-300g/dp/B07F42XJLJ): _"Per 2 tbs (12g),
+Fat 1.5g"_, which is 12.5% fat, modeled as `cocoa_butter`.
