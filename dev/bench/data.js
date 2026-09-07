@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788765748164,
+  "lastUpdate": 1788765755329,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -615363,6 +615363,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/9474fddfc2b62f976260a4f4d646f0c60c2c31a4"
         },
         "date": 1788765566764,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1096.52,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 333.08,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1721.91,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 531.83,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 579.2,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1925.7,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9baaa3f3e2435796203fef4a22d3781dd542ab7e",
+          "message": "Drop redundant Cargo homepage and readme\n\n`homepage` duplicated `repository` character-for-character, so crates.io\nrendered two identical sidebar links. `readme` restated the value Cargo\nalready infers from the README.md in the package root.\n\nNeither is required by `cargo_common_metadata`, which checks\ndescription, license, repository, readme, keywords, and categories — and\nstill sees the inferred README.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T03:19:11-04:00",
+          "tree_id": "4b95f0507f2ba1ed27936520bfe114ac8dccec94",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9baaa3f3e2435796203fef4a22d3781dd542ab7e"
+        },
+        "date": 1788765695177,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
