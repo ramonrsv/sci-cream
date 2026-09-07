@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788825394166,
+  "lastUpdate": 1788825399942,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -538697,6 +538697,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.99%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9fac315fb77a3731a7a26c6a5997498f5bebdb06",
+          "message": "Add Valrhona cocoa powder and Guanaja chocolate\n\nTwo named-source reference entries, alongside the existing Lindt,\nGhirardelli and USDA data.\n\nThe cocoa powder's technical information gives \"Cocoa 93% (min), Fat\n21%\". The unaccounted 7% is presumably water and the ash the Dutch\nprocessing introduces, so it is modeled as `other_solids`. Folding it\ninto `cacao_solids` instead would inflate the cocoa protein, fibre and\nash by ~10%, whereas `other_solids` contributes no energy.\n\nGuanaja is modeled as a plain 70% dark chocolate: neither Valrhona nor\nthe vendor publishes fat or sugar figures for it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T19:29:04-04:00",
+          "tree_id": "8fe2e41b93bedec8756f4c1596ea69ff499e4b14",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9fac315fb77a3731a7a26c6a5997498f5bebdb06"
+        },
+        "date": 1788825341465,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47706,
+            "range": "±1.21%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 442470,
+            "range": "±3.17%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32887,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 346902,
+            "range": "±1.31%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
