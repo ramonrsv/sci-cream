@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788765759843,
+  "lastUpdate": 1788765803140,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -600061,6 +600061,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.46,
             "range": "0.49",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9baaa3f3e2435796203fef4a22d3781dd542ab7e",
+          "message": "Drop redundant Cargo homepage and readme\n\n`homepage` duplicated `repository` character-for-character, so crates.io\nrendered two identical sidebar links. `readme` restated the value Cargo\nalready infers from the README.md in the package root.\n\nNeither is required by `cargo_common_metadata`, which checks\ndescription, license, repository, readme, keywords, and categories — and\nstill sees the inferred README.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T03:19:11-04:00",
+          "tree_id": "4b95f0507f2ba1ed27936520bfe114ac8dccec94",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9baaa3f3e2435796203fef4a22d3781dd542ab7e"
+        },
+        "date": 1788765756827,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 50.33,
+            "range": "7.15",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.66,
+            "range": "0.47",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.61,
+            "range": "0.46",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 137.5,
+            "range": "8.23",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.38,
+            "range": "0.08",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 137.5,
+            "range": "8.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 47.39,
+            "range": "6.79",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.9,
+            "range": "0.25",
             "unit": "ms"
           }
         ]
