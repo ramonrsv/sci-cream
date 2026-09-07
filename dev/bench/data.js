@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788766260214,
+  "lastUpdate": 1788766401530,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -499354,6 +499354,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 687.5,
             "range": "12.99",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9474fddfc2b62f976260a4f4d646f0c60c2c31a4",
+          "message": "Give every codegen step a --check counterpart\n\n`split-ref-footnotes.sh` was the one generator with no way to ask\nwhether its output was current, so nothing caught a bibliography\nedit that was never followed by a rerun — the stale index files\njust shipped into rustdoc. Add `--check`, reporting missing and\nstale files as one class and index files whose definition has since\nbeen deleted as another, since the writing path never removes and a\nrerun would not clear them.\n\nRename its script to `gen:footnotes` so the three generators share\na prefix, and add `gen:all` / `gen:all:check` over them. Their order\nis a dependency, not a preference: `cargo doc` reads the footnote\nindex, and `gen-data.ts` reads the map `gen-doc-links.ts` writes.\n\nFold the two CI jobs into `gen_check`, running the three in that\nsame order, and align the local suite with it. The suite ran the\ngenerating form for footnotes, for want of a check.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T03:14:44-04:00",
+          "tree_id": "10e3a100d7e71041a0c04adfbeba080c95f49381",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9474fddfc2b62f976260a4f4d646f0c60c2c31a4"
+        },
+        "date": 1788766345089,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 50.38,
+            "range": "4.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 58.38,
+            "range": "6.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 61.75,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2408.88,
+            "range": "53.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 317.13,
+            "range": "4.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 337.38,
+            "range": "4.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 348.88,
+            "range": "4.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16679.25,
+            "range": "62.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 935.75,
+            "range": "14.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.38,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.38,
+            "range": "2.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.5,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43.5,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 128.88,
+            "range": "3.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 85,
+            "range": "3.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.96,
+            "range": "0.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42,
+            "range": "0.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 631.5,
+            "range": "4.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 690.88,
+            "range": "8.94",
             "unit": "ms"
           }
         ]
