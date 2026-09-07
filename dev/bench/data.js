@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788763859584,
+  "lastUpdate": 1788763865198,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -597637,6 +597637,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.26,
             "range": "0.23",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f76430f6c37c9a1bbf5273188651844e4db61207",
+          "message": "Add fresh basil flavouring\n\nUSDA FoodData Central SR Legacy (FDC 172232), with a Fresh Basil\nalias, following the fresh peppermint and spearmint entries.\n\nThe 0.3g of total sugars is taken from the published per-sugar\nbreakdown: mostly galactose, with traces of glucose and fructose\nand no sucrose at all.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T02:39:27-04:00",
+          "tree_id": "463db6abe6fbcfbdd3010785a40276f62c910668",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f76430f6c37c9a1bbf5273188651844e4db61207"
+        },
+        "date": 1788763803449,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 66.73,
+            "range": "10.79",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.22,
+            "range": "1.06",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.19,
+            "range": "1.08",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 179.5,
+            "range": "15.55",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 179.5,
+            "range": "15.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.41,
+            "range": "7.35",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.49,
+            "range": "0.55",
             "unit": "ms"
           }
         ]
