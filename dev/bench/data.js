@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788763350553,
+  "lastUpdate": 1788763368182,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -534462,6 +534462,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.02%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2d25580ff42270deda5101e7d632618406c1c7bb",
+          "message": "Resolve rustdoc intra-doc links for the app\n\nThe guide and the ingredient/recipe data cite crate items the way\nrustdoc resolves them — [`Fibers`], [`field@Sugars::sucrose`],\n[POD](crate::docs#pod). Only rustdoc resolves those, so everywhere\nelse, the app included, they render as dead links.\n\nRather than re-implement the resolver, scrape the hrefs `cargo doc`\nalready produced. `gen-doc-links.ts` reads the three authored pages\nand records each target under its full crate path, emitting the\ntracked `docs/generated/link-map.json`; a citation using a shorter\npath is matched by tail at lookup. `gen-data.ts` rewrites comments\nthrough it, and an unresolvable citation throws rather than shipping\na dead link.\n\nKeep the map tracked rather than rebuilt by `build:package`, so\n`cargo doc` stays out of the app build path; `gen_doc_links_check`\ncatches staleness in CI instead.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T02:18:11-04:00",
+          "tree_id": "9d36faa0459f030244557825376fe3cc1aa36f2f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2d25580ff42270deda5101e7d632618406c1c7bb"
+        },
+        "date": 1788763312120,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47683,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 456440,
+            "range": "±0.47%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31486,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 345869,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
