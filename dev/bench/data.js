@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788765644948,
+  "lastUpdate": 1788765649207,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -606852,6 +606852,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/6a4555102ff99aba21dce7f96c61b2d32ed1b8ba"
         },
         "date": 1788764106255,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9474fddfc2b62f976260a4f4d646f0c60c2c31a4",
+          "message": "Give every codegen step a --check counterpart\n\n`split-ref-footnotes.sh` was the one generator with no way to ask\nwhether its output was current, so nothing caught a bibliography\nedit that was never followed by a rerun — the stale index files\njust shipped into rustdoc. Add `--check`, reporting missing and\nstale files as one class and index files whose definition has since\nbeen deleted as another, since the writing path never removes and a\nrerun would not clear them.\n\nRename its script to `gen:footnotes` so the three generators share\na prefix, and add `gen:all` / `gen:all:check` over them. Their order\nis a dependency, not a preference: `cargo doc` reads the footnote\nindex, and `gen-data.ts` reads the map `gen-doc-links.ts` writes.\n\nFold the two CI jobs into `gen_check`, running the three in that\nsame order, and align the local suite with it. The suite ran the\ngenerating form for footnotes, for want of a check.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T03:14:44-04:00",
+          "tree_id": "10e3a100d7e71041a0c04adfbeba080c95f49381",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9474fddfc2b62f976260a4f4d646f0c60c2c31a4"
+        },
+        "date": 1788765648132,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
