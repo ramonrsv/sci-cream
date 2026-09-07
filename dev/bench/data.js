@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788765970840,
+  "lastUpdate": 1788766029073,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -84790,6 +84790,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9474fddfc2b62f976260a4f4d646f0c60c2c31a4",
+          "message": "Give every codegen step a --check counterpart\n\n`split-ref-footnotes.sh` was the one generator with no way to ask\nwhether its output was current, so nothing caught a bibliography\nedit that was never followed by a rerun — the stale index files\njust shipped into rustdoc. Add `--check`, reporting missing and\nstale files as one class and index files whose definition has since\nbeen deleted as another, since the writing path never removes and a\nrerun would not clear them.\n\nRename its script to `gen:footnotes` so the three generators share\na prefix, and add `gen:all` / `gen:all:check` over them. Their order\nis a dependency, not a preference: `cargo doc` reads the footnote\nindex, and `gen-data.ts` reads the map `gen-doc-links.ts` writes.\n\nFold the two CI jobs into `gen_check`, running the three in that\nsame order, and align the local suite with it. The suite ran the\ngenerating form for footnotes, for want of a check.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T03:14:44-04:00",
+          "tree_id": "10e3a100d7e71041a0c04adfbeba080c95f49381",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9474fddfc2b62f976260a4f4d646f0c60c2c31a4"
+        },
+        "date": 1788765970143,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4508,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 177763,
+            "range": "± 2590",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2821,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 176337,
+            "range": "± 2557",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 5298,
+            "range": "± 131",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 5326,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 5302,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 5387,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 5340,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5541,
+            "range": "± 330",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 118801,
+            "range": "± 1595",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 123818,
+            "range": "± 1699",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 199609310,
+            "range": "± 2049263",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 654478,
+            "range": "± 4537",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 7443,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 67,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 7903,
+            "range": "± 426",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 108826,
+            "range": "± 1076",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 106484,
+            "range": "± 4916",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 173998,
+            "range": "± 2023",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 175607,
+            "range": "± 3145",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 389259,
+            "range": "± 1810",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 15132,
+            "range": "± 808",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 5,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 717,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
             "range": "± 0",
             "unit": "ns/iter"
           }
