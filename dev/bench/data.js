@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788886429085,
+  "lastUpdate": 1788886485325,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -604955,6 +604955,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "TTFB",
             "value": 3.5,
+            "range": "0.42",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c5d59e2cec6b03de56412660e73d83b6190d9349",
+          "message": "Add Corvitto reference recipes\n\nAdd White Cream and Egg Yolk Cream from Angelo Corvitto's I Segreti\ndel Gelato, each in the -11°C and -18°C serving-temperature variants\nthe book gives (pp. 150-151, 180-181).\n\nAdd 3.6% Milk and its Full Fat Milk alias, matching the butterfat\ncontent the book states for \"latte intero\" (p. 149).\n\nRetitle [^3] to the Italian/English pairing carried on the cover, and\nsplit the lead paragraph of the other recipe files so each opens with\nits source attribution.\n\nCorvitto's serving temperatures do not map onto the crate's: he\nignores the FPD contribution of milk salts and appears to take the\nserving point at ~70% frozen water against the crate's 75%, so his\n-11°C and -18°C land near -14°C and -20°C here. Noted inline.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-08T12:12:21-04:00",
+          "tree_id": "fa6e7238748c49c2eeefc0c13303567dc8cf487c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c5d59e2cec6b03de56412660e73d83b6190d9349"
+        },
+        "date": 1788886427527,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 65.45,
+            "range": "10.05",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.74,
+            "range": "1.15",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.69,
+            "range": "1.16",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 180.5,
+            "range": "13.48",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 180.5,
+            "range": "13.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.59,
+            "range": "9.89",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.35,
             "range": "0.42",
             "unit": "ms"
           }
