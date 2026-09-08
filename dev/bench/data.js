@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788904336270,
+  "lastUpdate": 1788904412150,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -542137,6 +542137,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.24%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "144820afd28fecd5400ed7bdda706719f5a4320c",
+          "message": "Clear localStorage between recipe editor tests\n\nRecipeEditor persists every recipe slot to localStorage on a 2s\ninterval while mounted, and hydrates from that store on mount,\nresolving each row's name through WasmBridge.get_ingredient_by_name.\n\njsdom shares localStorage across a whole test file, so a test that\nstays mounted past 2s leaves its rows behind for the next one to\nhydrate. That made the get_ingredient_by_name spy assertions in\nrecipe.test.tsx fail whenever load pushed an earlier test over the\ninterval — the calls came from the mount hydration, before the test\ntouched the input.\n\nClear localStorage in beforeEach for the three files that render a\nRecipeEditor, as the rest of the app's tests already do. The\nbalancing-targets hook in the calculator page test only cleared, so\nthe top-level hook now covers it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-08T17:44:35-04:00",
+          "tree_id": "7b27ed2dd8ccf1c4cd135926cffb72efc3ad55c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/144820afd28fecd5400ed7bdda706719f5a4320c"
+        },
+        "date": 1788904352690,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 53266,
+            "range": "±1.75%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 426815,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 37836,
+            "range": "±1.16%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 322951,
+            "range": "±0.97%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
