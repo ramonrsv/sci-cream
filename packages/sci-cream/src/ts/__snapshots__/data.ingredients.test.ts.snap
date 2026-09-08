@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 311  (non-alias: 263, independent: 249)
+"total: 313  (non-alias: 264, independent: 250)
 
             0% Milk
             1% Milk
@@ -12,6 +12,7 @@ exports[`Embedded spec entries 1`] = `
             2% Milk
             3.25% Milk
             3.5% Milk
+            3.6% Milk
             35% Cream
             36% Cream
             4% Milk
@@ -87,6 +88,7 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Fresh Peppermint
 [alias]     Fresh Spearmint
             Fructose
+[alias]     Full Fat Milk
 [alias]     GMS
             Gelatin
             Ghirardelli 100% Unsweetened Cocoa Powder

@@ -6,7 +6,7 @@
 
 [^2]: Goff & Hartel. (2013). _Ice Cream_ (7th ed.). Springer.
 
-[^3]: Corvitto, A. (2005). _Secrets of Ice-Cream. Ice-Cream Without Secrets_. Vilbo Ediciones Y Publicidad.
+[^3]: Corvitto, A. (2005). _I Segreti del Gelato (Secrets of Ice-Cream)_. Vilbo Ediciones Y Publicidad.
 
 [^4]: Clarke, C. (2004). _The Science of Ice Cream_. RSC Paperbacks.
 

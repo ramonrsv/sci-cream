@@ -1,9 +1,11 @@
 # Dana Cree Recipes
 
 These are reference recipes from _Hello, My Name Is Ice Cream: The Art and Science of the Scoop_, by
-Dana Cree. There are a few things to note regarding the ingredients used in the book and their
-mappings to Sci-Cream ingredients used here. The author makes a few clarifications (Cree, 2017, "A
-Few Things to Know When Making These Recipes", p. 107-108)[^6]:
+Dana Cree (Cree, 2017)[^6].
+
+There are a few things to note regarding the ingredients used in the book and their mappings to
+Sci-Cream ingredients used here. The author makes a few clarifications (Cree, 2017, "A Few Things to
+Know When Making These Recipes", p. 107-108)[^6]:
 
 - **Milk:** _"The recipes \[use\] homogenized whole milk (the standard 4% butterfat)."_
 - **Cream:** _"All cream in this book is heavy cream, with 40% butterfat content."_

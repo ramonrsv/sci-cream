@@ -30,6 +30,12 @@
 { "category": "Dairy", "DairySimpleSpec": { "fat": 3.5 } }
 ```
 
+## 3.6% Milk
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 3.6 } }
+```
+
 ## 4% Milk
 
 ```json
@@ -107,6 +113,15 @@
 ```json
 { "for": "3.25% Milk" }
 ```
+
+## Full Fat Milk
+
+```json
+{ "for": "3.6% Milk" }
+```
+
+This entry exists mostly for alignment with the nomenclature in _I Segreti del Gelato (Secrets of
+Ice-Cream)_ (Corvitto, 2005, p. 149)[^3].
 
 ## Half and Half
 

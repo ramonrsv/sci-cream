@@ -2,8 +2,12 @@
 source: packages/sci-cream/src/data/recipes.rs
 expression: embedded_recipe_entries_report()
 ---
-total: 19
+total: 23
 
+Corvitto: Egg Yolk Cream, -11°C
+Corvitto: Egg Yolk Cream, -18°C
+Corvitto: White Cream, -11°C
+Corvitto: White Cream, -18°C
 Dana Cree: Blank Slate Custard Ice Cream
 Dana Cree: Vanilla Ice Cream
 Ice Cream Science: Chocolate Ice Cream

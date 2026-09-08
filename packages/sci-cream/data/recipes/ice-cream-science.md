@@ -1,9 +1,10 @@
 # Ice Cream Science Recipes
 
-These are recipes from [Ice Cream Science](https://www.icecreamscience.com/). Any ingredient
-translation clarifications are provided per recipe. The author's composition calculations roughly
-match those produced by the `sci-cream` library; any significant differences are discussed inline
-for any affected recipes.
+These are recipes from [Ice Cream Science](https://www.icecreamscience.com/).
+
+Any ingredient translation clarifications are provided per recipe. The author's composition
+calculations roughly match those produced by the `sci-cream` library; any significant differences
+are discussed inline for any affected recipes.
 
 ## Chocolate Ice Cream
 

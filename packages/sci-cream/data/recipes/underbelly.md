@@ -1,6 +1,7 @@
 # Underbelly Recipes
 
 These are recipes from Underbelly's [ice cream blog](https://under-belly.org/category/ice-cream/).
+
 Any ingredient translation clarifications are provided per recipe. The author's composition
 calculations roughly match those produced by the `sci-cream` library; any significant differences
 are discussed inline for any affected recipes.
