@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788904416573,
+  "lastUpdate": 1788904555445,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -622000,6 +622000,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/5e1b33beab86f99b03b8f48d85e0ce7cb5561aca"
         },
         "date": 1788904248878,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1097.84,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 333.36,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1728.37,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 533.41,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 580.93,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1932.65,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "144820afd28fecd5400ed7bdda706719f5a4320c",
+          "message": "Clear localStorage between recipe editor tests\n\nRecipeEditor persists every recipe slot to localStorage on a 2s\ninterval while mounted, and hydrates from that store on mount,\nresolving each row's name through WasmBridge.get_ingredient_by_name.\n\njsdom shares localStorage across a whole test file, so a test that\nstays mounted past 2s leaves its rows behind for the next one to\nhydrate. That made the get_ingredient_by_name spy assertions in\nrecipe.test.tsx fail whenever load pushed an earlier test over the\ninterval — the calls came from the mount hydration, before the test\ntouched the input.\n\nClear localStorage in beforeEach for the three files that render a\nRecipeEditor, as the rest of the app's tests already do. The\nbalancing-targets hook in the calculator page test only cleared, so\nthe top-level hook now covers it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-08T17:44:35-04:00",
+          "tree_id": "7b27ed2dd8ccf1c4cd135926cffb72efc3ad55c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/144820afd28fecd5400ed7bdda706719f5a4320c"
+        },
+        "date": 1788904495806,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
