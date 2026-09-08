@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788880692935,
+  "lastUpdate": 1788880763143,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -603931,6 +603931,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.7,
             "range": "0.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f925b20d8026362d5e9c3bd17c2f498f6d0ef3ea",
+          "message": "Break the codegen dependency cycle\n\ngen:data resolves intra-doc citations against the link map, and\ngen:doc-links builds the docs to scrape that map -- which cannot\ncompile until generated/min/ holds a file for every source that\ndata.rs embeds. Each needed the other's output, so adding a data\nfile deadlocked gen:all at cargo doc.\n\nAdd gen-data.ts --min, writing only the embedded copy and reading\nno map, and order gen:all as footnotes, data:min, doc-links, data.\nThe map now loads lazily behind the full gate, so min cannot reach\nit even by accident.\n\nOrder the :check variants data before doc-links to match, in both\nCI's gen_check job and the local suite: cheapest first, and only\ngen:doc-links:check compiles.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-08T00:26:15-04:00",
+          "tree_id": "f58e5d3c17b7801a858f80de582ab42275f8b31c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f925b20d8026362d5e9c3bd17c2f498f6d0ef3ea"
+        },
+        "date": 1788880705851,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 65.46,
+            "range": "9.25",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.75,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.7,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 181.5,
+            "range": "12.64",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 181.5,
+            "range": "12.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.25,
+            "range": "8.73",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.5,
+            "range": "0.42",
             "unit": "ms"
           }
         ]
