@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788887139960,
+  "lastUpdate": 1788904300011,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -582130,6 +582130,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/docs/[...slug] first-load JS (gzip)",
             "value": 809.38,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1048.47,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5e1b33beab86f99b03b8f48d85e0ce7cb5561aca",
+          "message": "Add Serious Eats to docs resources\n\nPromote Serious Eats from the Others list to a full Sources entry,\nwith its own sections on the science and recipes pages, drawn from\ntheir ice cream and sorbet recipe hubs.\n\nScience gets 16 entries, ordered mechanism-first: ingredient and\nprocess articles ahead of the auxiliary technique pieces. Recipes\ngets 34 ice creams and 25 sorbets and sherbets, plus six under\n\"Beyond the Mix\" for the cones, sundaes and pastries that have no\nmix to translate.\n\nRoundups, taste tests and the ice cream maker review are named in\nthe source description instead, since they characterise the\npublication rather than belonging to either list. Where a sorbet\nappears as both a \"Scooped\" post and a recipe page, only the\nrecipe page is listed; it links back to the post.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-08T17:11:05-04:00",
+          "tree_id": "c178a9168ff825d1c55d7756b2e960d05b1d99cf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5e1b33beab86f99b03b8f48d85e0ce7cb5561aca"
+        },
+        "date": 1788904252672,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 719.84,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 888.29,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 656.9,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 825.35,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 667.23,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 835.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 639.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 807.9,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 640.94,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 809.39,
             "unit": "KB"
           },
           {
