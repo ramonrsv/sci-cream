@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788881421719,
+  "lastUpdate": 1788882167489,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -620483,6 +620483,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1928.31,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f925b20d8026362d5e9c3bd17c2f498f6d0ef3ea",
+          "message": "Break the codegen dependency cycle\n\ngen:data resolves intra-doc citations against the link map, and\ngen:doc-links builds the docs to scrape that map -- which cannot\ncompile until generated/min/ holds a file for every source that\ndata.rs embeds. Each needed the other's output, so adding a data\nfile deadlocked gen:all at cargo doc.\n\nAdd gen-data.ts --min, writing only the embedded copy and reading\nno map, and order gen:all as footnotes, data:min, doc-links, data.\nThe map now loads lazily behind the full gate, so min cannot reach\nit even by accident.\n\nOrder the :check variants data before doc-links to match, in both\nCI's gen_check job and the local suite: cheapest first, and only\ngen:doc-links:check compiles.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-08T00:26:15-04:00",
+          "tree_id": "f58e5d3c17b7801a858f80de582ab42275f8b31c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f925b20d8026362d5e9c3bd17c2f498f6d0ef3ea"
+        },
+        "date": 1788882109725,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1096.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 333.16,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1724.39,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 532.56,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 580.01,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1928.4,
             "unit": "KB"
           }
         ]
