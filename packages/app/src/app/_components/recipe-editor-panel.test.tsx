@@ -33,6 +33,7 @@ describe("RecipeEditorPanel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
+    localStorage.clear();
 
     recipeContext = makeEmptyRecipeContext();
     wasmResources = makeWasmResources(

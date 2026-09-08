@@ -70,6 +70,7 @@ describe("Calculator Page", () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
+    localStorage.clear();
 
     mockUseSearchParams.mockReturnValue(new URLSearchParams());
 
@@ -154,10 +155,6 @@ describe("Calculator Page", () => {
     const TOTAL_SOLIDS = compToPropKey(CompKey.TotalSolids);
     const targetInput = () =>
       screen.getByTestId(`watcher-card-${String(TOTAL_SOLIDS)}-target`) as HTMLInputElement;
-
-    beforeEach(() => {
-      localStorage.clear();
-    });
 
     it("hydrates stored targets into the watchers panel", async () => {
       localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [TOTAL_SOLIDS]: 30 }));

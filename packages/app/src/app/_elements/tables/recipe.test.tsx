@@ -270,6 +270,7 @@ describe("RecipeEditor", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
+    localStorage.clear();
     mockSize = null;
 
     recipeContext = makeEmptyRecipeContext();
