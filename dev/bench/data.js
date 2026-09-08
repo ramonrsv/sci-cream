@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788905088503,
+  "lastUpdate": 1788905342507,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -504268,6 +504268,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 665.63,
             "range": "12.13",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "144820afd28fecd5400ed7bdda706719f5a4320c",
+          "message": "Clear localStorage between recipe editor tests\n\nRecipeEditor persists every recipe slot to localStorage on a 2s\ninterval while mounted, and hydrates from that store on mount,\nresolving each row's name through WasmBridge.get_ingredient_by_name.\n\njsdom shares localStorage across a whole test file, so a test that\nstays mounted past 2s leaves its rows behind for the next one to\nhydrate. That made the get_ingredient_by_name spy assertions in\nrecipe.test.tsx fail whenever load pushed an earlier test over the\ninterval — the calls came from the mount hydration, before the test\ntouched the input.\n\nClear localStorage in beforeEach for the three files that render a\nRecipeEditor, as the rest of the app's tests already do. The\nbalancing-targets hook in the calculator page test only cleared, so\nthe top-level hook now covers it.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-08T17:44:35-04:00",
+          "tree_id": "7b27ed2dd8ccf1c4cd135926cffb72efc3ad55c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/144820afd28fecd5400ed7bdda706719f5a4320c"
+        },
+        "date": 1788905284818,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 48.75,
+            "range": "2.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 51,
+            "range": "3.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 56.75,
+            "range": "3.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2426.5,
+            "range": "44.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 324.75,
+            "range": "2.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 333.25,
+            "range": "5.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 346.25,
+            "range": "3.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16677.63,
+            "range": "54.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 933.63,
+            "range": "8.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.25,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.88,
+            "range": "3.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.75,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.13,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 132.13,
+            "range": "2.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 87.38,
+            "range": "3.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.97,
+            "range": "0.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.22,
+            "range": "0.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 637.25,
+            "range": "7.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 684.38,
+            "range": "19.71",
             "unit": "ms"
           }
         ]
