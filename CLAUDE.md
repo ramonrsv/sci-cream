@@ -46,6 +46,8 @@ pnpm fmt:check           # cargo fmt --check then prettier --check
 pnpm coverage            # cargo-llvm-cov (Rust) + vitest --coverage (JS)
 pnpm bench               # cargo criterion + benches/ts/run-all.ts
 pnpm doc                 # cargo doc --all-features
+pnpm gen:all             # Every codegen step, in dependency order — the one to reach for
+pnpm gen:data            # Resolve data/**/*.md into generated/{full,min}/*.json
 pnpm gen:doc-links       # Rebuild docs, rescrape docs/generated/link-map.json (tracked)
 
 # Cargo directly (only when pnpm can't express it):
@@ -186,8 +188,11 @@ rustdoc already resolved out of the three authored pages (`docs`, `docs::ingredi
 `docs/generated/link-map.json`. `rustdoc::all` is `warn` and CI sets `RUSTDOCFLAGS: -D warnings`,
 so `broken_intra_doc_links` guarantees every mapped target exists.
 
-Rerun `gen:doc-links` after moving or renaming any item the docs cite — CI's `gen_doc_links_check`
-fails on a stale map, and an unresolvable citation fails `gen:data` rather than shipping dead links.
+The two generators need each other: `gen:data` resolves citations against the map, and
+`gen:doc-links` builds the docs to scrape it, which needs a `generated/min/` file for every source
+`data.rs` embeds. `gen:all` breaks the cycle — `gen:data:min` (map-free), the map, then `gen:data`
+in full — so reach for it rather than either half. CI's `gen_check` runs the `:check` variants in
+that order, cheapest first; a stale map or an unresolvable citation fails it.
 
 #### Default vs. reference dairy ingredients
 

@@ -22,9 +22,13 @@
  * Those are rewritten to absolute docs.rs URLs via `lib/doc-links.ts`, since the app renders
  * comments outside rustdoc, where an unresolved path is a dead link. Unresolvable is a hard error.
  *
- * Run: `node --import tsx scripts/gen-data.ts [--check]`. With no flag it writes both variants;
- * `--check` regenerates both (validating parsing and footnotes) without writing, and verifies the
- * tracked `min/` files are up to date.
+ * That map comes from `gen-doc-links.ts`, which builds the docs to scrape it — and the crate only
+ * compiles once `generated/min/` holds a file for every source `data.rs` embeds. `--min` writes
+ * that copy alone, reading no map, so `gen:all` can seed the crate, refresh the map, then resolve.
+ *
+ * Run: `node --import tsx scripts/gen-data.ts [--check | --min]`. With no flag it writes both
+ * variants; `--min` writes only `generated/min/`; `--check` regenerates both (validating parsing
+ * and footnotes) without writing, and verifies the tracked `min/` files are up to date.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -136,10 +140,18 @@ function resolveFootnotes(label: string, comment: string, defs: Map<string, stri
 /** Which variants to emit: `full` (with comments) for the app, `min` (comment-free) for binary. */
 type Kind = "full" | "min";
 
-/** Compute the requested generated files' paths and content without touching disk. */
-function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
+/** A comment as `full` stores it: intra-doc links rewritten, then footnotes appended. */
+function makeCommentResolver(): (label: string, comment: string) => string {
   const defs = loadFootnoteDefs();
   const links = loadLinkMap();
+  /** Links first, so the resolver sees prose and never the appended bibliography. */
+  return (label, comment) => resolveFootnotes(label, resolveDocLinks(label, comment, links), defs);
+}
+
+/** Compute the requested generated files' paths and content without touching disk. */
+function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
+  /** The `full` gate, hoisted so its inputs load once — and so `min` alone reads no link map. */
+  const resolveComment = kinds.has("full") ? makeCommentResolver() : undefined;
   const outputs = new Map<string, string>();
 
   for (const dir of SOURCE_DIRS) {
@@ -153,14 +165,12 @@ function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
       const raw = parseMarkdownEntries(fs.readFileSync(path.join(base, file), "utf8"));
       const stem = file.replace(/\.md$/, "");
 
-      if (kinds.has("full")) {
-        const full = raw.map((e) => {
-          if (e.comments === undefined) return e;
-          const label = entryLabel(e);
-          /** Links first, so the resolver sees prose and never the appended bibliography. */
-          const linked = resolveDocLinks(label, e.comments, links);
-          return { ...e, comments: resolveFootnotes(label, linked, defs) };
-        });
+      if (resolveComment !== undefined) {
+        const full = raw.map((e) =>
+          e.comments === undefined
+            ? e
+            : { ...e, comments: resolveComment(entryLabel(e), e.comments) },
+        );
         outputs.set(
           path.join(base, "generated", "full", `${stem}.json`),
           `${JSON.stringify(full, null, 2)}\n`,
@@ -180,6 +190,12 @@ function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
 }
 
 const args = process.argv.slice(2);
+const minOnly = args.includes("--min");
+
+if (minOnly && args.includes("--check")) {
+  console.error("`--min` and `--check` are exclusive; `--check` validates both variants.");
+  process.exit(1);
+}
 
 if (args.includes("--check")) {
   // Generate both variants so parsing and footnote resolution are fully validated (footnotes are
@@ -197,10 +213,10 @@ if (args.includes("--check")) {
   }
   console.log(`gen-data --check: sources valid; ${tracked.length} tracked min/ files up to date.`);
 } else {
-  const outputs = generate(new Set(["full", "min"]));
+  const outputs = generate(new Set(minOnly ? ["min"] : ["full", "min"]));
   for (const [file, content] of outputs) {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, content);
   }
-  console.log(`gen-data: wrote ${outputs.size} files.`);
+  console.log(`gen-data${minOnly ? " --min" : ""}: wrote ${outputs.size} files.`);
 }

@@ -106,11 +106,11 @@ jobs:
       - name: Run footnotes generation check
         run: pnpm run gen:footnotes:check
 
-      - name: Run doc link map check
-        run: pnpm run gen:doc-links:check
-
       - name: Run data generation check
         run: pnpm run gen:data:check
+
+      - name: Run doc link map check
+        run: pnpm run gen:doc-links:check
 
   eslint:
     runs-on: ubuntu-latest
