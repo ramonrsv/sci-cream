@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788826123986,
+  "lastUpdate": 1788826130194,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -539544,6 +539544,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.31%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8f682d25888b9f60abccbdf59af1381718c2ec45",
+          "message": "Add Purest natural cocoa powder\n\nA label reference entry, taken from the vendor listing's nutrition\nfacts table: 1.5g fat per 12g serving => 12.5% cocoa butter.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T19:54:52-04:00",
+          "tree_id": "26dafc87552ad13c554fef2880a5dedab3cb55be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8f682d25888b9f60abccbdf59af1381718c2ec45"
+        },
+        "date": 1788826072471,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 48787,
+            "range": "±1.24%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 442142,
+            "range": "±0.62%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32031,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 341384,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
