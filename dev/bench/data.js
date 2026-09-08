@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788826139903,
+  "lastUpdate": 1788826143638,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -610066,6 +610066,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/9fac315fb77a3731a7a26c6a5997498f5bebdb06"
         },
         "date": 1788825393340,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8f682d25888b9f60abccbdf59af1381718c2ec45",
+          "message": "Add Purest natural cocoa powder\n\nA label reference entry, taken from the vendor listing's nutrition\nfacts table: 1.5g fat per 12g serving => 12.5% cocoa butter.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T19:54:52-04:00",
+          "tree_id": "26dafc87552ad13c554fef2880a5dedab3cb55be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8f682d25888b9f60abccbdf59af1381718c2ec45"
+        },
+        "date": 1788826142816,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
