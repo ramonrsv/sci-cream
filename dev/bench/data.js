@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788826143638,
+  "lastUpdate": 1788826171595,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -602906,6 +602906,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.25,
             "range": "0.40",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8f682d25888b9f60abccbdf59af1381718c2ec45",
+          "message": "Add Purest natural cocoa powder\n\nA label reference entry, taken from the vendor listing's nutrition\nfacts table: 1.5g fat per 12g serving => 12.5% cocoa butter.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-07T19:54:52-04:00",
+          "tree_id": "26dafc87552ad13c554fef2880a5dedab3cb55be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8f682d25888b9f60abccbdf59af1381718c2ec45"
+        },
+        "date": 1788826130151,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 49.6,
+            "range": "8.00",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 12.75,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 12.7,
+            "range": "0.85",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 127,
+            "range": "7.14",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.34,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 127,
+            "range": "7.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 46.04,
+            "range": "6.99",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.7,
+            "range": "0.38",
             "unit": "ms"
           }
         ]
