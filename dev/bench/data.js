@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788882167489,
+  "lastUpdate": 1788886413061,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -581194,6 +581194,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1047.58,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c5d59e2cec6b03de56412660e73d83b6190d9349",
+          "message": "Add Corvitto reference recipes\n\nAdd White Cream and Egg Yolk Cream from Angelo Corvitto's I Segreti\ndel Gelato, each in the -11°C and -18°C serving-temperature variants\nthe book gives (pp. 150-151, 180-181).\n\nAdd 3.6% Milk and its Full Fat Milk alias, matching the butterfat\ncontent the book states for \"latte intero\" (p. 149).\n\nRetitle [^3] to the Italian/English pairing carried on the cover, and\nsplit the lead paragraph of the other recipe files so each opens with\nits source attribution.\n\nCorvitto's serving temperatures do not map onto the crate's: he\nignores the FPD contribution of milk salts and appears to take the\nserving point at ~70% frozen water against the crate's 75%, so his\n-11°C and -18°C land near -14°C and -20°C here. Noted inline.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-08T12:12:21-04:00",
+          "tree_id": "fa6e7238748c49c2eeefc0c13303567dc8cf487c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c5d59e2cec6b03de56412660e73d83b6190d9349"
+        },
+        "date": 1788886355766,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 719.84,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 888.29,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 656.89,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 825.34,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 667.23,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 835.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 639.44,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 807.89,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 640.93,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 809.38,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1048.47,
             "unit": "KB"
           },
           {
