@@ -7,9 +7,9 @@ description: "External writing on the science of ice cream, grouped by source."
 
 This page collects links to ice cream science articles from various online sources - the sources
 themselves are described under [Sources](/docs/other-resources#sources). These articles contain a
-wealth of knowledge about ice cream making and the science behind it. I have used them extensively
-throughout my ice cream making journey, and still visit them often. I highly encourage you to give
-them a read!
+wealth of knowledge about ice cream making and the science behind it, as well as some less academic
+techniques and tricks. I have used them extensively throughout my ice cream making journey, and
+still visit them often. I highly encourage you to give them a read!
 
 ## Underbelly
 
@@ -88,3 +88,24 @@ them a read!
 - [Freezing point depression](https://icecreamcalc.com/2020/07/24/freezing-point-depression/)
 - [Evaporation](https://icecreamcalc.com/2020/07/11/evaporation/)
 - [Stabilizers](https://icecreamcalc.com/stabilizers/)
+
+## Serious Eats
+
+[About this source](/docs/other-resources#serious-eats)
+
+- [Real Talk: Stop Bashing Ice Cream Stabilizers](https://www.seriouseats.com/real-talk-no-stabilizers-doesnt-mean-good-ice-cream)
+- [5 Ice Cream Myths That Need to Disappear](https://www.seriouseats.com/ice-cream-myths)
+- [Do I Need to Use Eggs in Ice Cream (and How Many?)](https://www.seriouseats.com/how-many-eggs-should-i-use-to-make-ice-cream)
+- [The Real Rules of Making Boozy Ice Cream](https://www.seriouseats.com/how-to-use-beer-wine-spirits-ice-cream)
+- [The Best Way to Store Ice Cream in Your Freezer](https://www.seriouseats.com/the-best-way-to-store-ice-cream-in-your-freezer)
+- [What's the Difference Between Gelato and Ice Cream?](https://www.seriouseats.com/whats-the-difference-between-gelato-and-ice-cream)
+- [Why It's Time to Start Making Your Own Sherbet](https://www.seriouseats.com/what-is-how-to-make-sherbet)
+- [A Guide to Cornstarch](https://www.seriouseats.com/what-is-cornstarch-5324865)
+- [For Smoother Ice Cream and Sorbet, Use Corn Syrup](https://www.seriouseats.com/the-deal-with-corn-syrup-makes-better-sorbet-why-use-invert-sugars)
+- [Secret Tools and Tricks of the Ice Cream Pros](https://www.seriouseats.com/secret-tools-and-tricks-of-the-ice-cream-pros-chefs-secrets)
+- [Use Freeze-Dried Fruit for the Most Vibrant, Flavorful No-Churn Ice Cream](https://www.seriouseats.com/how-to-make-no-churn-fruit-ice-cream)
+- [How to Make Creamy Chocolate Ice Cream Without an Ice Cream Machine](https://www.seriouseats.com/no-churn-chocolate-ice-cream)
+- [The Subtle Secrets to Making the Best Ice Cream Mix-Ins](https://www.seriouseats.com/how-to-make-chocolate-chips-swirls-ice-cream-mix-ins)
+- [How to Mix and Match Ice Creams and Swirls](https://www.seriouseats.com/how-to-make-swirled-ice-creams)
+- [How to Make a Fresh-Fruit Swirl for Ice Cream](https://www.seriouseats.com/how-to-make-a-fresh-fruit-swirl-for-ice-cream)
+- [Level Up Your Ice Cream by Leveling Your Cake](https://www.seriouseats.com/save-cake-scraps-for-ice-cream)

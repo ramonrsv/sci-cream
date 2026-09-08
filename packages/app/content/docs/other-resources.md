@@ -87,6 +87,30 @@ a chance to try it.
 [Science](/docs/other-resources/science#icecreamcalccom) ·
 [Recipes](/docs/other-resources/recipes#icecreamcalccom)
 
+### Serious Eats
+
+<img src="/images/docs/serious_eats_logo.png" alt="Serious Eats Logo" width="400"
+style="display: block; margin: 0 auto">
+
+[seriouseats.com](https://www.seriouseats.com) is a general food publication and does not specialize
+in ice cream making, but they have a good number of [ice
+cream](https://www.seriouseats.com/ice-cream-recipes-5117867) and
+[sorbet](https://www.seriouseats.com/sorbet-recipes-5117864) recipes, some ice cream science
+articles, and some articles about auxiliary techniques beyond mix formulations, like mix-ins and
+swirls. Their recipes are perhaps in some regards less technical than other entries in this list,
+for instance I've seen little use of stabilizers or sugars beyond sucrose and corn syrup. However,
+the recipes are very interesting and cover a wide range of techniques and flavors; I look forward to
+exploring them further.
+
+They also have a very comprehensive [review of ice cream
+makers](https://www.seriouseats.com/the-best-ice-cream-makers), as well as other fun related
+articles like [The Complete History of Ice Cream
+Cones](https://www.seriouseats.com/ice-cream-cone-history) and [We Try Every Flavor of Tillamook Ice
+Cream](https://www.seriouseats.com/we-eat-ever-flavor-of-tillamook-ice-cream-best-flavors-oregon).
+
+[Science](/docs/other-resources/science#serious-eats) ·
+[Recipes](/docs/other-resources/recipes#serious-eats)
+
 ## Calculators
 
 These are a handful of ice cream spreadsheets and calculators that I am aware of. Dream Scoops' [ice
@@ -141,7 +165,6 @@ I just may not have had a chance to explore them yet. If and when I do, I will a
 - [if the spoon fits](https://ifthespoonfits.com/)
 - [Scoop Club](https://www.scoopclub.com.au/)
 - [Saveur](https://www.saveur.com/category/custards-ice-creams-puddings/)
-- [Serious Eats](https://www.seriouseats.com/ice-cream-recipes-5117867)
 - [Scoop Science](https://scoop-science.com/)
 - [Omni Calculator](https://www.omnicalculator.com/food/ice-cream)
 - [jhermann/ice-creamery](https://github.com/jhermann/ice-creamery)
