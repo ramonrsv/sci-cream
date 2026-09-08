@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788886779647,
+  "lastUpdate": 1788887139960,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -502678,6 +502678,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 710.38,
             "range": "11.43",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c5d59e2cec6b03de56412660e73d83b6190d9349",
+          "message": "Add Corvitto reference recipes\n\nAdd White Cream and Egg Yolk Cream from Angelo Corvitto's I Segreti\ndel Gelato, each in the -11°C and -18°C serving-temperature variants\nthe book gives (pp. 150-151, 180-181).\n\nAdd 3.6% Milk and its Full Fat Milk alias, matching the butterfat\ncontent the book states for \"latte intero\" (p. 149).\n\nRetitle [^3] to the Italian/English pairing carried on the cover, and\nsplit the lead paragraph of the other recipe files so each opens with\nits source attribution.\n\nCorvitto's serving temperatures do not map onto the crate's: he\nignores the FPD contribution of milk salts and appears to take the\nserving point at ~70% frozen water against the crate's 75%, so his\n-11°C and -18°C land near -14°C and -20°C here. Noted inline.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-08T12:12:21-04:00",
+          "tree_id": "fa6e7238748c49c2eeefc0c13303567dc8cf487c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c5d59e2cec6b03de56412660e73d83b6190d9349"
+        },
+        "date": 1788887083245,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 44.38,
+            "range": "2.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 53,
+            "range": "4.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 55.88,
+            "range": "3.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2385,
+            "range": "50.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 362,
+            "range": "14.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 342.63,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 347,
+            "range": "3.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16555.63,
+            "range": "59.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 911.13,
+            "range": "25.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.25,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.38,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.25,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 127.25,
+            "range": "3.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 83.38,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.41,
+            "range": "0.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.44,
+            "range": "0.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 627.5,
+            "range": "8.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 681.75,
+            "range": "19.32",
             "unit": "ms"
           }
         ]
