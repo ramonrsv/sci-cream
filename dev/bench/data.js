@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788993203623,
+  "lastUpdate": 1788993263876,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -609056,6 +609056,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.26,
             "range": "0.22",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6eb27b34623a305893f390fe805f5b4192d9f33d",
+          "message": "Test other_solids with Valrhona cocoa powder\n\nValrhona declares \"Cocoa 93% (min), Fat 21%\", leaving 7% modeled\nas other_solids. It is the only embedded entry pairing a non-zero\nremainder with no sugars, and the only one of the two\nother_solids entries left untested.\n\nPins that the remainder stays out of cacao solids, carbohydrates\nand energy, lands in OtherSNFS, and reconciles at 72 + 7 = 79\nSNFS against a 100% total.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-09T18:26:34-04:00",
+          "tree_id": "4682d1774c77510c353669be9148dbbabf55b616",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6eb27b34623a305893f390fe805f5b4192d9f33d"
+        },
+        "date": 1788993204848,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.5,
+            "range": "9.28",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.73,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.69,
+            "range": "1.03",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 180,
+            "range": "12.96",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 180,
+            "range": "12.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.97,
+            "range": "9.04",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.39,
+            "range": "0.39",
             "unit": "ms"
           }
         ]
