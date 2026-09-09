@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788994399675,
+  "lastUpdate": 1788994454976,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -610081,6 +610081,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.39,
             "range": "0.39",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3b300662be3dc412ad4071bf9e4a8a44acd42618",
+          "message": "Split CocoaPowderSpec out of ChocolateSpec\n\nCocoa powder does not share bar chocolate's invariants: its cacao\nsolids are a residual rather than an input, and its cocoa butter\ndefault differs -- the reason the fat constant carried a\n_NON_POWDER suffix, now dropped.\n\ncacao_solids is optional on the new spec, defaulting to\n100 - other_solids; cocoa_butter is required, since every powder\nentry states it and no single default spans natural and high-fat\nproducts. Move the eleven embedded powder entries across.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-09T18:36:54-04:00",
+          "tree_id": "55e5ea672a8dc3a8e1b68279e0a7aadc76a75810",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3b300662be3dc412ad4071bf9e4a8a44acd42618"
+        },
+        "date": 1788994410247,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 53.16,
+            "range": "8.86",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.71,
+            "range": "0.79",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.69,
+            "range": "0.81",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 142,
+            "range": "14.00",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.46,
+            "range": "0.13",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 142,
+            "range": "14.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 49.53,
+            "range": "8.59",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.89,
+            "range": "0.44",
             "unit": "ms"
           }
         ]
