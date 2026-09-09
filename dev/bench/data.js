@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788994387753,
+  "lastUpdate": 1788994399675,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -626312,6 +626312,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1932.65,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3b300662be3dc412ad4071bf9e4a8a44acd42618",
+          "message": "Split CocoaPowderSpec out of ChocolateSpec\n\nCocoa powder does not share bar chocolate's invariants: its cacao\nsolids are a residual rather than an input, and its cocoa butter\ndefault differs -- the reason the fat constant carried a\n_NON_POWDER suffix, now dropped.\n\ncacao_solids is optional on the new spec, defaulting to\n100 - other_solids; cocoa_butter is required, since every powder\nentry states it and no single default spans natural and high-fat\nproducts. Move the eleven embedded powder entries across.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-09T18:36:54-04:00",
+          "tree_id": "55e5ea672a8dc3a8e1b68279e0a7aadc76a75810",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3b300662be3dc412ad4071bf9e4a8a44acd42618"
+        },
+        "date": 1788994327763,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1112.41,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 337.67,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1747.54,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 537.5,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 584.94,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1951.82,
             "unit": "KB"
           }
         ]
