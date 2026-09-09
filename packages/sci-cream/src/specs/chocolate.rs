@@ -508,6 +508,80 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
+    pub(crate) const ING_SPEC_CHOCOLATE_VALRHONA_COCOA_POWDER_STR: &str = r#"{
+      "name": "Valrhona Unsweetened Cocoa Powder",
+      "category": "Chocolate",
+      "ChocolateSpec": {
+        "cacao_solids": 93,
+        "cocoa_butter": 21,
+        "other_solids": 7
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_CHOCOLATE_VALRHONA_COCOA_POWDER: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Valrhona Unsweetened Cocoa Powder".to_string(),
+            category: Category::Chocolate,
+            spec: ChocolateSpec {
+                cacao_solids: 93.0,
+                cocoa_butter: Some(21.0),
+                other_solids: Some(7.0),
+                ..empty_chocolate_spec()
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_VALRHONA_COCOA_POWDER: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(340.2)
+            .solids(
+                Solids::new()
+                    .cocoa(
+                        SolidsBreakdown::new()
+                            .fats(Fats::new().total(21.0).saturated(12.6))
+                            .carbohydrates(
+                                Carbohydrates::new()
+                                    .fiber(Fibers::new().other(28.8))
+                                    .others_from_total(48.96)
+                                    .unwrap(),
+                            )
+                            .proteins(SimpleProteins::from_total(17.64))
+                            .others(5.4),
+                    )
+                    .other(SolidsBreakdown::new().others(7.0)),
+            )
+            .pod(0.0)
+            .pac(PAC::new().hardness_factor(148.5))
+    });
+
+    #[test]
+    fn to_composition_chocolate_spec_valrhona_cocoa_powder() {
+        let comp = ING_SPEC_CHOCOLATE_VALRHONA_COCOA_POWDER.spec.to_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 340.2);
+        assert_eq!(comp.get(CompKey::TotalFats), 21.0);
+        assert_eq!(comp.get(CompKey::TotalProteins), 17.64);
+        assert_eq!(comp.get(CompKey::TotalFiber), 28.8);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+
+        // The declared 93% cacao solids leaves 7% unaccounted for, modeled as `other_solids`
+        assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), 93.0);
+        assert_eq!(comp.get(CompKey::CocoaButter), 21.0);
+        assert_eq_flt_test!(comp.get(CompKey::CocoaSolids), 72.0);
+        assert_eq_flt_test!(comp.solids.cocoa.others, 5.4);
+        assert_eq!(comp.solids.other.others, 7.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 48.96);
+        assert_eq!(comp.get(CompKey::OtherSNFS), 7.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 79.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::POD), 0.0);
+        assert_eq!(comp.get(CompKey::TotalPAC), 0.0);
+        assert_eq!(comp.get(CompKey::HF), 148.5);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 12.6);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
+    }
+
     pub(crate) const ING_SPEC_CHOCOLATE_70_DARK_CHOCOLATE_STR: &str = r#"{
       "name": "70% Dark Chocolate",
       "category": "Chocolate",
@@ -744,6 +818,11 @@ pub(crate) mod tests {
                     ING_SPEC_CHOCOLATE_GHIRARDELLI_100_COCOA_POWDER_STR,
                     ING_SPEC_CHOCOLATE_GHIRARDELLI_100_COCOA_POWDER.clone(),
                     Some(*COMP_GHIRARDELLI_100_COCOA_POWDER),
+                ),
+                (
+                    ING_SPEC_CHOCOLATE_VALRHONA_COCOA_POWDER_STR,
+                    ING_SPEC_CHOCOLATE_VALRHONA_COCOA_POWDER.clone(),
+                    Some(*COMP_VALRHONA_COCOA_POWDER),
                 ),
                 (
                     ING_SPEC_CHOCOLATE_70_DARK_CHOCOLATE_STR,
