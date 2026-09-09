@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788967174418,
+  "lastUpdate": 1788967182501,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -623913,6 +623913,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/144820afd28fecd5400ed7bdda706719f5a4320c"
         },
         "date": 1788904495806,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1097.84,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 333.36,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1728.37,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 533.41,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 580.93,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1932.65,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "17086e01787cd172939d49857b0d4764c6568395",
+          "message": "Justify Cree's glucose to glucose syrup mapping\n\nCree uses \"Glucose syrup\" and \"Glucose\" for the same ingredient,\nwhich reads as dextrose monohydrate to a careful reader. Record\nthe evidence that it is a syrup: the chapter-boundary naming\nsplit, both names used within single recipes and within one\nworked example, syrup-only substitutes, and a volume-weight\nconversion implying a packing fraction of ~0.75 against ~0.55\nfor her granulated sugar.\n\nCite the density and units constants the last point rests on,\nimporting their modules into docs::recipes so rustdoc resolves\nthem, and rescrape the link map.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-09T10:48:05-04:00",
+          "tree_id": "95cdd593a80741e57b9f8d7b8044475d021fadc2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/17086e01787cd172939d49857b0d4764c6568395"
+        },
+        "date": 1788967122792,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
