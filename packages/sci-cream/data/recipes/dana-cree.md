@@ -19,11 +19,14 @@ With regards to the mappings to Sci-Cream ingredients, "whole milk" typically re
 and "heavy cream" to 36% cream, which makes the 4% and 40% values seem odd. However, Cree is
 explicit about the butterfat percentages, and uses those values in calculations (Cree, 2017,
 "Ratios, or How Math Will Help You Make Your Own Ice Cream Recipes", p. 540)[^6], so we use the
-ingredients with precise butterfat percentages, namely "4% Milk" and "40% Cream". "Glucose Syrup"
-is directly mapped to the Sci-Cream ingredient of the same name, which is an alias for "Glucose
-Syrup 42 DE", the most common glucose syrup - see the ingredient definition for more details. The
-"corn syrup" substitute is taken to mean retail corn syrup products, e.g. "Karo Light Corn Syrup" -
-see [retail corn syrups](crate::docs#retail-corn-syrups) for more details.
+ingredients with precise butterfat percentages, namely "4% Milk" and "40% Cream".
+
+"Glucose Syrup" is directly mapped to the Sci-Cream ingredient of the same name, which is an alias
+for "Glucose Syrup 42 DE", the most common glucose syrup - see the ingredient definition, [glucose
+syrups and powders](crate::docs#glucose-syrups-and-powders), and the note below on Cree's use of
+"Glucose" for more details. The "corn syrup" substitute is taken to mean retail corn syrup products,
+e.g. "Karo Light Corn Syrup" - see [retail corn syrups](crate::docs#retail-corn-syrups) for more
+details.
 
 With regards to stabilizers or "texture agents", each recipe offers several alternatives, but they
 seem to be the same for every recipe, indicating that there is no fine per-recipe tailoring of
@@ -41,7 +44,32 @@ documented per recipe as required. For example _"2 tablespoons vanilla extract"_
 p. 115)[^6] and the ~28g of a 35% ABV solution at ~14.8ml per tablespoon (NIST, 2025,
 "tablespoon")[^74], (Perry & Green, 2008, Table 2-112, p. 2-117)[^53].
 
-A few caveats regarding Dana's composition calculations (Cree, 2017, "Assumed Percentages of Each
+**Note**: Cree seems to use "Glucose syrup" and "Glucose" interchangeably. Best I could figure out,
+"Glucose" does _not_ mean "Dextrose", i.e. dextrose monohydrate, the dry crystalline form of the
+dextrose/glucose monosaccharide. "Glucose" seems to be just an abbreviation of "Glucose syrup", and
+is translated as such here. The rationale behind this conclusion:
+
+- "Glucose syrup" is used throughout the _"Custard Ice Creams"_ chapter (Cree, 2017, p.
+  113-167)[^6], while "Glucose" is used everywhere else, without a clear rationale for a difference
+  of ingredients. What's more, the similar _"Blank Slate Custard Ice Cream"_ and _"Blank Slate
+  Philadelphia-Style Ice Cream"_ recipes have the same _"50g | 1/4 cup"_ and _"150g | 3/4 cup"_ of
+  "Glucose (syrup)" and "Sugar", respectively (Cree, 2017, p. 113, 178)[^6].
+- Within individual custard recipes, "Glucose syrup" is used in the ingredients list while "glucose"
+  is used in the procedure instructions - _"Put the cream, milk, glucose, and sugar ..."_ (Cree,
+  2017, p. 112-113)[^6]. Similarly, a calculation example uses "glucose" in the ingredient list and
+  calculations whilst taking the reference values from a table row for _"Glucose syrup contains"_
+  (Cree, 2017, p. 540-541)[^6].
+- Every suggested substitute for "Glucose", without detrimental textural effects, is a syrup swapped
+  1:1 by weight - corn syrup, or homemade inverted sugar syrup; a 1:1 swap by weight with sucrose is
+  argued to have negative effects (Cree, 2017, p. 42-43, 108)[^6].
+- The volume-weight conversion for "Sugar" is quoted as _"1 cup = 210g"_, while for "Glucose" it is
+  _"1 cup = 275g"_ (Cree, 2017, p. 534)[^6]. Taking a cup to be 240ml (see
+  [`units::label::ML_IN_CUP`]), the density for "Sugar" is 0.88g/ml, similar to the crate's 0.84g/ml
+  (see [`density`] and [`units`]). Given the 1.54g/ml density of crystalline glucose
+  [`density::sugars::GLUCOSE`], the 1.15g/ml density of "Glucose" would require a packing fraction
+  of ~0.75, which is improbable in contrast to ~0.55 for "Sugar" ([`density::sugars::SUCROSE`]).
+
+A few caveats regarding Cree's composition calculations (Cree, 2017, "Assumed Percentages of Each
 Ingredient", p. 540)[^6]. 9% MSNF for 40% butterfat cream is inconsistent with Goff & Hartel and
 with nutrition labels, which show closer to 5.5% (Goff & Hartel, 2025, Table 3.2, p. 48)[^20].
 Glucose syrups are closer to 80% solids according to various sources, not 90%. The solids are also

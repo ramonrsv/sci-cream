@@ -118,5 +118,9 @@ pub mod recipes {
     #![doc = include_str!("../docs/references/literature.md")]
 
     #[cfg(doc)]
-    use crate::constants::fpd::{CORVITTO_PAC_TO_SERVING_TEMP_TABLE, SERVING_TEMP_X_AXIS};
+    use crate::constants::{
+        density,
+        fpd::{CORVITTO_PAC_TO_SERVING_TEMP_TABLE, SERVING_TEMP_X_AXIS},
+        units,
+    };
 }
