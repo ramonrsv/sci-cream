@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788993184858,
+  "lastUpdate": 1788993188972,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -616338,6 +616338,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/17086e01787cd172939d49857b0d4764c6568395"
         },
         "date": 1788967222419,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6eb27b34623a305893f390fe805f5b4192d9f33d",
+          "message": "Test other_solids with Valrhona cocoa powder\n\nValrhona declares \"Cocoa 93% (min), Fat 21%\", leaving 7% modeled\nas other_solids. It is the only embedded entry pairing a non-zero\nremainder with no sugars, and the only one of the two\nother_solids entries left untested.\n\nPins that the remainder stays out of cacao solids, carbohydrates\nand energy, lands in OtherSNFS, and reconciles at 72 + 7 = 79\nSNFS against a 100% total.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-09T18:26:34-04:00",
+          "tree_id": "4682d1774c77510c353669be9148dbbabf55b616",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6eb27b34623a305893f390fe805f5b4192d9f33d"
+        },
+        "date": 1788993187979,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
