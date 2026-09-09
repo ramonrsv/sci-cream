@@ -20,8 +20,8 @@ use crate::{
     ingredient::{Category, Ingredient, IntoIngredient, ResolveIntoIngredient},
     resolution::IngredientGetter,
     specs::{
-        AlcoholSpec, ChocolateSpec, CompositeSpec, DairyLabelSpec, DairySimpleSpec, EggSpec, EmulsifierSpec, FruitSpec,
-        FullSpec, MicroSpec, NutSpec, StabilizerSpec, SweetenerSpec,
+        AlcoholSpec, ChocolateSpec, CocoaPowderSpec, CompositeSpec, DairyLabelSpec, DairySimpleSpec, EggSpec,
+        EmulsifierSpec, FruitSpec, FullSpec, MicroSpec, NutSpec, StabilizerSpec, SweetenerSpec,
     },
 };
 
@@ -35,6 +35,7 @@ pub enum TaggedSpec {
     SweetenerSpec(SweetenerSpec),
     FruitSpec(FruitSpec),
     ChocolateSpec(ChocolateSpec),
+    CocoaPowderSpec(CocoaPowderSpec),
     NutSpec(NutSpec),
     EggSpec(EggSpec),
     AlcoholSpec(AlcoholSpec),
@@ -53,6 +54,7 @@ impl ToComposition for TaggedSpec {
             Self::SweetenerSpec(spec) => spec.to_composition(),
             Self::FruitSpec(spec) => spec.to_composition(),
             Self::ChocolateSpec(spec) => spec.to_composition(),
+            Self::CocoaPowderSpec(spec) => spec.to_composition(),
             Self::NutSpec(spec) => spec.to_composition(),
             Self::EggSpec(spec) => spec.to_composition(),
             Self::AlcoholSpec(spec) => spec.to_composition(),
@@ -105,6 +107,12 @@ impl From<FruitSpec> for TaggedSpec {
 impl From<ChocolateSpec> for TaggedSpec {
     fn from(spec: ChocolateSpec) -> Self {
         Self::ChocolateSpec(spec)
+    }
+}
+
+impl From<CocoaPowderSpec> for TaggedSpec {
+    fn from(spec: CocoaPowderSpec) -> Self {
+        Self::CocoaPowderSpec(spec)
     }
 }
 

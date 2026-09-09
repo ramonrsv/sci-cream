@@ -275,9 +275,9 @@ pub mod cacao {
 
     /// Percentage of cocoa butter typically found in cacao solids of non-powder chocolate
     ///
-    /// This value is an average of all the products listed in [`composition::cacao`], except for
-    /// the two cocoa powder products, which contain much lesser amounts of cocoa butter.
-    pub const STD_COCOA_BUTTER_IN_CACAO_SOLIDS_OF_CHOCOLATE_NON_POWDER: f64 = 0.57;
+    /// This value is an average of all the chocolate products listed in [`composition::cacao`].
+    /// Note that this excludes cocoa powders, which contain much lesser amounts of cocoa butter.
+    pub const STD_COCOA_BUTTER_IN_CACAO_SOLIDS: f64 = 0.57;
 }
 
 #[cfg(test)]

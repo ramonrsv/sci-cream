@@ -79,6 +79,7 @@
     "specs::chocolate::ChocolateSpec::cocoa_butter": "specs/chocolate/struct.ChocolateSpec.html#structfield.cocoa_butter",
     "specs::chocolate::ChocolateSpec::other_solids": "specs/chocolate/struct.ChocolateSpec.html#structfield.other_solids",
     "specs::chocolate::ChocolateSpec::sugars": "specs/chocolate/struct.ChocolateSpec.html#structfield.sugars",
+    "specs::chocolate::CocoaPowderSpec": "specs/chocolate/struct.CocoaPowderSpec.html",
     "specs::composite::CompositeSpec": "specs/composite/struct.CompositeSpec.html",
     "specs::nut::NutSpec": "specs/nut/struct.NutSpec.html"
   },

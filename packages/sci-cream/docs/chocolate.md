@@ -26,5 +26,6 @@ different industries and stages of processing. For clarity, within this library 
 
   This value is specified in [`Composition`], accessible via [`CompKey::CocoaSolids`].
 
-[`ChocolateSpec`] can be used to define chocolate ingredients, which has fields for the above terms
-as well as for [`sugars`](ChocolateSpec::sugars) and [`other_solids`](ChocolateSpec::other_solids).
+[`ChocolateSpec`] and [`CocoaPowderSpec`] can be used to define chocolate and cocoa powder
+ingredients, which have fields for the above terms as well as for [`sugars`](ChocolateSpec::sugars)
+and [`other_solids`](ChocolateSpec::other_solids).

@@ -57,37 +57,37 @@
 ## Cocoa Powder, 10% Fat
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 10 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 10 } }
 ```
 
 ## Cocoa Powder, 13% Fat
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 13 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 13 } }
 ```
 
 ## Cocoa Powder, 15% Fat
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 15 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 15 } }
 ```
 
 ## Cocoa Powder, 17% Fat
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 17 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 17 } }
 ```
 
 ## Cocoa Powder, 20% Fat
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 20 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 20 } }
 ```
 
 ## Cocoa Powder, 22% Fat
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 22 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 22 } }
 ```
 
 ## Cocoa Butter
@@ -198,7 +198,7 @@ ingredient is modeled as a simple 70% dark chocolate.
 ## USDA Unsweetened Cocoa Powder
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 13.7 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 13.7 } }
 ```
 
 USDA FoodData Central - SR Legacy - [Cocoa, dry powder,
@@ -207,7 +207,7 @@ unsweetened](https://fdc.nal.usda.gov/food-details/169593/nutrients)
 ## Ghirardelli 100% Unsweetened Cocoa Powder
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 16.67 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 16.67 } }
 ```
 
 100% cocoa solids from the label. From the [nutrition facts
@@ -227,7 +227,7 @@ table](https://www.kraftheinz.com/en-CA/bakers/products/00066188008405-100-pure-
 ## Hershey's 100% Natural Unsweetened Cocoa Powder
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 10 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 10 } }
 ```
 
 100% cocoa solids from the label. From the [nutrition facts
@@ -239,7 +239,7 @@ table](https://www.hersheyland.com/products/hersheys-cocoa-100-cacao-natural-uns
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 93, "cocoa_butter": 21, "other_solids": 7 }
+  "CocoaPowderSpec": { "cacao_solids": 93, "cocoa_butter": 21, "other_solids": 7 }
 }
 ```
 
@@ -252,13 +252,13 @@ Powder_](https://supplies.gusta.ca/products/valrhona-dutch-processed-cocoa-powde
 > very warm red mahogany color.
 
 The manufacturer cites the composition as _"Cocoa 93% (min), Fat 21%"_. The potential remaining 7%
-is presumably water and ash introduced by the Dutch processing. [`ChocolateSpec`] currently does not
-support specifying a water content, so the whole 7% is modeled as `other_solids`.
+is presumably water and ash introduced by the Dutch processing. [`CocoaPowderSpec`] currently does
+not support specifying a water content, so the whole 7% is modeled as `other_solids`.
 
 ## Purest Natural Cocoa Powder
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 12.5 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 12.5 } }
 ```
 
 From the nutrition facts table in a [vendor

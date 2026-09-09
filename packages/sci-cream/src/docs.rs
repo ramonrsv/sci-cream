@@ -22,7 +22,7 @@ use crate::{
             STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_PROTEIN_IN_MSNF, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN,
         },
     },
-    specs::ChocolateSpec,
+    specs::{ChocolateSpec, CocoaPowderSpec},
 };
 
 /// Asserts for floating point comparisons in doc tests
@@ -105,7 +105,7 @@ pub mod ingredients {
     #[cfg(doc)]
     use crate::{
         constants::composition::dairy::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MSNF},
-        specs::{ChocolateSpec, CompositeSpec, NutSpec},
+        specs::{ChocolateSpec, CocoaPowderSpec, CompositeSpec, NutSpec},
     };
 }
 

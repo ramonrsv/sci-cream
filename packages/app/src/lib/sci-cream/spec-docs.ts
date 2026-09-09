@@ -19,6 +19,7 @@ const SPEC_TYPE_PAGES: Readonly<Record<string, string>> = {
   AlcoholSpec: "specs/alcohol/struct.AlcoholSpec.html",
   AliasSpec: "specs/alias/struct.AliasSpec.html",
   ChocolateSpec: "specs/chocolate/struct.ChocolateSpec.html",
+  CocoaPowderSpec: "specs/chocolate/struct.CocoaPowderSpec.html",
   CompositeSpec: "specs/composite/struct.CompositeSpec.html",
   DairyLabelSpec: "specs/dairy/struct.DairyLabelSpec.html",
   DairySimpleSpec: "specs/dairy/struct.DairySimpleSpec.html",
@@ -92,6 +93,7 @@ function nameMatches(pattern: RegExp): SpecDocRule["when"] {
  */
 const SPEC_DOC_RULES: readonly SpecDocRule[] = [
   { when: ofKind("ChocolateSpec"), chapters: ["chocolate"] },
+  { when: ofKind("CocoaPowderSpec"), chapters: ["chocolate"] },
   { when: ofKind("SweetenerSpec"), chapters: ["sweeteners", "pac-afp-fpdf-se"] },
   { when: ofKind("StabilizerSpec"), chapters: ["stabilizers"] },
   { when: ofKind("EmulsifierSpec"), chapters: ["emulsifiers"] },
