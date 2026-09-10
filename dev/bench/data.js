@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789014881285,
+  "lastUpdate": 1789068751618,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -628373,6 +628373,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1953.17,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5f3636a4648fa449a02f55e3b767927c42ebecac",
+          "message": "Add water support to `CocoaPowderSpec`\n\nCocoa powder carries a few percent moisture that the spec could not\nexpress, so every powder modeled as bone dry. Add an optional water\nfield defaulting to the 3% all three USDA listings sit near, derive\ncacao_solids as 100 - water - other_solids, and require the three to\nsum to 100.\n\nReplace STD_WATER_CONTENT_IN_CACAO_PRODUCTS, which had neither a\nconsumer nor provenance, with per-kind constants cited to the\nlistings they average: STD_WATER_IN_COCOA_POWDER, and\nSTD_WATER_IN_CHOCOLATE for when ChocolateSpec follows.\n\nValrhona's unexplained 7% splits into 3% moisture and 4%\nother_solids, replacing the ash-only reading. Tighten the cocoa\nreconciliation ceilings water improves -- water itself from a full\nmiss to 11%, protein 15.5 to 12.5, carbohydrate 5 to 3, fiber 15 to\n14 -- and loosen ash to 20%, since dropping the moisture out of the\nsolids widens the gap the dutched pair already showed.\n\nPin the field against a build that ignores it, with an explicit 9%\nEU ceiling and a dried 0%, and cover the sum-to-100 and sign checks\nit joined -- CocoaPowderSpec had neither before.\n\nCite Directive 2000/36/EC for the EU 9% water cap on cocoa powder,\nand record dutch_processed, ChocolateSpec water, and the per-kind\nconstant split as follow-ups.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-10T15:20:25-04:00",
+          "tree_id": "4f65fb2ec6df4f25345985c0de70dbece3a6059e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5f3636a4648fa449a02f55e3b767927c42ebecac"
+        },
+        "date": 1789068693403,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1114.1,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 337.84,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1750.55,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 539.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 587.36,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1955.01,
             "unit": "KB"
           }
         ]
