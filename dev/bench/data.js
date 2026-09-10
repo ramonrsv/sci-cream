@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788995155241,
+  "lastUpdate": 1789014190413,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -546320,6 +546320,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.99%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6dcb1e3dd41f8ff92732df987eccb47256305845",
+          "message": "Reconcile USDA chocolate and cocoa proximates\n\ncompare_specs pits two spec-derived compositions against each\nother, so for cocoa powders every non-zero row is an exact linear\nfunction of the two independent inputs -- a wrong constant shifts\nboth sides equally and passes unnoticed.\n\nAdd a suite comparing each embedded USDA entry's modeled\ncomposition against the proximates its FoodData Central listing\nmeasures, so the tolerance bounds model error instead. Ceilings\nare per product kind, since chocolate reconciles far better on\nprotein and ash while cocoa does better on fiber. Energy is\nexcluded: the listings share no convention, with 170273 on\ngeneral Atwater and the cocoas on specific factors.\n\nFiber is the loosest constant at 20%, and ash misses low on both\ndutched cocoas but high on natural -- the alkalization signature\nthe model does not yet carry. Water is unmodeled throughout, so\nits ceiling records that gap rather than tolerates drift.\n\nAdd the three USDA listings missing from the ingredient\nbibliography, and cite FoodData Central's documentation for the\ndefinition of proximates.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-10T00:17:52-04:00",
+          "tree_id": "56d7b8ccbbaee0510d13054597f6153a8d2f882e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6dcb1e3dd41f8ff92732df987eccb47256305845"
+        },
+        "date": 1789014155626,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 104619,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 789826,
+            "range": "±2.41%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 69286,
+            "range": "±1.73%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 548775,
+            "range": "±1.45%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
