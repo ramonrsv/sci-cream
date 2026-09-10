@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789068820947,
+  "lastUpdate": 1789068852625,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -612131,6 +612131,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.36,
             "range": "0.37",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5f3636a4648fa449a02f55e3b767927c42ebecac",
+          "message": "Add water support to `CocoaPowderSpec`\n\nCocoa powder carries a few percent moisture that the spec could not\nexpress, so every powder modeled as bone dry. Add an optional water\nfield defaulting to the 3% all three USDA listings sit near, derive\ncacao_solids as 100 - water - other_solids, and require the three to\nsum to 100.\n\nReplace STD_WATER_CONTENT_IN_CACAO_PRODUCTS, which had neither a\nconsumer nor provenance, with per-kind constants cited to the\nlistings they average: STD_WATER_IN_COCOA_POWDER, and\nSTD_WATER_IN_CHOCOLATE for when ChocolateSpec follows.\n\nValrhona's unexplained 7% splits into 3% moisture and 4%\nother_solids, replacing the ash-only reading. Tighten the cocoa\nreconciliation ceilings water improves -- water itself from a full\nmiss to 11%, protein 15.5 to 12.5, carbohydrate 5 to 3, fiber 15 to\n14 -- and loosen ash to 20%, since dropping the moisture out of the\nsolids widens the gap the dutched pair already showed.\n\nPin the field against a build that ignores it, with an explicit 9%\nEU ceiling and a dried 0%, and cover the sum-to-100 and sign checks\nit joined -- CocoaPowderSpec had neither before.\n\nCite Directive 2000/36/EC for the EU 9% water cap on cocoa powder,\nand record dutch_processed, ChocolateSpec water, and the per-kind\nconstant split as follow-ups.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-10T15:20:25-04:00",
+          "tree_id": "4f65fb2ec6df4f25345985c0de70dbece3a6059e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5f3636a4648fa449a02f55e3b767927c42ebecac"
+        },
+        "date": 1789068803904,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 50.75,
+            "range": "8.00",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.29,
+            "range": "0.53",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.26,
+            "range": "0.55",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 137.5,
+            "range": "8.70",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.35,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 137.5,
+            "range": "8.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 47.94,
+            "range": "7.97",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.77,
+            "range": "0.22",
             "unit": "ms"
           }
         ]
