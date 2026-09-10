@@ -76,31 +76,31 @@ appropriate keys from either [`CompKey`] or [`FpdKey`].
 let mix_properties = recipe.calculate_mix_properties()?;
 
 for (key, value) in [
-    (Energy.into(), 229.140), // kcal per 100g
+    (Energy.into(), 228.851), // kcal per 100g
     (MilkFat.into(), 13.637), // grams per 100g
     (Lactose.into(), 4.817), // ...
     (MSNF.into(), 8.839),
     (MilkProteins.into(), 3.094),
     (MilkSolids.into(), 22.475),
     (CocoaButter.into(), 0.778),
-    (CocoaSolids.into(), 3.799),
+    (CocoaSolids.into(), 3.662),
     (Glucose.into(), 6.767),
     (Fructose.into(), 5.23),
     (TotalSugars.into(), 16.815),
     (ABV.into(), 0.358), // Alcohol-by-volume %
     (Salt.into(), 0.082),
-    (TotalSolids.into(), 40.779),
-    (Water.into(), 58.938),
+    (TotalSolids.into(), 40.641),
+    (Water.into(), 59.075),
     (POD.into(), 15.234),
     (PACsgr.into(), 27.614),
     (PACmlk.into(), 3.247),
     (PACalc.into(), 2.107),
     (TotalPAC.into(), 33.446),
-    (AbsPAC.into(), 56.748), // TotalPAC / Water
-    (HF.into(), 7.538),
-    (FPD.into(), -3.612), // °C
-    (ServingTemp.into(), -13.402), // °C
-    (HardnessAt14C.into(), 76.206), // [0, 100] scale
+    (AbsPAC.into(), 56.617), // TotalPAC / Water
+    (HF.into(), 7.291),
+    (FPD.into(), -3.603), // °C
+    (ServingTemp.into(), -13.487), // °C
+    (HardnessAt14C.into(), 76.040), // [0, 100] scale
 ] {
     assert_eq_float!(mix_properties.get(key), value);
 }
@@ -485,10 +485,10 @@ let balanced = recipe.balance(&targets, Some(1000.0), &[])?;
 assert_recipe_matches(
     &balanced,
     &[
-        ("Whole Milk", 472.0),
+        ("Whole Milk", 470.0),
         ("Whipping Cream", 236.0),
-        ("Cocoa Powder, 17% Fat", 64.0),
-        ("95% Dark Chocolate", 17.0),
+        ("Cocoa Powder, 17% Fat", 67.0),
+        ("95% Dark Chocolate", 16.0),
         ("Skimmed Milk Powder", 12.0),
         ("Egg Yolk", 23.0),
         ("Dextrose", 138.0),
@@ -501,14 +501,14 @@ assert_recipe_matches(
 
 let balanced_properties = balanced.calculate_mix_properties()?;
 assert_abs_diff_eq!(balanced_properties.total_amount, 1000.0, epsilon = 0.1);
-assert_eq_float!(balanced_properties.get(ServingTemp.into()), -13.0983);
+assert_eq_float!(balanced_properties.get(ServingTemp.into()), -13.0991);
 
 for (key, value, _) in targets.iter().filter(|(key, _, _)| not_total_fats(key)) {
     assert_abs_diff_eq!(balanced_properties.get((*key).into()), *value, epsilon = 0.7);
 }
 
 // With disparate targets, some non-priority ones can drift to accommodate the priorities
-assert_eq_float!(balanced_properties.get(TotalFats.into()), 12.4937);
+assert_eq_float!(balanced_properties.get(TotalFats.into()), 12.4955);
 # Ok(()) }
 ```
 
@@ -569,19 +569,19 @@ const recipe = new Recipe("Chocolate Ice Cream", recipeLines);
 const mix_properties = recipe.calculate_mix_properties();
 
 const comp = mix_properties.composition;
-expect(comp.get(CompKey.Energy)).toBeCloseTo(229.14);
+expect(comp.get(CompKey.Energy)).toBeCloseTo(228.851);
 expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.637);
 expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.817);
 // ...
 
 const fpd = mix_properties.fpd;
-expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.612);
-expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.402);
-expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.206);
+expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
+expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.487);
+expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.04);
 
 // Via prop keys:
-expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(229.14);
-expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.612);
+expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(228.851);
+expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.603);
 ```
 
 <br>
@@ -605,9 +605,9 @@ import {
 const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
 const mix_properties = bridge.calculate_recipe_mix_properties(RECIPE);
 
-expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(229.14);
+expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(228.851);
 // ...
-expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.612);
+expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
 // ...
 ```
 

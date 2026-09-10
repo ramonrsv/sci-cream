@@ -56,7 +56,14 @@
 - [ ] Consider adding support for balancing ceilings, e.g. 'Lactose' < 10%, but no specific target.
 - [ ] Should `isCompQuantity` return false for ABV? It's a bit confusing as a quantity percentage.
 - [ ] Consider adding an a `RatioKey::StabilizersPerEmulsifiers`; I saw Underbelly mention it.
+- [ ] Add a `dutch_processed` field to `CocoaPowderSpec`; alkalization lifts ash from ~0.074 to
+      ~0.093 of cocoa solids, the loosest reconciliation ceiling at 19.3%, on one un-imputed pair.
+- [ ] Consider modeling water in `ChocolateSpec`, which `STD_WATER_IN_CHOCOLATE` awaits. Declared
+      figures are wet-basis and `cacao_solids + sugars` already closes at 100, so an additive field
+      double-counts, while carving it out decouples `CompKey::CacaoSolids` from the declared value.
 - [ ] Add milk solids support to `ChocolateSpec` and add milk chocolate Callebaut ingredients.
+- [ ] Split the cacao composition constants per product kind: chocolate fiber sits at ~0.328 of
+      cocoa solids (0.017 spread) against the shared 0.40; cocoa fiber, protein and carbs do not.
 - [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
 - [ ] Add wine ingredients, and considered adding evaporated wine - how to handle, parametric?
 - [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '\* [Evap 15]', etc.

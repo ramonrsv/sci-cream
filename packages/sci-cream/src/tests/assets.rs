@@ -119,22 +119,22 @@ pub(crate) static MAIN_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLo
     use RatioKey::*;
 
     vec![
-        (Energy.into(), 229.140),
+        (Energy.into(), 228.851),
         (MilkFat.into(), 13.637),
         (Lactose.into(), 4.817),
         (MSNF.into(), 8.839),
         (MilkProteins.into(), 3.094),
         (MilkSolids.into(), 22.475),
         (CocoaButter.into(), 0.778),
-        (CocoaSolids.into(), 3.799),
+        (CocoaSolids.into(), 3.662),
         (Glucose.into(), 6.767),
         (Fructose.into(), 5.23),
         (TotalSugars.into(), 16.815),
         (ABV.into(), 0.358),
         (Salt.into(), 0.082),
         (TotalFats.into(), 15.2975),
-        (TotalSolids.into(), 40.779),
-        (Water.into(), 58.938),
+        (TotalSolids.into(), 40.641),
+        (Water.into(), 59.075),
         (TotalEmulsifiers.into(), 0.2739),
         (EmulsifiersPerFat.into(), 1.7907),
         (TotalStabilizers.into(), 0.2043),
@@ -144,11 +144,11 @@ pub(crate) static MAIN_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLo
         (PACmlk.into(), 3.247),
         (PACalc.into(), 2.107),
         (TotalPAC.into(), 33.446),
-        (AbsPAC.into(), 56.748),
-        (HF.into(), 7.538),
-        (FPD.into(), -3.612),
-        (ServingTemp.into(), -13.402),
-        (HardnessAt14C.into(), 76.206),
+        (AbsPAC.into(), 56.617),
+        (HF.into(), 7.291),
+        (FPD.into(), -3.603),
+        (ServingTemp.into(), -13.487),
+        (HardnessAt14C.into(), 76.040),
     ]
 });
 

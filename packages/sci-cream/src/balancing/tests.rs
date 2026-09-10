@@ -2903,11 +2903,11 @@ fn ratio_band_with_empty_denominator_is_the_value_range() {
 
 #[test]
 fn ratio_band_pins_a_single_source_ratio() {
-    // Only cocoa has CocoaSolids > 0, so CocoaButter : CocoaSolids is pinned to its 16.7 : 83.3
+    // Only cocoa has CocoaSolids > 0, so CocoaButter : CocoaSolids is pinned to its 16.7 : 80.3
     let comps = comps_from_names(DAIRY_COCOA_ING);
     let (min, max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
     assert_eq_flt_test!(min, max);
-    assert_abs_diff_eq!(min, 16.67 / 83.33, epsilon = 1e-3);
+    assert_abs_diff_eq!(min, 16.67 / 80.33, epsilon = 1e-3);
 }
 
 #[test]

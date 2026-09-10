@@ -263,7 +263,7 @@ table](https://www.hersheyland.com/products/hersheys-cocoa-100-cacao-natural-uns
 ```json
 {
   "category": "Chocolate",
-  "CocoaPowderSpec": { "cacao_solids": 93, "cocoa_butter": 21, "other_solids": 7 }
+  "CocoaPowderSpec": { "cacao_solids": 93, "cocoa_butter": 21, "other_solids": 4, "water": 3 }
 }
 ```
 
@@ -275,9 +275,9 @@ Powder_](https://supplies.gusta.ca/products/valrhona-dutch-processed-cocoa-powde
 > Dutch Processed Cocoa Powder (processed with alkali) gives a pure and intense cocoa taste with a
 > very warm red mahogany color.
 
-The manufacturer cites the composition as _"Cocoa 93% (min), Fat 21%"_. The potential remaining 7%
-is presumably water and ash introduced by the Dutch processing. [`CocoaPowderSpec`] currently does
-not support specifying a water content, so the whole 7% is modeled as `other_solids`.
+The manufacturer cites the composition as _"Cocoa 93% (min), Fat 21%"_. The remaining 7% is assumed
+to be water and the ash introduced by the Dutch processing: 3% is the standard cocoa powder moisture
+[`STD_WATER_IN_COCOA_POWDER`], leaving 4% as `other_solids`.
 
 ## Purest Natural Cocoa Powder
 

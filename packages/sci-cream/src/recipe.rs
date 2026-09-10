@@ -485,14 +485,14 @@ mod tests {
         let mix_properties = recipe.calculate_mix_properties().unwrap();
 
         assert_eq!(mix_properties.total_amount, 611.75);
-        assert_eq_flt_test!(mix_properties.get(CompKey::HF.into()), 7.5384);
+        assert_eq_flt_test!(mix_properties.get(CompKey::HF.into()), 7.2912);
 
         assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6367);
         assert_eq_flt_test!(mix_properties.get(CompKey::TotalPAC.into()), 33.4463);
-        assert_eq_flt_test!(mix_properties.get(RatioKey::AbsPAC.into()), 56.7484);
-        assert_eq_flt_test!(mix_properties.get(FpdKey::FPD.into()), -3.6124);
-        assert_eq_flt_test!(mix_properties.get(FpdKey::ServingTemp.into()), -13.4021);
-        assert_eq_flt_test!(mix_properties.get(FpdKey::HardnessAt14C.into()), 76.2061);
+        assert_eq_flt_test!(mix_properties.get(RatioKey::AbsPAC.into()), 56.6165);
+        assert_eq_flt_test!(mix_properties.get(FpdKey::FPD.into()), -3.6032);
+        assert_eq_flt_test!(mix_properties.get(FpdKey::ServingTemp.into()), -13.4865);
+        assert_eq_flt_test!(mix_properties.get(FpdKey::HardnessAt14C.into()), 76.0404);
     }
 
     #[test]

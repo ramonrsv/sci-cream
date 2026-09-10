@@ -153,13 +153,16 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
     ),
 ];
 
+/// Encodes a full miss, typically for an unmodeled field
+const FULL_MISS: f64 = 100.0;
+
 /// Per-field ceilings on relative error against the measured value, in percent — dark chocolates.
 ///
 /// Fat and sugars are transcribed from the listing rather than predicted, so both must match
-/// exactly. Water is unmodeled and so reads as a full miss; that ceiling records the gap rather
-/// than tolerates drift, and tightening it is the acceptance criterion for a `water` field.
+/// exactly. [`ChocolateSpec`](crate::specs::ChocolateSpec) has no water field, so water is
+/// unmodeled and reads as a full miss; that ceiling records the gap rather than tolerates drift.
 const CHOCOLATE_CEILING: Proximates = Proximates {
-    water: 101.0,
+    water: FULL_MISS,
     protein: 5.0,
     fat: TESTS_EPSILON,
     carbohydrate: 3.0,
@@ -171,17 +174,17 @@ const CHOCOLATE_CEILING: Proximates = Proximates {
 /// Per-field ceilings on relative error against the measured value, in percent — cocoa powders.
 ///
 /// [`CocoaPowderSpec`](crate::specs::CocoaPowderSpec) has no sugars field, so the ~1.7 g each
-/// listing measures is a full miss, the same unmodeled-component gap as water. Protein and ash
-/// reconcile markedly worse here than on chocolate, 15.0% and 16.4% against 4.8% and 8.2%, while
-/// fiber does better, 14.3% against 20.0%.
+/// listing measures is a full miss. Water is modeled from [`cacao::STD_WATER_IN_COCOA_POWDER`],
+/// leaving only the dutched listing's 2.7% off, by 10%. Ash is the loosest at 19.3% and both
+/// dutched listings miss low, which a `dutch_processed` field would correct.
 const COCOA_CEILING: Proximates = Proximates {
-    water: 101.0,
-    protein: 15.5,
+    water: 11.0,
+    protein: 12.5,
     fat: TESTS_EPSILON,
-    carbohydrate: 5.0,
-    fiber: 15.0,
-    sugars: 101.0,
-    ash: 17.0,
+    carbohydrate: 3.0,
+    fiber: 14.0,
+    sugars: FULL_MISS,
+    ash: 20.0,
 };
 
 #[test]

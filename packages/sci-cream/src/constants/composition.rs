@@ -219,15 +219,25 @@ pub mod nut {
 /// documentation](crate::docs#chocolate) for more details about the components of chocolate.
 ///
 /// These values are averages compiled from the nutrient profiles of various cacao products in the
-/// _USDA FoodData Central_ database (Chocolate, dark, 60-69% cacao solids, 2019)[^104], (Chocolate,
-/// dark, 70-85% cacao solids, 2019)[^105], (Cocoa powder, unsweetened, 2019)[^106]. The values are
-/// very consistent between the different cacao products, usually all within ~3 percentage points of
-/// each other (fiber was the only exception, varying between 34% and 45%).
+/// _USDA FoodData Central_ database:
 ///
-/// The values are also consistent with the nutrition facts tables of various market cacao products
-/// (Lindt 70% Cacao Dark Chocolate, 2025)[^107], (Lindt 85% Cacao Dark Chocolate, 2025)[^108],
-/// (Lindt 95% Cacao Dark Chocolate, 2025)[^109], (Lindt 100% Cacao Dark Chocolate, 2025)[^110],
-/// (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^111].
+/// - (USDA, 2019, "Chocolate, dark, 45-59% cacao solids")[^127]
+/// - (USDA, 2019, "Chocolate, dark, 60-69% cacao solids")[^104]
+/// - (USDA, 2019, "Chocolate, dark, 70-85% cacao solids")[^105]
+/// - (USDA, 2019, "Cocoa, dry powder, unsweetened")[^106]
+/// - (USDA, 2019, "Cocoa, dry powder, unsweetened, processed with alkali")[^128]
+/// - (USDA, 2019, "Cocoa, dry powder, hi-fat or breakfast, processed with alkali")[^129]
+///
+/// The values are very consistent between the different cacao products, usually all within ~3
+/// percentage points of each other (fiber was the only exception, varying between 32% and 46%).
+///
+/// The values are also consistent with the nutrition facts tables of various market cacao products:
+///
+/// - (Lindt 70% Cacao Dark Chocolate, 2025)[^107]
+/// - (Lindt 85% Cacao Dark Chocolate, 2025)[^108]
+/// - (Lindt 95% Cacao Dark Chocolate, 2025)[^109]
+/// - (Lindt 100% Cacao Dark Chocolate, 2025)[^110]
+/// - (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^111]
 #[doc = include_str!("../../docs/references/index/104.md")]
 #[doc = include_str!("../../docs/references/index/105.md")]
 #[doc = include_str!("../../docs/references/index/106.md")]
@@ -236,12 +246,39 @@ pub mod nut {
 #[doc = include_str!("../../docs/references/index/109.md")]
 #[doc = include_str!("../../docs/references/index/110.md")]
 #[doc = include_str!("../../docs/references/index/111.md")]
+#[doc = include_str!("../../docs/references/index/127.md")]
+#[doc = include_str!("../../docs/references/index/128.md")]
+#[doc = include_str!("../../docs/references/index/129.md")]
 pub mod cacao {
     #[cfg(doc)]
     pub use crate::constants::composition;
 
-    /// Percentage of water typically found in cacao products
-    pub const STD_WATER_CONTENT_IN_CACAO_PRODUCTS: f64 = 0.02;
+    /// Water content of cocoa powder, as a percentage of the product as a whole
+    ///
+    /// This is a rough average of the water content of several natural and alkalized powders:
+    ///
+    /// - (USDA, 2019, "Cocoa, dry powder, unsweetened")[^106]
+    /// - (USDA, 2019, "Cocoa, dry powder, unsweetened, processed with alkali")[^128]
+    /// - (USDA, 2019, "Cocoa, dry powder, hi-fat or breakfast, processed with alkali")[^129]
+    ///
+    /// The EU caps cocoa powder at 9% water (Directive 2000/36/EC, 2000, Annex I 2.(a))[^84].
+    #[doc = include_str!("../../docs/references/index/84.md")]
+    #[doc = include_str!("../../docs/references/index/106.md")]
+    #[doc = include_str!("../../docs/references/index/128.md")]
+    #[doc = include_str!("../../docs/references/index/129.md")]
+    pub const STD_WATER_IN_COCOA_POWDER: f64 = 0.03;
+
+    /// Water content of chocolate, as a percentage of the product as a whole
+    ///
+    /// This is a rough average of the water content of several chocolate products:
+    ///
+    /// - (USDA, 2019, "Chocolate, dark, 45-59% cacao solids")[^127]
+    /// - (USDA, 2019, "Chocolate, dark, 60-69% cacao solids")[^104]
+    /// - (USDA, 2019, "Chocolate, dark, 70-85% cacao solids")[^105]
+    #[doc = include_str!("../../docs/references/index/104.md")]
+    #[doc = include_str!("../../docs/references/index/105.md")]
+    #[doc = include_str!("../../docs/references/index/127.md")]
+    pub const STD_WATER_IN_CHOCOLATE: f64 = 0.01;
 
     /// Percentage of proteins typically found in cocoa solids
     ///

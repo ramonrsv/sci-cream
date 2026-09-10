@@ -167,3 +167,5 @@
 [^82]: Raphaelson, Paul. (2016, December). [_Booze Flavored Ice Cream_](https://under-belly.org/booze-flavored-ice-cream/). Underbelly.
 
 [^83]: U.S. Department of Agriculture. (2024, April). [_FoodData Central Foundation Foods Documentation_](https://fdc.nal.usda.gov/Foundation_Foods_Documentation).
+
+[^84]: European Parliament and Council. (2000, June). [_Directive 2000/36/EC relating to cocoa and chocolate products intended for human consumption_](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32000L0036). EUR-Lex.
