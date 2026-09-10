@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789014563149,
+  "lastUpdate": 1789014593408,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -86836,6 +86836,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6dcb1e3dd41f8ff92732df987eccb47256305845",
+          "message": "Reconcile USDA chocolate and cocoa proximates\n\ncompare_specs pits two spec-derived compositions against each\nother, so for cocoa powders every non-zero row is an exact linear\nfunction of the two independent inputs -- a wrong constant shifts\nboth sides equally and passes unnoticed.\n\nAdd a suite comparing each embedded USDA entry's modeled\ncomposition against the proximates its FoodData Central listing\nmeasures, so the tolerance bounds model error instead. Ceilings\nare per product kind, since chocolate reconciles far better on\nprotein and ash while cocoa does better on fiber. Energy is\nexcluded: the listings share no convention, with 170273 on\ngeneral Atwater and the cocoas on specific factors.\n\nFiber is the loosest constant at 20%, and ash misses low on both\ndutched cocoas but high on natural -- the alkalization signature\nthe model does not yet carry. Water is unmodeled throughout, so\nits ceiling records that gap rather than tolerates drift.\n\nAdd the three USDA listings missing from the ingredient\nbibliography, and cite FoodData Central's documentation for the\ndefinition of proximates.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-10T00:17:52-04:00",
+          "tree_id": "56d7b8ccbbaee0510d13054597f6153a8d2f882e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6dcb1e3dd41f8ff92732df987eccb47256305845"
+        },
+        "date": 1789014550819,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 2675,
+            "range": "± 115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 85340,
+            "range": "± 1088",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1508,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 84405,
+            "range": "± 5748",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 2443,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 2394,
+            "range": "± 163",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 2427,
+            "range": "± 99",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 2470,
+            "range": "± 154",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 2434,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 2571,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 60864,
+            "range": "± 3831",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 61368,
+            "range": "± 1846",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 129731366,
+            "range": "± 7631334",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 431194,
+            "range": "± 20676",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 3712,
+            "range": "± 201",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 37,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 3468,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 56534,
+            "range": "± 2884",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 48770,
+            "range": "± 1516",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 82301,
+            "range": "± 4274",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 79596,
+            "range": "± 3403",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 196504,
+            "range": "± 10974",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 11830,
+            "range": "± 569",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 384,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 11,
             "range": "± 0",
             "unit": "ns/iter"
           }
