@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789014246178,
+  "lastUpdate": 1789014309219,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -611106,6 +611106,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.89,
             "range": "0.44",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6dcb1e3dd41f8ff92732df987eccb47256305845",
+          "message": "Reconcile USDA chocolate and cocoa proximates\n\ncompare_specs pits two spec-derived compositions against each\nother, so for cocoa powders every non-zero row is an exact linear\nfunction of the two independent inputs -- a wrong constant shifts\nboth sides equally and passes unnoticed.\n\nAdd a suite comparing each embedded USDA entry's modeled\ncomposition against the proximates its FoodData Central listing\nmeasures, so the tolerance bounds model error instead. Ceilings\nare per product kind, since chocolate reconciles far better on\nprotein and ash while cocoa does better on fiber. Energy is\nexcluded: the listings share no convention, with 170273 on\ngeneral Atwater and the cocoas on specific factors.\n\nFiber is the loosest constant at 20%, and ash misses low on both\ndutched cocoas but high on natural -- the alkalization signature\nthe model does not yet carry. Water is unmodeled throughout, so\nits ceiling records that gap rather than tolerates drift.\n\nAdd the three USDA listings missing from the ingredient\nbibliography, and cite FoodData Central's documentation for the\ndefinition of proximates.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-10T00:17:52-04:00",
+          "tree_id": "56d7b8ccbbaee0510d13054597f6153a8d2f882e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6dcb1e3dd41f8ff92732df987eccb47256305845"
+        },
+        "date": 1789014248868,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.16,
+            "range": "8.19",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.84,
+            "range": "0.82",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.81,
+            "range": "0.84",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 166.5,
+            "range": "11.48",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.41,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 166.5,
+            "range": "11.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.1,
+            "range": "6.36",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.36,
+            "range": "0.37",
             "unit": "ms"
           }
         ]
