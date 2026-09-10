@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789069107707,
+  "lastUpdate": 1789069152901,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -87022,6 +87022,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5f3636a4648fa449a02f55e3b767927c42ebecac",
+          "message": "Add water support to `CocoaPowderSpec`\n\nCocoa powder carries a few percent moisture that the spec could not\nexpress, so every powder modeled as bone dry. Add an optional water\nfield defaulting to the 3% all three USDA listings sit near, derive\ncacao_solids as 100 - water - other_solids, and require the three to\nsum to 100.\n\nReplace STD_WATER_CONTENT_IN_CACAO_PRODUCTS, which had neither a\nconsumer nor provenance, with per-kind constants cited to the\nlistings they average: STD_WATER_IN_COCOA_POWDER, and\nSTD_WATER_IN_CHOCOLATE for when ChocolateSpec follows.\n\nValrhona's unexplained 7% splits into 3% moisture and 4%\nother_solids, replacing the ash-only reading. Tighten the cocoa\nreconciliation ceilings water improves -- water itself from a full\nmiss to 11%, protein 15.5 to 12.5, carbohydrate 5 to 3, fiber 15 to\n14 -- and loosen ash to 20%, since dropping the moisture out of the\nsolids widens the gap the dutched pair already showed.\n\nPin the field against a build that ignores it, with an explicit 9%\nEU ceiling and a dried 0%, and cover the sum-to-100 and sign checks\nit joined -- CocoaPowderSpec had neither before.\n\nCite Directive 2000/36/EC for the EU 9% water cap on cocoa powder,\nand record dutch_processed, ChocolateSpec water, and the per-kind\nconstant split as follow-ups.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-10T15:20:25-04:00",
+          "tree_id": "4f65fb2ec6df4f25345985c0de70dbece3a6059e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5f3636a4648fa449a02f55e3b767927c42ebecac"
+        },
+        "date": 1789069094067,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4121,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 157244,
+            "range": "± 1210",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2464,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 155810,
+            "range": "± 1538",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4522,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4463,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4595,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4621,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4588,
+            "range": "± 112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4762,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 106139,
+            "range": "± 556",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 110449,
+            "range": "± 550",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 181867333,
+            "range": "± 1179854",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 627732,
+            "range": "± 12184",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6884,
+            "range": "± 268",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 56,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6646,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 96041,
+            "range": "± 380",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 92447,
+            "range": "± 282",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 152577,
+            "range": "± 1425",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 150703,
+            "range": "± 601",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 329692,
+            "range": "± 859",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14354,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 15,
             "range": "± 0",
             "unit": "ns/iter"
           }
