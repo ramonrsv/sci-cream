@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789069152901,
+  "lastUpdate": 1789069529189,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -508243,6 +508243,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 570.63,
             "range": "9.91",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5f3636a4648fa449a02f55e3b767927c42ebecac",
+          "message": "Add water support to `CocoaPowderSpec`\n\nCocoa powder carries a few percent moisture that the spec could not\nexpress, so every powder modeled as bone dry. Add an optional water\nfield defaulting to the 3% all three USDA listings sit near, derive\ncacao_solids as 100 - water - other_solids, and require the three to\nsum to 100.\n\nReplace STD_WATER_CONTENT_IN_CACAO_PRODUCTS, which had neither a\nconsumer nor provenance, with per-kind constants cited to the\nlistings they average: STD_WATER_IN_COCOA_POWDER, and\nSTD_WATER_IN_CHOCOLATE for when ChocolateSpec follows.\n\nValrhona's unexplained 7% splits into 3% moisture and 4%\nother_solids, replacing the ash-only reading. Tighten the cocoa\nreconciliation ceilings water improves -- water itself from a full\nmiss to 11%, protein 15.5 to 12.5, carbohydrate 5 to 3, fiber 15 to\n14 -- and loosen ash to 20%, since dropping the moisture out of the\nsolids widens the gap the dutched pair already showed.\n\nPin the field against a build that ignores it, with an explicit 9%\nEU ceiling and a dried 0%, and cover the sum-to-100 and sign checks\nit joined -- CocoaPowderSpec had neither before.\n\nCite Directive 2000/36/EC for the EU 9% water cap on cocoa powder,\nand record dutch_processed, ChocolateSpec water, and the per-kind\nconstant split as follow-ups.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-10T15:20:25-04:00",
+          "tree_id": "4f65fb2ec6df4f25345985c0de70dbece3a6059e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5f3636a4648fa449a02f55e3b767927c42ebecac"
+        },
+        "date": 1789069467891,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.75,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 53.88,
+            "range": "3.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 67,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2668.25,
+            "range": "92.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 338.25,
+            "range": "4.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 348.63,
+            "range": "4.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 367.13,
+            "range": "9.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17690.5,
+            "range": "124.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 913.5,
+            "range": "33.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.13,
+            "range": "1.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.38,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 129.75,
+            "range": "2.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 83.38,
+            "range": "1.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 56.4,
+            "range": "1.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.45,
+            "range": "0.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 630.38,
+            "range": "4.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 697,
+            "range": "14.47",
             "unit": "ms"
           }
         ]
