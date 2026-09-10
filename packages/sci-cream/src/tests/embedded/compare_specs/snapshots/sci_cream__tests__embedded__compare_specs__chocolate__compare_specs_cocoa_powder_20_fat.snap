@@ -1,0 +1,25 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/chocolate.rs
+expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
+---
+sources: Simple, Valrhona
+
+Energy               7.80 pp  (Simple vs Valrhona)
+TotalFats            1.00 pp  (Simple vs Valrhona)
+CacaoSolids          7.00 pp  (Simple vs Valrhona)
+CocoaButter          1.00 pp  (Simple vs Valrhona)
+CocoaSolids          8.00 pp  (Simple vs Valrhona)
+TotalFiber           3.20 pp  (Simple vs Valrhona)
+TotalSugars          0.00 pp  (Simple vs Valrhona)
+TotalCarbohydrates   5.44 pp  (Simple vs Valrhona)
+OtherSNFS            7.00 pp  (Simple vs Valrhona)
+TotalSNFS            1.00 pp  (Simple vs Valrhona)
+TotalProteins        1.96 pp  (Simple vs Valrhona)
+TotalSolids          0.00 pp  (Simple vs Valrhona)
+Water                0.00 pp  (Simple vs Valrhona)
+POD                  0.00 pp  (Simple vs Valrhona)
+PACsgr               0.00 pp  (Simple vs Valrhona)
+HF                  13.50 pp  (Simple vs Valrhona)
+TotalPAC             0.00 pp  (Simple vs Valrhona)
+SaturatedFat         0.60 pp  (Simple vs Valrhona)
+TransFat             0.00 pp  (Simple vs Valrhona)

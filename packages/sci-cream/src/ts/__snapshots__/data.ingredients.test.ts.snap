@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 313  (non-alias: 264, independent: 250)
+"total: 316  (non-alias: 267, independent: 253)
 
             0% Milk
             1% Milk
@@ -61,6 +61,7 @@ exports[`Embedded spec entries 1`] = `
             Cocoa Powder, 17% Fat
             Cocoa Powder, 20% Fat
             Cocoa Powder, 22% Fat
+            Cocoa Powder, 24% Fat
 [alias]     Coffee Extract
 [alias]     Commercial Stabilizers
             Cornstarch
@@ -293,6 +294,8 @@ exports[`Embedded spec entries 1`] = `
             USDA Raw Whole Egg
             USDA Sweetened Condensed Milk
             USDA Unsweetened Cocoa Powder
+            USDA Unsweetened Cocoa Powder, Processed with Alkali
+            USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat
             USDA Vanilla Extract
             USDA Whole Evaporated Milk
             USDA Whole Milk

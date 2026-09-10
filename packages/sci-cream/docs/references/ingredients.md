@@ -55,3 +55,9 @@
 [^125]: [_Super Neutrose Gallia, Fiche Technique CO-SP-004_](https://cdn.laboutiquedeschefs.fr/7768/ft_super-neutrose-1492696363.pdf). (2014). Louis Francois.
 
 [^126]: [_Perfect Ice Cream_](https://modernistpantry.com/products/perfect-ice-cream.html). (2026). Modernist Pantry.
+
+[^127]: [_Chocolate, dark, 45-59% cacao solids_](https://fdc.nal.usda.gov/food-details/170271/nutrients). (2019). USDA FoodData Central - SR Legacy.
+
+[^128]: [_Cocoa, dry powder, unsweetened, processed with alkali_](https://fdc.nal.usda.gov/food-details/169594/nutrients). (2019). USDA FoodData Central - SR Legacy.
+
+[^129]: [_Cocoa, dry powder, hi-fat or breakfast, processed with alkali_](https://fdc.nal.usda.gov/food-details/170657/nutrients). (2019). USDA FoodData Central - SR Legacy.

@@ -11,9 +11,8 @@
 #![allow(clippy::unwrap_used, clippy::float_cmp)]
 
 use super::util::*;
-use crate::composition::CompKey;
-use crate::constants::density::oils;
 use crate::tests::assets::get_comp_by_name;
+use crate::{composition::CompKey, constants::density::oils};
 
 #[test]
 fn nielsen_massey_extracts_reconcile() {
@@ -22,13 +21,13 @@ fn nielsen_massey_extracts_reconcile() {
     let cases = [
         // (name, oil_density, expected_kcal per-5mL serving, expected_sugar_g)
         ("Nielsen-Massey Pure Vanilla Extract", NO_OIL,               10.0, 0.0), // label 15 kcal
-        ("Nielsen-Massey Pure Vanilla Bean Paste", NO_OIL,           15.0, 3.0),  // label 17 kcal
-        ("Nielsen-Massey Pure Almond Extract", oils::BITTER_ALMOND,  25.0, 0.0),
+        ("Nielsen-Massey Pure Vanilla Bean Paste", NO_OIL,            15.0, 3.0), // label 17 kcal
+        ("Nielsen-Massey Pure Almond Extract", oils::BITTER_ALMOND,   25.0, 0.0),
         ("Nielsen-Massey Pure Chocolate Extract", oils::COCOA_BUTTER, 15.0, 0.0),
-        ("Nielsen-Massey Pure Coffee Extract", oils::COFFEE,         15.0, 0.0),  // label 20 kcal
-        ("Nielsen-Massey Pure Lemon Extract", oils::CITRUS,          30.0, 0.0),
-        ("Nielsen-Massey Pure Orange Extract", oils::CITRUS,         30.0, 0.0),
-        ("Nielsen-Massey Pure Peppermint Extract", oils::PEPPERMINT, 30.0, 0.0),
+        ("Nielsen-Massey Pure Coffee Extract", oils::COFFEE,          15.0, 0.0), // label 20 kcal
+        ("Nielsen-Massey Pure Lemon Extract", oils::CITRUS,           30.0, 0.0),
+        ("Nielsen-Massey Pure Orange Extract", oils::CITRUS,          30.0, 0.0),
+        ("Nielsen-Massey Pure Peppermint Extract", oils::PEPPERMINT,  30.0, 0.0),
     ];
 
     // all are under the 0.5g/serving threshold so they round to 0 on the label

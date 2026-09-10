@@ -165,3 +165,5 @@
 [^81]: Raphaelson, Paul. (2018, September). [_Ice Cream Flavor: Chocolate_](https://under-belly.org/ice-cream-flavor-chocolate/). Underbelly.
 
 [^82]: Raphaelson, Paul. (2016, December). [_Booze Flavored Ice Cream_](https://under-belly.org/booze-flavored-ice-cream/). Underbelly.
+
+[^83]: U.S. Department of Agriculture. (2024, April). [_FoodData Central Foundation Foods Documentation_](https://fdc.nal.usda.gov/Foundation_Foods_Documentation).

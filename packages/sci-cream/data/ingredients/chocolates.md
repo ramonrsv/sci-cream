@@ -90,6 +90,12 @@
 { "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 22 } }
 ```
 
+## Cocoa Powder, 24% Fat
+
+```json
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 24 } }
+```
+
 ## Cocoa Butter
 
 ```json
@@ -203,6 +209,24 @@ ingredient is modeled as a simple 70% dark chocolate.
 
 USDA FoodData Central - SR Legacy - [Cocoa, dry powder,
 unsweetened](https://fdc.nal.usda.gov/food-details/169593/nutrients)
+
+## USDA Unsweetened Cocoa Powder, Processed with Alkali
+
+```json
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 13.1 } }
+```
+
+USDA FoodData Central - SR Legacy - [Cocoa, dry powder, unsweetened, processed with
+alkali](https://fdc.nal.usda.gov/food-details/169594/nutrients)
+
+## USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat
+
+```json
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 23.7 } }
+```
+
+USDA FoodData Central - SR Legacy - [Cocoa, dry powder, hi-fat or breakfast, processed with
+alkali](https://fdc.nal.usda.gov/food-details/170657/nutrients)
 
 ## Ghirardelli 100% Unsweetened Cocoa Powder
 

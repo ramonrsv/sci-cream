@@ -67,6 +67,20 @@ fn compare_specs_chocolate_70() {
 }
 
 #[test]
+fn compare_specs_chocolate_75() {
+    let sources = [
+        ("Simple", "75% Dark Chocolate"),
+        ("USDA", "USDA Dark Chocolate, 70-85% Cacao Solids"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(2.0).with(CompKey::Energy, 3.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
 fn compare_specs_chocolate_85() {
     let sources = [
         ("Simple", "85% Dark Chocolate"),
@@ -133,6 +147,39 @@ fn compare_specs_cocoa_powder_17_fat() {
     .map(source_str_to_comp);
 
     let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 3.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_cocoa_powder_20_fat() {
+    let sources = [
+        ("Simple", "Cocoa Powder, 20% Fat"),
+        ("Valrhona", "Valrhona Unsweetened Cocoa Powder"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(6.0)
+        .with(CompKey::Energy, 8.0)
+        .with(CompKey::CacaoSolids, 7.0)
+        .with(CompKey::CocoaSolids, 8.0)
+        .with(CompKey::OtherSNFS, 7.0)
+        .with(CompKey::HF, 13.6);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_cocoa_powder_24_fat() {
+    let sources = [
+        ("Simple", "Cocoa Powder, 24% Fat"),
+        ("USDA", "USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 2.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
