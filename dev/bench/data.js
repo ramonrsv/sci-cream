@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789192620305,
+  "lastUpdate": 1789192624537,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -588774,6 +588774,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1055.2,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "96a842181f7f7f89fdd29ab7d26d3f793707a27c",
+          "message": "Add dutch processing and refit the cacao constants\n\nThe `_IN_COCOA_SOLIDS` constants were fitted against two different\ndenominators: cocoa powders kept their intrinsic sugars inside the\ncocoa solids, while chocolates lost theirs to the declared `sugars`.\nAveraging the two fitted neither.\n\nAdd `STD_SUGARS_IN_COCOA_SOLIDS`, measured at 2.1% of the non-fat\nsolids across the three unsweetened powders, and gross the chocolate\ndenominators back up by it so all six USDA listings share one basis.\nNeither spec models these sugars, so what the split costs now shows\nup as reconciliation error rather than being absorbed by the fit.\n\nAdd `dutch_processed` to `CocoaPowderSpec` and split ash and\ncarbohydrates into natural and dutched pairs. Alkalization leaves a\nmineral residue that is itself ash, the only per-kind difference with\nboth a mechanism and a gap wider than the within-kind scatter.\n\nChocolate protein now reconciles to within 4% where it missed by up\nto 4.8%, and the natural powder to 0.13%. Most ceilings tighten; the\ntwo that loosen record simplifications the old basis had hidden.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-12T01:36:28-04:00",
+          "tree_id": "b056405d5006216afd102381b7d76c27cd4ffb62",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/96a842181f7f7f89fdd29ab7d26d3f793707a27c"
+        },
+        "date": 1789192578861,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 726.29,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 894.74,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 663.36,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 831.81,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 673.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 842.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 645.9,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 814.35,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 647.39,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 815.83,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1054.92,
             "unit": "KB"
           },
           {
