@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789192658210,
+  "lastUpdate": 1789192725086,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -613208,6 +613208,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.77,
             "range": "0.22",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "96a842181f7f7f89fdd29ab7d26d3f793707a27c",
+          "message": "Add dutch processing and refit the cacao constants\n\nThe `_IN_COCOA_SOLIDS` constants were fitted against two different\ndenominators: cocoa powders kept their intrinsic sugars inside the\ncocoa solids, while chocolates lost theirs to the declared `sugars`.\nAveraging the two fitted neither.\n\nAdd `STD_SUGARS_IN_COCOA_SOLIDS`, measured at 2.1% of the non-fat\nsolids across the three unsweetened powders, and gross the chocolate\ndenominators back up by it so all six USDA listings share one basis.\nNeither spec models these sugars, so what the split costs now shows\nup as reconciliation error rather than being absorbed by the fit.\n\nAdd `dutch_processed` to `CocoaPowderSpec` and split ash and\ncarbohydrates into natural and dutched pairs. Alkalization leaves a\nmineral residue that is itself ash, the only per-kind difference with\nboth a mechanism and a gap wider than the within-kind scatter.\n\nChocolate protein now reconciles to within 4% where it missed by up\nto 4.8%, and the natural powder to 0.13%. Most ceilings tighten; the\ntwo that loosen record simplifications the old basis had hidden.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-12T01:36:28-04:00",
+          "tree_id": "b056405d5006216afd102381b7d76c27cd4ffb62",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/96a842181f7f7f89fdd29ab7d26d3f793707a27c"
+        },
+        "date": 1789192666677,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 66.38,
+            "range": "8.29",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.74,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.73,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 182.5,
+            "range": "11.48",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.53,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 182.5,
+            "range": "11.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.71,
+            "range": "7.04",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.43,
+            "range": "0.35",
             "unit": "ms"
           }
         ]
