@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789192973183,
+  "lastUpdate": 1789193019237,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -613809,6 +613809,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.43,
             "range": "0.35",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "46b3c9526d8958cab73e0c4d17c25a79bd6af4f4",
+          "message": "Fix stale recipe property literals\n\nSeven expected values across the three recipe tables no longer match\nthe computed ones at the precision they state. Each was correct when\nwritten and drifted as the recipes and constants moved, but\n`assert_eq_float!` tolerates 0.001 and `toBeCloseTo` 0.005, both\nwider than the drift, so nothing ever failed.\n\n`StabilizersPerWater` was stale in all three. It divides two values\nthat both move with any ingredient change, making it the most\ndrift-prone entry in the table: the main recipe's 0.3466 was exact\nback when `Water` was 58.95, and water has since moved to 59.075.\n\nThe main recipe's `AbsPAC` and `ServingTemp` are mirrored in the\nlib.rs and README examples, so those are updated alongside.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-12T01:54:58-04:00",
+          "tree_id": "b3b315ea1a4da4d7471988532509ff208e362373",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/46b3c9526d8958cab73e0c4d17c25a79bd6af4f4"
+        },
+        "date": 1789192958938,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.5,
+            "range": "8.94",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.11,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.09,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 178,
+            "range": "8.94",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.47,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 178,
+            "range": "8.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.1,
+            "range": "7.18",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.21,
+            "range": "0.38",
             "unit": "ms"
           }
         ]
