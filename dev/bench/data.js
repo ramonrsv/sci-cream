@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789192856849,
+  "lastUpdate": 1789192943951,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -548118,6 +548118,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.08%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "46b3c9526d8958cab73e0c4d17c25a79bd6af4f4",
+          "message": "Fix stale recipe property literals\n\nSeven expected values across the three recipe tables no longer match\nthe computed ones at the precision they state. Each was correct when\nwritten and drifted as the recipes and constants moved, but\n`assert_eq_float!` tolerates 0.001 and `toBeCloseTo` 0.005, both\nwider than the drift, so nothing ever failed.\n\n`StabilizersPerWater` was stale in all three. It divides two values\nthat both move with any ingredient change, making it the most\ndrift-prone entry in the table: the main recipe's 0.3466 was exact\nback when `Water` was 58.95, and water has since moved to 59.075.\n\nThe main recipe's `AbsPAC` and `ServingTemp` are mirrored in the\nlib.rs and README examples, so those are updated alongside.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-12T01:54:58-04:00",
+          "tree_id": "b3b315ea1a4da4d7471988532509ff208e362373",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/46b3c9526d8958cab73e0c4d17c25a79bd6af4f4"
+        },
+        "date": 1789192893928,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 64821,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 587932,
+            "range": "±0.43%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 46257,
+            "range": "±1.04%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 485327,
+            "range": "±0.92%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
