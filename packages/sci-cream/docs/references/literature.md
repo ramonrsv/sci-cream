@@ -169,3 +169,7 @@
 [^83]: U.S. Department of Agriculture. (2024, April). [_FoodData Central Foundation Foods Documentation_](https://fdc.nal.usda.gov/Foundation_Foods_Documentation).
 
 [^84]: European Parliament and Council. (2000, June). [_Directive 2000/36/EC relating to cocoa and chocolate products intended for human consumption_](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32000L0036). EUR-Lex.
+
+[^85]: Miller, K. B., et al. (2008, August). [_Impact of Alkalization on the Antioxidant and Flavanol Content of Commercial Cocoa Powders_](https://pubs.acs.org/doi/10.1021/jf801670p). Journal of Agricultural and Food Chemistry, 56(18), pages 8527-8533.
+
+[^86]: U.S. Food & Drug Administration. (n.d.). [_CFR - Code of Federal Regulations Title 21, Part 163 - Cacao Products_](https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-163).

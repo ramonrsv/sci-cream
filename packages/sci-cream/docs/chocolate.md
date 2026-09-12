@@ -29,3 +29,15 @@ different industries and stages of processing. For clarity, within this library 
 [`ChocolateSpec`] and [`CocoaPowderSpec`] can be used to define chocolate and cocoa powder
 ingredients, which have fields for the above terms as well as for [`sugars`](ChocolateSpec::sugars)
 and [`other_solids`](ChocolateSpec::other_solids).
+
+## Dutch Processed
+
+_Dutch processed_, _dutched_, or _alkalized_ cocoa is cocoa that has been treated with alkalizing
+agents at the time of roasting. This alkalization process can shift the pH of natural nibs from
+about 5.2-5.6 up to 7.0-8.6, resulting in cocoa that is less acidic and astringent, and has a darker
+color (Goff & Hartel, 2025, p. 105)[^20], (Miller et al., 2008)[^85]. Alkalizing agents vary, with
+_"\[a\]mmonium, potassium, or sodium bicarbonate, carbonate, or hydroxide, or magnesium carbonate or
+oxide"_ permitted (U.S. FDA, CFR 21, 163.110(b)(1))[^86]. Dutch processing is a graded scale, where
+natural cocoa powders have an extractable pH of 5.3-5.8, and alkalized cocoa powders can be grouped
+into lightly treated (pH 6.50-7.20), medium treated (pH 7.21-7.60), and heavily treated (pH 7.61 and
+higher) (Miller et al., 2008)[^85].

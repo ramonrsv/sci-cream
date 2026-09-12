@@ -119,7 +119,7 @@ pub(crate) static MAIN_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLo
     use RatioKey::*;
 
     vec![
-        (Energy.into(), 228.851),
+        (Energy.into(), 229.159),
         (MilkFat.into(), 13.637),
         (Lactose.into(), 4.817),
         (MSNF.into(), 8.839),

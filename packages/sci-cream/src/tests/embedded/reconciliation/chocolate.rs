@@ -159,32 +159,36 @@ const FULL_MISS: f64 = 100.0;
 /// Per-field ceilings on relative error against the measured value, in percent — dark chocolates.
 ///
 /// Fat and sugars are transcribed from the listing rather than predicted, so both must match
-/// exactly. [`ChocolateSpec`](crate::specs::ChocolateSpec) has no water field, so water is
-/// unmodeled and reads as a full miss; that ceiling records the gap rather than tolerates drift.
+/// exactly. [`ChocolateSpec`](crate::specs::ChocolateSpec) has no water field, so water reads as a
+/// full miss, a ceiling that records the gap rather than tolerates drift. That same water stays
+/// inside `cacao_solids` and inflates the cocoa solids, while the sugars intrinsic to cocoa deflate
+/// them by leaving with the declared `sugars` ([`cacao::STD_SUGARS_IN_COCOA_SOLIDS`]); the rest
+/// bound that net overstatement plus the scatter of each constant, fiber being the loosest.
 const CHOCOLATE_CEILING: Proximates = Proximates {
     water: FULL_MISS,
-    protein: 5.0,
+    protein: 4.5,
     fat: TESTS_EPSILON,
     carbohydrate: 3.0,
-    fiber: 21.0,
+    fiber: 16.0,
     sugars: TESTS_EPSILON,
     ash: 9.0,
 };
 
 /// Per-field ceilings on relative error against the measured value, in percent — cocoa powders.
 ///
-/// [`CocoaPowderSpec`](crate::specs::CocoaPowderSpec) has no sugars field, so the ~1.7 g each
-/// listing measures is a full miss. Water is modeled from [`cacao::STD_WATER_IN_COCOA_POWDER`],
-/// leaving only the dutched listing's 2.7% off, by 10%. Ash is the loosest at 19.3% and both
-/// dutched listings miss low, which a `dutch_processed` field would correct.
+/// [`CocoaPowderSpec`](crate::specs::CocoaPowderSpec) has no sugars field, so each listing's sugars
+/// read as a full miss; that mass stays inside the modeled cocoa solids as carbohydrate, keeping
+/// that row tight. Water comes from [`cacao::STD_WATER_IN_COCOA_POWDER`] and ash tracks
+/// alkalization via [`cacao::STD_ASH_IN_DUTCHED_COCOA_SOLIDS`], so each misses only where a listing
+/// departs from it. Fiber is the loosest, with protein also wide against a shared constant.
 const COCOA_CEILING: Proximates = Proximates {
-    water: 11.0,
-    protein: 12.5,
+    water: 10.5,
+    protein: 8.5,
     fat: TESTS_EPSILON,
-    carbohydrate: 3.0,
-    fiber: 14.0,
+    carbohydrate: 3.5,
+    fiber: 18.5,
     sugars: FULL_MISS,
-    ash: 20.0,
+    ash: 8.5,
 };
 
 #[test]

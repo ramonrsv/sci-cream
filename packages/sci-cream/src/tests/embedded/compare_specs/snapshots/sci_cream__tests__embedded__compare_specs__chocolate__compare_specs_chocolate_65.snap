@@ -4,17 +4,17 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Simple, USDA
 
-Energy              11.86 pp  (Simple vs USDA)
+Energy              11.61 pp  (Simple vs USDA)
 TotalFats            1.25 pp  (Simple vs USDA)
 CacaoSolids          1.70 pp  (Simple vs USDA)
 CocoaButter          1.25 pp  (Simple vs USDA)
 CocoaSolids          2.95 pp  (Simple vs USDA)
-TotalFiber           1.18 pp  (Simple vs USDA)
+TotalFiber           1.12 pp  (Simple vs USDA)
 TotalSugars          1.70 pp  (Simple vs USDA)
-TotalCarbohydrates   0.31 pp  (Simple vs USDA)
+TotalCarbohydrates   0.33 pp  (Simple vs USDA)
 OtherSNFS            0.00 pp  (Simple vs USDA)
 TotalSNFS            2.95 pp  (Simple vs USDA)
-TotalProteins        0.72 pp  (Simple vs USDA)
+TotalProteins        0.69 pp  (Simple vs USDA)
 TotalSolids          0.00 pp  (Simple vs USDA)
 Water                0.00 pp  (Simple vs USDA)
 POD                  1.70 pp  (Simple vs USDA)

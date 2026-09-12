@@ -213,7 +213,7 @@ unsweetened](https://fdc.nal.usda.gov/food-details/169593/nutrients)
 ## USDA Unsweetened Cocoa Powder, Processed with Alkali
 
 ```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 13.1 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 13.1, "dutch_processed": true } }
 ```
 
 USDA FoodData Central - SR Legacy - [Cocoa, dry powder, unsweetened, processed with
@@ -222,7 +222,7 @@ alkali](https://fdc.nal.usda.gov/food-details/169594/nutrients)
 ## USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat
 
 ```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 23.7 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 23.7, "dutch_processed": true } }
 ```
 
 USDA FoodData Central - SR Legacy - [Cocoa, dry powder, hi-fat or breakfast, processed with
@@ -263,7 +263,13 @@ table](https://www.hersheyland.com/products/hersheys-cocoa-100-cacao-natural-uns
 ```json
 {
   "category": "Chocolate",
-  "CocoaPowderSpec": { "cacao_solids": 93, "cocoa_butter": 21, "other_solids": 4, "water": 3 }
+  "CocoaPowderSpec": {
+    "cacao_solids": 93,
+    "cocoa_butter": 21,
+    "other_solids": 4,
+    "water": 3,
+    "dutch_processed": true
+  }
 }
 ```
 

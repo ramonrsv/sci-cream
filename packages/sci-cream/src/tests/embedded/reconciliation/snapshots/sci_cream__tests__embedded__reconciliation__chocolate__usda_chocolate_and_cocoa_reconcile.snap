@@ -5,59 +5,59 @@ expression: "lines.join(\"\\n\")"
 USDA Dark Chocolate, 45-59% Cacao Solids
   [     key      | modeled | measured |  diff  ]
   water              0.00      0.97    100.00 %
-  protein            5.10      4.88      4.24 %
+  protein            4.89      4.88      0.16 %
   fat               31.30     31.30      0.00 %
-  carbohydrate      62.04     61.20      1.36 %
-  fiber              8.32      7.00     15.87 %
+  carbohydrate      62.23     61.20      1.66 %
+  fiber              7.86      7.00     10.97 %
   sugars            47.90     47.90      0.00 %
-  ash                1.56      1.70      8.24 %
+  ash                1.58      1.70      7.01 %
 
 USDA Dark Chocolate, 60-69% Cacao Solids
   [     key      | modeled | measured |  diff  ]
   water              0.00      1.25    100.00 %
-  protein            6.12      6.12      0.08 %
+  protein            5.88      6.12      4.00 %
   fat               38.30     38.30      0.00 %
-  carbohydrate      53.70     52.40      2.42 %
-  fiber             10.00      8.00     20.00 %
+  carbohydrate      53.93     52.40      2.83 %
+  fiber              9.45      8.00     15.34 %
   sugars            36.70     36.70      0.00 %
-  ash                1.88      1.90      1.32 %
+  ash                1.90      1.90      0.00 %
 
 USDA Dark Chocolate, 70-85% Cacao Solids
   [     key      | modeled | measured |  diff  ]
   water              0.00      1.37    100.00 %
-  protein            8.18      7.79      4.80 %
+  protein            7.85      7.79      0.75 %
   fat               42.60     42.60      0.00 %
-  carbohydrate      46.71     45.90      1.74 %
-  fiber             13.36     10.90     18.41 %
+  carbohydrate      47.01     45.90      2.37 %
+  fiber             12.63     10.90     13.66 %
   sugars            24.00     24.00      0.00 %
-  ash                2.50      2.32      7.39 %
+  ash                2.54      2.32      8.60 %
 
 USDA Unsweetened Cocoa Powder
   [     key      | modeled | measured |  diff  ]
   water              3.00      3.00      0.00 %
-  protein           20.41     19.60      3.96 %
+  protein           19.58     19.60      0.13 %
   fat               13.70     13.70      0.00 %
-  carbohydrate      56.64     57.90      2.17 %
-  fiber             33.32     37.00      9.95 %
+  carbohydrate      57.39     57.90      0.87 %
+  fiber             31.49     37.00     14.90 %
   sugars             0.00      1.75    100.00 %
-  ash                6.25      5.80      7.16 %
+  ash                6.33      5.80      8.38 %
 
 USDA Unsweetened Cocoa Powder, Processed with Alkali
   [     key      | modeled | measured |  diff  ]
   water              3.00      2.70     10.00 %
-  protein           20.56     18.10     11.95 %
+  protein           19.72     18.10      8.20 %
   fat               13.10     13.10      0.00 %
-  carbohydrate      57.05     58.30      2.14 %
-  fiber             33.56     29.80     11.20 %
+  carbohydrate      56.38     58.30      3.29 %
+  fiber             31.71     29.80      6.04 %
   sugars             0.00      1.76    100.00 %
-  ash                6.29      7.80     19.33 %
+  ash                7.80      7.80      0.03 %
 
 USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat
   [     key      | modeled | measured |  diff  ]
   water              3.00      3.00      0.00 %
-  protein           17.96     16.80      6.45 %
+  protein           17.23     16.80      2.47 %
   fat               23.70     23.70      0.00 %
-  carbohydrate      49.84     49.70      0.29 %
-  fiber             29.32     33.90     13.51 %
+  carbohydrate      49.26     49.70      0.89 %
+  fiber             27.71     33.90     18.27 %
   sugars             0.00      1.53    100.00 %
-  ash                5.50      6.79     19.04 %
+  ash                6.82      6.79      0.39 %

@@ -179,7 +179,10 @@ fn compare_specs_cocoa_powder_24_fat() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 2.5);
+    // Only the USDA reference is alkalized, which moves carbohydrate into energy-free ash
+    let ceiling = KeyCeiling::new(1.0)
+        .with(CompKey::Energy, 7.5)
+        .with(CompKey::TotalCarbohydrates, 1.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));

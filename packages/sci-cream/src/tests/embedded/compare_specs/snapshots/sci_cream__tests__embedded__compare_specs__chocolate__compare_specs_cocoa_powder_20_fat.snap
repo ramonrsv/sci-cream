@@ -4,17 +4,17 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Simple, Valrhona
 
-Energy               1.55 pp  (Simple vs Valrhona)
+Energy               7.03 pp  (Simple vs Valrhona)
 TotalFats            1.03 pp  (Simple vs Valrhona)
 CacaoSolids          4.12 pp  (Simple vs Valrhona)
 CocoaButter          1.03 pp  (Simple vs Valrhona)
 CocoaSolids          5.15 pp  (Simple vs Valrhona)
-TotalFiber           2.06 pp  (Simple vs Valrhona)
+TotalFiber           1.95 pp  (Simple vs Valrhona)
 TotalSugars          0.00 pp  (Simple vs Valrhona)
-TotalCarbohydrates   3.51 pp  (Simple vs Valrhona)
+TotalCarbohydrates   4.81 pp  (Simple vs Valrhona)
 OtherSNFS            4.12 pp  (Simple vs Valrhona)
 TotalSNFS            1.03 pp  (Simple vs Valrhona)
-TotalProteins        1.26 pp  (Simple vs Valrhona)
+TotalProteins        1.21 pp  (Simple vs Valrhona)
 TotalSolids          0.00 pp  (Simple vs Valrhona)
 Water                0.00 pp  (Simple vs Valrhona)
 POD                  0.00 pp  (Simple vs Valrhona)

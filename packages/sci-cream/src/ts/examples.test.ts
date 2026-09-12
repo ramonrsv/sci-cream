@@ -45,7 +45,7 @@ test("example, without using WasmBridge", () => {
   const mix_properties = recipe.calculate_mix_properties();
 
   const comp = mix_properties.composition;
-  expect(comp.get(CompKey.Energy)).toBeCloseTo(228.851);
+  expect(comp.get(CompKey.Energy)).toBeCloseTo(229.159);
   expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.637);
   expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.817);
   // ...
@@ -56,7 +56,7 @@ test("example, without using WasmBridge", () => {
   expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.04);
 
   // Via prop keys:
-  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(228.851);
+  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(229.159);
   expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.603);
 });
 
@@ -69,12 +69,12 @@ test("example, using WasmBridge", () => {
   const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
   const mix_properties = bridge.calculate_recipe_mix_properties(RECIPE);
 
-  expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(228.851);
+  expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(229.159);
   // ...
   expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
   // ...
 
   // Via prop keys:
-  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(228.851);
+  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(229.159);
   expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.603);
 });

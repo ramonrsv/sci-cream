@@ -4,12 +4,12 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Simple, Ghirardelli
 
-Energy               2.35 pp  (Simple vs Ghirardelli)
+Energy               2.32 pp  (Simple vs Ghirardelli)
 TotalFats            0.34 pp  (Simple vs Ghirardelli)
 CacaoSolids          0.00 pp  (Simple vs Ghirardelli)
 CocoaButter          0.34 pp  (Simple vs Ghirardelli)
 CocoaSolids          0.34 pp  (Simple vs Ghirardelli)
-TotalFiber           0.14 pp  (Simple vs Ghirardelli)
+TotalFiber           0.13 pp  (Simple vs Ghirardelli)
 TotalSugars          0.00 pp  (Simple vs Ghirardelli)
 TotalCarbohydrates   0.23 pp  (Simple vs Ghirardelli)
 OtherSNFS            0.00 pp  (Simple vs Ghirardelli)
