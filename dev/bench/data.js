@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789193263912,
+  "lastUpdate": 1789193704912,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -509833,6 +509833,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 547.75,
             "range": "11.04",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "46b3c9526d8958cab73e0c4d17c25a79bd6af4f4",
+          "message": "Fix stale recipe property literals\n\nSeven expected values across the three recipe tables no longer match\nthe computed ones at the precision they state. Each was correct when\nwritten and drifted as the recipes and constants moved, but\n`assert_eq_float!` tolerates 0.001 and `toBeCloseTo` 0.005, both\nwider than the drift, so nothing ever failed.\n\n`StabilizersPerWater` was stale in all three. It divides two values\nthat both move with any ingredient change, making it the most\ndrift-prone entry in the table: the main recipe's 0.3466 was exact\nback when `Water` was 58.95, and water has since moved to 59.075.\n\nThe main recipe's `AbsPAC` and `ServingTemp` are mirrored in the\nlib.rs and README examples, so those are updated alongside.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-12T01:54:58-04:00",
+          "tree_id": "b3b315ea1a4da4d7471988532509ff208e362373",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/46b3c9526d8958cab73e0c4d17c25a79bd6af4f4"
+        },
+        "date": 1789193644578,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 48.75,
+            "range": "6.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 55.5,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 56.5,
+            "range": "3.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2345.88,
+            "range": "31.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 290.5,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 303.63,
+            "range": "4.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 318,
+            "range": "4.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15321.13,
+            "range": "56.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 861.88,
+            "range": "26.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 50,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 51.5,
+            "range": "0.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.88,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.38,
+            "range": "1.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 123.75,
+            "range": "3.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 80.38,
+            "range": "3.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.06,
+            "range": "0.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.24,
+            "range": "0.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 596.25,
+            "range": "6.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 658,
+            "range": "11.05",
             "unit": "ms"
           }
         ]
