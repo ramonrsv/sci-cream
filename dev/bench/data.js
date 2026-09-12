@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789193246566,
+  "lastUpdate": 1789193251268,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -509224,6 +509224,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 697,
             "range": "14.47",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "96a842181f7f7f89fdd29ab7d26d3f793707a27c",
+          "message": "Add dutch processing and refit the cacao constants\n\nThe `_IN_COCOA_SOLIDS` constants were fitted against two different\ndenominators: cocoa powders kept their intrinsic sugars inside the\ncocoa solids, while chocolates lost theirs to the declared `sugars`.\nAveraging the two fitted neither.\n\nAdd `STD_SUGARS_IN_COCOA_SOLIDS`, measured at 2.1% of the non-fat\nsolids across the three unsweetened powders, and gross the chocolate\ndenominators back up by it so all six USDA listings share one basis.\nNeither spec models these sugars, so what the split costs now shows\nup as reconciliation error rather than being absorbed by the fit.\n\nAdd `dutch_processed` to `CocoaPowderSpec` and split ash and\ncarbohydrates into natural and dutched pairs. Alkalization leaves a\nmineral residue that is itself ash, the only per-kind difference with\nboth a mechanism and a gap wider than the within-kind scatter.\n\nChocolate protein now reconciles to within 4% where it missed by up\nto 4.8%, and the natural powder to 0.13%. Most ceilings tighten; the\ntwo that loosen record simplifications the old basis had hidden.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-12T01:36:28-04:00",
+          "tree_id": "b056405d5006216afd102381b7d76c27cd4ffb62",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/96a842181f7f7f89fdd29ab7d26d3f793707a27c"
+        },
+        "date": 1789193200399,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 33.13,
+            "range": "2.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 37.63,
+            "range": "2.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 42.88,
+            "range": "4.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1699.38,
+            "range": "71.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 235.38,
+            "range": "3.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 244.63,
+            "range": "3.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 255.63,
+            "range": "3.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 12379.38,
+            "range": "34.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 769.25,
+            "range": "28.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 42.13,
+            "range": "1.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 42.63,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 31.63,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 32.13,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 105.25,
+            "range": "5.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 59,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 39.7,
+            "range": "0.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.08,
+            "range": "0.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 508.63,
+            "range": "10.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 547.75,
+            "range": "11.04",
             "unit": "ms"
           }
         ]
