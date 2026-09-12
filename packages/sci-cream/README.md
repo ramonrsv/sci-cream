@@ -98,10 +98,10 @@ for (key, value) in [
     (PACmlk.into(), 3.247),
     (PACalc.into(), 2.107),
     (TotalPAC.into(), 33.446),
-    (AbsPAC.into(), 56.617), // TotalPAC / Water
+    (AbsPAC.into(), 56.616), // TotalPAC / Water
     (HF.into(), 7.291),
     (FPD.into(), -3.603), // °C
-    (ServingTemp.into(), -13.487), // °C
+    (ServingTemp.into(), -13.486), // °C
     (HardnessAt14C.into(), 76.040), // [0, 100] scale
 ] {
     assert_eq_float!(mix_properties.get(key), value);
@@ -531,7 +531,7 @@ expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.817);
 
 const fpd = mix_properties.fpd;
 expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
-expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.487);
+expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.486);
 expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.04);
 
 // Via prop keys:

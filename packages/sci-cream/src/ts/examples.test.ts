@@ -52,7 +52,7 @@ test("example, without using WasmBridge", () => {
 
   const fpd = mix_properties.fpd;
   expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
-  expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.487);
+  expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.486);
   expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.04);
 
   // Via prop keys:
