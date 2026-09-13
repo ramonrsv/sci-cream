@@ -173,3 +173,5 @@
 [^85]: Miller, K. B., et al. (2008, August). [_Impact of Alkalization on the Antioxidant and Flavanol Content of Commercial Cocoa Powders_](https://pubs.acs.org/doi/10.1021/jf801670p). Journal of Agricultural and Food Chemistry, 56(18), pages 8527-8533.
 
 [^86]: U.S. Food & Drug Administration. (n.d.). [_CFR - Code of Federal Regulations Title 21, Part 163 - Cacao Products_](https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-163).
+
+[^87]: Lindmark Månsson, H. (2008, June). [_Fatty acids in bovine milk fat_](https://foodandnutritionresearch.net/index.php/fnr/article/view/1134). Food & Nutrition Research.

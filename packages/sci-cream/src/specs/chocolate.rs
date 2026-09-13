@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     composition::{
-        Carbohydrates, Composition, Fats, Fibers, PAC, SimpleProteins, SimpleSolids, Solids, Sugars, ToComposition,
+        Carbohydrates, Composition, Fats, Fibers, MilkSolids, PAC, ScaleComponents, SimpleProteins, SimpleSolids,
+        Solids, Sugars, ToComposition,
     },
     constants::{
         composition::cacao::{
@@ -13,17 +14,49 @@ use crate::{
             STD_COCOA_BUTTER_IN_CACAO_SOLIDS, STD_FIBER_IN_COCOA_SOLIDS, STD_PROTEIN_IN_COCOA_SOLIDS,
             STD_SATURATED_FAT_IN_COCOA_BUTTER, STD_WATER_IN_COCOA_POWDER,
         },
-        hf,
+        composition::dairy::{
+            STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MSNF,
+            STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
+        },
+        hf, pac,
     },
     error::Result,
+    specs::dairy::{SolidsSource, make_milk_proteins},
     validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_subset},
 };
 
 #[cfg(doc)]
 use crate::{
     composition::CompKey,
-    constants::{self, composition::cacao},
+    constants::{
+        self,
+        composition::{cacao, dairy},
+    },
 };
+
+/// Represents the fats in chocolate ingredients, either a total, or a butterfat/cocoa butter split
+///
+/// Nutrition facts tables and vendor listings typically only report the [`Total`](Self::Total) fat
+/// content, which does not distinguish between cocoa butter and milk fat. When available, product
+/// spec sheets provide an explicit cocoa butter and milk fat [`Split`](Self::Split) declaration, or
+/// ingredients from which it can be inferred; an explicit split is preferred when available.
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub enum ChocolateFat {
+    /// Total fat content, as nutrition facts and vendor listings report it
+    #[serde(rename = "total_fat")]
+    Total(f64),
+    /// Cocoa butter and milk fat separately, as specification sheets state them
+    #[serde(rename = "fat_sources")]
+    Split {
+        /// Cocoa butter content, a subset of [`ChocolateSpec::cacao_solids`]
+        #[serde(default)]
+        cocoa_butter: f64,
+        /// Milk fat content, a subset of [`ChocolateSpec::milk_solids`]
+        #[serde(default)]
+        milk_fat: f64,
+    },
+}
 
 /// Spec for chocolate ingredients, with cacao solids, cocoa butter, and optional sugar and others
 ///
@@ -63,12 +96,13 @@ use crate::{
 /// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
 ///     composition::{CompKey, ToComposition},
-///     specs::ChocolateSpec
+///     specs::{ChocolateFat, ChocolateSpec}
 /// };
 ///
 /// let comp = ChocolateSpec {
 ///     cacao_solids: 70.0,
-///     cocoa_butter: Some(40.0),
+///     milk_solids: None,
+///     fat: Some(ChocolateFat::Total(40.0)),
 ///     sugars: Some(30.0),
 ///     other_solids: None,
 /// }.to_composition()?;
@@ -85,19 +119,33 @@ use crate::{
 /// # Ok(()) }
 /// ```
 #[doc = include_str!("../../docs/references/index/107.md")]
-// @todo Add a `msnf` field to support milk chocolate products (some professional chocolatiers use)
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct ChocolateSpec {
     /// Total cacao solids content, usually advertised on packaging, e.g. 70% for 70% dark chocolate
     pub cacao_solids: f64,
-    /// Cocoa butter content as a percentage of the product as a whole, usually from nutrition facts
+    /// Total milk solids content, including milk fat; usually zero for dark chocolates
     ///
-    /// If not specified, it is calculated from [`cacao_solids`](Self::cacao_solids) and the
-    /// standard composition [`cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS`]. It must be a subset of
-    /// [`cacao_solids`](Self::cacao_solids) if both are specified.
+    /// Assumed to be zero if not specified, as dark chocolates do not contain any milk ingredients.
+    /// If non-zero, it is broken down into subcomponents based on standard dairy values, e.g.
+    /// [`dairy::STD_LACTOSE_IN_MSNF`], [`dairy::STD_PROTEIN_IN_MSNF`], etc. The ratio of butter fat
+    /// is determined from the [`ChocolateFat::Split::milk_fat`] value, if specified, otherwise from
+    /// the standard content in whole milk powder [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`].
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cocoa_butter: Option<f64>,
+    pub milk_solids: Option<f64>,
+    /// Fat content as a percentage of the product as a whole, usually from nutrition facts
+    ///
+    /// If not specified, cocoa butter and milk fat are independently calculated. Cocoa butter from
+    /// [`cacao_solids`](Self::cacao_solids) and [`cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS`], and
+    /// milk fat from [`milk_solids`](Self::milk_solids) and
+    /// [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`].
+    ///
+    /// If provided as a [`Total`](ChocolateFat::Total), it is internally split into cocoa butter
+    /// and milk fat. Milk fat, if any, is determined first from [`ChocolateSpec::milk_solids`] and
+    /// [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`]. The remainder is cocoa butter, equivalent to
+    /// total fat if there are no milk solids.
+    #[serde(flatten, skip_serializing_if = "Option::is_none")]
+    pub fat: Option<ChocolateFat>,
     /// Sugars content as a percentage of the product as a whole, usually from nutrition facts.
     ///
     /// Assumed to be zero if not specified, as some chocolate products (e.g. Unsweetened Chocolate,
@@ -116,36 +164,87 @@ impl ToComposition for ChocolateSpec {
     fn to_composition(&self) -> Result<Composition> {
         let Self {
             cacao_solids,
-            cocoa_butter,
+            milk_solids,
+            fat,
             sugars,
             other_solids,
         } = *self;
 
-        let cocoa_butter = cocoa_butter.unwrap_or(cacao_solids * STD_COCOA_BUTTER_IN_CACAO_SOLIDS);
+        let milk_solids = milk_solids.unwrap_or(0.0);
         let sugars = sugars.unwrap_or(0.0);
         let other_solids = other_solids.unwrap_or(0.0);
+        let (cocoa_butter, milk_fat) = resolve_fats(cacao_solids, milk_solids, fat);
 
-        verify_are_positive(&[cacao_solids, cocoa_butter, sugars, other_solids])?;
+        verify_are_positive(&[cacao_solids, milk_solids, cocoa_butter, milk_fat, sugars, other_solids])?;
         verify_is_subset(cocoa_butter, cacao_solids, "cocoa_butter <= cacao_solids")?;
-        verify_is_100_percent(cacao_solids + sugars + other_solids)?;
+        verify_is_subset(milk_fat, milk_solids, "milk_fat <= milk_solids")?;
+        verify_is_100_percent(cacao_solids + milk_solids + sugars + other_solids)?;
 
         let cocoa_solids = make_cocoa_solids(cacao_solids, cocoa_butter, false)?;
-        let sugars = Sugars::new().sucrose(sugars);
+        let milk_snf = milk_solids - milk_fat;
+        let lactose = Sugars::new().lactose(milk_snf * STD_LACTOSE_IN_MSNF);
+        let milk = make_milk_solids(milk_solids, milk_fat, &lactose)?;
+
+        let sucrose = Sugars::new().sucrose(sugars);
         let other_solids = SimpleSolids::new()
-            .carbohydrates(Carbohydrates::new().sugars(sugars))
+            .carbohydrates(Carbohydrates::new().sugars(sucrose))
             .others(other_solids);
+        let total_sugars = sucrose.add(&lactose);
 
         Composition::new()
-            .energy(cocoa_solids.energy()? + other_solids.energy()?)
-            .solids(Solids::new().cocoa(cocoa_solids).other(other_solids))
-            .pod(sugars.to_pod()?)
+            .energy(cocoa_solids.energy()? + milk.energy()? + other_solids.energy()?)
+            .solids(Solids::new().cocoa(cocoa_solids).milk(milk).other(other_solids))
+            .pod(total_sugars.to_pod()?)
             .pac(
                 PAC::new()
-                    .sugars(sugars.to_pac()?)
+                    .sugars(total_sugars.to_pac()?)
+                    .msnf_ws_salts(milk_snf * pac::MSNF_WS_SALTS / 100.0)
                     .hardness_factor(calculate_cocoa_hardness(cacao_solids, cocoa_butter)),
             )
             .validate_into()
     }
+}
+
+/// Resolves the declared [`ChocolateFat`] into cocoa butter and milk fat contents.
+///
+/// If `fat` is provided as a [`Total`](ChocolateFat::Total), milk fat is determined first from
+/// `milk_solids` and [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`]. The remainder is cocoa butter,
+/// equivalent to total fat if there are no milk solids. If `fat` is [None], then cocoa butter and
+/// milk fat are independently calculated. Cocoa butter from `cacao_solids` and
+/// [`cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS`], and milk fat from `milk_solids` and
+/// [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`].
+///
+/// Milk fat anchors the split when unspecified because the milk fat content of milk solids is more
+/// consistent than the cocoa butter content of cacao solids. The former usually comes from a single
+/// whole milk powder ingredient, while products often include additional cocoa butter from other
+/// sources. Products with separately added butterfat need an explicit [`ChocolateFat::Split`].
+fn resolve_fats(cacao_solids: f64, milk_solids: f64, fat: Option<ChocolateFat>) -> (f64, f64) {
+    let std_milk_fat = milk_solids * STD_BUTTERFAT_IN_WHOLE_MILK_POWDER;
+
+    match fat {
+        None => (cacao_solids * STD_COCOA_BUTTER_IN_CACAO_SOLIDS, std_milk_fat),
+        Some(ChocolateFat::Total(total)) => (total - std_milk_fat, std_milk_fat),
+        Some(ChocolateFat::Split { cocoa_butter, milk_fat }) => (cocoa_butter, milk_fat),
+    }
+}
+
+/// Builds a [`MilkSolids`] from total milk solids and milk fat, with standard compositions
+///
+/// Blends that depart from standard composition values - added lactose, whey, buttermilk - should
+/// be specified in a [`CompositeSpec`](crate::specs::CompositeSpec) instead.
+fn make_milk_solids(milk_solids: f64, milk_fat: f64, lactose: &Sugars) -> Result<MilkSolids> {
+    let proteins = (milk_solids - milk_fat) * STD_PROTEIN_IN_MSNF;
+
+    MilkSolids::new()
+        .fats(
+            Fats::new()
+                .total(milk_fat)
+                .saturated(milk_fat * STD_SATURATED_FAT_IN_MILK_FAT)
+                .trans(milk_fat * STD_TRANS_FAT_IN_MILK_FAT),
+        )
+        .carbohydrates(Carbohydrates::new().sugars(*lactose))
+        .proteins(make_milk_proteins(proteins, SolidsSource::Milk))
+        .others_from_total(milk_solids)
 }
 
 /// Spec for cocoa powder ingredients, with cocoa butter and optional other solids
@@ -309,7 +408,7 @@ fn make_cocoa_solids(cacao_solids: f64, cocoa_butter: f64, dutch_processed: bool
 /// Calculates the hardness factor based on the specified `cacao_solids` and `cocoa_butter`
 fn calculate_cocoa_hardness(cacao_solids: f64, cocoa_butter: f64) -> f64 {
     let cocoa_snf = cacao_solids - cocoa_butter;
-    cocoa_butter * hf::CACAO_BUTTER + cocoa_snf * hf::COCOA_SOLIDS
+    cocoa_butter * hf::COCOA_BUTTER + cocoa_snf * hf::COCOA_SOLIDS
 }
 
 #[cfg(test)]
@@ -332,7 +431,8 @@ pub(crate) mod tests {
     fn empty_chocolate_spec() -> ChocolateSpec {
         ChocolateSpec {
             cacao_solids: 0.0,
-            cocoa_butter: None,
+            milk_solids: None,
+            fat: None,
             sugars: None,
             other_solids: None,
         }
@@ -353,7 +453,7 @@ pub(crate) mod tests {
       "category": "Chocolate",
       "ChocolateSpec": {
         "cacao_solids": 70,
-        "cocoa_butter": 40,
+        "total_fat": 40,
         "sugars": 30
       }
     }"#;
@@ -364,7 +464,7 @@ pub(crate) mod tests {
             category: Category::Chocolate,
             spec: ChocolateSpec {
                 cacao_solids: 70.0,
-                cocoa_butter: Some(40.0),
+                fat: Some(ChocolateFat::Total(40.0)),
                 sugars: Some(30.0),
                 ..empty_chocolate_spec()
             }
@@ -433,7 +533,7 @@ pub(crate) mod tests {
       "category": "Chocolate",
       "ChocolateSpec": {
         "cacao_solids": 95,
-        "cocoa_butter": 57.5,
+        "total_fat": 57.5,
         "sugars": 3,
         "other_solids": 2
       }
@@ -445,7 +545,8 @@ pub(crate) mod tests {
             category: Category::Chocolate,
             spec: ChocolateSpec {
                 cacao_solids: 95.0,
-                cocoa_butter: Some(57.5),
+                milk_solids: None,
+                fat: Some(ChocolateFat::Total(57.5)),
                 sugars: Some(3.0),
                 other_solids: Some(2.0),
             }
@@ -514,7 +615,7 @@ pub(crate) mod tests {
       "category": "Chocolate",
       "ChocolateSpec": {
         "cacao_solids": 100,
-        "cocoa_butter": 54
+        "total_fat": 54
       }
     }"#;
 
@@ -524,7 +625,7 @@ pub(crate) mod tests {
             category: Category::Chocolate,
             spec: ChocolateSpec {
                 cacao_solids: 100.0,
-                cocoa_butter: Some(54.0),
+                fat: Some(ChocolateFat::Total(54.0)),
                 ..empty_chocolate_spec()
             }
             .into(),
@@ -779,7 +880,7 @@ pub(crate) mod tests {
             category: Category::Chocolate,
             spec: ChocolateSpec {
                 cacao_solids: 70.0,
-                cocoa_butter: None,
+                fat: None,
                 sugars: Some(30.0),
                 ..empty_chocolate_spec()
             }
@@ -853,7 +954,7 @@ pub(crate) mod tests {
             category: Category::Chocolate,
             spec: ChocolateSpec {
                 cacao_solids: 95.0,
-                cocoa_butter: None,
+                fat: None,
                 sugars: Some(5.0),
                 ..empty_chocolate_spec()
             }
@@ -926,7 +1027,7 @@ pub(crate) mod tests {
             category: Category::Chocolate,
             spec: ChocolateSpec {
                 cacao_solids: 100.0,
-                cocoa_butter: None,
+                fat: None,
                 sugars: None,
                 ..empty_chocolate_spec()
             }
@@ -1029,23 +1130,23 @@ pub(crate) mod tests {
         let neg_specs = [
             ChocolateSpec {
                 cacao_solids: -1.0,
-                cocoa_butter: Some(0.0),
+                fat: Some(ChocolateFat::Total(0.0)),
                 ..empty_chocolate_spec()
             },
             ChocolateSpec {
                 cacao_solids: 70.0,
-                cocoa_butter: Some(-1.0),
+                fat: Some(ChocolateFat::Total(-1.0)),
                 ..empty_chocolate_spec()
             },
             ChocolateSpec {
                 cacao_solids: 70.0,
-                cocoa_butter: Some(40.0),
+                fat: Some(ChocolateFat::Total(40.0)),
                 sugars: Some(-1.0),
                 ..empty_chocolate_spec()
             },
             ChocolateSpec {
                 cacao_solids: 70.0,
-                cocoa_butter: Some(40.0),
+                fat: Some(ChocolateFat::Total(40.0)),
                 other_solids: Some(-1.0),
                 ..empty_chocolate_spec()
             },
@@ -1061,7 +1162,7 @@ pub(crate) mod tests {
     fn to_composition_err_when_cocoa_butter_exceeds_cacao_solids() {
         let result = ChocolateSpec {
             cacao_solids: 40.0,
-            cocoa_butter: Some(60.0),
+            fat: Some(ChocolateFat::Total(60.0)),
             ..empty_chocolate_spec()
         }
         .to_composition();
@@ -1073,18 +1174,18 @@ pub(crate) mod tests {
         let gt_100_specs = [
             ChocolateSpec {
                 cacao_solids: 50.0,
-                cocoa_butter: Some(20.0),
+                fat: Some(ChocolateFat::Total(20.0)),
                 ..empty_chocolate_spec()
             },
             ChocolateSpec {
                 cacao_solids: 70.0,
-                cocoa_butter: Some(40.0),
+                fat: Some(ChocolateFat::Total(40.0)),
                 sugars: Some(35.0),
                 ..empty_chocolate_spec()
             },
             ChocolateSpec {
                 cacao_solids: 70.0,
-                cocoa_butter: Some(40.0),
+                fat: Some(ChocolateFat::Total(40.0)),
                 other_solids: Some(35.0),
                 ..empty_chocolate_spec()
             },
@@ -1135,5 +1236,166 @@ pub(crate) mod tests {
         }
         .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    fn to_composition_chocolate_spec_milk_solids_break_down_as_dairy() {
+        let comp = ChocolateSpec {
+            cacao_solids: 40.0,
+            milk_solids: Some(20.0),
+            fat: Some(ChocolateFat::Split {
+                cocoa_butter: 22.0,
+                milk_fat: 5.0,
+            }),
+            sugars: Some(40.0),
+            other_solids: None,
+        }
+        .to_composition()
+        .unwrap();
+
+        let msnf = 20.0 - 5.0;
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 20.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 5.0);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), msnf);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), msnf * STD_LACTOSE_IN_MSNF);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), msnf * STD_PROTEIN_IN_MSNF);
+
+        // The declared split is taken as-is, and the cacao side is untouched by the milk
+        assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), 40.0);
+        assert_eq_flt_test!(comp.get(CompKey::CocoaButter), 22.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFats), 27.0);
+    }
+
+    #[test]
+    fn to_composition_chocolate_spec_milk_lactose_reaches_pod_and_pac() {
+        let milky = ChocolateSpec {
+            cacao_solids: 40.0,
+            milk_solids: Some(20.0),
+            fat: Some(ChocolateFat::Split {
+                cocoa_butter: 22.0,
+                milk_fat: 5.0,
+            }),
+            sugars: Some(40.0),
+            other_solids: None,
+        }
+        .to_composition()
+        .unwrap();
+
+        let lactose = (20.0 - 5.0) * STD_LACTOSE_IN_MSNF;
+        assert_eq_flt_test!(milky.get(CompKey::TotalSugars), 40.0 + lactose);
+
+        // Sucrose alone would carry the POD of the declared 40 g, and MSNF salts no PAC at all
+        let sucrose_only = Sugars::new().sucrose(40.0).to_pod().unwrap();
+        assert!(milky.get(CompKey::POD) > sucrose_only);
+        assert!(milky.get(CompKey::PACmlk) > 0.0);
+    }
+
+    #[test]
+    fn to_composition_chocolate_spec_total_fat_reserves_milk_fat_first() {
+        let comp = ChocolateSpec {
+            cacao_solids: 40.0,
+            milk_solids: Some(20.0),
+            fat: Some(ChocolateFat::Total(27.0)),
+            sugars: Some(40.0),
+            other_solids: None,
+        }
+        .to_composition()
+        .unwrap();
+
+        let milk_fat = 20.0 * STD_BUTTERFAT_IN_WHOLE_MILK_POWDER;
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), milk_fat);
+        assert_eq_flt_test!(comp.get(CompKey::CocoaButter), 27.0 - milk_fat);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFats), 27.0);
+    }
+
+    #[test]
+    fn to_composition_chocolate_spec_total_fat_is_cocoa_butter_without_milk() {
+        let comp = ChocolateSpec {
+            cacao_solids: 70.0,
+            fat: Some(ChocolateFat::Total(40.0)),
+            sugars: Some(30.0),
+            ..empty_chocolate_spec()
+        }
+        .to_composition()
+        .unwrap();
+
+        assert_eq_flt_test!(&comp, &*COMP_LINDT_70_DARK_CHOCOLATE);
+    }
+
+    #[test]
+    fn to_composition_chocolate_spec_absent_fat_defaults_both_sources() {
+        let comp = ChocolateSpec {
+            cacao_solids: 40.0,
+            milk_solids: Some(20.0),
+            fat: None,
+            sugars: Some(40.0),
+            other_solids: None,
+        }
+        .to_composition()
+        .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::CocoaButter), 40.0 * STD_COCOA_BUTTER_IN_CACAO_SOLIDS);
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 20.0 * STD_BUTTERFAT_IN_WHOLE_MILK_POWDER);
+    }
+
+    #[test]
+    fn to_composition_err_when_milk_fat_exceeds_milk_solids() {
+        let result = ChocolateSpec {
+            cacao_solids: 40.0,
+            milk_solids: Some(20.0),
+            fat: Some(ChocolateFat::Split {
+                cocoa_butter: 22.0,
+                milk_fat: 25.0,
+            }),
+            sugars: Some(40.0),
+            other_solids: None,
+        }
+        .to_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn to_composition_err_when_total_fat_is_below_implied_milk_fat() {
+        let result = ChocolateSpec {
+            cacao_solids: 40.0,
+            milk_solids: Some(20.0),
+            fat: Some(ChocolateFat::Total(3.0)),
+            sugars: Some(40.0),
+            other_solids: None,
+        }
+        .to_composition();
+        assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    fn chocolate_fat_serializes_flattened() {
+        for (json, fat) in [
+            (r#"{"cacao_solids":70.0,"total_fat":40.0}"#, ChocolateFat::Total(40.0)),
+            (
+                r#"{"cacao_solids":70.0,"fat_sources":{"cocoa_butter":24.0,"milk_fat":6.0}}"#,
+                ChocolateFat::Split {
+                    cocoa_butter: 24.0,
+                    milk_fat: 6.0,
+                },
+            ),
+        ] {
+            let spec = ChocolateSpec {
+                cacao_solids: 70.0,
+                fat: Some(fat),
+                ..empty_chocolate_spec()
+            };
+            assert_eq!(serde_json::to_string(&spec).unwrap(), json);
+            assert_eq!(serde_json::from_str::<ChocolateSpec>(json).unwrap(), spec);
+        }
+    }
+
+    #[test]
+    fn chocolate_fat_deserialization_rejects_conflicting_and_unknown_fields() {
+        for json in [
+            r#"{"cacao_solids":70,"total_fat":40,"fat_sources":{"cocoa_butter":24,"milk_fat":6}}"#,
+            r#"{"cacao_solids":70,"total_fatt":40}"#,
+        ] {
+            assert!(serde_json::from_str::<ChocolateSpec>(json).is_err());
+        }
     }
 }

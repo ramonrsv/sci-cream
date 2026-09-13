@@ -9,7 +9,6 @@ use crate::{
         ToComposition,
     },
     constants::{
-        self,
         composition::dairy::{
             STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS,
             STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_MINERALS_IN_CASEIN, STD_MINERALS_IN_MSNF, STD_MINERALS_IN_WS,
@@ -17,6 +16,7 @@ use crate::{
             STD_TRANS_FAT_IN_MILK_FAT, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN,
         },
         density::solve_dairy_serving_grams,
+        pac,
     },
     error::{Error, Result},
     specs::units::Unit,
@@ -24,7 +24,10 @@ use crate::{
 };
 
 #[cfg(doc)]
-use crate::composition::{ArtificialSweeteners, Polyols};
+use crate::{
+    composition::{ArtificialSweeteners, Polyols},
+    constants,
+};
 
 /// Indicates the origin of the non-fat solids in a dairy product, which affects its composition
 #[derive(PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
@@ -149,7 +152,7 @@ impl ToComposition for DairySimpleSpec {
         let pod = total_sugars.to_pod()?;
         let pad = PAC::new()
             .sugars(total_sugars.to_pac()?)
-            .msnf_ws_salts(msnf * constants::pac::MSNF_WS_SALTS / 100.0);
+            .msnf_ws_salts(msnf * pac::MSNF_WS_SALTS / 100.0);
 
         Composition::new()
             .energy(milk_solids.energy()? + other_solids.energy()?)
@@ -353,7 +356,7 @@ impl ToComposition for DairyLabelSpec {
             .pac(
                 PAC::new()
                     .sugars(total_sugars.to_pac()?)
-                    .msnf_ws_salts(snf * constants::pac::MSNF_WS_SALTS / 100.0),
+                    .msnf_ws_salts(snf * pac::MSNF_WS_SALTS / 100.0),
             )
             .scale(100.0 / serving_size)
             .validate_into()
@@ -377,7 +380,7 @@ fn make_dairy_sugars(sugars: f64, lactose_free: bool) -> Sugars {
 ///
 /// Milk solids carry the natural ~80/20 casein/whey split ([`STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`],
 /// [`STD_WHEY_PROTEIN_IN_MSNF_PROTEIN`]); whey and casein solids are entirely whey or casein.
-fn make_milk_proteins(total: f64, source: SolidsSource) -> MilkProteins {
+pub(crate) fn make_milk_proteins(total: f64, source: SolidsSource) -> MilkProteins {
     match source {
         SolidsSource::Milk => MilkProteins::new()
             .casein(total * STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN)

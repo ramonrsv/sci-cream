@@ -22,7 +22,7 @@ use crate::{
             STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_PROTEIN_IN_MSNF, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN,
         },
     },
-    specs::{ChocolateSpec, CocoaPowderSpec},
+    specs::{ChocolateFat, ChocolateSpec, CocoaPowderSpec},
 };
 
 /// Asserts for floating point comparisons in doc tests

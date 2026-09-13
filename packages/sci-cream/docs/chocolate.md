@@ -17,8 +17,10 @@ different industries and stages of processing. For clarity, within this library 
   _effect that cocoa butter provides as it melts in the mouth."_ (Goff & Hartel, 2025, p. 107)[^20].
   It is rarely advertised on packaging, but can usually be inferred from the nutrition table.
 
-  This value is specified in [`Composition`], accessible via [`CompKey::CocoaButter`], and
-  corresponds to [`ChocolateSpec::cocoa_butter`].
+  This value is specified in [`Composition`], accessible via [`CompKey::CocoaButter`]. In
+  [`CocoaPowderSpec`] it is specified directly in the
+  [`cocoa_butter`](CocoaPowderSpec::cocoa_butter) field. In [`ChocolateSpec`] it is specified in the
+  [`ChocolateSpec::fat`] field, via [`ChocolateFat::Split::cocoa_butter`].
 
 - **_Cocoa_ solids**: the non-fat component of cacao solids (sometimes referred to as "cocoa powder"
   or "cocoa fiber"), i.e. cacao solids minus cocoa butter. In ice cream mixes, this generally

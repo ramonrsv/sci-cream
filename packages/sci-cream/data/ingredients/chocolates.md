@@ -99,7 +99,7 @@
 ## Cocoa Butter
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 100 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "total_fat": 100 } }
 ```
 
 ## USDA Dark Chocolate, 45-59% Cacao Solids
@@ -107,7 +107,7 @@
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 52.1, "cocoa_butter": 31.3, "sugars": 47.9 }
+  "ChocolateSpec": { "cacao_solids": 52.1, "total_fat": 31.3, "sugars": 47.9 }
 }
 ```
 
@@ -119,7 +119,7 @@ solids](https://fdc.nal.usda.gov/food-details/170271/nutrients)
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 63.3, "cocoa_butter": 38.3, "sugars": 36.7 }
+  "ChocolateSpec": { "cacao_solids": 63.3, "total_fat": 38.3, "sugars": 36.7 }
 }
 ```
 
@@ -131,7 +131,7 @@ solids](https://fdc.nal.usda.gov/food-details/170272/nutrients)
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 76, "cocoa_butter": 42.6, "sugars": 24 }
+  "ChocolateSpec": { "cacao_solids": 76, "total_fat": 42.6, "sugars": 24 }
 }
 ```
 
@@ -143,7 +143,7 @@ solids](https://fdc.nal.usda.gov/food-details/170273/nutrients)
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 70, "cocoa_butter": 40, "sugars": 30 }
+  "ChocolateSpec": { "cacao_solids": 70, "total_fat": 40, "sugars": 30 }
 }
 ```
 
@@ -156,7 +156,7 @@ table](https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 85, "cocoa_butter": 45, "sugars": 15 }
+  "ChocolateSpec": { "cacao_solids": 85, "total_fat": 45, "sugars": 15 }
 }
 ```
 
@@ -169,7 +169,7 @@ table](https://www.lindt.ca/en/lindt-excellence-85-cacao-dark-chocolate-bar-100g
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 95, "cocoa_butter": 57.5, "sugars": 3, "other_solids": 2 }
+  "ChocolateSpec": { "cacao_solids": 95, "total_fat": 57.5, "sugars": 3, "other_solids": 2 }
 }
 ```
 
@@ -180,7 +180,7 @@ table](https://www.lindt.ca/en/lindt-excellence-95-cacao-dark-chocolate-bar-80g)
 ## Lindt EXCELLENCE 100% Cacao Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 54 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "total_fat": 54 } }
 ```
 
 100% cocoa solids from the label. From the [nutrition facts
@@ -241,7 +241,7 @@ table](https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-po
 ## Baker's Unsweetened Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 53.3 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "total_fat": 53.3 } }
 ```
 
 100% cacao solids from the ingredients list. From the [nutrition facts
