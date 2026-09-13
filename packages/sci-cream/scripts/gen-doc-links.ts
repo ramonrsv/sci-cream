@@ -138,8 +138,14 @@ function pathForHref(href: string): string | undefined {
   const item = ITEM_FILE.exec(file);
   if (!item) return undefined;
 
-  /** `#structfield.sucrose` and `#variant.Trehalose` name a member of the item. */
-  const member = fragment?.replace(/^(structfield|variant|method|associatedconstant)\./, "");
+  /**
+   * `#structfield.sucrose` and `#variant.Trehalose` name a member of the item. A variant's own
+   * field arrives as `#variant.Split.field.cocoa_butter`, whose inner `.field.` an author writes as
+   * another `::`.
+   */
+  const member = fragment
+    ?.replace(/^(structfield|variant|method|associatedconstant)\./, "")
+    .replace(/\.field\./, "::");
   const tail = member === undefined ? [item[2]] : [item[2], member];
   return [...segments, ...tail].join("::");
 }
