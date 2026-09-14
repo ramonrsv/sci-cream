@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789194197154,
+  "lastUpdate": 1789361575435,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -632204,6 +632204,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/46b3c9526d8958cab73e0c4d17c25a79bd6af4f4"
         },
         "date": 1789192823235,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1116.01,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 338,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1753.19,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 539.41,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 587.1,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1957.65,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0756562b00d2b593b2bb952a395e70f518b09d01",
+          "message": "Fix doc link inversion for variant fields\n\nRustdoc anchors a variant's own field two levels deep, as\n`#variant.Split.field.cocoa_butter`. The scraper stripped only the\nleading `variant.`, keying the citation `Split.field.cocoa_butter`\nwhere an author writes `Split::cocoa_butter`, so it never resolved.\n\nThe check compares the map against a regeneration, so a consistently\nwrong inversion passes it; only the citation test in doc-links.test.ts\ncatches this.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-14T00:29:07-04:00",
+          "tree_id": "d0bf638e50e15c3ebbc10dccd49d4ab352db7082",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0756562b00d2b593b2bb952a395e70f518b09d01"
+        },
+        "date": 1789361515471,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
