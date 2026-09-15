@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789453450298,
+  "lastUpdate": 1789453454310,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -624698,6 +624698,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/0756562b00d2b593b2bb952a395e70f518b09d01"
         },
         "date": 1789361596078,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e50786d0105f793fdc564d8dd3f148ed60a5a63a",
+          "message": "Add milk solids to `ChocolateSpec`\n\nChocolate's fat is now a ChocolateFat enum: a product declares either\na total or a cocoa butter/milk fat pair, never both. Flattened into\nthe spec, that invariant is a deserialization error rather than a\nvalidation rule.\n\nMilk solids route through the MilkSolids path the dairy specs use, so\nlactose reaches POD, PAC and freezing point depression, and proteins\ncarry the natural casein/whey split.\n\nA declared total reserves milk fat from\nSTD_BUTTERFAT_IN_WHOLE_MILK_POWDER, leaving cocoa butter as the\nremainder. The milk fat fraction of milk solids is the steadier of\nthe two, since added cocoa butter moves the other freely.\n\nThe nine entries declaring cocoa_butter now declare total_fat, which\nis what their nutrition tables measured. No value moves: a total is\nthe cocoa butter when there are no milk solids.\n\nAlso renames hf::CACAO_BUTTER to COCOA_BUTTER, cites Corvitto for\neach hardness factor, and adds Lindmark Mansson (2008) to the\nbibliography for the butyric acid content of milk fat.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-14T00:49:55-04:00",
+          "tree_id": "01fb2d100b0e91de0afeed2356fca9bac111a01e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e50786d0105f793fdc564d8dd3f148ed60a5a63a"
+        },
+        "date": 1789453453469,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
