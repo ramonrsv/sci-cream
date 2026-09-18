@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789715567909,
+  "lastUpdate": 1789715576384,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -552384,6 +552384,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.95%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "744274ada63b9294c6ff6358ea6b01e516e8242a",
+          "message": "Add Callebaut chocolate ingredients\n\nSeven entries covering the dark, milk and white range: 811, 2815,\n60-40-38, 70-30-38, 823, 665 and W2.\n\nFive are backed by specification sheets, citing each field to the\nsheet and reconciling against the product page's stated minimums.\n2815 and 60-40-38 have no sheet, so their cacao solids come from\nthe page minimum plus 1.5, the tolerance stated on four of the\nfive siblings' sheets, with sugars as the remainder.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-18T02:59:33-04:00",
+          "tree_id": "8885a8049bbbc21c43ea0ee5a4a6bfcddd641303",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/744274ada63b9294c6ff6358ea6b01e516e8242a"
+        },
+        "date": 1789715516482,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47696,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 463758,
+            "range": "±0.38%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33125,
+            "range": "±1.31%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 349129,
+            "range": "±1.07%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
