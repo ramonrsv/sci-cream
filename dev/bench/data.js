@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789715593461,
+  "lastUpdate": 1789715705644,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -618238,6 +618238,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.47,
             "range": "0.29",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "744274ada63b9294c6ff6358ea6b01e516e8242a",
+          "message": "Add Callebaut chocolate ingredients\n\nSeven entries covering the dark, milk and white range: 811, 2815,\n60-40-38, 70-30-38, 823, 665 and W2.\n\nFive are backed by specification sheets, citing each field to the\nsheet and reconciling against the product page's stated minimums.\n2815 and 60-40-38 have no sheet, so their cacao solids come from\nthe page minimum plus 1.5, the tolerance stated on four of the\nfive siblings' sheets, with sugars as the remainder.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-18T02:59:33-04:00",
+          "tree_id": "8885a8049bbbc21c43ea0ee5a4a6bfcddd641303",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/744274ada63b9294c6ff6358ea6b01e516e8242a"
+        },
+        "date": 1789715643066,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.65,
+            "range": "7.60",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.21,
+            "range": "0.56",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.14,
+            "range": "0.58",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 175.5,
+            "range": "5.81",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.49,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 175.5,
+            "range": "5.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.16,
+            "range": "5.72",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.32,
+            "range": "0.27",
             "unit": "ms"
           }
         ]
