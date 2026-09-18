@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789715989173,
+  "lastUpdate": 1789715993118,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -626714,6 +626714,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/744274ada63b9294c6ff6358ea6b01e516e8242a"
         },
         "date": 1789715592785,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bacd18c201403909190bb85175b2bf2cd067e791",
+          "message": "Rename `fat_sources` spec key to `split_fats`\n\n`fat_sources` led with \"sources\" as the head noun, reading as a list\nof origins rather than the amounts it holds.\n\n`split_fats` puts the amounts first, matches the modifier-head order\nof its sibling `total_fat`, and its plural marks the object shape\nagainst that scalar. A bare `fats` was rejected: the key already\ndenotes a `Fats` breakdown of total/saturated/trans elsewhere in\n`data/ingredients`.\n\nSerialization only; the `Split` variant and its doc links are\nunchanged, and resolved compositions are identical.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-18T03:14:30-04:00",
+          "tree_id": "3a75230bc3f94af5eab66318d91bec33ebc1cfa0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bacd18c201403909190bb85175b2bf2cd067e791"
+        },
+        "date": 1789715992175,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
