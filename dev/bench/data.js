@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789454205841,
+  "lastUpdate": 1789715567909,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -634945,6 +634945,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1974.17,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "744274ada63b9294c6ff6358ea6b01e516e8242a",
+          "message": "Add Callebaut chocolate ingredients\n\nSeven entries covering the dark, milk and white range: 811, 2815,\n60-40-38, 70-30-38, 823, 665 and W2.\n\nFive are backed by specification sheets, citing each field to the\nsheet and reconciling against the product page's stated minimums.\n2815 and 60-40-38 have no sheet, so their cacao solids come from\nthe page minimum plus 1.5, the tolerance stated on four of the\nfive siblings' sheets, with sugars as the remainder.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-18T02:59:33-04:00",
+          "tree_id": "8885a8049bbbc21c43ea0ee5a4a6bfcddd641303",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/744274ada63b9294c6ff6358ea6b01e516e8242a"
+        },
+        "date": 1789715507538,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1129.6,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 344.4,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1778.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 548.28,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 595.85,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1983.26,
             "unit": "KB"
           }
         ]
