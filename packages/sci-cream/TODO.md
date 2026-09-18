@@ -59,7 +59,6 @@
 - [ ] Consider modeling water in `ChocolateSpec`, which `STD_WATER_IN_CHOCOLATE` awaits. Declared
       figures are wet-basis and `cacao_solids + sugars` already closes at 100, so an additive field
       double-counts, while carving it out decouples `CompKey::CacaoSolids` from the declared value.
-- [ ] Add milk solids support to `ChocolateSpec` and add milk chocolate Callebaut ingredients.
 - [ ] Revisit splitting the cacao constants per product kind as listings are added. The per-kind gap
       is smaller than the scatter within each kind: 1.7 points for protein against 2.0 for powders.
 - [ ] Consider modeling the sugars `STD_SUGARS_IN_COCOA_SOLIDS` measures, today only a derivation
@@ -134,6 +133,7 @@
 
 ## Completed
 
+- [x] Add milk solids support to `ChocolateSpec` and add milk chocolate Callebaut ingredients.
 - [x] Add a `dutch_processed` field to `CocoaPowderSpec`; alkalization lifts ash from ~0.074 to
       ~0.093 of cocoa solids, the loosest reconciliation ceiling at 19.3%, on one un-imputed pair.
 - [x] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
