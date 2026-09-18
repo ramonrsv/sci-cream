@@ -47,7 +47,7 @@ pub enum ChocolateFat {
     #[serde(rename = "total_fat")]
     Total(f64),
     /// Cocoa butter and milk fat separately, as specification sheets state them
-    #[serde(rename = "fat_sources")]
+    #[serde(rename = "split_fats")]
     Split {
         /// Cocoa butter content, a subset of [`ChocolateSpec::cacao_solids`]
         #[serde(default)]
@@ -1372,7 +1372,7 @@ pub(crate) mod tests {
         for (json, fat) in [
             (r#"{"cacao_solids":70.0,"total_fat":40.0}"#, ChocolateFat::Total(40.0)),
             (
-                r#"{"cacao_solids":70.0,"fat_sources":{"cocoa_butter":24.0,"milk_fat":6.0}}"#,
+                r#"{"cacao_solids":70.0,"split_fats":{"cocoa_butter":24.0,"milk_fat":6.0}}"#,
                 ChocolateFat::Split {
                     cocoa_butter: 24.0,
                     milk_fat: 6.0,
@@ -1392,7 +1392,7 @@ pub(crate) mod tests {
     #[test]
     fn chocolate_fat_deserialization_rejects_conflicting_and_unknown_fields() {
         for json in [
-            r#"{"cacao_solids":70,"total_fat":40,"fat_sources":{"cocoa_butter":24,"milk_fat":6}}"#,
+            r#"{"cacao_solids":70,"total_fat":40,"split_fats":{"cocoa_butter":24,"milk_fat":6}}"#,
             r#"{"cacao_solids":70,"total_fatt":40}"#,
         ] {
             assert!(serde_json::from_str::<ChocolateSpec>(json).is_err());

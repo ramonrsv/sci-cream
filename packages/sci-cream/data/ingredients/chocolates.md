@@ -291,7 +291,7 @@ These are in agreement with the product page's _"70.5% Min. % Dry cocoa solids"_
   "ChocolateSpec": {
     "cacao_solids": 35.1,
     "milk_solids": 21.8,
-    "fat_sources": { "cocoa_butter": 30.2, "milk_fat": 6 },
+    "split_fats": { "cocoa_butter": 30.2, "milk_fat": 6 },
     "sugars": 42,
     "other_solids": 1.1
   }
@@ -324,7 +324,7 @@ Dry milk solids"_, _"36.2% Fat %"_.
   "ChocolateSpec": {
     "cacao_solids": 33,
     "milk_solids": 27,
-    "fat_sources": { "cocoa_butter": 29.8, "milk_fat": 5.9 },
+    "split_fats": { "cocoa_butter": 29.8, "milk_fat": 5.9 },
     "sugars": 38.5,
     "other_solids": 1.5
   }
@@ -359,7 +359,7 @@ milk solids"_, _"35.5% Fat %"_ (off by 0.2%).
   "ChocolateSpec": {
     "cacao_solids": 29.5,
     "milk_solids": 23,
-    "fat_sources": { "cocoa_butter": 29.5, "milk_fat": 6.3 },
+    "split_fats": { "cocoa_butter": 29.5, "milk_fat": 6.3 },
     "sugars": 46.5,
     "other_solids": 1
   }
