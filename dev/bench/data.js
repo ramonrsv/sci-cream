@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789715589870,
+  "lastUpdate": 1789715593461,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -625804,6 +625804,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/e50786d0105f793fdc564d8dd3f148ed60a5a63a"
         },
         "date": 1789453453469,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "744274ada63b9294c6ff6358ea6b01e516e8242a",
+          "message": "Add Callebaut chocolate ingredients\n\nSeven entries covering the dark, milk and white range: 811, 2815,\n60-40-38, 70-30-38, 823, 665 and W2.\n\nFive are backed by specification sheets, citing each field to the\nsheet and reconciling against the product page's stated minimums.\n2815 and 60-40-38 have no sheet, so their cacao solids come from\nthe page minimum plus 1.5, the tolerance stated on four of the\nfive siblings' sheets, with sugars as the remainder.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-18T02:59:33-04:00",
+          "tree_id": "8885a8049bbbc21c43ea0ee5a4a6bfcddd641303",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/744274ada63b9294c6ff6358ea6b01e516e8242a"
+        },
+        "date": 1789715592785,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
