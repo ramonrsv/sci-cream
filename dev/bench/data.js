@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790277022343,
+  "lastUpdate": 1790277089913,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -620660,6 +620660,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.26,
             "range": "0.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "46ed29195922559c9bd951c200cf1710c99e5476",
+          "message": "Add Callebaut and Mona Lisa chocolate ingredients\n\nAdd the Callebaut Power 41 and Arriba milk couvertures, and Mona Lisa's\ndark curved shavings and milk blossoms, each from its spec sheet.\n\nTake Callebaut 60-40-38 from its spec sheet too, replacing the values\nderived from its product page: cacao solids 62.1 rather than 61.6, and\nfat 38.8 rather than 39.4.\n\nFold the milk keys into COMPARABLE_CHOCOLATE_KEYS so one list spans\ndark, milk, white and cocoa powder. Cocoa-only pairings read zero on\nboth sides, which also catches stray milk solids in a dark entry.\nCompare the new entries: the shavings against USDA's 45-59% listing,\n60-40-38 against the generic 60% rung, and the milk couvertures in\npairs of similar cocoa content, 823 with 665 and Power 41 with Arriba.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-24T14:51:48-04:00",
+          "tree_id": "31aa4ce359e1068b823d03bd9d54af0e3e190bd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/46ed29195922559c9bd951c200cf1710c99e5476"
+        },
+        "date": 1790277029136,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.65,
+            "range": "7.87",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.8,
+            "range": "1.03",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.75,
+            "range": "1.04",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 186,
+            "range": "16.12",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.48,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 186,
+            "range": "16.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.34,
+            "range": "8.11",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.39,
+            "range": "0.40",
             "unit": "ms"
           }
         ]
