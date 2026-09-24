@@ -1,0 +1,32 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/chocolate.rs
+expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
+---
+sources: Simple, Callebaut
+
+Energy              23.94 pp  (Simple vs Callebaut)
+TotalFats            4.60 pp  (Simple vs Callebaut)
+CacaoSolids          2.10 pp  (Simple vs Callebaut)
+CocoaButter          4.60 pp  (Simple vs Callebaut)
+CocoaSolids          2.50 pp  (Simple vs Callebaut)
+MilkFat              0.00 pp  (Simple vs Callebaut)
+MilkSolids           0.00 pp  (Simple vs Callebaut)
+MSNF                 0.00 pp  (Simple vs Callebaut)
+MilkSNFS             0.00 pp  (Simple vs Callebaut)
+MilkProteins         0.00 pp  (Simple vs Callebaut)
+Lactose              0.00 pp  (Simple vs Callebaut)
+TotalFiber           0.95 pp  (Simple vs Callebaut)
+TotalSugars          3.00 pp  (Simple vs Callebaut)
+TotalCarbohydrates   4.72 pp  (Simple vs Callebaut)
+OtherSNFS            0.90 pp  (Simple vs Callebaut)
+TotalSNFS            1.60 pp  (Simple vs Callebaut)
+TotalProteins        0.59 pp  (Simple vs Callebaut)
+TotalSolids          0.00 pp  (Simple vs Callebaut)
+Water                0.00 pp  (Simple vs Callebaut)
+POD                  3.00 pp  (Simple vs Callebaut)
+PACsgr               3.00 pp  (Simple vs Callebaut)
+PACmlk               0.00 pp  (Simple vs Callebaut)
+HF                   0.36 pp  (Simple vs Callebaut)
+TotalPAC             3.00 pp  (Simple vs Callebaut)
+SaturatedFat         2.76 pp  (Simple vs Callebaut)
+TransFat             0.00 pp  (Simple vs Callebaut)

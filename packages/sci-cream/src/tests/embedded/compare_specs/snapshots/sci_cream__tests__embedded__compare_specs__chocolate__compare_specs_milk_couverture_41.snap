@@ -1,0 +1,32 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/chocolate.rs
+expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
+---
+sources: Callebaut Power 41, Callebaut Arriba
+
+Energy              19.41 pp  (Callebaut Power 41 vs Callebaut Arriba)
+TotalFats            2.70 pp  (Callebaut Power 41 vs Callebaut Arriba)
+CacaoSolids          1.70 pp  (Callebaut Power 41 vs Callebaut Arriba)
+CocoaButter          1.60 pp  (Callebaut Power 41 vs Callebaut Arriba)
+CocoaSolids          3.30 pp  (Callebaut Power 41 vs Callebaut Arriba)
+MilkFat              1.10 pp  (Callebaut Power 41 vs Callebaut Arriba)
+MilkSolids           5.10 pp  (Callebaut Power 41 vs Callebaut Arriba)
+MSNF                 4.00 pp  (Callebaut Power 41 vs Callebaut Arriba)
+MilkSNFS             1.82 pp  (Callebaut Power 41 vs Callebaut Arriba)
+MilkProteins         1.40 pp  (Callebaut Power 41 vs Callebaut Arriba)
+Lactose              2.18 pp  (Callebaut Power 41 vs Callebaut Arriba)
+TotalFiber           1.25 pp  (Callebaut Power 41 vs Callebaut Arriba)
+TotalSugars          0.82 pp  (Callebaut Power 41 vs Callebaut Arriba)
+TotalCarbohydrates   3.09 pp  (Callebaut Power 41 vs Callebaut Arriba)
+OtherSNFS            0.40 pp  (Callebaut Power 41 vs Callebaut Arriba)
+TotalSNFS            1.88 pp  (Callebaut Power 41 vs Callebaut Arriba)
+TotalProteins        0.62 pp  (Callebaut Power 41 vs Callebaut Arriba)
+TotalSolids          0.00 pp  (Callebaut Power 41 vs Callebaut Arriba)
+Water                0.00 pp  (Callebaut Power 41 vs Callebaut Arriba)
+POD                  2.65 pp  (Callebaut Power 41 vs Callebaut Arriba)
+PACsgr               0.82 pp  (Callebaut Power 41 vs Callebaut Arriba)
+PACmlk               1.47 pp  (Callebaut Power 41 vs Callebaut Arriba)
+HF                   4.50 pp  (Callebaut Power 41 vs Callebaut Arriba)
+TotalPAC             0.65 pp  (Callebaut Power 41 vs Callebaut Arriba)
+SaturatedFat         1.68 pp  (Callebaut Power 41 vs Callebaut Arriba)
+TransFat             0.04 pp  (Callebaut Power 41 vs Callebaut Arriba)

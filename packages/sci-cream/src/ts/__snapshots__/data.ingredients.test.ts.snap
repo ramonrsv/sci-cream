@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 323  (non-alias: 274, independent: 260)
+"total: 327  (non-alias: 278, independent: 264)
 
             0% Milk
             1% Milk
@@ -49,6 +49,8 @@ exports[`Embedded spec entries 1`] = `
             Callebaut 70-30-38 Dark Chocolate
             Callebaut 811 Dark Chocolate
             Callebaut 823 Milk Chocolate
+            Callebaut Arriba Milk Chocolate
+            Callebaut Power 41 Milk Chocolate
             Callebaut W2 White Chocolate
             Carboxymethyl Cellulose
             Carnation 2% Evaporated Partly Skimmed Milk
@@ -203,6 +205,8 @@ exports[`Embedded spec entries 1`] = `
             Marsala Wine
             Medallion Skim Milk Powder
             Medallion Whole Milk Powder
+            Mona Lisa Dark Chocolate Curved Shavings
+            Mona Lisa Milk Chocolate Blossoms
             Mono- and Diglycerides
             MyProtein Clear Whey Isolate
             MyProtein Impact Whey Protein

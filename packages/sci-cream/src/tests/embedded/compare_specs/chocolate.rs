@@ -1,5 +1,5 @@
-//! Cross-source consistency checks for chocolate ingredients — dark chocolates and cocoa powder —
-//! comparing each Simple/default entry against Lindt and Ghirardelli label references.
+//! Cross-source consistency checks for chocolate ingredients, spanning dark, milk, white and
+//! cocoa powder, lining up each entry against labelled references from other sources.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -9,8 +9,10 @@ use crate::tests::util::{KeyCeiling, assert_compositions_consistent, compare_com
 /// Composition keys compared when cross-checking chocolate ingredient data sources.
 ///
 /// These keys carry meaningful, generally non-zero values for chocolate-based ingredients. Keys
-/// irrelevant to chocolate (milk, nut, egg, and other non-cocoa components) are excluded so
-/// that comparisons stay focused on values a reader would expect to differ between sources.
+/// irrelevant to chocolate (nut, egg, and other non-cocoa components) are excluded so that
+/// comparisons stay focused on values a reader would expect to differ between sources. One list
+/// spans the whole category — dark, milk, white and cocoa powder. The milk components read zero on
+/// both sides of a cocoa-only pairing.
 ///
 /// **Energy:** as `kcal/g of solids × 100` it lands in `[400, 900]` vs `[0, 100]` for mass
 /// components, so the same fractional precision error shows up 4–9× larger. Energy ceiling
@@ -22,6 +24,12 @@ const COMPARABLE_CHOCOLATE_KEYS: &[CompKey] = &[
     CompKey::CacaoSolids,
     CompKey::CocoaButter,
     CompKey::CocoaSolids,
+    CompKey::MilkFat,
+    CompKey::MilkSolids,
+    CompKey::MSNF,
+    CompKey::MilkSNFS,
+    CompKey::MilkProteins,
+    CompKey::Lactose,
     CompKey::TotalFiber,
     CompKey::TotalSugars,
     CompKey::TotalCarbohydrates,
@@ -32,11 +40,41 @@ const COMPARABLE_CHOCOLATE_KEYS: &[CompKey] = &[
     CompKey::Water,
     CompKey::POD,
     CompKey::PACsgr,
+    CompKey::PACmlk,
     CompKey::HF,
     CompKey::TotalPAC,
     CompKey::SaturatedFat,
     CompKey::TransFat,
 ];
+
+#[test]
+fn compare_specs_chocolate_50() {
+    let sources = [
+        ("Mona Lisa", "Mona Lisa Dark Chocolate Curved Shavings"),
+        ("USDA", "USDA Dark Chocolate, 45-59% Cacao Solids"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(3.0).with(CompKey::HF, 4.5).with(CompKey::Energy, 7.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_chocolate_60() {
+    let sources = [
+        ("Simple", "60% Dark Chocolate"),
+        ("Callebaut", "Callebaut 60-40-38 Dark Chocolate"),
+    ]
+    .map(source_str_to_comp);
+
+    // The couverture carries far more cocoa butter than the generic rung's standard ratio
+    let ceiling = KeyCeiling::new(5.0).with(CompKey::Energy, 24.5);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
 
 #[test]
 fn compare_specs_chocolate_65() {
@@ -119,6 +157,34 @@ fn compare_specs_chocolate_100() {
     .map(source_str_to_comp);
 
     let ceiling = KeyCeiling::new(4.0).with(CompKey::Energy, 21.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_milk_couverture_34() {
+    let sources = [
+        ("Callebaut 823", "Callebaut 823 Milk Chocolate"),
+        ("Callebaut 665", "Callebaut 665 Milk Chocolate"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(5.5);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_milk_couverture_41() {
+    let sources = [
+        ("Callebaut Power 41", "Callebaut Power 41 Milk Chocolate"),
+        ("Callebaut Arriba", "Callebaut Arriba Milk Chocolate"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(5.5).with(CompKey::Energy, 20.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));

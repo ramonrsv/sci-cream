@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 323  (non-alias: 274, independent: 260)
+total: 327  (non-alias: 278, independent: 264)
 
             0% Milk
             1% Milk
@@ -50,6 +50,8 @@ total: 323  (non-alias: 274, independent: 260)
             Callebaut 70-30-38 Dark Chocolate
             Callebaut 811 Dark Chocolate
             Callebaut 823 Milk Chocolate
+            Callebaut Arriba Milk Chocolate
+            Callebaut Power 41 Milk Chocolate
             Callebaut W2 White Chocolate
             Carboxymethyl Cellulose
             Carnation 2% Evaporated Partly Skimmed Milk
@@ -204,6 +206,8 @@ total: 323  (non-alias: 274, independent: 260)
             Marsala Wine
             Medallion Skim Milk Powder
             Medallion Whole Milk Powder
+            Mona Lisa Dark Chocolate Curved Shavings
+            Mona Lisa Milk Chocolate Blossoms
             Mono- and Diglycerides
             MyProtein Clear Whey Isolate
             MyProtein Impact Whey Protein

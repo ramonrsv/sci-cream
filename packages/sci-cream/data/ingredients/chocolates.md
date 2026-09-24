@@ -244,20 +244,25 @@ siblings.
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 61.6, "total_fat": 39.4, "sugars": 37.4, "other_solids": 1 }
+  "ChocolateSpec": { "cacao_solids": 62.1, "total_fat": 38.8, "sugars": 37, "other_solids": 0.9 }
 }
 ```
 
-Dark chocolate, from the [product
-page](https://www.callebaut.com/en-CA/products/callebaut/60-40-38/60-40-38NV-595), stating dry cocoa
-solids of minimum 60.1% and fat 39.4%. No specification sheet was found for it, so `cacao_solids`
-and `sugars` are both derived.
+Dark couverture chocolate, from the [product
+page](https://www.callebaut.com/en-CA/products/callebaut/60-40-38/60-40-38NV-595) and
+[specification
+sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Dark-604038-%2860-40-38NV-01B%29.pdf).
+The values are taken from the spec sheet:
 
-Across the siblings that do have sheets, the product page's minimum cacao solids is almost always
-the sheet's value less its stated tolerance, 1.5 in almost all of them. As such, the minimum 60.1%
-plus 1.5 is likely what would be on a spec sheet, and a better estimate of typical values. `sugars`
-is taken as a remainder, including `other_solids` of 1%, the low end of the 1.0-1.5% range of its
-siblings.
+- `cacao_solids` from _"Dry cocoa solids 62.1%"_, corroborated by _"cocoa mass 52.0%"_ plus
+  _"cocoa butter 10.5%"_
+- `total_fat` from _"TOTAL FAT CONTENT 38.8%"_, corroborated by 62.1% less _"Dry fatfree cocoa
+  solids 23.3%"_
+- `sugars` from _"sugar 37.0%"_
+- `other_solids` the remainder from the above
+
+These are in agreement with the product page's _"60.1% Min. % Dry cocoa solids"_,
+_"39.4% Fat %"_ (off by 0.6%).
 
 ## Callebaut 70-30-38 Dark Chocolate
 
@@ -351,6 +356,74 @@ The values are taken from the spec sheet:
 These are in agreement with the product page's _"31% Min. % Dry cocoa solids"_, _"25.1% Min. % Dry
 milk solids"_, _"35.5% Fat %"_ (off by 0.2%).
 
+## Callebaut Power 41 Milk Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cacao_solids": 42.2,
+    "milk_solids": 20.4,
+    "split_fats": { "cocoa_butter": 32.3, "milk_fat": 4.1 },
+    "sugars": 36,
+    "other_solids": 1.4
+  }
+}
+```
+
+Couverture milk chocolate, from the [product
+page](https://www.callebaut.com/en/chocolate-cocoa-nuts/841-RT-U71/milkchocolaterecipepower41) and
+[specification
+sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Power-41-%28841-E4-U71%29.pdf).
+The values are taken from the spec sheet:
+
+- `cacao_solids` from _"Dry cocoa solids 42.2%"_, corroborated by _"cocoa mass 22.0%"_ plus
+  _"cocoa butter 20.0%"_
+- `milk_solids` from _"Dry milk solids 20.4%"_, corroborated by _"whole milk powder 14.5%"_ plus
+  _"skimmed milk powder 6.0%"_
+- `milk_fat` from _"Milkfat 4.1%"_
+- `cocoa_butter` as 42.2% less _"Dry fatfree cocoa solids 9.9%"_, corroborated by _"TOTAL FAT
+  CONTENT 36.3%"_ less the milkfat
+- `sugars` from _"sugar 36.0%"_
+- `other_solids` the remainder from the above
+
+These are in agreement with the product page's _"40.7% Min. % Dry cocoa solids"_, _"19.4% Min. %
+Dry milk solids"_, _"36.3% Fat %"_.
+
+## Callebaut Arriba Milk Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cacao_solids": 40.5,
+    "milk_solids": 25.5,
+    "split_fats": { "cocoa_butter": 33.9, "milk_fat": 5.2 },
+    "sugars": 33,
+    "other_solids": 1
+  }
+}
+```
+
+Couverture milk chocolate made with Ecuadorian Arriba cocoa, from the [product
+page](https://www.callebaut.com/en-US/chocolate-cocoa-nuts/CHM-Q415AR-2B-U75/arriba) and
+[specification
+sheet](https://www.sephra.com/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Arriba-%28CHM-Q415AR-E4-U70%29.pdf).
+The values are taken from the spec sheet:
+
+- `cacao_solids` from _"Dry cocoa solids 40.5%"_, corroborated by _"cocoa butter 26.0%"_ plus
+  _"cocoa mass Ecuador 14.5%"_
+- `milk_solids` from _"Dry milk solids 25.5%"_, corroborated by _"whole milk powder 19.0%"_ plus
+  _"skimmed milk powder 7.5%"_
+- `milk_fat` from _"Milkfat 5.2%"_
+- `cocoa_butter` as 40.5% less _"Dry fatfree cocoa solids 6.6%"_, corroborated by _"TOTAL FAT
+  CONTENT 39.0%"_ less the milkfat
+- `sugars` from _"sugar 33.0%"_
+- `other_solids` the remainder from the above
+
+These are in agreement with the product page's _"39% Min. % Dry cocoa solids"_, _"24% Min. % Dry
+milk solids"_, _"39.1% Fat %"_ (off by 0.1%).
+
 ## Callebaut W2 White Chocolate
 
 ```json
@@ -383,6 +456,64 @@ The values are taken from the spec sheet:
 
 These are in agreement with the product page's _"28% Min. % Dry cocoa solids"_, _"22% Min. % Dry
 milk solids"_, _"35.8% Fat %"_.
+
+## Mona Lisa Dark Chocolate Curved Shavings
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": { "cacao_solids": 49.4, "total_fat": 30.3, "sugars": 49.5, "other_solids": 1.1 }
+}
+```
+
+Chocolate decoration made from Callebaut chocolate, from the [product
+page](https://www.cfw.co.uk/Mona-Lisa-Dark-Curved-Shavings-2.5Kg) and [specification
+sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Dark-Chocolate-Curved-Shavings%20%28CHD-SV-U4C-E0-74A%29.pdf).
+Its _"Legal denomination"_ is _"Chocolate"_, the plain EU denomination rather than a couverture.
+The values are taken from the spec sheet:
+
+- `cacao_solids` from _"Dry cocoa solids 49.4%"_, corroborated by _"cocoa mass 43.0%"_ plus
+  _"cocoa butter 7.0%"_
+- `total_fat` from _"TOTAL FAT 30.3 g"_, corroborated by 49.4% less _"Dry fatfree cocoa solids
+  19.2%"_
+- `sugars` from _"sugar 49.5%"_
+- `other_solids` the remainder from the above
+
+The product page lists the ingredients without percentages and states no composition minima, so it
+corroborates only the recipe.
+
+## Mona Lisa Milk Chocolate Blossoms
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cacao_solids": 29.6,
+    "milk_solids": 16.9,
+    "split_fats": { "cocoa_butter": 23, "milk_fat": 3.9 },
+    "sugars": 52.5,
+    "other_solids": 1
+  }
+}
+```
+
+Chocolate decoration made from Callebaut chocolate, from the [product
+page](https://www.cfw.co.uk/Callebaut-Milk-Chocolate-Blossoms-1kg) and [specification
+sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Milk-Blossoms-1kg%20%28CHM-BS-9U15-E0-07B%29.pdf).
+Its _"Legal denomination"_ is _"Milk chocolate"_, the plain EU denomination rather than a
+couverture. The values are taken from the spec sheet:
+
+- `cacao_solids` from _"Dry cocoa solids 29.6%"_, corroborated by _"cocoa mass 15.0%"_ plus
+  _"cocoa butter 15.0%"_
+- `milk_solids` from _"Dry milk solids 16.9%"_, corroborated by _"whole milk powder 13.5%"_ plus
+  _"skimmed milk powder 3.5%"_
+- `cocoa_butter` as 29.6% less _"Dry fatfree cocoa solids 6.6%"_
+- `milk_fat` as _"TOTAL FAT 26.9 g"_ less that cocoa butter. The sheet gives only _"Milkfat min
+  3.5 %"_, a floor rather than a typical value
+- `sugars` from _"sugar 52.5%"_
+- `other_solids` the remainder from the above
+
+These are in agreement with the product page's _"Min Cocoa Solids: 28%"_.
 
 ## USDA Unsweetened Cocoa Powder
 
