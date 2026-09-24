@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790277011780,
+  "lastUpdate": 1790277022343,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -637728,6 +637728,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 1983.24,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "46ed29195922559c9bd951c200cf1710c99e5476",
+          "message": "Add Callebaut and Mona Lisa chocolate ingredients\n\nAdd the Callebaut Power 41 and Arriba milk couvertures, and Mona Lisa's\ndark curved shavings and milk blossoms, each from its spec sheet.\n\nTake Callebaut 60-40-38 from its spec sheet too, replacing the values\nderived from its product page: cacao solids 62.1 rather than 61.6, and\nfat 38.8 rather than 39.4.\n\nFold the milk keys into COMPARABLE_CHOCOLATE_KEYS so one list spans\ndark, milk, white and cocoa powder. Cocoa-only pairings read zero on\nboth sides, which also catches stray milk solids in a dark entry.\nCompare the new entries: the shavings against USDA's 45-59% listing,\n60-40-38 against the generic 60% rung, and the milk couvertures in\npairs of similar cocoa content, 823 with 665 and Power 41 with Arriba.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-24T14:51:48-04:00",
+          "tree_id": "31aa4ce359e1068b823d03bd9d54af0e3e190bd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/46ed29195922559c9bd951c200cf1710c99e5476"
+        },
+        "date": 1790276949704,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1130.35,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 344.55,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1784.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 549.25,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 596.85,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1989.62,
             "unit": "KB"
           }
         ]
