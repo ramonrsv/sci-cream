@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790277420018,
+  "lastUpdate": 1790277727253,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -515110,6 +515110,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 695.75,
             "range": "15.79",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "46ed29195922559c9bd951c200cf1710c99e5476",
+          "message": "Add Callebaut and Mona Lisa chocolate ingredients\n\nAdd the Callebaut Power 41 and Arriba milk couvertures, and Mona Lisa's\ndark curved shavings and milk blossoms, each from its spec sheet.\n\nTake Callebaut 60-40-38 from its spec sheet too, replacing the values\nderived from its product page: cacao solids 62.1 rather than 61.6, and\nfat 38.8 rather than 39.4.\n\nFold the milk keys into COMPARABLE_CHOCOLATE_KEYS so one list spans\ndark, milk, white and cocoa powder. Cocoa-only pairings read zero on\nboth sides, which also catches stray milk solids in a dark entry.\nCompare the new entries: the shavings against USDA's 45-59% listing,\n60-40-38 against the generic 60% rung, and the milk couvertures in\npairs of similar cocoa content, 823 with 665 and Power 41 with Arriba.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-24T14:51:48-04:00",
+          "tree_id": "31aa4ce359e1068b823d03bd9d54af0e3e190bd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/46ed29195922559c9bd951c200cf1710c99e5476"
+        },
+        "date": 1790277667701,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 40.75,
+            "range": "2.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 46.88,
+            "range": "2.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 52.63,
+            "range": "5.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2207.88,
+            "range": "56.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 271.25,
+            "range": "6.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 281.13,
+            "range": "6.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 311.88,
+            "range": "12.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 14595.88,
+            "range": "145.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 863.5,
+            "range": "26.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 50.63,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 50.5,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.13,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.38,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 120.75,
+            "range": "4.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 76.63,
+            "range": "4.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 51.66,
+            "range": "1.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 38.59,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 573.63,
+            "range": "5.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 640.25,
+            "range": "22.45",
             "unit": "ms"
           }
         ]
