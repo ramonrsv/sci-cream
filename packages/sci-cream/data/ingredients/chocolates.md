@@ -96,6 +96,69 @@
 { "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 24 } }
 ```
 
+## Cocoa Powder, 10/12% Fat
+
+```json
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 11 } }
+```
+
+Cocoa powder in the 10-12% cocoa butter content range, a typical grade used in commercial products,
+e.g. [Callebaut Natural Cocoa Powder -
+10/12](https://www.callebaut.com/en-US/products/callebaut/natural-cocoa-powder/NCP-10C101-CAL-A99).
+
+It has different classifications depending on the regulatory jurisdiction. Its 10% floor matches the
+FDA's "cocoa" or "medium fat cocoa" designation, below which it would be "lowfat cocoa" (U.S. FDA,
+CFR 21, 163.113-114)[^86]. Being below 20%, it falls within the EU's "fat-reduced cocoa" designation
+(Directive 2000/36/EC, 2000, Annex I 2.)[^84]. Due to the challenges of achieving less than 10%
+cocoa butter content, this is the leanest grade found in commonly sold commercial products, and can
+be considered medium (Kuehn, 2021)[^88] or low-fat (CFW Blog, 2025)[^89] content.
+
+The spec uses 11% cocoa butter content, the grade's midpoint, matching the _"TOTAL FAT 11.0 g"_ of
+Callebaut's [10/12 Natural spec
+sheet](https://linneasinc.com/wp-content/uploads/2025/11/6-NCP1012-SPEC.pdf).
+
+## Cocoa Powder, 20/22% Fat
+
+```json
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 21 } }
+```
+
+Cocoa powder in the 20-22% cocoa butter content range, a typical grade used in commercial products,
+e.g. [Callebaut Botanical Décor Cacao
+Powder](https://www.callebaut.com/en/products/callebaut/botanical-decor-cacao-en-polvo-callebaut/DCP-20BODEC-89B).
+
+It has different classifications depending on the regulatory jurisdiction. Its 20% floor matches the
+EU's "cocoa powder" designation, below which it would be "fat-reduced cocoa" (Directive 2000/36/EC,
+2000, Annex I 2.)[^84]. Being below 22%, it falls within the FDA's "cocoa" or "medium fat cocoa"
+designation (U.S. FDA, CFR 21, 163.113)[^86].
+
+The spec uses 21% cocoa butter content, the grade's midpoint, matching the _"TOTAL FAT 21.0 g"_ of
+Cacao Barry's [Décor Cacao spec
+sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Cacao%20Barry/Spec-Sheet-Cacao-Barry-Cocoa-Powder-Decor-1kg-%28DCP-20DECOR-E0-89B%29.pdf).
+
+## Cocoa Powder, 22/24% Fat
+
+```json
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 23 } }
+```
+
+Cocoa powder in the 22-24% cocoa butter content range, a typical grade used in commercial products,
+e.g. [Callebaut Zestina Plein Arôme
+Powder](https://www.callebaut.com/en/products/callebaut/zestina-plein-arome-cacao-en-polvo-callebaut/DCP-22ZEPLA-E0-89B).
+
+It has different classifications depending on the regulatory jurisdiction. Its 22% floor matches the
+FDA's "breakfast cocoa" or "high fat cocoa" designation, below which it would be "cocoa" (U.S. FDA,
+CFR 21, 163.112-113)[^86]. Being above 20%, it falls within the EU's "cocoa powder" designation
+(Directive 2000/36/EC, 2000, Annex I 2.)[^84]. It is the grade most commonly used in ice-cream
+making (Corvitto, 2005, p. 249)[^3], and is consistently considered high-fat content
+(Kuehn, 2021)[^88], (CFW Blog, 2025)[^89].
+
+The spec uses 23% cocoa butter content, the grade's midpoint, matching the _"TOTAL FAT 23.0 g"_ of
+Callebaut's spec sheets for [Botanical Extra
+Brute](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Botanical-Extra-Brute-Cocoa-Powder-1kg%20%28DCP-22BOEXB-E0-89B%29.pdf)
+and [Zestina Plein
+Arôme](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Zestina-Plein-Arome-1kg%20%28DCP-22ZEPLA-E0-89B%29.pdf).
+
 ## Cocoa Butter
 
 ```json
@@ -608,3 +671,65 @@ to be water and the ash introduced by the Dutch processing: 3% is the standard c
 From the nutrition facts table in a [vendor
 listing](https://www.amazon.ca/PUREST-NATURAL-Cocoa-Powder-300g/dp/B07F42XJLJ): _"Per 2 tbs (12g),
 Fat 1.5g"_, which is 12.5% fat, modeled as `cocoa_butter`.
+
+## Callebaut Botanical Extra Brute Cocoa Powder
+
+```json
+{
+  "category": "Chocolate",
+  "CocoaPowderSpec": { "cocoa_butter": 23, "water": 3.5, "dutch_processed": true }
+}
+```
+
+Alkalized cocoa powder, from the [product
+page](https://www.callebaut.com/en/products/callebaut/callebaut-selection-botanical-extra-brute-powder/DCP-22BOEXB-89B),
+[product listing](https://www.cfw.co.uk/callebaut-cocoa-powder-botanical-extra-brute-1kg), and
+[specification
+sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Botanical-Extra-Brute-Cocoa-Powder-1kg%20%28DCP-22BOEXB-E0-89B%29.pdf).
+The values are taken from the spec sheet:
+
+- `cocoa_butter` from _"TOTAL FAT 23.0 g"_, within _"TOT. FAT CONTENT ON DRY MATTER 22.0 - 24.0 %"_
+- `water` as 100 less the 96.5 g its nutritional data accounts for, within _"MOISTURE max 4.50 %"_
+- `dutch_processed` from its _"Legal denomination"_, _"Cocoa powder alkalized"_, at _"pH 7.7 - 8.1"_
+
+These are in agreement with the listing's _"22–24% cocoa butter"_, _"pH: 7.6-8.2 (High alkalized)"_.
+
+## Callebaut Zestina Plein Arome Cocoa Powder
+
+```json
+{
+  "category": "Chocolate",
+  "CocoaPowderSpec": { "cocoa_butter": 23, "water": 3.5, "dutch_processed": true }
+}
+```
+
+Alkalized cocoa powder, from the [product
+page](https://www.callebaut.com/en/products/callebaut/zestina-plein-arome-cacao-en-polvo-callebaut/DCP-22ZEPLA-E0-89B),
+[product listing](https://www.cfw.co.uk/callebaut-zestina-plein-arome-cocoa-powder-1kg), and
+[specification
+sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Zestina-Plein-Arome-1kg%20%28DCP-22ZEPLA-E0-89B%29.pdf).
+The values are taken from the spec sheet:
+
+- `cocoa_butter` from _"TOTAL FAT 23.0 g"_, within _"TOT. FAT CONTENT ON DRY MATTER 22.0 - 24.0 %"_
+- `water` as 100 less the 96.5 g its nutritional data accounts for, within _"MOISTURE max 4.50 %"_
+- `dutch_processed` from its _"Legal denomination"_, _"Cocoa powder alkalized"_, at _"pH 6.8 - 7.2"_
+
+These are in agreement with the product page's _"22-24% fat content"_,
+_"pH 6.8-7.2"_, _"light alkalisation"_.
+
+## Callebaut 10/12 Natural Cocoa Powder
+
+```json
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 11, "water": 3.5 } }
+```
+
+Natural cocoa powder, from the [product
+page](https://www.callebaut.com/en-US/products/callebaut/natural-cocoa-powder/NCP-10C101-CAL-A99),
+[product listing](https://linneasinc.com/product/callebaut-10-12-cocoa-powder-natural-4-lb-bag/),
+and [specification sheet](https://linneasinc.com/wp-content/uploads/2025/11/6-NCP1012-SPEC.pdf). The
+values are taken from the spec sheet:
+
+- `cocoa_butter` from _"TOTAL FAT 11.0 g"_, within _"TOT. FAT CONTENT ON DRY MATTER 10.0 - 12.0 %"_
+- `water` as 100 less the 96.5 g its nutritional data accounts for, within _"MOISTURE max 5 %"_
+
+These are in agreement with the product page's _"10–12% fat"_, _"pH 5-6.2 (Natural)"_.

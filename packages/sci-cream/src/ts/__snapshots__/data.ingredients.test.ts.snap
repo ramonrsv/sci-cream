@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 327  (non-alias: 278, independent: 264)
+"total: 333  (non-alias: 284, independent: 270)
 
             0% Milk
             1% Milk
@@ -43,6 +43,7 @@ exports[`Embedded spec entries 1`] = `
             Bulk Barn Whey Protein Isolate 90%
 [alias]     CMC
             California Gold Nutrition, Sport, Micellar Casein
+            Callebaut 10/12 Natural Cocoa Powder
             Callebaut 2815 Dark Chocolate
             Callebaut 60-40-38 Dark Chocolate
             Callebaut 665 Milk Chocolate
@@ -50,8 +51,10 @@ exports[`Embedded spec entries 1`] = `
             Callebaut 811 Dark Chocolate
             Callebaut 823 Milk Chocolate
             Callebaut Arriba Milk Chocolate
+            Callebaut Botanical Extra Brute Cocoa Powder
             Callebaut Power 41 Milk Chocolate
             Callebaut W2 White Chocolate
+            Callebaut Zestina Plein Arome Cocoa Powder
             Carboxymethyl Cellulose
             Carnation 2% Evaporated Partly Skimmed Milk
             Carnation Condensed Milk (UK)
@@ -65,11 +68,14 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Clotted Cream
             Cocoa Butter
             Cocoa Powder, 10% Fat
+            Cocoa Powder, 10/12% Fat
             Cocoa Powder, 13% Fat
             Cocoa Powder, 15% Fat
             Cocoa Powder, 17% Fat
             Cocoa Powder, 20% Fat
+            Cocoa Powder, 20/22% Fat
             Cocoa Powder, 22% Fat
+            Cocoa Powder, 22/24% Fat
             Cocoa Powder, 24% Fat
 [alias]     Coffee Extract
 [alias]     Commercial Stabilizers

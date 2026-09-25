@@ -191,6 +191,20 @@ fn compare_specs_milk_couverture_41() {
 }
 
 #[test]
+fn compare_specs_cocoa_powder_10_12_fat() {
+    let sources = [
+        ("Simple", "Cocoa Powder, 10/12% Fat"),
+        ("Callebaut", "Callebaut 10/12 Natural Cocoa Powder"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(1.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
 fn compare_specs_cocoa_powder_13_fat() {
     let sources = [
         ("Simple", "Cocoa Powder, 13% Fat"),
@@ -232,6 +246,36 @@ fn compare_specs_cocoa_powder_20_fat() {
         .with(CompKey::CocoaSolids, 8.0)
         .with(CompKey::OtherSNFS, 7.0)
         .with(CompKey::HF, 13.6);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_cocoa_powder_22_24_fat() {
+    let sources = [
+        ("Simple", "Cocoa Powder, 22/24% Fat"),
+        ("Callebaut", "Callebaut Zestina Plein Arome Cocoa Powder"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(1.0)
+        .with(CompKey::Energy, 4.5)
+        .with(CompKey::TotalCarbohydrates, 1.5);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_dutched_cocoa_powder_22_24_fat() {
+    let sources = [
+        ("Callebaut", "Callebaut Botanical Extra Brute Cocoa Powder"),
+        ("USDA", "USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 4.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));

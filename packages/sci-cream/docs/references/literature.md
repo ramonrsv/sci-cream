@@ -175,3 +175,7 @@
 [^86]: U.S. Food & Drug Administration. (n.d.). [_CFR - Code of Federal Regulations Title 21, Part 163 - Cacao Products_](https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-163).
 
 [^87]: Lindmark Månsson, H. (2008, June). [_Fatty acids in bovine milk fat_](https://foodandnutritionresearch.net/index.php/fnr/article/view/1134). Food & Nutrition Research.
+
+[^88]: Kuehn, R. (2021, June). [_The Art and Science of Cocoa Powders: Knowing the Variables So You Can Find the Right Solution_](https://pastryartsmag.com/sponsored/the-art-and-science-of-cocoa-powders-knowing-the-variables-so-you-can-find-the-right-solution/). Pastry Arts.
+
+[^89]: [_What Cocoa Powder is best for your Business? 10/12% Fat vs. 22/24% Fat and Their Professional Applications_](https://cfwblog.co.uk/what-cocoa-powder-is-best-for-your-business-10-12-fat-vs-22-24-fat-and-their-professional-applications/). (2025, March). CFW Blog.

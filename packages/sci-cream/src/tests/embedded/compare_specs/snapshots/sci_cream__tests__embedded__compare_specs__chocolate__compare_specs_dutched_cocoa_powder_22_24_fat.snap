@@ -1,0 +1,32 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/chocolate.rs
+expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
+---
+sources: Callebaut, USDA
+
+Energy               4.12 pp  (Callebaut vs USDA)
+TotalFats            0.60 pp  (Callebaut vs USDA)
+CacaoSolids          0.00 pp  (Callebaut vs USDA)
+CocoaButter          0.60 pp  (Callebaut vs USDA)
+CocoaSolids          0.60 pp  (Callebaut vs USDA)
+MilkFat              0.00 pp  (Callebaut vs USDA)
+MilkSolids           0.00 pp  (Callebaut vs USDA)
+MSNF                 0.00 pp  (Callebaut vs USDA)
+MilkSNFS             0.00 pp  (Callebaut vs USDA)
+MilkProteins         0.00 pp  (Callebaut vs USDA)
+Lactose              0.00 pp  (Callebaut vs USDA)
+TotalFiber           0.23 pp  (Callebaut vs USDA)
+TotalSugars          0.00 pp  (Callebaut vs USDA)
+TotalCarbohydrates   0.40 pp  (Callebaut vs USDA)
+OtherSNFS            0.00 pp  (Callebaut vs USDA)
+TotalSNFS            0.60 pp  (Callebaut vs USDA)
+TotalProteins        0.14 pp  (Callebaut vs USDA)
+TotalSolids          0.50 pp  (Callebaut vs USDA)
+Water                0.50 pp  (Callebaut vs USDA)
+POD                  0.00 pp  (Callebaut vs USDA)
+PACsgr               0.00 pp  (Callebaut vs USDA)
+PACmlk               0.00 pp  (Callebaut vs USDA)
+HF                   0.54 pp  (Callebaut vs USDA)
+TotalPAC             0.00 pp  (Callebaut vs USDA)
+SaturatedFat         0.36 pp  (Callebaut vs USDA)
+TransFat             0.00 pp  (Callebaut vs USDA)
