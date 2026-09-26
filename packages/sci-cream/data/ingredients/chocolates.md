@@ -1,5 +1,17 @@
 <!-- markdownlint-disable MD041 -- files are used to generate JSON, may also be concatenated -->
 
+## 50% Dark Chocolate
+
+```json
+{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 50, "sugars": 50 } }
+```
+
+## 55% Dark Chocolate
+
+```json
+{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 55, "sugars": 45 } }
+```
+
 ## 60% Dark Chocolate
 
 ```json
@@ -143,8 +155,8 @@ sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Cacao%20Barry/Spec-Sheet-
 ```
 
 Cocoa powder in the 22-24% cocoa butter content range, a typical grade used in commercial products,
-e.g. [Callebaut Zestina Plein Arôme
-Powder](https://www.callebaut.com/en/products/callebaut/zestina-plein-arome-cacao-en-polvo-callebaut/DCP-22ZEPLA-E0-89B).
+e.g. [Callebaut Botanical Extra Brute
+Powder](https://www.callebaut.com/en/products/callebaut/callebaut-selection-botanical-extra-brute-powder/DCP-22BOEXB-89B).
 
 It has different classifications depending on the regulatory jurisdiction. Its 22% floor matches the
 FDA's "breakfast cocoa" or "high fat cocoa" designation, below which it would be "cocoa" (U.S. FDA,
@@ -164,6 +176,100 @@ Arôme](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Cal
 ```json
 { "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "total_fat": 100 } }
 ```
+
+## Corvitto 55% Dark Chocolate
+
+```json
+{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 55, "total_fat": 35, "sugars": 45 } }
+```
+
+Corvitto's 55% dark coating, a couverture, with 35% cocoa butter and 20% _"pure cocoa"_, for a
+_"total cocoa paste"_ (`cacao_solids`) of 55%, plus 45% sugar (Corvitto, 2005, p. 254)[^3].
+
+## Corvitto 60% Dark Chocolate
+
+```json
+{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 60, "total_fat": 38, "sugars": 40 } }
+```
+
+Corvitto's 60% dark coating, a couverture, with 38% cocoa butter and 22% _"pure cocoa"_, for a
+_"total cocoa paste"_ (`cacao_solids`) of 60%, plus 40% sugar (Corvitto, 2005, p. 254)[^3].
+
+## Corvitto 65% Dark Chocolate
+
+```json
+{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 65, "total_fat": 40, "sugars": 35 } }
+```
+
+Corvitto's 65% dark coating, a couverture, with 40% cocoa butter and 25% _"pure cocoa"_, for a
+_"total cocoa paste"_ (`cacao_solids`) of 65%, plus 35% sugar (Corvitto, 2005, p. 254)[^3].
+
+## Corvitto 70% Dark Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": { "cacao_solids": 70, "total_fat": 42.5, "sugars": 30 }
+}
+```
+
+Corvitto's 70% dark coating, a couverture, with 42.5% cocoa butter and 27.5% _"pure cocoa"_, for a
+_"total cocoa paste"_ (`cacao_solids`) of 70%, plus 30% sugar (Corvitto, 2005, p. 254)[^3].
+
+## Corvitto Cocoa Powder, 10/12% Fat
+
+```json
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 11, "water": 0 } }
+```
+
+Corvitto's type 10/12 dry cocoa powder, where _"the fat would represent 11% and the pure cocoa 89%"_
+(Corvitto, 2005, p. 249)[^3]. Water is 0, since the book's calculations count the 22/24 powder's
+full weight as solids (Corvitto, 2005, p. 251)[^3].
+
+## Corvitto Cocoa Powder, 22/24% Fat
+
+```json
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 22, "water": 0 } }
+```
+
+Corvitto's type 22/24 dry cocoa powder, _"22% of fat and 78% of pure cocoa"_ (Corvitto, 2005,
+p. 249)[^3]. Water is 0, since the book's calculations count the powder's full weight as solids
+(Corvitto, 2005, p. 251)[^3].
+
+## Corvitto 40% Milk Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cacao_solids": 40,
+    "milk_solids": 25,
+    "split_fats": { "cocoa_butter": 35, "milk_fat": 5 },
+    "sugars": 35
+  }
+}
+```
+
+Corvitto's 40% milk coating, a couverture, with 35% cocoa butter, 5% _"pure cocoa"_, 35% sugar,
+5% dairy fat, and 20% skimmed milk powder (Corvitto, 2005, pp. 258, 260)[^3].
+
+## Corvitto White Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cacao_solids": 30,
+    "milk_solids": 30,
+    "split_fats": { "cocoa_butter": 30, "milk_fat": 10 },
+    "sugars": 40
+  }
+}
+```
+
+Corvitto's white chocolate, with 30% cocoa butter, 10% dairy fat, 20% powdered milk and 40% sugar
+(Corvitto, 2005, p. 264)[^3]. The powdered milk is skimmed, as the book's white chocolate cream
+counts 40g of skimmed powdered milk in 200g of white chocolate (Corvitto, 2005, p. 266)[^3].
 
 ## USDA Dark Chocolate, 45-59% Cacao Solids
 

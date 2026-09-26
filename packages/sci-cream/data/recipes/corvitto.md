@@ -5,15 +5,28 @@ These are reference recipes from _I Segreti del Gelato (Secrets of Ice-Cream)_, 
 
 With regards to ingredient translations, "full fat milk" is explicitly stated in the book to have a
 3.6% butterfat content; the "Full Fat Milk" ingredient entry encodes this, aliasing "3.6% Milk"
-(Corvitto, 2005, p. 149)[^3]. _"Dry cocoa powder"_ is modeled as "Cocoa Powder, 22% Fat", since the
-author states that the _"dry cocoa powder most commonly used in ice-cream making is the one that
-contains 22% of fat and 78% of pure cocoa"_, and 22% fat is used in their calculations (Corvitto,
-2005, p. 249)[^3]. All other ingredients are either obvious, explicit, or clarified per recipe.
+(Corvitto, 2005, p. 149)[^3]. Regarding cocoa powder and chocolate ingredients, Sci-Cream includes
+"Corvitto" ingredient definitions that encode the compositions as stated in the text. However, these
+are mostly references used in internal validations, and are generally not used in the recipes, which
+prefer generic entries where a clear translation exists, e.g. for "70% Dark Chocolate" - the text's
+entries use idealized compositions that are less accurate than the library's sourced values. Milk
+and white chocolates are exceptions, since those don't have a clear representative composition, as
+product formulations can vary significantly. In those cases, the "Corvitto" entries are effectively
+specific formulations and so these are used in the recipes.
 
-The author's composition calculations roughly match those produced by the `sci-cream` library; any
-significant differences are discussed inline for any affected recipes. The composition values, e.g.
-PAC, POD, etc., of the ingredients are similar, albeit not equal, to those in `sci-cream`, so there
-may be some variation in the composition values of the recipe mixes (Corvitto, 2005, p. 149)[^3].
+_"Dry cocoa powder"_, _"type 22/24"_, is modeled as "Cocoa Powder, 22% Fat", since the author states
+that the _"dry cocoa powder most commonly used in ice-cream making is the one that contains 22% of
+fat and 78% of pure cocoa"_, and 22% fat is used in their calculations (Corvitto, 2005, p. 249)[^3].
+Note that the generic entries include water, whereas Corvitto models cocoa powder as all solids. The
+22% fat entry as a stand-in for 22/24% also differs slightly from the generic "Cocoa Powder, 22/24%
+Fat", which has 23% fat and is more consistent with the spec sheets of branded products like
+"Callebaut Botanical Extra Brute Cocoa Powder".
+
+All other ingredients are either obvious, explicit, or clarified per recipe. The author's
+composition calculations roughly match those produced by the `sci-cream` library; any significant
+differences are discussed inline for any affected recipes. The composition values, e.g. PAC, POD,
+etc., of the ingredients are similar, albeit not equal, to those in `sci-cream`, so there may be
+some variation in the composition values of the recipe mixes (Corvitto, 2005, p. 149)[^3].
 
 Corvitto provides two versions of each recipe, formulated for different serving temperatures of
 -11°C and -18°C. These are designed for _"serving in a classical ice-cream parlor cabinet, placed in

@@ -1,0 +1,32 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/chocolate.rs
+expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
+---
+sources: Corvitto, Callebaut
+
+Energy              23.61 pp  (Corvitto vs Callebaut)
+TotalFats            4.20 pp  (Corvitto vs Callebaut)
+CacaoSolids          0.50 pp  (Corvitto vs Callebaut)
+CocoaButter          0.50 pp  (Corvitto vs Callebaut)
+CocoaSolids          0.00 pp  (Corvitto vs Callebaut)
+MilkFat              3.70 pp  (Corvitto vs Callebaut)
+MilkSolids           7.00 pp  (Corvitto vs Callebaut)
+MSNF                 3.30 pp  (Corvitto vs Callebaut)
+MilkSNFS             1.50 pp  (Corvitto vs Callebaut)
+MilkProteins         1.15 pp  (Corvitto vs Callebaut)
+Lactose              1.80 pp  (Corvitto vs Callebaut)
+TotalFiber           0.00 pp  (Corvitto vs Callebaut)
+TotalSugars          4.70 pp  (Corvitto vs Callebaut)
+TotalCarbohydrates   4.70 pp  (Corvitto vs Callebaut)
+OtherSNFS            1.00 pp  (Corvitto vs Callebaut)
+TotalSNFS            0.50 pp  (Corvitto vs Callebaut)
+TotalProteins        1.15 pp  (Corvitto vs Callebaut)
+TotalSolids          0.00 pp  (Corvitto vs Callebaut)
+Water                0.00 pp  (Corvitto vs Callebaut)
+POD                  6.21 pp  (Corvitto vs Callebaut)
+PACsgr               4.70 pp  (Corvitto vs Callebaut)
+PACmlk               1.21 pp  (Corvitto vs Callebaut)
+HF                   0.45 pp  (Corvitto vs Callebaut)
+TotalPAC             3.49 pp  (Corvitto vs Callebaut)
+SaturatedFat         2.71 pp  (Corvitto vs Callebaut)
+TransFat             0.13 pp  (Corvitto vs Callebaut)

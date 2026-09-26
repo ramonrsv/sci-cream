@@ -50,12 +50,28 @@ const COMPARABLE_CHOCOLATE_KEYS: &[CompKey] = &[
 #[test]
 fn compare_specs_chocolate_50() {
     let sources = [
-        ("Mona Lisa", "Mona Lisa Dark Chocolate Curved Shavings"),
+        ("Simple", "50% Dark Chocolate"),
         ("USDA", "USDA Dark Chocolate, 45-59% Cacao Solids"),
+        ("Mona Lisa", "Mona Lisa Dark Chocolate Curved Shavings"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(3.0).with(CompKey::HF, 4.5).with(CompKey::Energy, 7.0);
+    let ceiling = KeyCeiling::new(3.0).with(CompKey::Energy, 15.5).with(CompKey::HF, 4.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_chocolate_55() {
+    let sources = [
+        ("Simple", "55% Dark Chocolate"),
+        ("Corvitto", "Corvitto 55% Dark Chocolate"),
+        ("Callebaut", "Callebaut 811 Dark Chocolate"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(5.5).with(CompKey::Energy, 30.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -65,12 +81,13 @@ fn compare_specs_chocolate_50() {
 fn compare_specs_chocolate_60() {
     let sources = [
         ("Simple", "60% Dark Chocolate"),
-        ("Callebaut", "Callebaut 60-40-38 Dark Chocolate"),
+        ("Corvitto", "Corvitto 60% Dark Chocolate"),
+        ("Callebaut 2815", "Callebaut 2815 Dark Chocolate"),
+        ("Callebaut 60-40-38", "Callebaut 60-40-38 Dark Chocolate"),
     ]
     .map(source_str_to_comp);
 
-    // The couverture carries far more cocoa butter than the generic rung's standard ratio
-    let ceiling = KeyCeiling::new(5.0).with(CompKey::Energy, 24.5);
+    let ceiling = KeyCeiling::new(5.5).with(CompKey::Energy, 28.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -80,11 +97,12 @@ fn compare_specs_chocolate_60() {
 fn compare_specs_chocolate_65() {
     let sources = [
         ("Simple", "65% Dark Chocolate"),
+        ("Corvitto", "Corvitto 65% Dark Chocolate"),
         ("USDA", "USDA Dark Chocolate, 60-69% Cacao Solids"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(3.0).with(CompKey::Energy, 12.0).with(CompKey::HF, 4.5);
+    let ceiling = KeyCeiling::new(3.0).with(CompKey::Energy, 20.5).with(CompKey::HF, 4.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -94,11 +112,17 @@ fn compare_specs_chocolate_65() {
 fn compare_specs_chocolate_70() {
     let sources = [
         ("Simple", "70% Dark Chocolate"),
+        ("Corvitto", "Corvitto 70% Dark Chocolate"),
         ("Lindt", "Lindt EXCELLENCE 70% Cacao Dark Chocolate"),
+        ("Callebaut", "Callebaut 70-30-38 Dark Chocolate"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(1.0);
+    let ceiling = KeyCeiling::new(4.5)
+        .with(CompKey::Energy, 35.5)
+        .with(CompKey::CocoaSolids, 6.5)
+        .with(CompKey::TotalSNFS, 8.0)
+        .with(CompKey::HF, 8.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -163,7 +187,7 @@ fn compare_specs_chocolate_100() {
 }
 
 #[test]
-fn compare_specs_milk_couverture_34() {
+fn compare_specs_milk_chocolate_35() {
     let sources = [
         ("Callebaut 823", "Callebaut 823 Milk Chocolate"),
         ("Callebaut 665", "Callebaut 665 Milk Chocolate"),
@@ -177,28 +201,32 @@ fn compare_specs_milk_couverture_34() {
 }
 
 #[test]
-fn compare_specs_milk_couverture_41() {
+fn compare_specs_milk_chocolate_40() {
     let sources = [
+        ("Corvitto", "Corvitto 40% Milk Chocolate"),
         ("Callebaut Power 41", "Callebaut Power 41 Milk Chocolate"),
         ("Callebaut Arriba", "Callebaut Arriba Milk Chocolate"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.5).with(CompKey::Energy, 20.0);
+    let ceiling = KeyCeiling::new(5.5).with(CompKey::HF, 6.5).with(CompKey::Energy, 31.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
 }
 
 #[test]
-fn compare_specs_cocoa_powder_10_12_fat() {
+fn compare_specs_white_chocolate() {
     let sources = [
-        ("Simple", "Cocoa Powder, 10/12% Fat"),
-        ("Callebaut", "Callebaut 10/12 Natural Cocoa Powder"),
+        ("Corvitto", "Corvitto White Chocolate"),
+        ("Callebaut", "Callebaut W2 White Chocolate"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(1.0);
+    let ceiling = KeyCeiling::new(5.0)
+        .with(CompKey::MilkSolids, 7.5)
+        .with(CompKey::POD, 6.5)
+        .with(CompKey::Energy, 24.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -233,19 +261,32 @@ fn compare_specs_cocoa_powder_17_fat() {
 }
 
 #[test]
-fn compare_specs_cocoa_powder_20_fat() {
+fn compare_specs_cocoa_powder_10_12_fat() {
     let sources = [
-        ("Simple", "Cocoa Powder, 20% Fat"),
+        ("Simple", "Cocoa Powder, 10/12% Fat"),
+        ("Corvitto", "Corvitto Cocoa Powder, 10/12% Fat"),
+        ("Callebaut", "Callebaut 10/12 Natural Cocoa Powder"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(1.0)
+        .with(CompKey::Energy, 3.0)
+        .with(CompKey::TotalSolids, 4.0)
+        .with(CompKey::Water, 4.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_cocoa_powder_20_22_fat() {
+    let sources = [
+        ("Simple", "Cocoa Powder, 20/22% Fat"),
         ("Valrhona", "Valrhona Unsweetened Cocoa Powder"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(6.0)
-        .with(CompKey::Energy, 8.0)
-        .with(CompKey::CacaoSolids, 7.0)
-        .with(CompKey::CocoaSolids, 8.0)
-        .with(CompKey::OtherSNFS, 7.0)
-        .with(CompKey::HF, 13.6);
+    let ceiling = KeyCeiling::new(4.5).with(CompKey::Energy, 14.5).with(CompKey::HF, 7.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -255,44 +296,18 @@ fn compare_specs_cocoa_powder_20_fat() {
 fn compare_specs_cocoa_powder_22_24_fat() {
     let sources = [
         ("Simple", "Cocoa Powder, 22/24% Fat"),
-        ("Callebaut", "Callebaut Zestina Plein Arome Cocoa Powder"),
-    ]
-    .map(source_str_to_comp);
-
-    let ceiling = KeyCeiling::new(1.0)
-        .with(CompKey::Energy, 4.5)
-        .with(CompKey::TotalCarbohydrates, 1.5);
-
-    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
-    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
-}
-
-#[test]
-fn compare_specs_dutched_cocoa_powder_22_24_fat() {
-    let sources = [
-        ("Callebaut", "Callebaut Botanical Extra Brute Cocoa Powder"),
+        ("Corvitto", "Corvitto Cocoa Powder, 22/24% Fat"),
+        ("Callebaut Plein Arome", "Callebaut Zestina Plein Arome Cocoa Powder"),
+        ("Callebaut Extra Brute", "Callebaut Botanical Extra Brute Cocoa Powder"),
         ("USDA", "USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 4.5);
-
-    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
-    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
-}
-
-#[test]
-fn compare_specs_cocoa_powder_24_fat() {
-    let sources = [
-        ("Simple", "Cocoa Powder, 24% Fat"),
-        ("USDA", "USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat"),
-    ]
-    .map(source_str_to_comp);
-
-    // Only the USDA reference is alkalized, which moves carbohydrate into energy-free ash
-    let ceiling = KeyCeiling::new(1.0)
-        .with(CompKey::Energy, 7.5)
-        .with(CompKey::TotalCarbohydrates, 1.5);
+    let ceiling = KeyCeiling::new(2.5)
+        .with(CompKey::Energy, 12.0)
+        .with(CompKey::TotalCarbohydrates, 3.0)
+        .with(CompKey::TotalSolids, 4.0)
+        .with(CompKey::Water, 4.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));

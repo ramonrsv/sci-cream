@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 333  (non-alias: 284, independent: 270)
+"total: 343  (non-alias: 294, independent: 280)
 
             0% Milk
             1% Milk
@@ -22,7 +22,9 @@ exports[`Embedded spec entries 1`] = `
             45% ABV Spirit
             48% Cream
             5% Cream
+            50% Dark Chocolate
             55% Cream
+            55% Dark Chocolate
             6% Cream
             60% Dark Chocolate
             65% Dark Chocolate
@@ -80,6 +82,14 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Coffee Extract
 [alias]     Commercial Stabilizers
             Cornstarch
+            Corvitto 40% Milk Chocolate
+            Corvitto 55% Dark Chocolate
+            Corvitto 60% Dark Chocolate
+            Corvitto 65% Dark Chocolate
+            Corvitto 70% Dark Chocolate
+            Corvitto Cocoa Powder, 10/12% Fat
+            Corvitto Cocoa Powder, 22/24% Fat
+            Corvitto White Chocolate
 [alias]     DMG
             Dark Rum
             Devon Cream Company Clotted Cream
