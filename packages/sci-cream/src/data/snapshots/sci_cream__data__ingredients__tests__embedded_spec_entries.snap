@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 343  (non-alias: 294, independent: 280)
+total: 345  (non-alias: 296, independent: 282)
 
             0% Milk
             1% Milk
@@ -320,6 +320,7 @@ total: 343  (non-alias: 294, independent: 280)
             USDA Raw Egg Yolk
             USDA Raw Lemon Peel
             USDA Raw Whole Egg
+            USDA Skim Milk Powder
             USDA Sweetened Condensed Milk
             USDA Unsweetened Cocoa Powder
             USDA Unsweetened Cocoa Powder, Processed with Alkali
@@ -327,6 +328,7 @@ total: 343  (non-alias: 294, independent: 280)
             USDA Vanilla Extract
             USDA Whole Evaporated Milk
             USDA Whole Milk
+            USDA Whole Milk Powder
 [composite] Underbelly Easy-to-find Stabilizer Blend
 [composite] Underbelly Eggless Ice Cream Stabilizer Blend
 [composite] Underbelly General Purpose Stabilizer Blend

@@ -336,6 +336,7 @@ fn compare_specs_skim_milk_powder() {
     let sources = [
         ("Simple", "Skimmed Milk Powder"),
         ("Goff & Hartel", "Goff & Hartel Skim Milk Powder"),
+        ("USDA", "USDA Skim Milk Powder"),
         ("Medallion", "Medallion Skim Milk Powder"),
         ("Theland", "Theland Skim Milk Powder"),
     ]
@@ -352,6 +353,7 @@ fn compare_specs_whole_milk_powder() {
     let sources = [
         ("Simple", "Whole Milk Powder"),
         ("Goff & Hartel", "Goff & Hartel Whole Milk Powder"),
+        ("USDA", "USDA Whole Milk Powder"),
         ("Medallion", "Medallion Whole Milk Powder"),
         ("Theland", "Theland Whole Milk Powder"),
     ]

@@ -938,6 +938,44 @@ not specify the lactose and sucrose breakdown, so sucrose is assumed to be 42% o
 FoodData Central, 2026, "Dulce de Leche")[^119], total weight calculated at 1.305g/ml (Goff &
 Hartel, 2025, Table 3.2, p. 48)[^20].
 
+## USDA Skim Milk Powder
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "grams": 100 },
+    "energy": 362,
+    "total_fat": { "grams": 0.77 },
+    "saturated_fat": 0.499,
+    "sugars": 52,
+    "protein": 36.2
+  }
+}
+```
+
+USDA FoodData Central - SR Legacy - [Milk, dry, nonfat, regular, without added vitamin A and vitamin
+D](https://fdc.nal.usda.gov/food-details/170877/nutrients)
+
+## USDA Whole Milk Powder
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "grams": 100 },
+    "energy": 496,
+    "total_fat": { "grams": 26.7 },
+    "saturated_fat": 16.7,
+    "sugars": 38.4,
+    "protein": 26.3
+  }
+}
+```
+
+USDA FoodData Central - SR Legacy - [Milk, dry, whole, without added vitamin
+D](https://fdc.nal.usda.gov/food-details/173454/nutrients)
+
 ## Medallion Skim Milk Powder
 
 ```json
