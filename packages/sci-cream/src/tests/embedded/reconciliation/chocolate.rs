@@ -9,59 +9,13 @@
 //! cocoas on specific factors that discount fiber, landing near 220 where Atwater gives over 400.
 
 #![cfg_attr(coverage, coverage(off))]
-#![allow(clippy::unwrap_used, clippy::float_cmp)]
 #![expect(clippy::doc_markdown)] // _FoodData_ false positive
 
-use struct_iterable::Iterable;
-
-use crate::composition::{CompKey, Composition};
-use crate::tests::{asserts::TESTS_EPSILON, assets::get_comp_by_name, util::relative_diff_percent};
+use super::util::{Proximates, reconcile_proximates};
+use crate::tests::asserts::TESTS_EPSILON;
 
 #[cfg(doc)]
 use crate::constants::composition::cacao;
-
-/// Proximate analysis of an ingredient, per 100 g.
-///
-/// USDA's proximate components are water, protein, total lipid (fat), total carbohydrate and ash
-/// (USDA, 2024, "FoodData Central Foundation Foods Documentation")[^83]; fiber and sugars are the
-/// carbohydrate subfractions its listings report alongside.
-#[doc = include_str!("../../../../docs/references/index/83.md")]
-#[derive(Iterable, Copy, Clone, Debug)]
-struct Proximates {
-    water: f64,
-    protein: f64,
-    fat: f64,
-    carbohydrate: f64,
-    fiber: f64,
-    sugars: f64,
-    ash: f64,
-}
-
-impl Proximates {
-    /// Field name and value pairs, in declaration order.
-    fn fields(&self) -> impl Iterator<Item = (&'static str, f64)> {
-        self.iter()
-            .map(|(name, value)| (name, *value.downcast_ref::<f64>().unwrap()))
-    }
-
-    /// The modeled proximates of an embedded ingredient.
-    ///
-    /// Ash has no [`CompKey`]: cacao's ash is the cocoa solids' `others`, while an entry's
-    /// `other_solids` is a separate bucket that is not ash.
-    fn modeled(name: &str) -> Self {
-        let comp: Composition = get_comp_by_name(name);
-
-        Self {
-            water: comp.get(CompKey::Water),
-            protein: comp.get(CompKey::TotalProteins),
-            fat: comp.get(CompKey::TotalFats),
-            carbohydrate: comp.get(CompKey::TotalCarbohydrates),
-            fiber: comp.get(CompKey::TotalFiber),
-            sugars: comp.get(CompKey::TotalSugars),
-            ash: comp.solids.cocoa.others,
-        }
-    }
-}
 
 /// Measured proximates of each embedded `USDA …` entry, from its FoodData Central listing.
 const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
@@ -193,29 +147,6 @@ const COCOA_CEILING: Proximates = Proximates {
 
 #[test]
 fn usda_chocolate_and_cocoa_reconcile() {
-    let mut lines = Vec::new();
-
-    for (name, measured, ceiling) in USDA_LISTINGS {
-        lines.push((*name).to_string());
-        lines.push("  [     key      | modeled | measured |  diff  ]".to_string());
-
-        let ingredient = Proximates::modeled(name);
-
-        for (((key, modeled), (_, measured)), (_, limit)) in
-            ingredient.fields().zip(measured.fields()).zip(ceiling.fields())
-        {
-            let diff = relative_diff_percent(modeled, measured);
-            lines.push(format!("  {key:<16}{modeled:>7.2}   {measured:>7.2}    {diff:>6.2} %"));
-
-            assert!(
-                diff <= limit,
-                "{name}: {key} is {diff:.2}% off the measured {measured:.2} \
-                 (modeled {modeled:.2}, ceiling {limit:.2}%)"
-            );
-        }
-
-        lines.push(String::new());
-    }
-
+    let lines = reconcile_proximates(USDA_LISTINGS);
     insta::assert_snapshot!(lines.join("\n"));
 }

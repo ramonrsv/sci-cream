@@ -1,11 +1,93 @@
-//! Helpers shared by the label-reconciliation suites: serving-mass estimation from component
-//! densities (via [`mixture_density`]) and FDA label rounding (21 CFR 101.9).
+//! Helpers shared by the reconciliation suites: proximates reconciliation against USDA listings,
+//! serving-mass estimation from component densities (via [`mixture_density`]), and FDA label
+//! rounding (21 CFR 101.9).
+
+use struct_iterable::Iterable;
 
 use crate::{
     composition::{CompKey, Composition},
     constants::density::{MixDensityParams, OTHER_DISSOLVED_SOLIDS, mixture_density, sugars::SUCROSE},
     error::Result,
+    tests::{assets::get_comp_by_name, util::relative_diff_percent},
 };
+
+/// Proximate analysis of an ingredient, per 100 g.
+///
+/// USDA's proximate components are water, protein, total lipid (fat), total carbohydrate and ash
+/// (USDA, 2024, "FoodData Central Foundation Foods Documentation")[^83]; fiber and sugars are the
+/// carbohydrate subfractions its listings report alongside.
+#[doc = include_str!("../../../../docs/references/index/83.md")]
+#[expect(clippy::doc_markdown)] // _FoodData_ false positive
+#[derive(Iterable, Copy, Clone, Debug)]
+pub(super) struct Proximates {
+    pub(super) water: f64,
+    pub(super) protein: f64,
+    pub(super) fat: f64,
+    pub(super) carbohydrate: f64,
+    pub(super) fiber: f64,
+    pub(super) sugars: f64,
+    pub(super) ash: f64,
+}
+
+impl Proximates {
+    /// Field name and value pairs, in declaration order.
+    #[allow(clippy::unwrap_used)] // Every field is an `f64`
+    fn fields(&self) -> impl Iterator<Item = (&'static str, f64)> {
+        self.iter()
+            .map(|(name, value)| (name, *value.downcast_ref::<f64>().unwrap()))
+    }
+
+    /// The modeled proximates of an embedded ingredient.
+    ///
+    /// Ash has no [`CompKey`]: cacao's ash is the cocoa solids' `others`, and milk's the milk
+    /// solids' `others`, the MSNF remainder beyond its sugars and protein. `solids.other` is a
+    /// separate bucket that is not ash.
+    fn modeled(name: &str) -> Self {
+        let comp: Composition = get_comp_by_name(name);
+
+        Self {
+            water: comp.get(CompKey::Water),
+            protein: comp.get(CompKey::TotalProteins),
+            fat: comp.get(CompKey::TotalFats),
+            carbohydrate: comp.get(CompKey::TotalCarbohydrates),
+            fiber: comp.get(CompKey::TotalFiber),
+            sugars: comp.get(CompKey::TotalSugars),
+            ash: comp.solids.cocoa.others + comp.solids.milk.others,
+        }
+    }
+}
+
+/// Reconciles each `(name, measured, ceiling)` listing against the named entry's modeled
+/// proximates, asserting each field's relative error, in percent, within its ceiling.
+///
+/// Returns the report lines, one table per listing, for a review snapshot.
+pub(super) fn reconcile_proximates(listings: &[(&str, Proximates, Proximates)]) -> Vec<String> {
+    let mut lines = Vec::new();
+
+    for (name, measured, ceiling) in listings {
+        lines.push((*name).to_string());
+        lines.push("  [     key      | modeled | measured |  diff  ]".to_string());
+
+        let ingredient = Proximates::modeled(name);
+
+        for (((key, modeled), (_, measured)), (_, limit)) in
+            ingredient.fields().zip(measured.fields()).zip(ceiling.fields())
+        {
+            let diff = relative_diff_percent(modeled, measured);
+            lines.push(format!("  {key:<16}{modeled:>7.2}   {measured:>7.2}    {diff:>6.2} %"));
+
+            assert!(
+                diff <= limit,
+                "{name}: {key} is {diff:.2}% off the measured {measured:.2} \
+                 (modeled {modeled:.2}, ceiling {limit:.2}%)"
+            );
+        }
+
+        lines.push(String::new());
+    }
+
+    lines
+}
 
 /// Placeholder oil density for fat-free rows, where the `fat / density` term is zero regardless.
 pub(super) const NO_OIL: f64 = 1.0;

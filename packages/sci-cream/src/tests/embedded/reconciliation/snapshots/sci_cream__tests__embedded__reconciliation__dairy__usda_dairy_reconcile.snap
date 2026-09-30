@@ -1,0 +1,33 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/dairy.rs
+expression: "lines.join(\"\\n\")"
+---
+USDA Sweetened Condensed Milk
+  [     key      | modeled | measured |  diff  ]
+  water             26.94     27.20      0.97 %
+  protein            7.91      7.91      0.00 %
+  fat                8.70      8.70      0.00 %
+  carbohydrate      54.40     54.40      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            54.40     54.40      0.00 %
+  ash                2.05      1.83     10.92 %
+
+USDA Skim Milk Powder
+  [     key      | modeled | measured |  diff  ]
+  water              2.00      3.16     36.71 %
+  protein           36.20     36.20      0.00 %
+  fat                0.77      0.77      0.00 %
+  carbohydrate      52.00     52.00      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            52.00     52.00      0.00 %
+  ash                9.03      7.93     12.18 %
+
+USDA Whole Milk Powder
+  [     key      | modeled | measured |  diff  ]
+  water              2.00      2.47     19.03 %
+  protein           26.30     26.30      0.00 %
+  fat               26.70     26.70      0.00 %
+  carbohydrate      38.40     38.40      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            38.40     38.40      0.00 %
+  ash                6.60      6.08      7.88 %
