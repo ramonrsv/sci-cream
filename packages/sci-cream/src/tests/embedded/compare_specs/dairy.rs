@@ -302,7 +302,13 @@ fn compare_specs_whole_evaporated_milk() {
     //
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
-    let ceiling = KeyCeiling::new(200.0);
+    let ceiling = KeyCeiling::new(10.0)
+        .with(CompKey::Energy, 37.0)
+        .with(CompKey::Lactose, 17.0)
+        .with(CompKey::MSNF, 21.0)
+        .with(CompKey::MilkSolids, 24.0)
+        .with(CompKey::PACsgr, 17.0)
+        .with(CompKey::TotalPAC, 24.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
