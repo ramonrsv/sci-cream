@@ -433,8 +433,8 @@ Kg'](https://bulkmart.ca/products/mmpa-grade-a-whole-milk-powder-26-25-kg), ['Wh
 }
 ```
 
-USDA FoodData Central - Survey (FNDDS) - [Milk, fat free
-(skim)](https://fdc.nal.usda.gov/food-details/2705388/nutrients)
+USDA FoodData Central - Foundation - [Milk, nonfat, fluid, with added vitamin A and vitamin D (fat
+free or skim)](https://fdc.nal.usda.gov/food-details/746776/nutrients)
 
 ## USDA 2% Reduced-Fat Milk
 
@@ -452,8 +452,8 @@ USDA FoodData Central - Survey (FNDDS) - [Milk, fat free
 }
 ```
 
-USDA FoodData Central - Survey (FNDDS) - [Milk, reduced fat
-(2%)](https://fdc.nal.usda.gov/food-details/2705386/nutrients)
+USDA FoodData Central - Foundation - [Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and
+vitamin D](https://fdc.nal.usda.gov/food-details/746778/nutrients)
 
 ## USDA Whole Milk
 
@@ -471,8 +471,8 @@ USDA FoodData Central - Survey (FNDDS) - [Milk, reduced fat
 }
 ```
 
-USDA FoodData Central - Survey (FNDDS) - [Milk,
-whole](https://fdc.nal.usda.gov/food-details/2705385/nutrients)
+USDA FoodData Central - Foundation - [Milk, whole, 3.25% milkfat, with added vitamin
+D](https://fdc.nal.usda.gov/food-details/746782/nutrients)
 
 ## USDA Half and Half Cream
 
@@ -490,8 +490,8 @@ whole](https://fdc.nal.usda.gov/food-details/2705385/nutrients)
 }
 ```
 
-USDA FoodData Central - Survey (FNDDS) - [Cream, half and
-half](https://fdc.nal.usda.gov/food-details/2705594/nutrients)
+USDA FoodData Central - SR Legacy - [Cream, fluid, half and
+half](https://fdc.nal.usda.gov/food-details/171255/nutrients)
 
 ## USDA Light Cream
 
@@ -509,8 +509,8 @@ half](https://fdc.nal.usda.gov/food-details/2705594/nutrients)
 }
 ```
 
-USDA FoodData Central - Survey (FNDDS) - [Cream,
-light](https://fdc.nal.usda.gov/food-details/2705593/nutrients)
+USDA FoodData Central - SR Legacy - [Cream, fluid, light (coffee cream or table
+cream)](https://fdc.nal.usda.gov/food-details/170857/nutrients)
 
 ## USDA Heavy Cream
 
@@ -520,7 +520,7 @@ light](https://fdc.nal.usda.gov/food-details/2705593/nutrients)
   "DairyLabelSpec": {
     "serving_size": { "grams": 100 },
     "energy": 343,
-    "total_fat": { "grams": 35.6 },
+    "total_fat": { "grams": 35.56 },
     "saturated_fat": 20.4,
     "carbohydrates": 3.8,
     "sugars": 2.92,
@@ -530,7 +530,12 @@ light](https://fdc.nal.usda.gov/food-details/2705593/nutrients)
 ```
 
 USDA FoodData Central - Survey (FNDDS) - [Cream,
-heavy](https://fdc.nal.usda.gov/food-details/2705597/nutrients).
+heavy](https://fdc.nal.usda.gov/food-details/2705597/nutrients), which FNDDS composes from
+Foundation's [Cream, heavy](https://fdc.nal.usda.gov/food-details/2346386/nutrients) and, for the
+sugars Foundation doesn't report, SR Legacy's [Cream, fluid, heavy
+whipping](https://fdc.nal.usda.gov/food-details/170859/nutrients). FNDDS's [Ingredient Nutrient
+Values](https://www.ars.usda.gov/ARSUserFiles/80400530/apps/2021-2023%20FNDDS%20At%20A%20Glance%20-%20Ingredient%20Nutrient%20Values.xlsx)
+spreadsheet lists each value's source.
 
 ## Sealtest 0% Skim Milk
 
@@ -747,14 +752,14 @@ From [nutrition facts table](https://fairlife.com/ultra-filtered-milk/whole-milk
     "energy": 78,
     "total_fat": { "grams": 0.2 },
     "saturated_fat": 0.121,
-    "sugars": 11.35,
+    "sugars": 11.4,
     "protein": 7.55
   }
 }
 ```
 
-USDA FoodData Central - Survey (FNDDS) - [Milk, evaporated, fat free
-(skim)](https://fdc.nal.usda.gov/food-details/2705401/nutrients)
+USDA FoodData Central - SR Legacy - [Milk, canned, evaporated, nonfat, with added vitamin A and
+vitamin D](https://fdc.nal.usda.gov/food-details/170878/nutrients)
 
 ## USDA 2% Reduced-Fat Evaporated Milk
 
@@ -773,7 +778,12 @@ USDA FoodData Central - Survey (FNDDS) - [Milk, evaporated, fat free
 ```
 
 USDA FoodData Central - Survey (FNDDS) - [Milk, evaporated, reduced fat
-(2%)](https://fdc.nal.usda.gov/food-details/2705400/nutrients)
+(2%)](https://fdc.nal.usda.gov/food-details/2705400/nutrients), which FNDDS calculates from 100 g of
+SR Legacy's [nonfat evaporated milk](https://fdc.nal.usda.gov/food-details/170878/nutrients) with
+1.8 g of anhydrous butter oil. FNDDS's [Ingredient Nutrient
+Values](https://www.ars.usda.gov/ARSUserFiles/80400530/apps/2021-2023%20FNDDS%20At%20A%20Glance%20-%20Ingredient%20Nutrient%20Values.xlsx)
+spreadsheet lists each value's source. SR Legacy's own [2% evaporated
+milk](https://fdc.nal.usda.gov/food-details/171302/nutrients) is not lab-analyzed.
 
 ## USDA Whole Evaporated Milk
 
@@ -784,15 +794,15 @@ USDA FoodData Central - Survey (FNDDS) - [Milk, evaporated, reduced fat
     "serving_size": { "grams": 100 },
     "energy": 134,
     "total_fat": { "grams": 7.56 },
-    "saturated_fat": 4.591,
-    "sugars": 10.04,
+    "saturated_fat": 4.59,
+    "sugars": 10,
     "protein": 6.81
   }
 }
 ```
 
-USDA FoodData Central - Survey (FNDDS) - [Milk, evaporated,
-whole](https://fdc.nal.usda.gov/food-details/2705399/nutrients)
+USDA FoodData Central - SR Legacy - [Milk, canned, evaporated, with added vitamin D and without
+added vitamin A](https://fdc.nal.usda.gov/food-details/171276/nutrients)
 
 ## Carnation Fat Free Evaporated Milk
 

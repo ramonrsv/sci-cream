@@ -174,7 +174,7 @@ fn compare_specs_whipping_cream() {
     ]
     .map(source_str_to_comp);
 
-    // USDA Heavy Cream is 35.6% fat; close enough to compare with the 35% Simple/Sealtest
+    // USDA Heavy Cream is 35.56% fat; close enough to compare with the 35% Simple/Sealtest
     // entries. Sealtest's 15ml serving rounds the lactose label to 0g sugars at this fat
     // level, which cascades through MilkSolids and TotalPAC (missing lactose is exactly
     // missing solids). The exceptions are:
@@ -294,11 +294,11 @@ fn compare_specs_whole_evaporated_milk() {
     //    - MilkSolids     23.61 pp  (Goff & Hartel vs Carnation)
     //    - PACsgr         16.35 pp  (Goff & Hartel vs Carnation)
     //    - TotalPAC       23.91 pp  (Goff & Hartel vs Carnation)
-    //    - Lactose        14.43 pp  (USDA vs Carnation)
-    //    - MSNF           18.58 pp  (USDA vs Carnation)
+    //    - Lactose        14.35 pp  (USDA vs Carnation)
+    //    - MSNF           18.53 pp  (USDA vs Carnation)
     //    - MilkSolids     23.61 pp  (USDA vs Carnation)
-    //    - PACsgr         14.43 pp  (USDA vs Carnation)
-    //    - TotalPAC       21.26 pp  (USDA vs Carnation)
+    //    - PACsgr         14.35 pp  (USDA vs Carnation)
+    //    - TotalPAC       21.16 pp  (USDA vs Carnation)
     //
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.

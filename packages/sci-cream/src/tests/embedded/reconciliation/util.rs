@@ -30,6 +30,19 @@ pub(super) struct Proximates {
 }
 
 impl Proximates {
+    /// Constructs a new `Proximates` instance with all fields set to the same value.
+    pub(super) const fn splat(value: f64) -> Self {
+        Self {
+            water: value,
+            protein: value,
+            fat: value,
+            carbohydrate: value,
+            fiber: value,
+            sugars: value,
+            ash: value,
+        }
+    }
+
     /// Field name and value pairs, in declaration order.
     #[allow(clippy::unwrap_used)] // Every field is an `f64`
     fn fields(&self) -> impl Iterator<Item = (&'static str, f64)> {
