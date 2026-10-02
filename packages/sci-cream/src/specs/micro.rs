@@ -10,8 +10,6 @@ use crate::{
 };
 
 /// Spec for ingredients with solely micro components, e.g. salt, etc.
-#[doc = include_str!("../../docs/references/index/5.md")]
-#[doc = include_str!("../../docs/references/index/6.md")]
 #[derive(Eq, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub enum MicroSpec {

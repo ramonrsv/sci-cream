@@ -153,8 +153,6 @@ impl CurvePoint {
 }
 
 /// [Freezing Point Depression Curves](crate::docs#freezing-point-depression-curve) for a mix
-#[doc = include_str!("../docs/references/index/2.md")]
-#[doc = include_str!("../docs/references/index/3.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Clone, Debug)]
 pub struct Curves {
@@ -170,8 +168,6 @@ pub struct Curves {
     /// curve, frozen water percentage being a proxy for hardness. If using
     /// [`FpdCurvesMethod::ModifiedGoffHartelCorvitto`], this curves also incorporates the effects
     /// of hardness factors (e.g., from cocoa or nut ingredients) as per Corvitto.
-    #[doc = include_str!("../docs/references/index/2.md")]
-    #[doc = include_str!("../docs/references/index/3.md")]
     #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub hardness: Vec<CurvePoint>,
 }
@@ -435,7 +431,6 @@ pub fn get_serving_temp_from_pac_corvitto(pac: f64) -> Result<f64> {
 /// A step in an FPD curve using the Goff & Hartel method
 ///
 /// Maps to [`FpdCurvesMethod::GoffHartel`] and [`compute_fpd_curve_step_goff_hartel`].
-#[doc = include_str!("../docs/references/index/2.md")]
 #[derive(Iterable, PartialEq, Copy, Clone, Debug)]
 pub struct GoffHartelFpdCurveStep {
     /// Percentage of total water in mix that's frozen at this step

@@ -960,7 +960,7 @@ pub(crate) mod tests {
     #[test]
     fn bridge_seed() {
         let bridge = Bridge::new(IngredientDatabase::new());
-        assert!(bridge.get_all_ingredients().is_empty());
+        assert_eq!(bridge.get_all_ingredients(), Vec::<Ingredient>::new());
 
         let ingredients = get_all_independent_ingredient_specs()[..10]
             .iter()
@@ -979,7 +979,7 @@ pub(crate) mod tests {
     #[test]
     fn bridge_seed_from_specs() {
         let bridge = Bridge::new(IngredientDatabase::new());
-        assert!(bridge.get_all_ingredients().is_empty());
+        assert_eq!(bridge.get_all_ingredients(), Vec::<Ingredient>::new());
 
         let specs = get_all_spec_entries();
 

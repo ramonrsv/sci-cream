@@ -20,9 +20,8 @@ different functional properties and are used in different quantities. See
 
 The detailed breakdown of artificial sweeteners in a mix is tracked in [`ArtificialSweeteners`].
 [Potere Anti-Congelante (PAC)](crate::docs#pac-afp-fpdf-se) and [Potere Dolcificante
-(POD)](crate::docs#pod) values for all sugars documented here can be found at
-[`constants::pac`](crate::constants::pac) and [`constants::pod`](crate::constants::pod),
-respectively.
+(POD)](crate::docs#pod) values for all sugars documented here can be found at [`constants::pac`] and
+[`constants::pod`], respectively.
 
 - <a id="aspartame"></a>**Aspartame** is a common non-saccharide high-intensity artificial
   sweetener. It is a methyl ester of aspartic acid and phenylalanine. It is approximately 200 times

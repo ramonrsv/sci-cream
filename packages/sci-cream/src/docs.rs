@@ -1,3 +1,5 @@
+// Each page includes the whole shared bibliography but cites only part of it.
+#![expect(rustdoc::unused_footnote_definition)]
 #![doc = include_str!("../docs/table-of-contents.md")]
 #![doc = include_str!("../docs/sweeteners.md")]
 #![doc = include_str!("../docs/sugars.md")]
