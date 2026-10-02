@@ -152,6 +152,7 @@ fn compare_specs_18_cream() {
 
     // Sealtest's 15ml serving rounds sugars and saturated fat coarsely, pushing TotalPAC
     // and SaturatedFat above the default ceiling. The exceptions are:
+    //    - TotalPAC       10.05 pp  (Simple vs Sealtest)
     //    - TotalPAC       12.57 pp  (USDA vs Sealtest)
     //    - SaturatedFat   10.90 pp  (Simple vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
@@ -178,12 +179,14 @@ fn compare_specs_whipping_cream() {
     // USDA Heavy Cream is 35.56% fat; close enough to compare with the 35% Simple/Sealtest
     // entries. Sealtest's 15ml serving rounds the lactose label to 0g sugars at this fat
     // level, which cascades through MilkSolids and TotalPAC (missing lactose is exactly
-    // missing solids). The exceptions are:
+    // missing solids). Its 3g saturated fat label is also only ~58% of its fat, against the
+    // standard 65%. The exceptions are:
     //    - MilkSolids     15.24 pp  (Simple vs Sealtest)
     //    - MilkSolids     15.24 pp  (Goff & Hartel vs Sealtest)
     //    - MilkSolids     13.13 pp  (USDA vs Sealtest)
     //    - TotalPAC       11.24 pp  (Simple vs Sealtest)
     //    - TotalPAC       10.93 pp  (Goff & Hartel vs Sealtest)
+    //    - SaturatedFat   10.19 pp  (Goff & Hartel vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
         .with(CompKey::Energy, 64.0)
         .with(CompKey::MilkSolids, 16.0)
