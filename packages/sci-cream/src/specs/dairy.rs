@@ -288,7 +288,7 @@ impl ToComposition for DairyLabelSpec {
         let sucrose = sucrose.unwrap_or(0.0);
         let dairy_sugars = sugars - sucrose;
         let carbohydrates = carbohydrates.unwrap_or(sugars);
-        let other_carbohydrates = carbohydrates - sugars - sucrose;
+        let other_carbohydrates = carbohydrates - sugars;
         let solids_source = solids_source.unwrap_or(SolidsSource::Milk);
 
         let std_minerals_in_snf = match solids_source {
@@ -340,7 +340,6 @@ impl ToComposition for DairyLabelSpec {
         verify_is_subset(sucrose, sugars, "sucrose <= sugars")?;
 
         let dairy_sugars = make_dairy_sugars(dairy_sugars, lactose_free);
-        let other_carbohydrates = carbohydrates - dairy_sugars.total() - sucrose;
         let other_sugars = Sugars::new().sucrose(sucrose);
         let total_sugars = dairy_sugars.add(&other_sugars);
 
@@ -2366,6 +2365,29 @@ pub(crate) mod tests {
             lactose_free: None,
             solids_source: None,
         }
+    }
+
+    #[test]
+    fn dairy_label_spec_water_floor_with_sucrose() {
+        let comp = DairyLabelSpec {
+            serving_size: Unit::Grams(100.0),
+            energy: None,
+            total_fat: Unit::Grams(26.0),
+            saturated_fat: None,
+            trans_fat: None,
+            carbohydrates: Some(52.0),
+            sugars: 50.0,
+            protein: 17.0,
+            lactose_free: None,
+            sucrose: Some(20.0),
+            solids_source: None,
+        }
+        .to_composition()
+        .unwrap();
+
+        // The estimated 51.09g MSNF is capped at 98% solids, less fat, sucrose, and other carbs
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 50.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
     }
 
     #[test]
