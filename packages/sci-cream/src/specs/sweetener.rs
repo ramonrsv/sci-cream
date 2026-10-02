@@ -31,10 +31,10 @@ use crate::{
 /// with 15% sucrose remaining, and the syrup containing 20% water. If [`basis`](Self::basis) is
 /// [`ByTotalWeight`](CompositionBasis::ByTotalWeight), then the values in
 /// [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a percentage of
-/// the total weight of the ingredient, their total plus `fiber`,`other_carbohydrates`, `other_solids`, and
-/// `water` adding up to 100. For example, Honey might be composed of `sugars.glucose = 36`,
-/// `sugars.fructose = 41`, `sugars.sucrose = 2`, and `other_solids = 1`, with `ByTotalWeight {
-/// water = 20 }`.
+/// the total weight of the ingredient, their total plus `fiber`, `other_carbohydrates`,
+/// `other_solids`, and `water` adding up to 100. For example, Honey might be composed of
+/// `sugars.glucose = 36`, `sugars.fructose = 41`, `sugars.sucrose = 2`, and `other_solids = 1`,
+/// with `ByTotalWeight { water = 20 }`.
 ///
 /// [`fiber`](Self::fiber) are any dietary fibers that may be in or similar to sweetener products,
 /// e.g. inulin or oligofructose. [`other_carbohydrates`](Self::other_carbohydrates) are any
@@ -94,7 +94,7 @@ use crate::{
 /// # Ok(()) }
 /// ```
 ///
-/// (Canadian Maple Syrup, 2018)[^114], from _USDA FoodData Central_:
+/// (USDA, 2018, "Syrup, maple, Canadian")[^114], from _USDA FoodData Central_:
 /// - 60% mixed sugars (59% sucrose, 1% glucose/fructose)
 /// - 7.5% oligosaccharides
 /// - 0.5% minerals

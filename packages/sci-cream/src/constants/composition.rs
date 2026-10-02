@@ -3,7 +3,8 @@
 /// Standard composition values for dairy products, including milk/cream, powders, proteins, etc.
 ///
 /// The `_IN_MSNF` constants are corroborated by averages compiled from the nutrient profiles of
-/// these milks, evaporated milks, and milk powders in the _USDA FoodData Central_ database:
+/// these milks, evaporated milks, and milk powders in the
+/// [USDA FoodData Central](https://fdc.nal.usda.gov/) database:
 ///
 /// - (USDA, 2019, "Milk, nonfat, fluid, with added vitamin ... (fat free or skim)")[^130]
 /// - (USDA, 2019, "Milk, reduced fat, fluid, 2% milkfat, with added vitamin ...")[^131]
@@ -152,7 +153,7 @@ pub mod egg {
 
     /// Percentage of protein typically found in egg yolk
     ///
-    /// (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p. 48)[^20], (FoodData Central, 2019,
+    /// (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p. 48)[^20], (USDA, 2019,
     /// "Eggs, Grade A, Large, egg yolk")[^100].
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
@@ -162,7 +163,7 @@ pub mod egg {
 
     /// Percentage of protein typically found in egg white
     ///
-    /// (FoodData Central, 2019, "Eggs, Grade A, Large, egg white")[^118]
+    /// (USDA, 2019, "Eggs, Grade A, Large, egg white")[^118]
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/118.md")]
     pub const STD_PROTEIN_IN_EGG_WHITE: f64 = 0.11;
@@ -171,7 +172,7 @@ pub mod egg {
     ///
     /// Sources list the total solids content of egg yolks to be between 48-51% by weight; 50% is a
     /// reasonable average of these values (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p.
-    /// 48)[^20], (FoodData Central, 2019, "Eggs, Grade A, Large, egg yolk")[^100].
+    /// 48)[^20], (USDA, 2019, "Eggs, Grade A, Large, egg yolk")[^100].
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
     #[doc = include_str!("../../docs/references/index/20.md")]
@@ -180,7 +181,7 @@ pub mod egg {
 
     /// Percentage of solids typically found in egg white
     ///
-    /// (FoodData Central, 2019, "Eggs, Grade A, Large, egg white")[^118]
+    /// (USDA, 2019, "Eggs, Grade A, Large, egg white")[^118]
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/118.md")]
     pub const STD_SOLIDS_IN_EGG_WHITE: f64 = 0.14;
@@ -189,7 +190,7 @@ pub mod egg {
     ///
     /// Sources list the protein content of egg yolk solids to be between 30.9-33.75% by weight; 32%
     /// is a reasonable average of these values (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p.
-    /// 48)[^20], (FoodData Central, 2019, "Eggs, Grade A, Large, egg yolk")[^100].
+    /// 48)[^20], (USDA, 2019, "Eggs, Grade A, Large, egg yolk")[^100].
     ///
     /// Consistent with [`STD_PROTEIN_IN_EGG_YOLK`] / [`STD_SOLIDS_IN_EGG_YOLK`].
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
@@ -200,7 +201,7 @@ pub mod egg {
 
     /// Percentage of protein typically found in egg white solids
     ///
-    /// (FoodData Central, 2019, "Eggs, Grade A, Large, egg white")[^118]
+    /// (USDA, 2019, "Eggs, Grade A, Large, egg white")[^118]
     ///
     /// Consistent-ish with [`STD_PROTEIN_IN_EGG_WHITE`] / [`STD_SOLIDS_IN_EGG_WHITE`].
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
@@ -249,7 +250,7 @@ pub mod egg {
     /// solids in egg yolk to be between 48-51% by weight, for a lecithin content of egg yolk solids
     /// of between ~16-21% by weight; 19% is a reasonable average of these values (Clarke, 2004, p.
     /// 49)[^4], (Goff & Hartel, 2025, p. 84)[^20], (Manley, 2000, 12.3.1 Lecithin)[^68], (Zhao, et
-    /// al., 2023, 1. Introduction)[^69], (Palacios, et al., 2020)[^70], (FoodData Central, 2019,
+    /// al., 2023, 1. Introduction)[^69], (Palacios, et al., 2020)[^70], (USDA, 2019,
     /// "Eggs, Grade A, Large, egg yolk")[^100]
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
@@ -266,8 +267,8 @@ pub mod nut {
     /// Percentage of saturated fats typical of nut fat; see [`NutSpec`](crate::specs::NutSpec).
     ///
     /// This value is an average compiled from the nutrient profiles of various nuts in the _USDA
-    /// FoodData Central_ database (Nuts, almonds, 2019)[^102], (Nuts, pistachio nuts, raw,
-    /// 2019)[^112], (Nuts, hazelnuts or filberts, 2019)[^113].
+    /// FoodData Central_ database (USDA, 2019, "Nuts, almonds")[^102], (USDA, 2019, "Nuts,
+    /// pistachio nuts, raw")[^112], (USDA, 2019, "Nuts, hazelnuts or filberts")[^113].
     #[doc = include_str!("../../docs/references/index/102.md")]
     #[doc = include_str!("../../docs/references/index/112.md")]
     #[doc = include_str!("../../docs/references/index/113.md")]
@@ -278,7 +279,7 @@ pub mod nut {
 /// documentation](crate::docs#chocolate) for more details about the components of chocolate.
 ///
 /// These values are averages compiled from the nutrient profiles of various cacao products in the
-/// _USDA FoodData Central_ database:
+/// [USDA FoodData Central](https://fdc.nal.usda.gov/) database:
 ///
 /// - (USDA, 2019, "Chocolate, dark, 45-59% cacao solids")[^127]
 /// - (USDA, 2019, "Chocolate, dark, 60-69% cacao solids")[^104]

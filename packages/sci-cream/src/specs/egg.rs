@@ -43,7 +43,8 @@ pub enum EggSource {
 ///
 /// Based on a combination of multiple sources:
 ///
-/// - Water: 52.1%, Protein: 16.2%, Total Lipid: 28.8% (Eggs, Grade A, Large, egg yolk, 2019)[^100]
+/// - Water: 52.1%, Protein: 16.2%, Total Lipid: 28.8% (USDA, 2019,
+///   "Eggs, Grade A, Large, egg yolk")[^100]
 /// - Fat: 33%, Protein: 15.8%, Total Solids: 51.2% (Goff & Hartel, 2013, p. 49)[^2]
 /// - Water: 50%, Protein: 16%, Other Fat: 23% (Clarke, 2004, p. 49)[^4]
 ///

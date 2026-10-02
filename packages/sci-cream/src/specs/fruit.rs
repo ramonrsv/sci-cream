@@ -25,7 +25,7 @@ use crate::{
 ///
 /// # Examples
 ///
-/// (Strawberries, raw, 2019)[^101] per 100g:
+/// (USDA, 2019, "Strawberries, raw")[^101] per 100g:
 /// - Water: 91g
 /// - Energy: 32 kcal
 /// - Protein: 0.67g

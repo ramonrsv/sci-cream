@@ -899,9 +899,9 @@ milk](https://fdc.nal.usda.gov/food-details/2758990/nutrients)
 ```
 
 From [nutrition facts table](https://www.eaglebrand.ca/en/products/original). The label does not
-specify the lactose and sucrose breakdown, so sucrose is assumed to be 45% of total weight (USDA
-FoodData Central, 2026, "Sweetened condensed milk")[^117], total weight calculated at 1.305g/ml
-(Goff & Hartel, 2025, Table 3.2, p. 48)[^20].
+specify the lactose and sucrose breakdown, so sucrose is assumed to be 45% of total weight (USDA,
+2026, "Sweetened condensed milk")[^117], total weight calculated at 1.305g/ml (Goff & Hartel, 2025,
+Table 3.2, p. 48)[^20].
 
 ## Eagle Brand Low Fat Sweetened Condensed Milk
 
@@ -921,9 +921,9 @@ FoodData Central, 2026, "Sweetened condensed milk")[^117], total weight calculat
 ```
 
 From [nutrition facts table](https://www.eaglebrand.ca/en/products/low-fat). The label does not
-specify the lactose and sucrose breakdown, so sucrose is assumed to be 45% of total weight (USDA
-FoodData Central, 2026, "Sweetened condensed milk")[^117], total weight calculated at 1.321g/ml
-(Goff & Hartel, 2025, Table 3.2, p. 48)[^20].
+specify the lactose and sucrose breakdown, so sucrose is assumed to be 45% of total weight (USDA,
+2026, "Sweetened condensed milk")[^117], total weight calculated at 1.321g/ml (Goff & Hartel, 2025,
+Table 3.2, p. 48)[^20].
 
 ## Eagle Brand Dulce de Leche Caramel Flavoured Sauce
 
@@ -944,9 +944,9 @@ FoodData Central, 2026, "Sweetened condensed milk")[^117], total weight calculat
 ```
 
 From [nutrition facts table](https://www.eaglebrand.ca/en/products/dulce-de-leche). The label does
-not specify the lactose and sucrose breakdown, so sucrose is assumed to be 42% of total weight (USDA
-FoodData Central, 2026, "Dulce de Leche")[^119], total weight calculated at 1.305g/ml (Goff &
-Hartel, 2025, Table 3.2, p. 48)[^20].
+not specify the lactose and sucrose breakdown, so sucrose is assumed to be 42% of total weight
+(USDA, 2019, "Dulce de Leche")[^119], total weight calculated at 1.305g/ml (Goff & Hartel, 2025,
+Table 3.2, p. 48)[^20].
 
 ## USDA Skim Milk Powder
 

@@ -30,7 +30,7 @@ use crate::composition::CompKey;
 ///
 /// # Examples
 ///
-/// (Nuts, almonds, 2019)[^102] per 100g:
+/// (USDA, 2019, "Nuts, almonds")[^102] per 100g:
 /// - Water: 4.41g
 /// - Protein: 21.2g
 /// - Total lipid (fat): 49.9g
