@@ -1,18 +1,18 @@
 ---
 source: packages/sci-cream/src/balancing/tests.rs
-expression: "rounded_self_targets_report(&recipe, &get_all_balanceable_keys())"
+expression: "rounded_self_targets_report(&recipe, &get_all_native_balancing_keys())"
 ---
 === exact ===
 targets:
-  Energy                237.50
+  Energy                238.60
   MilkSolids             26.70
   MilkFat                15.40
   MSNF                   11.40
   MilkSugars              6.19
   MilkSNFS                5.17
-  MilkProteins            3.98
-  Casein                  3.18
-  Whey                    0.80
+  MilkProteins            4.26
+  Casein                  3.41
+  Whey                    0.85
   EggSolids               1.91
   EggFat                  1.17
   EggSNF                  0.74
@@ -23,7 +23,7 @@ targets:
   TotalFats              16.50
   TotalSNF               23.70
   TotalSNFS               6.14
-  TotalProteins           4.60
+  TotalProteins           4.88
   Water                  59.80
   TotalCarbohydrates     17.70
   TotalFiber              0.15
@@ -64,19 +64,18 @@ targets:
 [warning] Target ratio 'Lactose' + 'PACmlk' : 'Milk Sugars' (1.67) is outside the range [1.67, 1.67] the ingredients allow
 [warning] Target ratio 'MSNF' : 'Milk SNFS' (2.21) is outside the range [2.2, 2.2] the ingredients allow
 [warning] Target ratio 'Milk Sugars' : 'Milk SNFS' (1.2) is outside the range [1.2, 1.2] the ingredients allow
-[warning] Target ratio 'MSNF' : 'Milk Proteins' (2.86) is outside the range [2.86, 2.86] the ingredients allow
-[warning] Target ratio 'Milk Sugars' : 'Milk Proteins' (1.56) is outside the range [1.56, 1.56] the ingredients allow
-[warning] Target ratio 'Milk SNFS' : 'Milk Proteins' (1.3) is outside the range [1.3, 1.3] the ingredients allow
-[warning] Target ratio 'MSNF' : 'Casein' (3.58) is outside the range [3.57, 3.57] the ingredients allow
-[warning] Target ratio 'Milk Sugars' : 'Casein' (1.95) is outside the range [1.95, 1.95] the ingredients allow
-[warning] Target ratio 'Milk SNFS' : 'Casein' (1.63) is outside the range [1.62, 1.62] the ingredients allow
+[warning] Target ratio 'MSNF' : 'Milk Proteins' (2.68) is outside the range [2.67, 2.67] the ingredients allow
+[warning] Target ratio 'Milk Sugars' : 'Milk Proteins' (1.45) is outside the range [1.45, 1.45] the ingredients allow
+[warning] Target ratio 'Milk SNFS' : 'Milk Proteins' (1.21) is outside the range [1.21, 1.21] the ingredients allow
+[warning] Target ratio 'MSNF' : 'Casein' (3.34) is outside the range [3.33, 3.33] the ingredients allow
+[warning] Target ratio 'Milk Sugars' : 'Casein' (1.82) is outside the range [1.82, 1.82] the ingredients allow
+[warning] Target ratio 'Milk SNFS' : 'Casein' (1.52) is outside the range [1.52, 1.52] the ingredients allow
 [warning] Target ratio 'Milk Proteins' : 'Casein' (1.25) is outside the range [1.25, 1.25] the ingredients allow
-[warning] Target ratio 'MSNF' : 'Whey' (14.25) is outside the range [14.29, 14.29] the ingredients allow
-[warning] Target ratio 'Milk Sugars' : 'Whey' (7.74) is outside the range [7.79, 7.79] the ingredients allow
-[warning] Target ratio 'Milk SNFS' : 'Whey' (6.46) is outside the range [6.5, 6.5] the ingredients allow
-[warning] Target ratio 'Milk Proteins' : 'Whey' (4.97) is outside the range [5, 5] the ingredients allow
-[warning] Target ratio 'Casein' : 'Whey' (3.98) is outside the range [4, 4] the ingredients allow
-[warning] Target ratio 'Carrageenans' + 'PACmlk' : 'Whey' (5.24) is outside the range [5.25, ∞] the ingredients allow
+[warning] Target ratio 'MSNF' : 'Whey' (13.41) is outside the range [13.33, 13.33] the ingredients allow
+[warning] Target ratio 'Milk Sugars' : 'Whey' (7.28) is outside the range [7.27, 7.27] the ingredients allow
+[warning] Target ratio 'Milk SNFS' : 'Whey' (6.08) is outside the range [6.07, 6.07] the ingredients allow
+[warning] Target ratio 'Milk Proteins' : 'Whey' (5.01) is outside the range [5, 5] the ingredients allow
+[warning] Target ratio 'Casein' : 'Whey' (4.01) is outside the range [4, 4] the ingredients allow
 [warning] Target ratio 'Egg Solids' : 'Egg Fat' (1.63) is outside the range [1.63, 1.63] the ingredients allow
 [warning] Target ratio 'Egg Solids' : 'Egg SNF' (2.58) is outside the range [2.58, 2.58] the ingredients allow
 [warning] Target ratio 'Egg Fat' : 'Egg SNF' (1.58) is outside the range [1.58, 1.58] the ingredients allow
@@ -104,14 +103,14 @@ targets:
 [warning] Targets 'Sweeteners' + 'Locust Bean Gum' + 'Carrageenans' sum to 17.71, exceeding the target for 'Carbohydrates' (17.7), but no ingredient mix can satisfy them all — every ingredient's parts sum to ≤ its 'Carbohydrates'
 [warning] Target ratio 'MSNF' : 'Lactose' (1.84) is outside the range [1.83, 1.83] the ingredients allow
 [warning] Target ratio 'Milk Sugars' + 'Milk SNFS' : 'Lactose' (1.84) is outside the range [1.83, 1.83] the ingredients allow
-[warning] Target ratio 'Milk Sugars' + 'Milk Proteins' : 'Lactose' (1.64) is outside the range [1.64, 1.64] the ingredients allow
-[warning] Target ratio 'Milk Sugars' + 'Casein' : 'Lactose' (1.51) is outside the range [1.51, 1.51] the ingredients allow
-[warning] Target ratio 'Milk Sugars' + 'Whey' : 'Lactose' (1.13) is outside the range [1.13, 1.13] the ingredients allow
+[warning] Target ratio 'Milk Sugars' + 'Milk Proteins' : 'Lactose' (1.69) is outside the range [1.69, 1.69] the ingredients allow
+[warning] Target ratio 'Milk Sugars' + 'Casein' : 'Lactose' (1.55) is outside the range [1.55, 1.55] the ingredients allow
+[warning] Target ratio 'Milk Sugars' + 'Whey' : 'Lactose' (1.14) is outside the range [1.14, 1.14] the ingredients allow
 [warning] Target ratio 'Milk Sugars' + 'PACmlk' : 'Lactose' (1.67) is outside the range [1.67, 1.67] the ingredients allow
 [warning] Target ratio 'Milk SNFS' : 'Lactose' (0.84) is outside the range [0.83, 0.83] the ingredients allow
-[warning] Target ratio 'Milk Proteins' : 'Lactose' (0.64) is outside the range [0.64, 0.64] the ingredients allow
-[warning] Target ratio 'Casein' : 'Lactose' (0.51) is outside the range [0.51, 0.51] the ingredients allow
-[warning] Target ratio 'Whey' : 'Lactose' (0.13) is outside the range [0.13, 0.13] the ingredients allow
+[warning] Target ratio 'Milk Proteins' : 'Lactose' (0.69) is outside the range [0.69, 0.69] the ingredients allow
+[warning] Target ratio 'Casein' : 'Lactose' (0.55) is outside the range [0.55, 0.55] the ingredients allow
+[warning] Target ratio 'Whey' : 'Lactose' (0.14) is outside the range [0.14, 0.14] the ingredients allow
 [warning] Target ratio 'Carrageenans' + 'PACslt' : 'Salt' (5.75) is outside the range [5.85, ∞] the ingredients allow
 [warning] Target ratio 'Egg Solids' : 'Emulsifiers' (5.31) is outside the range [5.26, 5.26] the ingredients allow
 [warning] Target ratio 'Egg Fat' : 'Emulsifiers' (3.25) is outside the range [3.22, 3.22] the ingredients allow
@@ -128,24 +127,24 @@ targets:
 [warning] Target ratio 'MSNF' : 'PACmlk' (2.73) is outside the range [2.72, 2.72] the ingredients allow
 [warning] Target ratio 'Milk Sugars' : 'PACmlk' (1.48) is outside the range [1.48, 1.48] the ingredients allow
 [warning] Target ratio 'Milk SNFS' : 'PACmlk' (1.24) is outside the range [1.24, 1.24] the ingredients allow
-[warning] Target ratio 'Milk Proteins' : 'PACmlk' (0.95) is outside the range [0.95, 0.95] the ingredients allow
-[warning] Target ratio 'Casein' : 'PACmlk' (0.76) is outside the range [0.76, 0.76] the ingredients allow
-[warning] Target ratio 'Whey' : 'PACmlk' (0.19) is outside the range [0.19, 0.19] the ingredients allow
+[warning] Target ratio 'Milk Proteins' : 'PACmlk' (1.02) is outside the range [1.02, 1.02] the ingredients allow
+[warning] Target ratio 'Casein' : 'PACmlk' (0.82) is outside the range [0.82, 0.82] the ingredients allow
+[warning] Target ratio 'Whey' : 'PACmlk' (0.2) is outside the range [0.2, 0.2] the ingredients allow
 [warning] Target ratio 'Lactose' : 'PACmlk' (1.48) is outside the range [1.48, 1.48] the ingredients allow
 [warning] Target ratio 'Milk Fat' : 'Trans Fat' (28.52) is outside the range [28.57, 28.57] the ingredients allow
 [information] 44 targets with only 11 ingredients: at most 10 can be met exactly, so the balance is a best-fit compromise
 
 === tolerant (rel_tol = 0.01) ===
 targets:
-  Energy                237.50
+  Energy                238.60
   MilkSolids             26.70
   MilkFat                15.40
   MSNF                   11.40
   MilkSugars              6.19
   MilkSNFS                5.17
-  MilkProteins            3.98
-  Casein                  3.18
-  Whey                    0.80
+  MilkProteins            4.26
+  Casein                  3.41
+  Whey                    0.85
   EggSolids               1.91
   EggFat                  1.17
   EggSNF                  0.74
@@ -156,7 +155,7 @@ targets:
   TotalFats              16.50
   TotalSNF               23.70
   TotalSNFS               6.14
-  TotalProteins           4.60
+  TotalProteins           4.88
   Water                  59.80
   TotalCarbohydrates     17.70
   TotalFiber              0.15

@@ -1,35 +1,94 @@
 //! Standard composition values for various food components and ingredients
 
 /// Standard composition values for dairy products, including milk/cream, powders, proteins, etc.
+///
+/// The `_IN_MSNF` constants are corroborated by averages compiled from the nutrient profiles of
+/// these milks, evaporated milks, and milk powders in the _USDA FoodData Central_ database:
+///
+/// - (USDA, 2019, "Milk, nonfat, fluid, with added vitamin ... (fat free or skim)")[^130]
+/// - (USDA, 2019, "Milk, reduced fat, fluid, 2% milkfat, with added vitamin ...")[^131]
+/// - (USDA, 2019, "Milk, whole, 3.25% milkfat, with added vitamin ...")[^103]
+/// - (USDA, 2019, "Milk, canned, evaporated, nonfat, with added vitamin ...")[^132]
+/// - (USDA, 2019, "Milk, canned, evaporated, with added vitamin ... and without added ...")[^133]
+/// - (USDA, 2019, "Milk, dry, nonfat, regular, without added vitamin ...")[^134]
+/// - (USDA, 2019, "Milk, dry, whole, without added vitamin ...")[^135]
+///
+/// The creams and sweetened condensed milk scatter more widely, e.g. 32.0-41.7% protein, so they
+/// are left out, as is the 2% evaporated milk, which FNDDS calculates from the nonfat one.
+///
+/// **Note:** The calculated values under the `_IN_MSNF` constants are fractions of the MSNF of each
+/// listing, which is itself calculated as `100 - water - fat`. This should match the sum of the
+/// listing's sugars, protein, and ash, but that is not always the case, e.g. skim milk's calculated
+/// MSNF of 9.12g differs from the 9.25g sum of those, a ~1.4% discrepancy. The listings'
+/// discrepancies range from 0% to ~2.1%.
+#[doc = include_str!("../../docs/references/index/103.md")]
+#[doc = include_str!("../../docs/references/index/130.md")]
+#[doc = include_str!("../../docs/references/index/131.md")]
+#[doc = include_str!("../../docs/references/index/132.md")]
+#[doc = include_str!("../../docs/references/index/133.md")]
+#[doc = include_str!("../../docs/references/index/134.md")]
+#[doc = include_str!("../../docs/references/index/135.md")]
 pub mod dairy {
-    /// Percentage milk solids non-fat (MSNF) typical of milk serum (Goff & Hartel, 2013, p.160)[^2]
+    /// Percentage milk solids non-fat (MSNF) typical of milk serum
+    ///
+    /// (Goff & Hartel, 2013, p. 160)[^2]
     #[doc = include_str!("../../docs/references/index/2.md")]
     pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
 
-    /// Percentage of lactose typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p.181)[^2]
+    /// Percentage of lactose typical of milk solids non-fat (MSNF)
+    ///
+    /// (Goff & Hartel, 2013, p. 181)[^2],
+    /// (Goff, n.d., "16. Ice Cream Mix General Composition")[^90]
+    ///
+    /// The sourced value agrees with the 54.8% average of the [USDA listings](self).
+    /// Calculated values are (%): 55.4, 54.3, 55.3, 55.9, 54.2, 54.1, 54.2
     #[doc = include_str!("../../docs/references/index/2.md")]
+    #[doc = include_str!("../../docs/references/index/90.md")]
     pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
 
-    /// Percentage of lactose typically found in whey solids (WS) (Goff & Hartel, 2013, p. 181)[^2]
+    /// Percentage of lactose typically found in whey solids (WS)
+    ///
+    /// (Goff & Hartel, 2013, p. 181)[^2]
     #[doc = include_str!("../../docs/references/index/2.md")]
     pub const STD_LACTOSE_IN_WS: f64 = 0.765;
 
-    /// Percentage of protein typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p. 35)[^2]
-    #[doc = include_str!("../../docs/references/index/2.md")]
-    pub const STD_PROTEIN_IN_MSNF: f64 = 0.35;
+    /// Percentage of protein typical of milk solids non-fat (MSNF)
+    ///
+    /// Calculated as the remainder of 100% - [`STD_LACTOSE_IN_MSNF`] - [`STD_MINERALS_IN_MSNF`].
+    ///
+    /// This is in line with the ~37% average (~35-37.5% range) of the milks, creams, and milk
+    /// powders in Goff & Hartel's Table 3.2 (Goff & Hartel, 2025, p. 48)[^20], the text's slightly
+    /// lower range 34-36% (Goff & Hartel, 2025, p. 34)[^20], the Guelph e-Book's 38% (Goff, n.d.,
+    /// "16. Ice Cream Mix General Composition")[^90], and the 37.3% average of the [USDA
+    /// listings](self).
+    ///
+    /// Calculated USDA values are (%): 37.6, 37.3, 37.6, 37.0, 36.9, 37.7, 37.1
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/90.md")]
+    pub const STD_PROTEIN_IN_MSNF: f64 = 1.0 - STD_LACTOSE_IN_MSNF - STD_MINERALS_IN_MSNF;
 
-    /// Percentage of protein typically found in whey solids (WS) (Goff & Hartel, 2013, p. 35)[^2]
+    /// Percentage of protein typically found in whey solids (WS)
+    ///
+    /// (Goff & Hartel, 2013, p. 35)[^2]
     #[doc = include_str!("../../docs/references/index/2.md")]
     pub const STD_PROTEIN_IN_WS: f64 = 0.12;
 
-    /// Percentage of minerals typical of milk solids non-fat (MSNF)
+    /// Percentage of minerals (ash) typical of milk solids non-fat (MSNF)
     ///
-    /// Calculates as the remainder of 100% - [`STD_LACTOSE_IN_MSNF`] - [`STD_PROTEIN_IN_MSNF`].
-    pub const STD_MINERALS_IN_MSNF: f64 = 1.0 - STD_LACTOSE_IN_MSNF - STD_PROTEIN_IN_MSNF;
+    /// Taken as 8% on a dry weight basis (Goff, n.d., "16. Ice Cream Mix General
+    /// Composition")[^90]. This is in line with the 7.7% of Goff & Hartel's bulk milk, calculated
+    /// from 700 mg/100 mL of ash at 8.8 wt.% non-fat solids and 1.032 kg/L density (Goff & Hartel,
+    /// 2025, Tables 3.2-3.3, pp. 48-49)[^20].
+    ///
+    /// The sourced value agrees with the 8.4% average of the [USDA listings](self).
+    /// Calculated values are (%): 8.4, 8.3, 9.2, 7.4, 8.4, 8.3, 8.6
+    #[doc = include_str!("../../docs/references/index/90.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    pub const STD_MINERALS_IN_MSNF: f64 = 0.08;
 
     /// Percentage of minerals typical of whey solids (WS)
     ///
-    /// Calculates as the remainder of 100% - [`STD_LACTOSE_IN_WS`] - [`STD_PROTEIN_IN_WS`].
+    /// Calculated as the remainder of 100% - [`STD_LACTOSE_IN_WS`] - [`STD_PROTEIN_IN_WS`].
     pub const STD_MINERALS_IN_WS: f64 = 1.0 - STD_LACTOSE_IN_WS - STD_PROTEIN_IN_WS;
 
     /// Percentage of minerals typical of casein solids (CS)
@@ -75,7 +134,7 @@ pub mod dairy {
 
     /// Percentage of trans fats typically found in milk fat
     ///
-    /// (Milk, whole, 3.25% milkfat, with added Vitamin D, 2019)[^103]
+    /// (USDA, 2019, "Milk, whole, 3.25% milkfat, with added vitamin D")[^103]
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/103.md")]
     pub const STD_TRANS_FAT_IN_MILK_FAT: f64 = 0.035;

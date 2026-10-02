@@ -179,3 +179,5 @@
 [^88]: Kuehn, R. (2021, June). [_The Art and Science of Cocoa Powders: Knowing the Variables So You Can Find the Right Solution_](https://pastryartsmag.com/sponsored/the-art-and-science-of-cocoa-powders-knowing-the-variables-so-you-can-find-the-right-solution/). Pastry Arts.
 
 [^89]: [_What Cocoa Powder is best for your Business? 10/12% Fat vs. 22/24% Fat and Their Professional Applications_](https://cfwblog.co.uk/what-cocoa-powder-is-best-for-your-business-10-12-fat-vs-22-24-fat-and-their-professional-applications/). (2025, March). CFW Blog.
+
+[^90]: Goff, H. D. (n.d.). [_Ice Cream Technology e-Book_](https://books.lib.uoguelph.ca/icecreamtechnologyebook/). University of Guelph.

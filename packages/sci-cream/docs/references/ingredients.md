@@ -8,7 +8,7 @@
 
 [^102]: [_Nuts, almonds_](https://fdc.nal.usda.gov/food-details/170567/nutrients). (2019). USDA FoodData Central - SR Legacy.
 
-[^103]: [_Milk, whole, 3.25% milkfat, with added Vitamin D_](https://fdc.nal.usda.gov/food-details/746782/nutrients). (2019). USDA FoodData Central - Foundation.
+[^103]: [_Milk, whole, 3.25% milkfat, with added vitamin D_](https://fdc.nal.usda.gov/food-details/746782/nutrients). (2019). USDA FoodData Central - Foundation.
 
 [^104]: [_Chocolate, dark, 60-69% cacao solids_](https://fdc.nal.usda.gov/food-details/170272/nutrients). (2019). USDA FoodData Central - SR Legacy.
 
@@ -61,3 +61,15 @@
 [^128]: [_Cocoa, dry powder, unsweetened, processed with alkali_](https://fdc.nal.usda.gov/food-details/169594/nutrients). (2019). USDA FoodData Central - SR Legacy.
 
 [^129]: [_Cocoa, dry powder, hi-fat or breakfast, processed with alkali_](https://fdc.nal.usda.gov/food-details/170657/nutrients). (2019). USDA FoodData Central - SR Legacy.
+
+[^130]: [_Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)_](https://fdc.nal.usda.gov/food-details/746776/nutrients). (2019). USDA FoodData Central - Foundation.
+
+[^131]: [_Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D_](https://fdc.nal.usda.gov/food-details/746778/nutrients). (2019). USDA FoodData Central - Foundation.
+
+[^132]: [_Milk, canned, evaporated, nonfat, with added vitamin A and vitamin D_](https://fdc.nal.usda.gov/food-details/170878/nutrients). (2019). USDA FoodData Central - SR Legacy.
+
+[^133]: [_Milk, canned, evaporated, with added vitamin D and without added vitamin A_](https://fdc.nal.usda.gov/food-details/171276/nutrients). (2019). USDA FoodData Central - SR Legacy.
+
+[^134]: [_Milk, dry, nonfat, regular, without added vitamin A and vitamin D_](https://fdc.nal.usda.gov/food-details/170877/nutrients). (2019). USDA FoodData Central - SR Legacy.
+
+[^135]: [_Milk, dry, whole, without added vitamin D_](https://fdc.nal.usda.gov/food-details/173454/nutrients). (2019). USDA FoodData Central - SR Legacy.

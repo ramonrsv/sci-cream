@@ -76,11 +76,11 @@ appropriate keys from either [`CompKey`] or [`FpdKey`].
 let mix_properties = recipe.calculate_mix_properties()?;
 
 for (key, value) in [
-    (Energy.into(), 229.159), // kcal per 100g
+    (Energy.into(), 230.043), // kcal per 100g
     (MilkFat.into(), 13.637), // grams per 100g
     (Lactose.into(), 4.817), // ...
     (MSNF.into(), 8.839),
-    (MilkProteins.into(), 3.094),
+    (MilkProteins.into(), 3.315),
     (MilkSolids.into(), 22.475),
     (CocoaButter.into(), 0.778),
     (CocoaSolids.into(), 3.662),
@@ -233,11 +233,11 @@ let comp = Composition::new()
     .pod(pod)
     .pac(pac);
 
-assert_eq_float!(comp.get(CompKey::Energy), 49.576);
+assert_eq_float!(comp.get(CompKey::Energy), 50.458);
 assert_eq_float!(comp.get(CompKey::MilkFat), 2.0);
 assert_eq_float!(comp.get(CompKey::Lactose), 4.807);
 assert_eq_float!(comp.get(CompKey::MSNF), 8.82);
-assert_eq_float!(comp.get(CompKey::MilkProteins), 3.087);
+assert_eq_float!(comp.get(CompKey::MilkProteins), 3.308);
 // ...
 # Ok(()) }
 ```
@@ -280,11 +280,11 @@ let dairy_spec = DairySimpleSpec {
 
 let comp = dairy_spec.to_composition()?;
 
-assert_eq_float!(comp.get(Energy), 49.576);
+assert_eq_float!(comp.get(Energy), 50.458);
 assert_eq_float!(comp.get(MilkFat), 2.0);
 assert_eq_float!(comp.get(Lactose), 4.807);
 assert_eq_float!(comp.get(MSNF), 8.82);
-assert_eq_float!(comp.get(MilkProteins), 3.087);
+assert_eq_float!(comp.get(MilkProteins), 3.308);
 // ...
 # Ok(()) }
 ```
@@ -569,7 +569,7 @@ const recipe = new Recipe("Chocolate Ice Cream", recipeLines);
 const mix_properties = recipe.calculate_mix_properties();
 
 const comp = mix_properties.composition;
-expect(comp.get(CompKey.Energy)).toBeCloseTo(229.159);
+expect(comp.get(CompKey.Energy)).toBeCloseTo(230.043);
 expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.637);
 expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.817);
 // ...
@@ -580,7 +580,7 @@ expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.486);
 expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.04);
 
 // Via prop keys:
-expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(229.159);
+expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(230.043);
 expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.603);
 ```
 
@@ -605,7 +605,7 @@ import {
 const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
 const mix_properties = bridge.calculate_recipe_mix_properties(RECIPE);
 
-expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(229.159);
+expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(230.043);
 // ...
 expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
 // ...

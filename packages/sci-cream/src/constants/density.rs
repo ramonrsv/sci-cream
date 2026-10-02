@@ -621,7 +621,7 @@ mod tests {
         // Brand's 15mL serving: 1.5g fat, 8.97g sucrose, MSNF from its 2.03g lactose + 1g protein.
         let scm_msnf = (2.03 + 1.0) / (1.0 - STD_MINERALS_IN_MSNF);
         let (grams, iters) = solve_dairy_serving_grams_iters(15.0, 8.97, scm_msnf, |_| 1.5);
-        assert_eq_flt_test!(grams, 19.4338);
+        assert_eq_flt_test!(grams, 19.4109);
         assert_lt!(iters, DAIRY_SERVING_SOLVER_ITERS);
         assert_le!(iters, 20);
 

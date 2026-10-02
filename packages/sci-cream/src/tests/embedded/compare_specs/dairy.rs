@@ -54,7 +54,7 @@ fn compare_specs_skim_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 28.0);
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 29.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -69,7 +69,7 @@ fn compare_specs_2_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 22.0);
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 20.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -87,7 +87,7 @@ fn compare_specs_whole_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 23.0);
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 18.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -104,9 +104,9 @@ fn compare_specs_5_cream() {
 
     // Sealtest's small 15ml serving rounds energy coarsely, in addition to the usual issue with
     // energy's higher fractional precision vs mass components, pushing a heigh error, ~150 pp.
-    //    - Energy        149.62 pp  (Simple vs Sealtest)
-    //    - Energy        145.08 pp  (Goff & Hartel vs Sealtest)
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 150.0);
+    //    - Energy        148.19 pp  (Simple vs Sealtest)
+    //    - Energy        137.34 pp  (Goff & Hartel vs Sealtest)
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 149.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -125,11 +125,12 @@ fn compare_specs_half_and_half() {
 
     // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), pulling
     // Lactose, PACsgr, and TotalPAC a few pp above the default ceiling. The exceptions are:
-    //    - Lactose        11.19 pp  (USDA vs Sealtest)
-    //    - PACsgr         11.19 pp  (USDA vs Sealtest)
-    //    - TotalPAC       14.53 pp  (USDA vs Sealtest)
+    //    - Lactose        11.40 pp  (USDA vs Sealtest)
+    //    - PACsgr         11.40 pp  (USDA vs Sealtest)
+    //    - TotalPAC       10.15 pp  (Simple vs Sealtest)
+    //    - TotalPAC       14.73 pp  (USDA vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 23.0)
+        .with(CompKey::Energy, 22.0)
         .with(CompKey::Lactose, 12.0)
         .with(CompKey::PACsgr, 12.0)
         .with(CompKey::TotalPAC, 15.0);
@@ -151,12 +152,12 @@ fn compare_specs_18_cream() {
 
     // Sealtest's 15ml serving rounds sugars and saturated fat coarsely, pushing TotalPAC
     // and SaturatedFat above the default ceiling. The exceptions are:
-    //    - TotalPAC       12.47 pp  (USDA vs Sealtest)
-    //    - SaturatedFat   11.25 pp  (Simple vs Sealtest)
+    //    - TotalPAC       12.57 pp  (USDA vs Sealtest)
+    //    - SaturatedFat   10.90 pp  (Simple vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 46.0)
+        .with(CompKey::Energy, 42.0)
         .with(CompKey::TotalPAC, 13.0)
-        .with(CompKey::SaturatedFat, 12.0);
+        .with(CompKey::SaturatedFat, 11.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -178,13 +179,13 @@ fn compare_specs_whipping_cream() {
     // entries. Sealtest's 15ml serving rounds the lactose label to 0g sugars at this fat
     // level, which cascades through MilkSolids and TotalPAC (missing lactose is exactly
     // missing solids). The exceptions are:
-    //    - MilkSolids     15.22 pp  (Simple vs Sealtest)
-    //    - MilkSolids     15.22 pp  (Goff & Hartel vs Sealtest)
-    //    - MilkSolids     13.12 pp  (USDA vs Sealtest)
-    //    - TotalPAC       11.19 pp  (Simple vs Sealtest)
-    //    - TotalPAC       10.88 pp  (Goff & Hartel vs Sealtest)
+    //    - MilkSolids     15.24 pp  (Simple vs Sealtest)
+    //    - MilkSolids     15.24 pp  (Goff & Hartel vs Sealtest)
+    //    - MilkSolids     13.13 pp  (USDA vs Sealtest)
+    //    - TotalPAC       11.24 pp  (Simple vs Sealtest)
+    //    - TotalPAC       10.93 pp  (Goff & Hartel vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 65.0)
+        .with(CompKey::Energy, 64.0)
         .with(CompKey::MilkSolids, 16.0)
         .with(CompKey::TotalPAC, 12.0)
         .with(CompKey::SaturatedFat, 11.0);
@@ -219,7 +220,7 @@ fn compare_specs_clotted_cream() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 14.0);
+    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 15.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -234,7 +235,7 @@ fn compare_specs_skim_evaporated_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 68.0);
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 69.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -253,23 +254,23 @@ fn compare_specs_2_evaporated_milk() {
     // difference in Lactose content, which cascades into every lactose-derived field
     // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
     // MilkSolids, PACmlk, and TotalPAC. The exceptions are:
-    //    - Lactose        20.94 pp  (USDA vs Carnation)
-    //    - MSNF           28.44 pp  (USDA vs Carnation)
-    //    - MilkSolids     28.16 pp  (USDA vs Carnation)
-    //    - PACsgr         20.94 pp  (USDA vs Carnation)
-    //    - PACmlk         10.45 pp  (USDA vs Carnation)
-    //    - TotalPAC       31.39 pp  (USDA vs Carnation)
+    //    - Lactose        21.70 pp  (USDA vs Carnation)
+    //    - MSNF           28.86 pp  (USDA vs Carnation)
+    //    - MilkSolids     28.65 pp  (USDA vs Carnation)
+    //    - PACsgr         21.70 pp  (USDA vs Carnation)
+    //    - PACmlk         10.60 pp  (USDA vs Carnation)
+    //    - TotalPAC       32.30 pp  (USDA vs Carnation)
     //
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 18.0)
-        .with(CompKey::Lactose, 21.0)
+        .with(CompKey::Energy, 15.0)
+        .with(CompKey::Lactose, 22.0)
         .with(CompKey::MSNF, 29.0)
         .with(CompKey::MilkSolids, 29.0)
-        .with(CompKey::PACsgr, 21.0)
+        .with(CompKey::PACsgr, 22.0)
         .with(CompKey::PACmlk, 11.0)
-        .with(CompKey::TotalPAC, 32.0);
+        .with(CompKey::TotalPAC, 33.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -289,23 +290,23 @@ fn compare_specs_whole_evaporated_milk() {
     // difference in Lactose content, which cascades into every lactose-derived field
     // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
     // MilkSolids, PACmlk, and TotalPAC. The exceptions are:
-    //    - Lactose        16.35 pp  (Goff & Hartel vs Carnation)
-    //    - MSNF           20.56 pp  (Goff & Hartel vs Carnation)
-    //    - MilkSolids     23.61 pp  (Goff & Hartel vs Carnation)
-    //    - PACsgr         16.35 pp  (Goff & Hartel vs Carnation)
-    //    - TotalPAC       23.91 pp  (Goff & Hartel vs Carnation)
-    //    - Lactose        14.35 pp  (USDA vs Carnation)
-    //    - MSNF           18.53 pp  (USDA vs Carnation)
-    //    - MilkSolids     23.61 pp  (USDA vs Carnation)
-    //    - PACsgr         14.35 pp  (USDA vs Carnation)
-    //    - TotalPAC       21.16 pp  (USDA vs Carnation)
+    //    - Lactose        16.01 pp  (Goff & Hartel vs Carnation)
+    //    - MSNF           21.25 pp  (Goff & Hartel vs Carnation)
+    //    - MilkSolids     23.96 pp  (Goff & Hartel vs Carnation)
+    //    - PACsgr         16.01 pp  (Goff & Hartel vs Carnation)
+    //    - TotalPAC       23.82 pp  (Goff & Hartel vs Carnation)
+    //    - Lactose        14.75 pp  (USDA vs Carnation)
+    //    - MSNF           18.65 pp  (USDA vs Carnation)
+    //    - MilkSolids     23.96 pp  (USDA vs Carnation)
+    //    - PACsgr         14.75 pp  (USDA vs Carnation)
+    //    - TotalPAC       21.61 pp  (USDA vs Carnation)
     //
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 37.0)
+        .with(CompKey::Energy, 40.0)
         .with(CompKey::Lactose, 17.0)
-        .with(CompKey::MSNF, 21.0)
+        .with(CompKey::MSNF, 22.0)
         .with(CompKey::MilkSolids, 24.0)
         .with(CompKey::PACsgr, 17.0)
         .with(CompKey::TotalPAC, 24.0);
@@ -348,7 +349,7 @@ fn compare_specs_skim_milk_powder() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 12.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -365,7 +366,7 @@ fn compare_specs_whole_milk_powder() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 33.0);
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 26.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));

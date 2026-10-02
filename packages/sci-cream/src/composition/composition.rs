@@ -987,18 +987,18 @@ mod tests {
     #[test]
     fn composition_2_percent_milk_get() {
         let expected = HashMap::from([
-            (CompKey::Energy, 49.5756),
+            (CompKey::Energy, 50.4576),
             (CompKey::MilkFat, 2.0),
             (CompKey::MSNF, 8.82),
             (CompKey::MilkSNFS, 4.0131),
-            (CompKey::MilkProteins, 3.087),
-            (CompKey::Casein, 2.4696),
-            (CompKey::Whey, 0.6174),
+            (CompKey::MilkProteins, 3.3075),
+            (CompKey::Casein, 2.646),
+            (CompKey::Whey, 0.6615),
             (CompKey::MilkSolids, 10.82),
             (CompKey::TotalFats, 2.0),
             (CompKey::TotalSNF, 8.82),
             (CompKey::TotalSNFS, 4.0131),
-            (CompKey::TotalProteins, 3.087),
+            (CompKey::TotalProteins, 3.3075),
             (CompKey::TotalSolids, 10.82),
             (CompKey::Water, 89.18),
             (CompKey::Lactose, 4.8069),

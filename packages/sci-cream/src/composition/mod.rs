@@ -63,13 +63,13 @@
 //!     .pod(pod)
 //!     .pac(pac);
 //!
-//! assert_eq!(comp.get(CompKey::Energy), 49.5756);
+//! assert_eq!(comp.get(CompKey::Energy), 50.4576);
 //!
 //! assert_eq!(comp.get(CompKey::MilkFat), 2.0);
 //! assert_eq_float!(comp.get(CompKey::Lactose), 4.8069);
 //! assert_eq!(comp.get(CompKey::MSNF), 8.82);
 //! assert_eq!(comp.get(CompKey::MilkSNFS), 4.0131);
-//! assert_eq_float!(comp.get(CompKey::MilkProteins), 3.087);
+//! assert_eq_float!(comp.get(CompKey::MilkProteins), 3.3075);
 //! assert_eq!(comp.get(CompKey::MilkSolids), 10.82);
 //!
 //! assert_eq!(comp.get(CompKey::TotalSolids), 10.82);

@@ -1,11 +1,9 @@
 //! Reconciles the `USDA …` dairy entries against the proximates their listings measure.
 //!
 //! Protein, fat and sugars are transcribed inputs, so they match exactly. Water and ash show how
-//! [`DairyLabelSpec`] estimates the milk solids non-fat (MSNF) around them: it adds to sugars and
-//! protein the [`STD_MINERALS_IN_MSNF`] remainder, read here as ash, though it covers non-ash
-//! solids such as citrate too. Every listing leaves less than that past its sugars and protein, and
-//! only ash where its sugars are carbohydrate by difference, since such sugars already hold the
-//! non-ash solids. The overstated MSNF shows as excess ash and about as much missing water.
+//! [`DairyLabelSpec`] estimates the milk solids non-fat (MSNF) around them: sugars and protein make
+//! up all of it but its [`STD_MINERALS_IN_MSNF`] share of ash. Each listing's water and ash miss by
+//! how far its own MSNF departs from that split, in either direction.
 
 #![cfg_attr(coverage, coverage(off))]
 #![expect(clippy::doc_markdown)] // _FoodData_ false positive
@@ -14,10 +12,7 @@ use super::util::{Proximates, reconcile_proximates};
 use crate::tests::asserts::TESTS_EPSILON;
 
 #[cfg(doc)]
-use crate::{
-    constants::composition::dairy::{STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_MINERALS_IN_MSNF},
-    specs::DairyLabelSpec,
-};
+use crate::{constants::composition::dairy::STD_MINERALS_IN_MSNF, specs::DairyLabelSpec};
 
 /// Measured proximates of each `USDA …` dairy entry, from its FoodData Central listing.
 ///
@@ -203,7 +198,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
 const MILK_CEILING: Proximates = Proximates {
     water: 0.5,
     carbohydrate: 4.0,
-    ash: 23.0,
+    ash: 12.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
@@ -213,17 +208,16 @@ const MILK_CEILING: Proximates = Proximates {
 const CREAM_CEILING: Proximates = Proximates {
     water: 0.5,
     carbohydrate: 4.0,
-    ash: 40.5,
+    ash: 19.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
 /// Per-field ceilings on relative error against the measured value, in percent — evaporated milk.
 ///
-/// The listings give sugars equal to carbohydrate by difference, so carbohydrate matches exactly,
-/// while water and ash carry the MSNF overstatement in full.
+/// The listings give sugars equal to carbohydrate by difference, so carbohydrate matches exactly.
 const EVAPORATED_CEILING: Proximates = Proximates {
-    water: 1.0,
-    ash: 33.0,
+    water: 0.5,
+    ash: 9.0,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
@@ -232,17 +226,16 @@ const EVAPORATED_CEILING: Proximates = Proximates {
 /// Sugars, added sucrose included, equal carbohydrate by difference, as in [`EVAPORATED_CEILING`].
 const CONDENSED_CEILING: Proximates = Proximates {
     water: 1.0,
-    ash: 11.0,
+    ash: 17.0,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
 /// Per-field ceilings on relative error against the measured value, in percent — milk powders.
 ///
-/// The MSNF overstatement exceeds the water a powder holds above the
-/// [`STD_MIN_WATER_CONTENT_IN_MILK_POWDER`] floor, so water stops there, capping the excess ash.
+/// A powder holds little water, so even a small MSNF miss is a large relative water miss.
 const POWDER_CEILING: Proximates = Proximates {
-    water: 37.0,
-    ash: 12.5,
+    water: 17.0,
+    ash: 7.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 

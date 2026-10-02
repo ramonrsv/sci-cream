@@ -10,32 +10,32 @@ targets:
 
 [nalgebra]
   [           ingredient           | qty ]
-  3.25% Milk                        60.40
-  40% Cream                         25.35
-  Skimmed Milk Powder                4.26
-  Sucrose                            9.99
+  3.25% Milk                        60.59
+  40% Cream                         25.21
+  Skimmed Milk Powder                4.22
+  Sucrose                            9.98
 
   [      key       | target | achieved |  error  ]
-  Energy             150.00    187.64     25.09 pp
-  MilkFat             16.00     12.15     24.09 pp
-  MSNF                11.00     10.72      2.58 pp
-  TotalSugars         18.00     15.83     12.05 pp
+  Energy             150.00    188.12     25.41 pp
+  MilkFat             16.00     12.10     24.40 pp
+  MSNF                11.00     10.69      2.80 pp
+  TotalSugars         18.00     15.80     12.20 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      25.09 pp    18.45 pp
+     1.0000        0      25.41 pp    18.69 pp
 
 [nnls]
   [           ingredient           | qty ]
-  3.25% Milk                        60.40
-  40% Cream                         25.35
-  Skimmed Milk Powder                4.26
-  Sucrose                            9.99
+  3.25% Milk                        60.59
+  40% Cream                         25.21
+  Skimmed Milk Powder                4.22
+  Sucrose                            9.98
 
   [      key       | target | achieved |  error  ]
-  Energy             150.00    187.64     25.09 pp
-  MilkFat             16.00     12.15     24.09 pp
-  MSNF                11.00     10.72      2.58 pp
-  TotalSugars         18.00     15.83     12.05 pp
+  Energy             150.00    188.12     25.41 pp
+  MilkFat             16.00     12.10     24.40 pp
+  MSNF                11.00     10.69      2.80 pp
+  TotalSugars         18.00     15.80     12.20 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      25.09 pp    18.45 pp
+     1.0000        0      25.41 pp    18.69 pp

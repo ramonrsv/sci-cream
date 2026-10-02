@@ -119,11 +119,11 @@ pub(crate) static MAIN_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLo
     use RatioKey::*;
 
     vec![
-        (Energy.into(), 229.159),
+        (Energy.into(), 230.043),
         (MilkFat.into(), 13.637),
         (Lactose.into(), 4.817),
         (MSNF.into(), 8.839),
-        (MilkProteins.into(), 3.094),
+        (MilkProteins.into(), 3.315),
         (MilkSolids.into(), 22.475),
         (CocoaButter.into(), 0.778),
         (CocoaSolids.into(), 3.662),
@@ -158,11 +158,11 @@ pub(crate) static REF_A_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyL
     use RatioKey::*;
 
     vec![
-        (Energy.into(), 236.702),
+        (Energy.into(), 237.818),
         (MilkFat.into(), 14.929),
         (Lactose.into(), 6.086),
         (MSNF.into(), 11.167),
-        (MilkProteins.into(), 3.908),
+        (MilkProteins.into(), 4.188),
         (MilkSolids.into(), 26.096),
         (CocoaButter.into(), 0.0),
         (CocoaSolids.into(), 0.0),
@@ -197,11 +197,11 @@ pub(crate) static REF_B_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyL
     use RatioKey::*;
 
     vec![
-        (Energy.into(), 230.132),
+        (Energy.into(), 231.241),
         (MilkFat.into(), 14.376),
         (Lactose.into(), 6.045),
         (MSNF.into(), 11.091),
-        (MilkProteins.into(), 3.882),
+        (MilkProteins.into(), 4.159),
         (MilkSolids.into(), 25.467),
         (CocoaButter.into(), 0.0),
         (CocoaSolids.into(), 0.0),
