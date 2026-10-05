@@ -181,3 +181,15 @@
 [^89]: [_What Cocoa Powder is best for your Business? 10/12% Fat vs. 22/24% Fat and Their Professional Applications_](https://cfwblog.co.uk/what-cocoa-powder-is-best-for-your-business-10-12-fat-vs-22-24-fat-and-their-professional-applications/). (2025, March). CFW Blog.
 
 [^90]: Goff, H. D. (n.d.). [_Ice Cream Technology e-Book_](https://books.lib.uoguelph.ca/icecreamtechnologyebook/). University of Guelph.
+
+[^91]: U.S. Dairy Export Council. (2003). [_Reference Manual for U.S. Whey and Lactose Products_](https://www.thinkusadairy.org/assets/documents/Customer%20Site/C3-Using%20Dairy/C3.7-Resources%20and%20Insights/02-Product%20Resources/ReferenceManualForWheyAndLactose_English1.pdf).
+
+[^92]: de Wit, J. N. (2001). [_Lecturer's Handbook on Whey and Whey Products_](https://ewpa.euromilk.org/wp-content/uploads/2024/05/Lecturer_s_Handbook_on_Whey.pdf). European Whey Products Association.
+
+[^93]: American Dairy Products Institute. (2023). [_Dry Whey Standard_](https://adpi.org/wp-content/uploads/2023/07/Dry-Whey-Standard-v4_2023.pdf).
+
+[^94]: Kuntz, L. A. (2010, April). [_Concentrating on Whey Protein Isolate_](https://college.agrilife.org/talcottlab/wp-content/uploads/sites/108/2019/01/FPD-Whey-Protein-Isolates.pdf). Food Product Design.
+
+[^95]: American Dairy Products Institute. (2023). [_Whey Protein Isolate (WPI) Standard_](https://adpi.org/wp-content/uploads/2023/07/WPI-Standard-v4.0_2023.pdf).
+
+[^96]: Southward, C. R. (n.d.). [_Casein Products_](https://nzic.org.nz/unsecure_files/book/3E.pdf). New Zealand Institute of Chemistry.

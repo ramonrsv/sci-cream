@@ -30,6 +30,8 @@
 #[doc = include_str!("../../docs/references/index/134.md")]
 #[doc = include_str!("../../docs/references/index/135.md")]
 pub mod dairy {
+    use crate::specs::SolidsSource;
+
     /// Percentage milk solids non-fat (MSNF) typical of milk serum
     ///
     /// (Goff & Hartel, 2013, p. 160)[^2]
@@ -47,12 +49,6 @@ pub mod dairy {
     #[doc = include_str!("../../docs/references/index/90.md")]
     pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
 
-    /// Percentage of lactose typically found in whey solids (WS)
-    ///
-    /// (Goff & Hartel, 2013, p. 181)[^2]
-    #[doc = include_str!("../../docs/references/index/2.md")]
-    pub const STD_LACTOSE_IN_WS: f64 = 0.765;
-
     /// Percentage of protein typical of milk solids non-fat (MSNF)
     ///
     /// Calculated as the remainder of 100% - [`STD_LACTOSE_IN_MSNF`] - [`STD_MINERALS_IN_MSNF`].
@@ -68,12 +64,6 @@ pub mod dairy {
     #[doc = include_str!("../../docs/references/index/90.md")]
     pub const STD_PROTEIN_IN_MSNF: f64 = 1.0 - STD_LACTOSE_IN_MSNF - STD_MINERALS_IN_MSNF;
 
-    /// Percentage of protein typically found in whey solids (WS)
-    ///
-    /// (Goff & Hartel, 2013, p. 35)[^2]
-    #[doc = include_str!("../../docs/references/index/2.md")]
-    pub const STD_PROTEIN_IN_WS: f64 = 0.12;
-
     /// Percentage of minerals (ash) typical of milk solids non-fat (MSNF)
     ///
     /// Taken as 8% on a dry weight basis (Goff, n.d., "16. Ice Cream Mix General
@@ -87,15 +77,228 @@ pub mod dairy {
     #[doc = include_str!("../../docs/references/index/20.md")]
     pub const STD_MINERALS_IN_MSNF: f64 = 0.08;
 
-    /// Percentage of minerals typical of whey solids (WS)
+    /// Standard composition values for whey solids (WS): sweet whey, concentrates, and isolates
     ///
-    /// Calculated as the remainder of 100% - [`STD_LACTOSE_IN_WS`] - [`STD_PROTEIN_IN_WS`].
-    pub const STD_MINERALS_IN_WS: f64 = 1.0 - STD_LACTOSE_IN_WS - STD_PROTEIN_IN_WS;
+    /// The `_IN_WS` constants are corroborated by averages compiled from the nutrient profiles of
+    /// these _sweet_ whey listings in the
+    /// [USDA FoodData Central](https://fdc.nal.usda.gov/) database:
+    ///
+    /// - (USDA, 2019, "Whey, sweet, dried")[^136]
+    /// - (USDA, 2019, "Whey, sweet, fluid")[^137]
+    ///
+    /// The acid wheys are left out of the analysis, since they have different compositions with
+    /// higher minerals (de Wit, 2001, p. 15)[^92], and this model explicitly targets only sweet
+    /// whey, as noted below. The FNDDS sweet dry whey listing, which repeats the SR Legacy
+    /// values, is also excluded.
+    ///
+    /// **Note:** The constants, and therefore the model, are based on sweet whey only, which most
+    /// whey products on the market are derived from (de Wit, 2001, p. 10)[^92], and which is the
+    /// whey most commonly used in ice cream (USDEC, 2003, p. 156)[^91], (Goff & Hartel, 2025,
+    /// p. 21)[^20]. Acid whey's use in frozen desserts is limited to acid-flavored sherbets and
+    /// sorbets (USDEC, 2003, p. 156)[^91], (ADPI, 2023, p. 5)[^93].
+    ///
+    /// **Note:** The calculated values under the `_IN_WS` constants are fractions of the WS of each
+    /// listing, which is itself calculated as `100 - water - fat`. This matches the sum of each
+    /// listing's sugars, protein, and ash to within ~0.3%.
+    ///
+    /// Concentrates and isolates hold less lactose and minerals, as ultrafiltration removes them
+    /// with the permeate (Goff & Hartel, 2025, p. 60)[^20]. Both fall from the sweet whey constants
+    /// (`_IN_WS`) to the isolate ones (`_IN_WPI`), and [`lactose_in_snf`] and [`minerals_in_snf`]
+    /// take each as linear in the protein fraction between the two.
+    ///
+    /// The lactose, protein, and minerals account for 98% of the solids in sweet whey, rising
+    /// linearly to 99.9% in isolates. The gap is expected, as whey's total solids are not often
+    /// equivalent to the sum of its separately determined constituents (de Wit, 2001, p. 15)[^92].
+    /// Sources that give lactose as the carbohydrates by difference count the gap in it too, so
+    /// they run higher than the lactose constants. The rest counts with the minerals, under other
+    /// milk solids, in [`DairySimpleSpec`](crate::specs::DairySimpleSpec).
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/91.md")]
+    #[doc = include_str!("../../docs/references/index/92.md")]
+    #[doc = include_str!("../../docs/references/index/93.md")]
+    #[doc = include_str!("../../docs/references/index/136.md")]
+    #[doc = include_str!("../../docs/references/index/137.md")]
+    pub mod whey {
+        /// Percentage of lactose typically found in sweet whey solids (WS)
+        ///
+        /// (Goff & Hartel, 2013, p. 181)[^2]
+        ///
+        /// This is in line with the 72-73% lactose of whey powder (Goff & Hartel, 2025, p. 59)[^20]
+        /// and the 70-75% of de Wit's sweet whey powder spec (de Wit, 2001, p. 81)[^92], ~75-77%
+        /// of WS. The [USDA listings](self) average a higher 78.2%, as their sugar content is
+        /// the carbohydrates by difference.
+        ///
+        /// Calculated values are (%): 77.8, 78.6
+        #[doc = include_str!("../../docs/references/index/2.md")]
+        #[doc = include_str!("../../docs/references/index/20.md")]
+        #[doc = include_str!("../../docs/references/index/92.md")]
+        pub const STD_LACTOSE_IN_WS: f64 = 0.765;
 
-    /// Percentage of minerals typical of casein solids (CS)
-    //
-    // 10% guess, @todo find a reference for this value
-    pub const STD_MINERALS_IN_CASEIN: f64 = 0.1;
+        /// Percentage of protein typically found in sweet whey solids (WS)
+        ///
+        /// Taken as 13%, in line with the 11.0-14.5% of sweet whey powder (USDEC, 2003, p. 28)[^91]
+        /// and the 11-14% of de Wit's spec (de Wit, 2001, p. 81)[^92], ~13.3-13.5% of WS at the
+        /// midpoints, Goff & Hartel's "about 12%" of dry whey (Goff & Hartel, 2025, p. 34)[^20],
+        /// ~12.5% of WS, and the 13.3% average of the [USDA listings](self). ADPI's minimum for dry
+        /// sweet whey is 11% (ADPI, 2023, p. 2)[^93], ~11.6% of WS.
+        ///
+        /// Calculated values are (%): 13.5, 13.0
+        #[doc = include_str!("../../docs/references/index/20.md")]
+        #[doc = include_str!("../../docs/references/index/91.md")]
+        #[doc = include_str!("../../docs/references/index/92.md")]
+        #[doc = include_str!("../../docs/references/index/93.md")]
+        pub const STD_PROTEIN_IN_WS: f64 = 0.13;
+
+        /// Percentage of minerals (ash) typical of sweet whey solids (WS)
+        ///
+        /// Taken as 8.5%, in line with the 8.2-8.7% of de Wit's sweet wheys (de Wit, 2001, Table 1,
+        /// p. 14)[^92] and the 8.4% average of the [USDA listings](self). Spec sheets run slightly
+        /// higher: the 8.2-8.8% of sweet whey powder (USDEC, 2003, p. 28)[^91] and the 8-9% of
+        /// de Wit's spec (de Wit, 2001, p. 81)[^92] are ~9.0% of WS at their midpoints.
+        ///
+        /// Calculated values are (%): 8.7, 8.1
+        #[doc = include_str!("../../docs/references/index/91.md")]
+        #[doc = include_str!("../../docs/references/index/92.md")]
+        pub const STD_MINERALS_IN_WS: f64 = 0.085;
+
+        /// Percentage of lactose typical of whey protein isolate (WPI) solids
+        ///
+        /// Taken as 0.8%, in line with the typical 0.5-1.0% of WPI powder (USDEC, 2003,
+        /// p. 33)[^91], (ADPI, 2023)[^95], ~0.8% of the solids at the midpoint, a typical
+        /// WPI's 0.5% (Kuntz, 2010)[^94], and Hilmar 9000's 1.0% (Hilmar Ingredients, 2026)[^138].
+        /// The WPI profile (USDEC, 2003, Table 6, pp. 51-52)[^91] has a higher ~0.9%, as its
+        /// lactose is the carbohydrates by difference.
+        ///
+        /// The [line](super::lactose_in_snf) from [`STD_LACTOSE_IN_WS`] to this fits USDEC's WPC 34
+        /// and WPC 80 within ~0.9 percentage points.
+        #[doc = include_str!("../../docs/references/index/91.md")]
+        #[doc = include_str!("../../docs/references/index/94.md")]
+        #[doc = include_str!("../../docs/references/index/95.md")]
+        #[doc = include_str!("../../docs/references/index/138.md")]
+        pub const STD_LACTOSE_IN_WPI: f64 = 0.008;
+
+        /// Percentage of protein typical of whey protein isolate (WPI) solids
+        ///
+        /// Calculated from the 90.75g of protein in 95.0g of solids of the WPI profile (USDEC,
+        /// 2003, Table 6, pp. 51-52)[^91], in line with the typical 90.0-92.0% of WPI powder
+        /// (USDEC, 2003, p. 33)[^91], a typical WPI's 92.0% (Kuntz, 2010)[^94], and Hilmar 9000's
+        /// 89.0% (Hilmar Ingredients, 2026)[^138], ~93.7-97.4% of the solids. ADPI gives USDEC's
+        /// typical range on a dry basis (ADPI, 2023)[^95], ~90.7-92.7% of the solids, but only the
+        /// as-is reading adds up with its other typical values.
+        #[doc = include_str!("../../docs/references/index/91.md")]
+        #[doc = include_str!("../../docs/references/index/94.md")]
+        #[doc = include_str!("../../docs/references/index/95.md")]
+        #[doc = include_str!("../../docs/references/index/138.md")]
+        pub const STD_PROTEIN_IN_WPI: f64 = 0.955;
+
+        /// Percentage of minerals (ash) typical of whey protein isolate (WPI) solids
+        ///
+        /// Calculated from the 3.38g of ash in 95.0g of solids of the WPI profile (USDEC, 2003,
+        /// Table 6, pp. 51-52)[^91]. Typical isolates run lower, ~2.1-3.2% of the solids: the
+        /// 2.0-3.0% of WPI powder (USDEC, 2003, p. 33)[^91], (ADPI, 2023)[^95], a typical WPI's
+        /// 2.0% (Kuntz, 2010)[^94], and Hilmar 9000's 2.5% (Hilmar Ingredients, 2026)[^138], whose
+        /// 3.5% maximum is ~3.7% of the solids.
+        ///
+        /// The [line](super::minerals_in_snf) from [`STD_MINERALS_IN_WS`] to this fits USDA's sweet
+        /// whey and USDEC's WPC 34, WPC 80, and WPI within ~0.5 percentage points. The line would
+        /// miss WPC 80 by ~1.5 pp if using the lower typical values for isolates.
+        #[doc = include_str!("../../docs/references/index/91.md")]
+        #[doc = include_str!("../../docs/references/index/94.md")]
+        #[doc = include_str!("../../docs/references/index/95.md")]
+        #[doc = include_str!("../../docs/references/index/138.md")]
+        pub const STD_MINERALS_IN_WPI: f64 = 0.036;
+    }
+
+    /// Standard composition values for casein solids (CS)
+    pub mod casein {
+        /// Percentage of lactose typical of casein solids (CS)
+        ///
+        /// Taken as 0.1%, the lactose of acid and rennet casein and of sodium and calcium caseinate
+        /// (Southward, n.d., Table 1, p. 8)[^96], ~0.1% of their solids.
+        #[doc = include_str!("../../docs/references/index/96.md")]
+        pub const STD_LACTOSE_IN_CASEIN: f64 = 0.001;
+
+        /// Percentage of minerals typical of casein solids (CS)
+        //
+        // 10% guess, @todo find a reference for this value
+        pub const STD_MINERALS_IN_CASEIN: f64 = 0.1;
+    }
+
+    /// Estimate the lactose fraction of `source`'s solids non-fat from their protein fraction.
+    ///
+    /// Evaluates the line [`lactose_in_snf_coeffs`] (`a + b × protein_in_snf`).
+    ///
+    /// This is a pure evaluation and does not validate its inputs.
+    #[must_use]
+    pub const fn lactose_in_snf(protein_in_snf: f64, source: SolidsSource) -> f64 {
+        let [a, b] = lactose_in_snf_coeffs(source);
+        a + b * protein_in_snf
+    }
+
+    /// Get coefficients `[a, b]` of the line `a + b × protein_in_snf` for the lactose fraction of
+    /// `source`'s solids non-fat - constant for milk and casein, linear for whey.
+    ///
+    /// Milk and casein solids hold fixed fractions, [`STD_LACTOSE_IN_MSNF`] and
+    /// [`casein::STD_LACTOSE_IN_CASEIN`], so their `b` is 0. Whey's falls as the protein is
+    /// concentrated, along the line from [`whey::STD_LACTOSE_IN_WS`] at
+    /// [`whey::STD_PROTEIN_IN_WS`] protein in sweet whey to [`whey::STD_LACTOSE_IN_WPI`]
+    /// at [`whey::STD_PROTEIN_IN_WPI`] in isolates.
+    ///
+    /// See [`lactose_in_snf`] for a function doing the computation with these coefficients.
+    #[must_use]
+    pub const fn lactose_in_snf_coeffs(source: SolidsSource) -> [f64; 2] {
+        use crate::constants::composition::dairy::{
+            casein::STD_LACTOSE_IN_CASEIN,
+            whey::{STD_LACTOSE_IN_WPI, STD_LACTOSE_IN_WS, STD_PROTEIN_IN_WPI, STD_PROTEIN_IN_WS},
+        };
+
+        match source {
+            SolidsSource::Milk => [STD_LACTOSE_IN_MSNF, 0.0],
+            SolidsSource::Whey => {
+                let slope = (STD_LACTOSE_IN_WPI - STD_LACTOSE_IN_WS) / (STD_PROTEIN_IN_WPI - STD_PROTEIN_IN_WS);
+                [STD_LACTOSE_IN_WS - slope * STD_PROTEIN_IN_WS, slope]
+            }
+            SolidsSource::Casein => [STD_LACTOSE_IN_CASEIN, 0.0],
+        }
+    }
+
+    /// Estimate the minerals fraction of `source`'s solids non-fat from their protein fraction.
+    ///
+    /// Evaluates the line [`minerals_in_snf_coeffs`] (`a + b × protein_in_snf`).
+    ///
+    /// This is a pure evaluation and does not validate its inputs.
+    #[must_use]
+    pub const fn minerals_in_snf(protein_in_snf: f64, source: SolidsSource) -> f64 {
+        let [a, b] = minerals_in_snf_coeffs(source);
+        a + b * protein_in_snf
+    }
+
+    /// Get coefficients `[a, b]` of the line `a + b × protein_in_snf` for the minerals fraction of
+    /// `source`'s solids non-fat - constant for milk and casein, linear for whey.
+    ///
+    /// Milk and casein solids hold fixed fractions, [`STD_MINERALS_IN_MSNF`] and
+    /// [`casein::STD_MINERALS_IN_CASEIN`], so their `b` is 0. Whey's falls as the protein is
+    /// concentrated, along the line from [`whey::STD_MINERALS_IN_WS`] at
+    /// [`whey::STD_PROTEIN_IN_WS`] protein in sweet whey to [`whey::STD_MINERALS_IN_WPI`]
+    /// at [`whey::STD_PROTEIN_IN_WPI`] in isolates.
+    ///
+    /// See [`minerals_in_snf`] for a function doing the computation with these coefficients.
+    #[must_use]
+    pub const fn minerals_in_snf_coeffs(source: SolidsSource) -> [f64; 2] {
+        use crate::constants::composition::dairy::{
+            casein::STD_MINERALS_IN_CASEIN,
+            whey::{STD_MINERALS_IN_WPI, STD_MINERALS_IN_WS, STD_PROTEIN_IN_WPI, STD_PROTEIN_IN_WS},
+        };
+
+        match source {
+            SolidsSource::Milk => [STD_MINERALS_IN_MSNF, 0.0],
+            SolidsSource::Whey => {
+                let slope = (STD_MINERALS_IN_WPI - STD_MINERALS_IN_WS) / (STD_PROTEIN_IN_WPI - STD_PROTEIN_IN_WS);
+                [STD_MINERALS_IN_WS - slope * STD_PROTEIN_IN_WS, slope]
+            }
+            SolidsSource::Casein => [STD_MINERALS_IN_CASEIN, 0.0],
+        }
+    }
 
     /// Proportion of proteins in milk solids that is whey
     ///
@@ -471,6 +674,7 @@ mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
+    use crate::specs::SolidsSource;
 
     #[test]
     fn cocoa_constants() {
@@ -528,5 +732,64 @@ mod tests {
             egg::STD_PROTEIN_IN_EGG_WHITE / egg::STD_SOLIDS_IN_EGG_WHITE,
             epsilon = 0.01
         );
+    }
+
+    #[test]
+    fn dairy_minerals_in_snf() {
+        // Whey's line passes through its sweet whey and isolate anchors, to within float rounding
+        for (protein_fraction, minerals_fraction) in [
+            (dairy::whey::STD_PROTEIN_IN_WS, dairy::whey::STD_MINERALS_IN_WS),
+            (dairy::whey::STD_PROTEIN_IN_WPI, dairy::whey::STD_MINERALS_IN_WPI),
+        ] {
+            assert_abs_diff_eq!(
+                dairy::minerals_in_snf(protein_fraction, SolidsSource::Whey),
+                minerals_fraction,
+                epsilon = f64::EPSILON
+            );
+        }
+
+        // Milk and casein solids hold fixed fractions, whatever their protein
+        for protein_fraction in [0.0, 0.5, 1.0] {
+            assert_eq!(dairy::minerals_in_snf(protein_fraction, SolidsSource::Milk), dairy::STD_MINERALS_IN_MSNF);
+            assert_eq!(
+                dairy::minerals_in_snf(protein_fraction, SolidsSource::Casein),
+                dairy::casein::STD_MINERALS_IN_CASEIN
+            );
+        }
+    }
+
+    #[test]
+    fn dairy_lactose_in_snf() {
+        // Whey's line passes through its sweet whey and isolate anchors, to within float rounding
+        for (protein_fraction, lactose_fraction) in [
+            (dairy::whey::STD_PROTEIN_IN_WS, dairy::whey::STD_LACTOSE_IN_WS),
+            (dairy::whey::STD_PROTEIN_IN_WPI, dairy::whey::STD_LACTOSE_IN_WPI),
+        ] {
+            assert_abs_diff_eq!(
+                dairy::lactose_in_snf(protein_fraction, SolidsSource::Whey),
+                lactose_fraction,
+                epsilon = f64::EPSILON
+            );
+        }
+
+        // Milk and casein solids hold fixed fractions, whatever their protein
+        for protein_fraction in [0.0, 0.5, 1.0] {
+            assert_eq!(dairy::lactose_in_snf(protein_fraction, SolidsSource::Milk), dairy::STD_LACTOSE_IN_MSNF);
+            assert_eq!(
+                dairy::lactose_in_snf(protein_fraction, SolidsSource::Casein),
+                dairy::casein::STD_LACTOSE_IN_CASEIN
+            );
+        }
+    }
+
+    #[test]
+    fn dairy_whey_lines_leave_non_negative_unaccounted_solids() {
+        // Protein, minerals, and lactose don't exceed the whey solids at either anchor, and so
+        // anywhere between, since the unaccounted solids they leave are linear in the protein too
+        for protein_fraction in [dairy::whey::STD_PROTEIN_IN_WS, dairy::whey::STD_PROTEIN_IN_WPI] {
+            let minerals_fraction = dairy::minerals_in_snf(protein_fraction, SolidsSource::Whey);
+            let lactose_fraction = dairy::lactose_in_snf(protein_fraction, SolidsSource::Whey);
+            assert_ge!(1.0 - protein_fraction - minerals_fraction - lactose_fraction, 0.0);
+        }
     }
 }

@@ -73,3 +73,9 @@
 [^134]: U.S. Department of Agriculture. (2019). [_Milk, dry, nonfat, regular, without added vitamin A and vitamin D_](https://fdc.nal.usda.gov/food-details/170877/nutrients). FoodData Central - SR Legacy.
 
 [^135]: U.S. Department of Agriculture. (2019). [_Milk, dry, whole, without added vitamin D_](https://fdc.nal.usda.gov/food-details/173454/nutrients). FoodData Central - SR Legacy.
+
+[^136]: U.S. Department of Agriculture. (2019). [_Whey, sweet, dried_](https://fdc.nal.usda.gov/food-details/171283/nutrients). FoodData Central - SR Legacy.
+
+[^137]: U.S. Department of Agriculture. (2019). [_Whey, sweet, fluid_](https://fdc.nal.usda.gov/food-details/171282/nutrients). FoodData Central - SR Legacy.
+
+[^138]: Hilmar Ingredients. (2026, March). [_Hilmar 9000 Whey Protein Isolate_](https://www.hilmar.com/wp-content/uploads/2023/07/Hilmar-9000-WPI.pdf).

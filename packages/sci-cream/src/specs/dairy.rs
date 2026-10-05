@@ -10,10 +10,9 @@ use crate::{
     },
     constants::{
         composition::dairy::{
-            STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS,
-            STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_MINERALS_IN_CASEIN, STD_MINERALS_IN_MSNF, STD_MINERALS_IN_WS,
-            STD_MSNF_IN_MILK_SERUM, STD_PROTEIN_IN_MSNF, STD_PROTEIN_IN_WS, STD_SATURATED_FAT_IN_MILK_FAT,
-            STD_TRANS_FAT_IN_MILK_FAT, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN,
+            STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_MSNF_IN_MILK_SERUM,
+            STD_PROTEIN_IN_MSNF, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
+            STD_WHEY_PROTEIN_IN_MSNF_PROTEIN, lactose_in_snf_coeffs, minerals_in_snf_coeffs, whey::STD_PROTEIN_IN_WS,
         },
         density::solve_dairy_serving_grams,
         pac,
@@ -26,7 +25,13 @@ use crate::{
 #[cfg(doc)]
 use crate::{
     composition::{ArtificialSweeteners, Polyols},
-    constants,
+    constants::{
+        self,
+        composition::dairy::{
+            self, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, casein::STD_MINERALS_IN_CASEIN, lactose_in_snf,
+            minerals_in_snf,
+        },
+    },
 };
 
 /// Indicates the origin of the non-fat solids in a dairy product, which affects its composition
@@ -38,9 +43,11 @@ pub enum SolidsSource {
     /// [`STD_WHEY_PROTEIN_IN_MSNF_PROTEIN`], and [`STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`] for details
     /// about the composition assumptions.
     Milk,
-    /// Whey solids (WS), all whey proteins, lactose, ~11.5% minerals.
+    /// Sweet whey solids (WS) and their concentrates: whey proteins, lactose, 3.6-8.5% minerals
     ///
-    /// See [`STD_LACTOSE_IN_WS`] and [`STD_PROTEIN_IN_WS`] for details about the composition.
+    /// Lactose and minerals decrease linearly as protein is concentrated, from sweet whey to
+    /// isolates, as computed by [`lactose_in_snf`] and [`minerals_in_snf`]. See [`dairy::whey`] for
+    /// more information about the detailed composition of whey products.
     Whey,
     /// Casein solids, all casein proteins, ~10% minerals
     //
@@ -68,8 +75,10 @@ pub struct DairySimpleSpec {
     pub msnf: Option<f64>,
     /// Protein content by weight; calculated internally based on standard values, if unspecified.
     ///
-    /// See [`STD_PROTEIN_IN_MSNF`] and [`STD_PROTEIN_IN_WS`] constants for protein content details.
-    /// The detailed proteins breakdown is determined by [`solids_source`](Self::solids_source).
+    /// See [`STD_PROTEIN_IN_MSNF`] and [`STD_PROTEIN_IN_WS`] for those standard values. The
+    /// detailed proteins breakdown is determined by [`solids_source`](Self::solids_source). If
+    /// that is [`SolidsSource::Whey`], the lactose content is also determined by the protein
+    /// content, as given by [`lactose_in_snf`].
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protein: Option<f64>,
     /// Sucrose content by weight; optional, assumed to be zero if not specified.
@@ -86,15 +95,15 @@ pub struct DairySimpleSpec {
     /// Whether the dairy product is lactose-free, which affects the detailed sugars composition
     ///
     /// If `false`/`None`, the sugars are assumed to be all lactose, calculated from
-    /// [`msnf`](Self::msnf) via [`STD_LACTOSE_IN_MSNF`]. If `true`, the same amount of lactose is
-    /// instead assumed to be a 50/50 glucose and galactose mixture, the two monosaccharides that
-    /// make up lactose, which is typical of lactose-free dairy products where lactose is
-    /// enzymatically broken down into its constituent sugars.
+    /// [`msnf`](Self::msnf) per the [`solids_source`](Self::solids_source) and [`lactose_in_snf`].
+    /// If `true`, the same amount of lactose is instead assumed to be a 50/50 glucose and galactose
+    /// mixture, the two monosaccharides that make up lactose, which is typical of lactose-free
+    /// dairy products where lactose is enzymatically broken down into its constituent sugars.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lactose_free: Option<bool>,
     /// Source of the solids non-fat in this product, [`SolidsSource::Milk`] if unspecified
     ///
-    /// This affects the detailed protein and mineral composition of the solids non-fat.
+    /// This affects the detailed protein, lactose, and minerals composition of the solids non-fat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub solids_source: Option<SolidsSource>,
 }
@@ -114,9 +123,12 @@ impl ToComposition for DairySimpleSpec {
         let lactose_free = lactose_free.unwrap_or(false);
         let solids_source = solids_source.unwrap_or(SolidsSource::Milk);
 
-        let (protein_in_snf, lactose_in_snf) = match solids_source {
-            SolidsSource::Milk => (STD_PROTEIN_IN_MSNF, STD_LACTOSE_IN_MSNF),
-            SolidsSource::Whey => (STD_PROTEIN_IN_WS, STD_LACTOSE_IN_WS),
+        let calculated_msnf = (100.0 - fat) * STD_MSNF_IN_MILK_SERUM;
+        let msnf = msnf.unwrap_or(calculated_msnf);
+
+        let std_protein_in_snf = match solids_source {
+            SolidsSource::Milk => STD_PROTEIN_IN_MSNF,
+            SolidsSource::Whey => STD_PROTEIN_IN_WS,
             SolidsSource::Casein => {
                 return Err(Error::UnsupportedComposition(
                     "Casein solids source is not supported in DairySimpleSpec".to_string(),
@@ -124,15 +136,13 @@ impl ToComposition for DairySimpleSpec {
             }
         };
 
-        let calculated_msnf = (100.0 - fat) * STD_MSNF_IN_MILK_SERUM;
-        let msnf = msnf.unwrap_or(calculated_msnf);
-        let proteins = protein.unwrap_or(msnf * protein_in_snf);
+        let proteins = protein.unwrap_or(msnf * std_protein_in_snf);
+        let lactose = estimate_lactose(msnf, proteins, solids_source);
 
         verify_are_positive(&[fat, msnf, proteins, sucrose])?;
         verify_is_within_100_percent(fat + msnf + sucrose)?;
         verify_is_subset(proteins, msnf, "proteins <= msnf")?;
 
-        let lactose = msnf * lactose_in_snf;
         let dairy_sugars = make_dairy_sugars(lactose, lactose_free);
         let other_sugars = Sugars::new().sucrose(sucrose);
         let total_sugars = dairy_sugars.add(&other_sugars);
@@ -171,15 +181,14 @@ impl ToComposition for DairySimpleSpec {
 /// different types of sugars, whey protein or isolate powder, or other specialized dairy products.
 /// The required values can typically be pulled directly from the nutrition facts label.
 ///
-/// In addition to lactose and proteins, MSNF (milk solids non-fat) and WS (whey solids) typically
-/// include [`STD_MINERALS_IN_MSNF`] (8%) and [`STD_MINERALS_IN_WS`] (11.5%) minerals and salts
-/// respectively (Goff & Hartel, 2025, pp. 37, 47, 158)[^20], (Goff, n.d., "11. Milk
-/// Solids-not-fat")[^90], which are not easy to infer from nutrition facts labels. As such, the
-/// total MSNF or WS content is internally estimated from `dairy_sugars` (see
-/// [`sugars`](Self::sugars) and [`sucrose`](Self::sucrose)), [`protein`](Self::protein), and
-/// standard composition constants: [`STD_LACTOSE_IN_MSNF`] and [`STD_PROTEIN_IN_MSNF`] if
-/// [`solids_source`](Self::solids_source) is [`Milk`](SolidsSource::Milk), [`STD_LACTOSE_IN_WS`]
-/// and [`STD_PROTEIN_IN_WS`] if [`Whey`](SolidsSource::Whey).
+/// In addition to lactose and proteins, MSNF (milk solids non-fat) and WS (whey solids) include
+/// minerals and salts (Goff & Hartel, 2025, pp. 37, 47)[^20], (Goff, n.d., "11. Milk
+/// Solids-not-fat")[^90], which nutrition facts labels don't list. As such, the total MSNF or WS
+/// content is internally estimated from `dairy_sugars` (see [`sugars`](Self::sugars) and
+/// [`sucrose`](Self::sucrose)), [`protein`](Self::protein), and the minerals fraction of the
+/// [`solids_source`](Self::solids_source): [`STD_MINERALS_IN_MSNF`] for
+/// [`Milk`](SolidsSource::Milk), [`STD_MINERALS_IN_CASEIN`] for [`Casein`](SolidsSource::Casein),
+/// and for [`Whey`](SolidsSource::Whey) a line in the protein fraction, see [`minerals_in_snf`].
 #[doc = include_str!("../../docs/references/index/20.md")]
 #[doc = include_str!("../../docs/references/index/90.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
@@ -263,7 +272,7 @@ pub struct DairyLabelSpec {
     pub sucrose: Option<f64>,
     /// Source of the solids non-fat in this product, [`SolidsSource::Milk`] if unspecified
     ///
-    /// This affects the detailed protein and mineral composition of the solids non-fat.
+    /// This affects the detailed protein and minerals composition of the solids non-fat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub solids_source: Option<SolidsSource>,
 }
@@ -291,13 +300,7 @@ impl ToComposition for DairyLabelSpec {
         let other_carbohydrates = carbohydrates - sugars;
         let solids_source = solids_source.unwrap_or(SolidsSource::Milk);
 
-        let std_minerals_in_snf = match solids_source {
-            SolidsSource::Milk => STD_MINERALS_IN_MSNF,
-            SolidsSource::Whey => STD_MINERALS_IN_WS,
-            SolidsSource::Casein => STD_MINERALS_IN_CASEIN,
-        };
-
-        let calculated_snf = (dairy_sugars + protein) / (1.0 - std_minerals_in_snf);
+        let calculated_snf = estimate_snf(dairy_sugars, protein, solids_source);
         let max_solids = 1.0 - STD_MIN_WATER_CONTENT_IN_MILK_POWDER;
         let snf_ceiling = |size: f64, fat| max_solids * size - fat - sucrose - other_carbohydrates;
 
@@ -379,6 +382,22 @@ fn make_dairy_sugars(sugars: f64, lactose_free: bool) -> Sugars {
     }
 }
 
+/// Estimates the solids non-fat from their `sugars` and `protein`, adding `source`'s minerals
+const fn estimate_snf(sugars: f64, protein: f64, source: SolidsSource) -> f64 {
+    // Solves `snf = sugars + protein + snf × minerals_in_snf(protein / snf)`. The fraction is
+    // linear, `a + b × protein / snf`, so `snf = sugars + protein + snf × (a + b × protein / snf)`.
+    // Solving for `snf` gives `snf = (sugars + (1 + b) × protein) / (1 - a)`
+    let [a, b] = minerals_in_snf_coeffs(source);
+    (sugars + (1.0 + b) * protein) / (1.0 - a)
+}
+
+/// Estimates the lactose in `snf` grams of `source`'s solids non-fat from their `protein` content
+const fn estimate_lactose(snf: f64, protein: f64, source: SolidsSource) -> f64 {
+    // The lactose, `snf × lactose_in_snf(protein / snf, source)`, is `a × snf + b × protein`
+    let [a, b] = lactose_in_snf_coeffs(source);
+    a * snf + b * protein
+}
+
 /// Splits a total milk protein content into casein and whey according to the [`SolidsSource`].
 ///
 /// Milk solids carry the natural ~80/20 casein/whey split ([`STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`],
@@ -407,6 +426,9 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         composition::{CompKey, SolidsBreakdown},
+        constants::composition::dairy::whey::{
+            STD_LACTOSE_IN_WPI, STD_LACTOSE_IN_WS, STD_MINERALS_IN_WPI, STD_MINERALS_IN_WS, STD_PROTEIN_IN_WPI,
+        },
         error::Error,
         ingredient::Category,
         specs::IngredientSpec,
@@ -2033,11 +2055,11 @@ pub(crate) mod tests {
                         .fats(Fats::new().total(1.2821).saturated(0.7692).trans(0.0449))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(2.5641)))
                         .proteins(MilkProteins::new().whey(89.7436))
-                        .others(4.4103),
+                        .others(3.5586),
                 ),
             )
             .pod(0.4103)
-            .pac(PAC::new().sugars(2.5641).msnf_ws_salts(35.5346))
+            .pac(PAC::new().sugars(2.5641).msnf_ws_salts(35.2217))
     });
 
     #[test]
@@ -2048,16 +2070,16 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 1.2821);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 2.5641);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 96.7179);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 94.1538);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 95.8663);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 93.3022);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 89.7436);
         assert_eq_flt_test!(comp.get(CompKey::Whey), 89.7436);
         assert_eq_flt_test!(comp.get(CompKey::Casein), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 98.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 97.1484);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 89.7436);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 98.0);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 97.1484);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 2.8516);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
@@ -2067,8 +2089,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 2.5641);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.5346);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 38.0987);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.2217);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 37.7858);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.7692);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0449);
@@ -2120,12 +2142,12 @@ pub(crate) mod tests {
                             .fats(Fats::new().total(4.0).saturated(1.4).trans(0.14))
                             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(3.3)))
                             .proteins(MilkProteins::new().whey(80.0))
-                            .others(9.8),
+                            .others(3.2759),
                     )
                     .other(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().others(0.9))),
             )
             .pod(0.528)
-            .pac(PAC::new().sugars(3.3).msnf_ws_salts(34.2053))
+            .pac(PAC::new().sugars(3.3).msnf_ws_salts(31.8083))
     });
 
     #[test]
@@ -2139,16 +2161,16 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 4.0);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 3.3);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 93.1);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 89.8);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 86.5759);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 83.2759);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 80.0);
         assert_eq_flt_test!(comp.get(CompKey::Whey), 80.0);
         assert_eq_flt_test!(comp.get(CompKey::Casein), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 97.1);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 90.5759);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 80.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 98.0);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 91.4759);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 8.5241);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
@@ -2158,8 +2180,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 3.3);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 34.2053);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 37.5053);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 31.8083);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 35.1083);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.4);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.14);
@@ -2391,6 +2413,91 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn dairy_label_spec_whey_minerals_line_endpoints() {
+        // 90g of whey solids at each end of the line, sweet whey and isolate, with 1g of fat. The
+        // label's sugars are by difference, as USDA's are, so they hold the unaccounted solids too
+        for (protein_fraction, minerals_fraction) in [
+            (STD_PROTEIN_IN_WS, STD_MINERALS_IN_WS),
+            (STD_PROTEIN_IN_WPI, STD_MINERALS_IN_WPI),
+        ] {
+            let sugars_by_difference = 1.0 - protein_fraction - minerals_fraction;
+            let comp = DairyLabelSpec {
+                serving_size: Unit::Grams(100.0),
+                energy: None,
+                total_fat: Unit::Grams(1.0),
+                saturated_fat: None,
+                trans_fat: None,
+                carbohydrates: None,
+                sugars: 90.0 * sugars_by_difference,
+                protein: 90.0 * protein_fraction,
+                lactose_free: None,
+                sucrose: None,
+                solids_source: Some(SolidsSource::Whey),
+            }
+            .to_composition()
+            .unwrap();
+
+            assert_eq_flt_test!(comp.get(CompKey::MSNF), 90.0);
+            assert_eq_flt_test!(comp.get(CompKey::Water), 9.0);
+        }
+    }
+
+    #[test]
+    fn dairy_simple_spec_whey_at_sweet_whey_protein() {
+        // Sweet whey's own protein keeps lactose at its fixed fraction, whether given or defaulted
+        for protein in [None, Some(96.0 * STD_PROTEIN_IN_WS)] {
+            let comp = DairySimpleSpec {
+                fat: 1.0,
+                msnf: Some(96.0),
+                protein,
+                solids_source: Some(SolidsSource::Whey),
+                ..empty_dairy_simple_spec()
+            }
+            .to_composition()
+            .unwrap();
+
+            assert_eq_flt_test!(comp.get(CompKey::Lactose), 96.0 * STD_LACTOSE_IN_WS);
+            assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 96.0 * STD_PROTEIN_IN_WS);
+        }
+    }
+
+    #[test]
+    fn dairy_simple_spec_whey_at_isolate_protein() {
+        // An isolate's protein puts lactose at the line's other anchor
+        let comp = DairySimpleSpec {
+            fat: 0.5,
+            msnf: Some(95.0),
+            protein: Some(95.0 * STD_PROTEIN_IN_WPI),
+            solids_source: Some(SolidsSource::Whey),
+            ..empty_dairy_simple_spec()
+        }
+        .to_composition()
+        .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 95.0 * STD_LACTOSE_IN_WPI);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 95.0 * STD_PROTEIN_IN_WPI);
+    }
+
+    #[test]
+    fn dairy_simple_spec_whey_protein_concentrate() {
+        // USDEC's WPC 80 profile: at 89.6% protein, the line's lactose is 6.22% of the whey solids
+        let comp = DairySimpleSpec {
+            fat: 6.6,
+            msnf: Some(89.29),
+            protein: Some(80.0),
+            solids_source: Some(SolidsSource::Whey),
+            ..empty_dairy_simple_spec()
+        }
+        .to_composition()
+        .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 5.5517);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 80.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 83.7383);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 4.11);
+    }
+
+    #[test]
     fn dairy_simple_spec_err_on_negative_field() {
         let specs = [
             DairySimpleSpec {
@@ -2425,6 +2532,19 @@ pub(crate) mod tests {
         }
         .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn dairy_simple_spec_err_when_whey_protein_leaves_no_lactose() {
+        // At 97% protein, past the ~96.4% where the line's lactose runs out
+        let result = DairySimpleSpec {
+            msnf: Some(95.0),
+            protein: Some(92.15),
+            solids_source: Some(SolidsSource::Whey),
+            ..empty_dairy_simple_spec()
+        }
+        .to_composition();
+        assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
     }
 
     #[test]

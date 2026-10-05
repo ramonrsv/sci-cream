@@ -383,7 +383,7 @@ fn compare_specs_whey_protein() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 27.0);
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 12.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -404,9 +404,15 @@ fn compare_specs_whey_isolate() {
     // 100% Isolate sits in the middle at ~83% protein with low but non-zero fat and sugar.
     // MyProtein Clear is a hydrolyzed/extra-filtered isolate intended to mix into a clear
     // juice-like drink rather than a shake — it lists only 80% protein and exactly 0g fat
-    // and 0g sugar, which gives it a noticeably lower kcal-per-g-of-solids profile and
-    // drives the ~44 pp Energy gap.
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 44.0);
+    // and 0g sugar, so whatever else its solids hold shows up as water. The exceptions are:
+    //    - TotalSolids    15.06 pp  (Bulk Barn vs MyProtein)
+    //    - TotalSolids    14.21 pp  (Leanfit vs MyProtein)
+    //    - Water          15.06 pp  (Bulk Barn vs MyProtein)
+    //    - Water          14.21 pp  (Leanfit vs MyProtein)
+    let ceiling = KeyCeiling::new(10.0)
+        .with(CompKey::Energy, 13.0)
+        .with(CompKey::TotalSolids, 16.0)
+        .with(CompKey::Water, 16.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
