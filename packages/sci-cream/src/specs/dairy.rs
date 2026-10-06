@@ -1,5 +1,5 @@
-//! [`DairySimpleSpec`], [`DairyLabelSpec`], and associated implementations, for dairy ingredients
-//! such as milk, cream, milk powders, protein powders, etc.
+//! [`DairySimpleSpec`], [`DairyLabelSpec`], [`DairySheetSpec`], and associated implementations,
+//! for dairy ingredients such as milk, cream, milk powders, protein powders, etc.
 
 use serde::{Deserialize, Serialize};
 
@@ -57,11 +57,22 @@ pub enum SolidsSource {
 
 /// Spec for trivial dairy ingredients, e.g. Milk, Cream, Milk Powder, etc.
 ///
-/// For most ingredients it is sufficient to specify the fat content; the rest of the components are
-/// calculated from standard values, notably [`STD_MSNF_IN_MILK_SERUM`], [`STD_LACTOSE_IN_MSNF`],
-/// [`STD_PROTEIN_IN_MSNF`], and [`STD_SATURATED_FAT_IN_MILK_FAT`]. For milk powder ingredients it's
-/// necessary to specify the `msnf`, e.g. 97 for Skimmed Milk Powder - 3% water, no fat, the rest is
-/// milk solids non-fat, or 72 for Whole Milk Powder - 2% water, 26% fat, the rest is `msnf`.
+/// This spec is suitable for common dairy ingredients where only one or a few basic compositional
+/// parameters are specified, such as fat content, and the rest is inferred from standard values,
+/// notably [`STD_MSNF_IN_MILK_SERUM`], [`STD_LACTOSE_IN_MSNF`], [`STD_PROTEIN_IN_MSNF`], etc. It
+/// is also suitable for literature sources where only basic compositional information is available.
+///
+/// For most common ingredients, e.g. milks and creams, it is sufficient to specify only the fat
+/// content. For dried or concentrated dairy products, such as milk powder, whey concentrates, etc.,
+/// it is necessary to specify the milk solids non-fat [`msnf`](Self::msnf) content explicitly. For
+/// example, _Skimmed Milk Powder_ may have a 3% water content and 0% `fat`, which translates to an
+/// `msnf` of 97. Concentrates also need to specify the protein content, as the ultrafiltration
+/// process increases the protein concentration beyond that of typical milk or whey. Whey
+/// products also need to specify the corresponding [`solids_source`](Self::solids_source).
+//
+// @todo Add support for milk concentrates, e.g. ultra-filtered milk. The lactose content, which
+// decreases as protein increases, is currently overestimated; see handling of whey concentrates.
+// @todo Add support for casein as a solids source, most likely only casein concentrates.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct DairySimpleSpec {
@@ -70,7 +81,7 @@ pub struct DairySimpleSpec {
     /// Milk solids non-fat content by weight, calculated internally for typical milks and creams.
     ///
     /// It is necessary to specify `msnf` for milk powders and other condensed or dried dairy
-    /// products, as they do not adhere to the standard milk and cream composition ratios.
+    /// products, as they do not adhere to the standard milk and whey composition ratios.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub msnf: Option<f64>,
     /// Protein content by weight; calculated internally based on standard values, if unspecified.
@@ -87,18 +98,19 @@ pub struct DairySimpleSpec {
     ///
     /// Note that this is included under [`Solids::other`], not under [`Solids::milk`].
     ///
-    /// See [`lactose_free`](Self::sucrose) for the possibility of different natural sugar
+    /// See [`lactose_free`](Self::lactose_free) for the possibility of different natural sugar
     /// compositions in lactose-free products.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sucrose: Option<f64>,
-    ///
     /// Whether the dairy product is lactose-free, which affects the detailed sugars composition
     ///
     /// If `false`/`None`, the sugars are assumed to be all lactose, calculated from
     /// [`msnf`](Self::msnf) per the [`solids_source`](Self::solids_source) and [`lactose_in_snf`].
     /// If `true`, the same amount of lactose is instead assumed to be a 50/50 glucose and galactose
     /// mixture, the two monosaccharides that make up lactose, which is typical of lactose-free
-    /// dairy products where lactose is enzymatically broken down into its constituent sugars.
+    /// dairy products where lactose is enzymatically broken down into its constituent sugars
+    /// (Goff & Hartel, 2025, pp. 35, 422)[^20].
+    #[doc = include_str!("../../docs/references/index/20.md")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lactose_free: Option<bool>,
     /// Source of the solids non-fat in this product, [`SolidsSource::Milk`] if unspecified
@@ -181,6 +193,9 @@ impl ToComposition for DairySimpleSpec {
 /// different types of sugars, whey protein or isolate powder, or other specialized dairy products.
 /// The required values can typically be pulled directly from the nutrition facts label.
 ///
+/// For sources that list more detailed compositions like water and ash content, such as spec
+/// sheets and composition databases, use [`DairySheetSpec`] for a more accurate representation.
+///
 /// In addition to lactose and proteins, MSNF (milk solids non-fat) and WS (whey solids) include
 /// minerals and salts (Goff & Hartel, 2025, pp. 37, 47)[^20], (Goff, n.d., "11. Milk
 /// Solids-not-fat")[^90], which nutrition facts labels don't list. As such, the total MSNF or WS
@@ -254,9 +269,10 @@ pub struct DairyLabelSpec {
     /// predominant sugar in regular dairy products. If `true`, the non-sucrose sugars are assumed
     /// to be a 50/50 glucose and galactose mixture, the two monosaccharides that make up lactose,
     /// which is typical of lactose free dairy products where lactose is enzymatically broken down
-    /// into its constituent sugars.
+    /// into its constituent sugars (Goff & Hartel, 2025, pp. 35, 422)[^20].
     ///
     /// See [`sucrose`](Self::sucrose) for the possibility of other types of sugars.
+    #[doc = include_str!("../../docs/references/index/20.md")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lactose_free: Option<bool>,
     /// Sucrose content per serving, in grams, assumed to be zero if not specified
@@ -266,7 +282,7 @@ pub struct DairyLabelSpec {
     ///
     /// Note that this is included under [`Solids::other`], not under [`Solids::milk`].
     ///
-    /// See [`lactose_free`](Self::sucrose) for the possibility of different natural sugar
+    /// See [`lactose_free`](Self::lactose_free) for the possibility of different natural sugar
     /// compositions in lactose-free products.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sucrose: Option<f64>,
@@ -369,6 +385,131 @@ impl ToComposition for DairyLabelSpec {
     }
 }
 
+/// Spec for dairy ingredients from spec sheets and food composition databases, per 100 g
+///
+/// This spec is suitable for dairy ingredients that have detailed compositional information,
+/// including water, fat, protein, sugars, ash, etc. These most often come from food composition
+/// databases, like the [USDA FoodData Central](https://fdc.nal.usda.gov/) database, or from
+/// suppliers' specification sheets. It makes the fewest assumptions about the composition beyond
+/// what is explicitly listed, and as such provides few defaults and requires comprehensive input.
+///
+/// See [`DairySimpleSpec`] for a simpler spec that infers most of the composition from standard
+/// values, and [`DairyLabelSpec`] for a spec that is suitable for nutrition facts labels, as well
+/// as some spec sheets that don't provide the water content - the anchor for solids calculations.
+///
+/// Values are as-is, in grams per 100 g. Where sheets list typical values beside min/max
+/// limits, use the typical values, or the midpoints of typical ranges. Values given on a dry basis
+/// should be converted to as-is using the water content, as: `as-is = dry × (100 - water) / 100`.
+///
+/// **Note:** The solids non-fat are calculated by difference from the listed water, as
+/// `100 - water - fat - added_sugars`, with no assumptions about their mineral content. In
+/// contrast, [`DairyLabelSpec`] lacks the water, so it estimates the solids non-fat from the sugars
+/// and protein plus the minerals modeled for the solids source, and the water is what remains.
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct DairySheetSpec {
+    /// Water content, in grams per 100 g; spec sheets usually list it as moisture
+    ///
+    /// Water content determines the amount of milk solids non-fat in the ingredient, what remains
+    /// of the 100 g after the water, [`fat`](Self::fat), and added [`sugars`](Self::sugars).
+    pub water: f64,
+    /// Energy per 100 g, in kcal; calculated based on macronutrients composition if unspecified
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub energy: Option<f64>,
+    /// Total fat content, in grams per 100 g; wholly counted as butterfat (milk fat)
+    pub fat: f64,
+    /// Saturated fat content, in grams per 100 g; it must be a subset of [`fat`](Self::fat).
+    ///
+    /// If unspecified, it is calculated as [`STD_SATURATED_FAT_IN_MILK_FAT`] of [`fat`](Self::fat).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub saturated_fat: Option<f64>,
+    /// Trans fat content, in grams per 100 g; it must be a subset of [`fat`](Self::fat).
+    ///
+    /// If unspecified, it is calculated as [`STD_TRANS_FAT_IN_MILK_FAT`] of [`fat`](Self::fat).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub trans_fat: Option<f64>,
+    /// Sugar content and composition breakdown of mono- and disaccharides, in grams per 100 g
+    ///
+    /// This allows a detailed breakdown of the sugars composition, although only a few combinations
+    /// occur in dairy. For typical dairy products, `lactose` should be the only listed sugar.
+    /// Lactose-free products should list either all or part of the lactose as a 50/50 split of
+    /// glucose and galactose, the two constituent monosaccharides that it is enzymatically broken
+    /// down into (Goff & Hartel, 2025, pp. 35, 422)[^20]. These are all counted as milk sugars, as
+    /// part of [`Solids::milk`]. Any other sugars, typically added `sucrose`, e.g. in sweetened
+    /// condensed milk, should be included and are counted as [`Solids::other`].
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    pub sugars: Sugars,
+    /// Protein content, in grams per 100 g, as-is rather than on a dry basis
+    ///
+    /// The detailed proteins breakdown is determined by [`solids_source`](Self::solids_source).
+    pub protein: f64,
+    /// Ash or mineral content, in grams per 100 g, if listed
+    ///
+    /// This does not currently affect the composition; minerals are implicitly counted as part of
+    /// other milk solids that remain from the solids non-fat less the milk sugars and
+    /// [`protein`](Self::protein). However, it should still be specified if listed, as it will
+    /// eventually be used to inform PAC calculations in place of [`pac::MSNF_WS_SALTS`].
+    //
+    // @todo Derive the milk salts' PAC from this mineral content, replacing `pac::MSNF_WS_SALTS`,
+    // which doesn't hold for concentrates that have a lower relative mineral content.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ash: Option<f64>,
+    /// Source of the solids non-fat in this product, [`SolidsSource::Milk`] if unspecified
+    ///
+    /// This affects the detailed protein composition of the solids non-fat.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub solids_source: Option<SolidsSource>,
+}
+
+impl ToComposition for DairySheetSpec {
+    fn to_composition(&self) -> Result<Composition> {
+        let Self {
+            water,
+            energy,
+            fat,
+            saturated_fat,
+            trans_fat,
+            sugars,
+            protein,
+            ash,
+            solids_source,
+        } = *self;
+
+        let saturated_fat = saturated_fat.unwrap_or(STD_SATURATED_FAT_IN_MILK_FAT * fat);
+        let trans_fat = trans_fat.unwrap_or(STD_TRANS_FAT_IN_MILK_FAT * fat);
+        let solids_source = solids_source.unwrap_or(SolidsSource::Milk);
+
+        sugars.validate()?;
+
+        verify_are_positive(&[water, fat, saturated_fat, trans_fat, protein, ash.unwrap_or(0.0)])?;
+        verify_is_within_100_percent(water + fat + sugars.total() + protein)?;
+        verify_is_subset(saturated_fat, fat, "saturated_fat <= fat")?;
+        verify_is_subset(trans_fat, fat, "trans_fat <= fat")?;
+
+        let (milk_sugars, other_sugars) = split_milk_sugars(sugars);
+        let snf = 100.0 - water - fat - other_sugars.total();
+
+        let milk_solids = MilkSolids::new()
+            .fats(Fats::new().total(fat).saturated(saturated_fat).trans(trans_fat))
+            .carbohydrates(Carbohydrates::new().sugars(milk_sugars))
+            .proteins(make_milk_proteins(protein, solids_source))
+            .others_from_total(fat + snf)?;
+
+        let other_solids = SimpleSolids::new().carbohydrates(Carbohydrates::new().sugars(other_sugars));
+
+        Composition::new()
+            .energy(energy.unwrap_or(milk_solids.energy()? + other_solids.energy()?))
+            .solids(Solids::new().milk(milk_solids).other(other_solids))
+            .pod(sugars.to_pod()?)
+            .pac(
+                PAC::new()
+                    .sugars(sugars.to_pac()?)
+                    .msnf_ws_salts(snf * pac::MSNF_WS_SALTS / 100.0),
+            )
+            .validate_into()
+    }
+}
+
 /// Splits a total sugars content into lactose or glucose/galactose according to the `lactose_free`
 ///
 /// If `lactose_free` is `false`, then it returns all lactose. If `true`, then a 50/50 glucose and
@@ -380,6 +521,28 @@ fn make_dairy_sugars(sugars: f64, lactose_free: bool) -> Sugars {
     } else {
         Sugars::new().lactose(sugars)
     }
+}
+
+/// Splits `sugars` into milk and other sugars, as `(milk_sugars, other_sugars)`
+///
+/// Lactose, glucose, and galactose are considered milk sugars; all others, e.g. sucrose, are not.
+/// Lactose is a disaccharide composed of glucose and galactose, into which it is enzymatically
+/// broken down in typical lactose-free products (Goff & Hartel, 2025, pp. 35, 422)[^20].
+#[doc = include_str!("../../docs/references/index/20.md")]
+const fn split_milk_sugars(sugars: Sugars) -> (Sugars, Sugars) {
+    let milk_sugars = Sugars {
+        lactose: sugars.lactose,
+        glucose: sugars.glucose,
+        galactose: sugars.galactose,
+        ..Sugars::new()
+    };
+    let other_sugars = Sugars {
+        lactose: 0.0,
+        glucose: 0.0,
+        galactose: 0.0,
+        ..sugars
+    };
+    (milk_sugars, other_sugars)
 }
 
 /// Estimates the solids non-fat from their `sugars` and `protein`, adding `source`'s minerals
@@ -2741,5 +2904,184 @@ pub(crate) mod tests {
         }
         .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    fn empty_dairy_sheet_spec() -> DairySheetSpec {
+        DairySheetSpec {
+            water: 0.0,
+            energy: None,
+            fat: 0.0,
+            saturated_fat: None,
+            trans_fat: None,
+            sugars: Sugars::new(),
+            protein: 0.0,
+            ash: None,
+            solids_source: None,
+        }
+    }
+
+    // https://fdc.nal.usda.gov/food-details/746782/nutrients
+    fn usda_whole_milk_sheet_spec() -> DairySheetSpec {
+        DairySheetSpec {
+            water: 88.1,
+            energy: Some(61.0),
+            fat: 3.2,
+            saturated_fat: Some(1.86),
+            sugars: Sugars::new().lactose(4.81),
+            protein: 3.27,
+            ash: Some(0.8),
+            ..empty_dairy_sheet_spec()
+        }
+    }
+
+    #[test]
+    fn dairy_sheet_spec_whey_unaccounted_solids() {
+        // Hilmar 9000's bulletin sums to 97.5%, so beside its 2.5 g of ash, the other milk solids
+        // hold the 2.5 g it doesn't account for
+        let comp = DairySheetSpec {
+            water: 4.5,
+            fat: 0.5,
+            sugars: Sugars::new().lactose(1.0),
+            protein: 89.0,
+            ash: Some(2.5),
+            solids_source: Some(SolidsSource::Whey),
+            ..empty_dairy_sheet_spec()
+        }
+        .to_composition()
+        .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 95.0);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 1.0);
+        assert_eq_flt_test!(comp.get(CompKey::Whey), 89.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 89.0 + 2.5 + 2.5);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 4.5);
+    }
+
+    #[test]
+    fn dairy_sheet_spec_lactose_free() {
+        // The glucose and galactose its lactose breaks down into still count as milk solids
+        let comp = DairySheetSpec {
+            sugars: Sugars::new().glucose(4.81 / 2.0).galactose(4.81 / 2.0),
+            ..usda_whole_milk_sheet_spec()
+        }
+        .to_composition()
+        .unwrap();
+
+        assert_eq!(comp.get(CompKey::Lactose), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::Glucose), 4.81 / 2.0);
+        assert_eq_flt_test!(comp.get(CompKey::Galactose), 4.81 / 2.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSugars), 4.81);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 8.7);
+    }
+
+    #[test]
+    fn dairy_sheet_spec_ash_does_not_affect_composition() {
+        let listed = usda_whole_milk_sheet_spec();
+        let unlisted = DairySheetSpec { ash: None, ..listed };
+
+        assert_eq!(listed.to_composition().unwrap(), unlisted.to_composition().unwrap());
+    }
+
+    #[test]
+    fn dairy_sheet_spec_err_on_negative_field() {
+        let base = usda_whole_milk_sheet_spec();
+
+        let neg_cases = [
+            DairySheetSpec { water: -1.0, ..base },
+            DairySheetSpec { fat: -1.0, ..base },
+            DairySheetSpec {
+                saturated_fat: Some(-1.0),
+                ..base
+            },
+            DairySheetSpec {
+                trans_fat: Some(-1.0),
+                ..base
+            },
+            DairySheetSpec {
+                sugars: Sugars::new().lactose(-1.0),
+                ..base
+            },
+            DairySheetSpec {
+                sugars: Sugars::new().lactose(4.81).sucrose(-1.0),
+                ..base
+            },
+            DairySheetSpec { protein: -1.0, ..base },
+            DairySheetSpec {
+                ash: Some(-1.0),
+                ..base
+            },
+        ];
+
+        for spec in neg_cases {
+            let result = spec.to_composition();
+            assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn dairy_sheet_spec_err_when_water_plus_fat_plus_sugars_plus_protein_exceeds_100() {
+        let result = DairySheetSpec {
+            water: 90.0,
+            ..usda_whole_milk_sheet_spec()
+        }
+        .to_composition();
+        assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn dairy_sheet_spec_err_when_saturated_fat_exceeds_fat() {
+        let result = DairySheetSpec {
+            saturated_fat: Some(4.0),
+            ..usda_whole_milk_sheet_spec()
+        }
+        .to_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn dairy_sheet_spec_err_when_trans_fat_exceeds_fat() {
+        let result = DairySheetSpec {
+            trans_fat: Some(4.0),
+            ..usda_whole_milk_sheet_spec()
+        }
+        .to_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn split_milk_sugars_by_type() {
+        let sugars = Sugars::new()
+            .lactose(1.0)
+            .glucose(2.0)
+            .galactose(3.0)
+            .sucrose(4.0)
+            .fructose(5.0)
+            .maltose(6.0)
+            .trehalose(7.0)
+            .other(8.0);
+
+        let (milk_sugars, other_sugars) = split_milk_sugars(sugars);
+
+        assert_eq!(milk_sugars, Sugars::new().lactose(1.0).glucose(2.0).galactose(3.0));
+        assert_eq!(
+            other_sugars,
+            Sugars::new()
+                .sucrose(4.0)
+                .fructose(5.0)
+                .maltose(6.0)
+                .trehalose(7.0)
+                .other(8.0)
+        );
+        assert_eq!(milk_sugars.add(&other_sugars), sugars);
+    }
+
+    #[test]
+    fn dairy_sheet_spec_err_on_unspecified_sugars() {
+        let result = DairySheetSpec {
+            sugars: Sugars::new().other(4.81),
+            ..usda_whole_milk_sheet_spec()
+        }
+        .to_composition();
+        assert!(matches!(result, Err(Error::CannotComputePOD(_))));
     }
 }

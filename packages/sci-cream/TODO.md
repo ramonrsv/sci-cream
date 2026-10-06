@@ -72,6 +72,10 @@
 - [ ] Consider supporting ignored ingredients — ones strained out before freezing, e.g. herbs, etc.
 - [ ] Add a buttermilk ingredient (Goff & Hartel), distinct from the "Buttermilk Powder" listed
       above, and look into the stabilizing role that Underbelly and Goff & Hartel both mention.
+- [ ] Put a space between numbers and unit symbols, per SI, e.g. "100 g" rather than "100g"; most
+      comments and docs omit it, except the newer `DairySheetSpec` docs.
+- [ ] Add a spec-level fats type, a total with optional `saturated`/`trans`, for `DairySheetSpec`,
+      `DairyLabelSpec`, and `NutSpec`; `Fats` defaults them to 0. Stored user specs need migrating.
 
 ## Backlog
 

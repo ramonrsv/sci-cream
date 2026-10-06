@@ -31,6 +31,13 @@
 #[doc = include_str!("../../docs/references/index/135.md")]
 pub mod dairy {
     use crate::specs::SolidsSource;
+    use {
+        casein::{STD_LACTOSE_IN_CASEIN, STD_MINERALS_IN_CASEIN},
+        whey::{
+            STD_LACTOSE_IN_WPI, STD_LACTOSE_IN_WS, STD_MINERALS_IN_WPI, STD_MINERALS_IN_WS, STD_PROTEIN_IN_WPI,
+            STD_PROTEIN_IN_WS,
+        },
+    };
 
     /// Percentage milk solids non-fat (MSNF) typical of milk serum
     ///
@@ -247,11 +254,6 @@ pub mod dairy {
     /// See [`lactose_in_snf`] for a function doing the computation with these coefficients.
     #[must_use]
     pub const fn lactose_in_snf_coeffs(source: SolidsSource) -> [f64; 2] {
-        use crate::constants::composition::dairy::{
-            casein::STD_LACTOSE_IN_CASEIN,
-            whey::{STD_LACTOSE_IN_WPI, STD_LACTOSE_IN_WS, STD_PROTEIN_IN_WPI, STD_PROTEIN_IN_WS},
-        };
-
         match source {
             SolidsSource::Milk => [STD_LACTOSE_IN_MSNF, 0.0],
             SolidsSource::Whey => {
@@ -285,11 +287,6 @@ pub mod dairy {
     /// See [`minerals_in_snf`] for a function doing the computation with these coefficients.
     #[must_use]
     pub const fn minerals_in_snf_coeffs(source: SolidsSource) -> [f64; 2] {
-        use crate::constants::composition::dairy::{
-            casein::STD_MINERALS_IN_CASEIN,
-            whey::{STD_MINERALS_IN_WPI, STD_MINERALS_IN_WS, STD_PROTEIN_IN_WPI, STD_PROTEIN_IN_WS},
-        };
-
         match source {
             SolidsSource::Milk => [STD_MINERALS_IN_MSNF, 0.0],
             SolidsSource::Whey => {

@@ -13,7 +13,7 @@ export interface SpecDocLink {
 
 /**
  * Rustdoc page for each spec type, relative to {@link DOCS_BASE}. The paths cannot be templated:
- * `MicroSpec` is an enum, and the `dairy` module hosts two types.
+ * `MicroSpec` is an enum, and the `dairy` module hosts three types.
  */
 const SPEC_TYPE_PAGES: Readonly<Record<string, string>> = {
   AlcoholSpec: "specs/alcohol/struct.AlcoholSpec.html",
@@ -22,6 +22,7 @@ const SPEC_TYPE_PAGES: Readonly<Record<string, string>> = {
   CocoaPowderSpec: "specs/chocolate/struct.CocoaPowderSpec.html",
   CompositeSpec: "specs/composite/struct.CompositeSpec.html",
   DairyLabelSpec: "specs/dairy/struct.DairyLabelSpec.html",
+  DairySheetSpec: "specs/dairy/struct.DairySheetSpec.html",
   DairySimpleSpec: "specs/dairy/struct.DairySimpleSpec.html",
   EggSpec: "specs/egg/struct.EggSpec.html",
   EmulsifierSpec: "specs/emulsifier/struct.EmulsifierSpec.html",
