@@ -1,0 +1,21 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
+expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
+---
+sources: USDA, USDA Label
+
+Energy               8.58 pp  (USDA vs USDA Label)
+MilkFat              0.11 pp  (USDA vs USDA Label)
+Lactose              1.63 pp  (USDA vs USDA Label)
+MSNF                 0.11 pp  (USDA vs USDA Label)
+MilkSNFS             1.75 pp  (USDA vs USDA Label)
+MilkProteins         0.27 pp  (USDA vs USDA Label)
+MilkSolids           0.00 pp  (USDA vs USDA Label)
+TotalSolids          0.15 pp  (USDA vs USDA Label)
+Water                0.15 pp  (USDA vs USDA Label)
+POD                  0.26 pp  (USDA vs USDA Label)
+PACsgr               1.63 pp  (USDA vs USDA Label)
+PACmlk               0.04 pp  (USDA vs USDA Label)
+TotalPAC             1.59 pp  (USDA vs USDA Label)
+SaturatedFat         0.07 pp  (USDA vs USDA Label)
+TransFat             0.00 pp  (USDA vs USDA Label)

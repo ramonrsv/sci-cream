@@ -241,3 +241,43 @@ USDA Whole Milk Powder (Label)
   fiber              0.00      0.00      0.00 %
   sugars            38.40     38.40      0.00 %
   ash                5.63      6.08      7.47 %
+
+USDA Sweet Whey
+  [     key      | modeled | measured |  diff  ]
+  water             93.10     93.10      0.00 %
+  protein            0.85      0.85      0.00 %
+  fat                0.36      0.36      0.00 %
+  carbohydrate       5.14      5.14      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars             5.14      5.14      0.00 %
+  ash                0.55      0.53      3.64 %
+
+USDA Sweet Whey (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             92.95     93.10      0.17 %
+  protein            0.85      0.85      0.00 %
+  fat                0.36      0.36      0.00 %
+  carbohydrate       5.14      5.14      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars             5.14      5.14      0.00 %
+  ash                0.70      0.53     24.78 %
+
+USDA Sweet Whey Powder
+  [     key      | modeled | measured |  diff  ]
+  water              3.19      3.19      0.00 %
+  protein           12.90     12.90      0.00 %
+  fat                1.07      1.07      0.00 %
+  carbohydrate      74.50     74.50      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            74.50     74.50      0.00 %
+  ash                8.34      8.35      0.12 %
+
+USDA Sweet Whey Powder (Label)
+  [     key      | modeled | measured |  diff  ]
+  water              2.00      3.19     37.30 %
+  protein           12.90     12.90      0.00 %
+  fat                1.07      1.07      0.00 %
+  carbohydrate      74.50     74.50      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            74.50     74.50      0.00 %
+  ash                9.53      8.35     12.38 %

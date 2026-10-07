@@ -156,5 +156,33 @@
       "protein": 26.3
     },
     "comments": "https://fdc.nal.usda.gov/food-details/173454/nutrients"
+  },
+  {
+    "name": "USDA Sweet Whey (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 27,
+      "total_fat": { "grams": 0.36 },
+      "saturated_fat": 0.23,
+      "sugars": 5.14,
+      "protein": 0.85,
+      "solids_source": "Whey"
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/171282/nutrients, whose sugars are its carbohydrate by difference, so they already hold the unaccounted solids that the label estimate adds"
+  },
+  {
+    "name": "USDA Sweet Whey Powder (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 353,
+      "total_fat": { "grams": 1.07 },
+      "saturated_fat": 0.684,
+      "sugars": 74.5,
+      "protein": 12.9,
+      "solids_source": "Whey"
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/171283/nutrients, whose sugars are its carbohydrate by difference, so they already hold the unaccounted solids that the label estimate adds"
   }
 ]

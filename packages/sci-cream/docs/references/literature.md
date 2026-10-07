@@ -193,3 +193,9 @@
 [^95]: American Dairy Products Institute. (2023). [_Whey Protein Isolate (WPI) Standard_](https://adpi.org/wp-content/uploads/2023/07/WPI-Standard-v4.0_2023.pdf).
 
 [^96]: Southward, C. R. (n.d.). [_Casein Products_](https://nzic.org.nz/unsecure_files/book/3E.pdf). New Zealand Institute of Chemistry.
+
+[^97]: American Dairy Products Institute. (2023). [_Whey Protein Concentrate (WPC) Standard_](https://adpi.org/wp-content/uploads/2023/07/WPC-Standard-v4.0_2023.pdf).
+
+[^98]: American Dairy Products Institute. (n.d.). [_Ingredient Resource Center_](https://adpi.org/ingredient-resources/).
+
+[^99]: American Dairy Products Institute. (n.d.). [_The Powerful List of Dairy Ingredients_](https://adpi.org/the-powerful-list-of-dairy-ingredients/).

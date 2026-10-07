@@ -200,9 +200,10 @@ The brand- and country-neutral `DairySimpleSpec` milk/cream entries (`0% Milk`, 
 `35% Cream`, …) are the canonical **defaults**, surfaced through the friendly aliases (`Whole Milk`,
 `Half and Half`, `Whipping Cream`, …). They are preferred as defaults because they span the full fat
 ladder (only the Simple set covers every rung), model milk salts as a distinct MSNF component, and
-stay consistent with the crate's own composition model.
+stay consistent with the crate's own composition model. The Simple whey entries (`Whey Powder`,
+`Whey Protein Concentrate 34%` and `80%`, `Whey Protein Isolate`) span the protein ladder likewise.
 
-The named-source entries, `USDA …` (`DairySheetSpec`) and `Sealtest …`, `Carnation …`,
+The named-source entries, `USDA …` and `USDEC …` (`DairySheetSpec`) and `Sealtest …`, `Carnation …`,
 `Eagle Brand …` (`DairyLabelSpec`), are real-world **reference data**, not defaults. They back the
 cross-source `compare_specs_*` tests in `src/tests/embedded/compare_specs/` — which treat the Simple
 specs as the baseline, and also compare test-only `USDA … (Label)` variants of the sheets — and are

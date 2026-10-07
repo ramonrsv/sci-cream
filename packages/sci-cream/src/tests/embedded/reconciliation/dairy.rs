@@ -15,6 +15,11 @@
 //! The labels' water and ash show how [`DairyLabelSpec`] estimates the milk solids non-fat (MSNF)
 //! around them: sugars and protein make up all of it but its [`STD_MINERALS_IN_MSNF`] share of ash.
 //! Each listing's water and ash miss by how far its own MSNF departs from that split, either way.
+//!
+//! For whey, the labels' estimate also adds the solids that lactose, protein, and minerals leave
+//! unaccounted, see [`unaccounted_in_snf`], keeping them with the minerals, in the ash. The whey
+//! listings' sugars are carbohydrate by difference, which holds them already, so the labels count
+//! them twice and fall short of water, the powder's down to the 2% floor.
 //
 // @todo Once milk solids track their minerals apart from the rest, reconcile ash against those. The
 // sheets' ash misses should then go to zero, moving to the other milk solids that aren't minerals.
@@ -27,7 +32,7 @@ use crate::tests::asserts::TESTS_EPSILON;
 
 #[cfg(doc)]
 use crate::{
-    constants::composition::dairy::STD_MINERALS_IN_MSNF,
+    constants::composition::dairy::{STD_MINERALS_IN_MSNF, unaccounted_in_snf},
     specs::{DairyLabelSpec, DairySheetSpec},
 };
 
@@ -220,6 +225,36 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
         POWDER_SHEET_CEILING,
         POWDER_LABEL_CEILING,
     ),
+    // https://fdc.nal.usda.gov/food-details/171282/nutrients
+    (
+        "USDA Sweet Whey",
+        Proximates {
+            water: 93.1,
+            protein: 0.85,
+            fat: 0.36,
+            carbohydrate: 5.14,
+            fiber: 0.0,
+            sugars: 5.14,
+            ash: 0.53,
+        },
+        WHEY_SHEET_CEILING,
+        WHEY_LABEL_CEILING,
+    ),
+    // https://fdc.nal.usda.gov/food-details/171283/nutrients
+    (
+        "USDA Sweet Whey Powder",
+        Proximates {
+            water: 3.19,
+            protein: 12.9,
+            fat: 1.07,
+            carbohydrate: 74.5,
+            fiber: 0.0,
+            sugars: 74.5,
+            ash: 8.35,
+        },
+        WHEY_POWDER_SHEET_CEILING,
+        WHEY_POWDER_LABEL_CEILING,
+    ),
 ];
 
 /// Per-field ceilings on relative error vs the measured value, in percent — fluid milk sheets.
@@ -299,6 +334,32 @@ const POWDER_SHEET_CEILING: Proximates = Proximates {
 const POWDER_LABEL_CEILING: Proximates = Proximates {
     water: 17.0,
     ash: 7.5,
+    ..Proximates::splat(TESTS_EPSILON)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — fluid whey sheet.
+const WHEY_SHEET_CEILING: Proximates = Proximates {
+    ash: 4.0,
+    ..Proximates::splat(TESTS_EPSILON)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — fluid whey label.
+const WHEY_LABEL_CEILING: Proximates = Proximates {
+    water: 0.5,
+    ash: 33.0,
+    ..Proximates::splat(TESTS_EPSILON)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — whey powder sheet.
+const WHEY_POWDER_SHEET_CEILING: Proximates = Proximates {
+    ash: 0.5,
+    ..Proximates::splat(TESTS_EPSILON)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — whey powder label.
+const WHEY_POWDER_LABEL_CEILING: Proximates = Proximates {
+    water: 37.5,
+    ash: 14.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 

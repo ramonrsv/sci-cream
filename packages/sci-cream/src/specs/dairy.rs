@@ -2179,6 +2179,170 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 1.036);
     }
 
+    // USDEC, Reference Manual for U.S. Whey and Lactose Products (2003), Table 6, pp. 51-52
+    pub(crate) const ING_SPEC_DAIRY_SHEET_WPC_80_USDEC_STR: &str = r#"{
+      "name": "USDEC Whey Protein Concentrate 80%",
+      "category": "Dairy",
+      "DairySheetSpec": {
+        "water": 4.11,
+        "energy": 412,
+        "fat": 6.6,
+        "sugars": { "lactose": 5.31 },
+        "protein": 80,
+        "ash": 3.98,
+        "solids_source": "Whey"
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_SHEET_WPC_80_USDEC: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "USDEC Whey Protein Concentrate 80%".to_string(),
+        category: Category::Dairy,
+        spec: DairySheetSpec {
+            water: 4.11,
+            energy: Some(412.0),
+            fat: 6.6,
+            saturated_fat: None,
+            trans_fat: None,
+            sugars: Sugars::new().lactose(5.31),
+            protein: 80.0,
+            ash: Some(3.98),
+            solids_source: Some(SolidsSource::Whey),
+        }
+        .into(),
+    });
+
+    pub(crate) static COMP_WPC_80_USDEC: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(412.0)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(6.6).saturated(4.29).trans(0.231))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(5.31)))
+                        .proteins(MilkProteins::new().whey(80.0))
+                        .others(3.98),
+                ),
+            )
+            .pod(0.8496)
+            .pac(PAC::new().sugars(5.31).msnf_ws_salts(32.8055))
+    });
+
+    #[test]
+    fn to_composition_dairy_sheet_spec_wpc_80_usdec() {
+        let comp = ING_SPEC_DAIRY_SHEET_WPC_80_USDEC.spec.to_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 412.0);
+
+        assert_eq!(comp.get(CompKey::MilkFat), 6.6);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 5.31);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 89.29);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 83.98);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 80.0);
+        assert_eq_flt_test!(comp.get(CompKey::Whey), 80.0);
+        assert_eq_flt_test!(comp.get(CompKey::Casein), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 95.89);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 80.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 95.89);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 4.11);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.8496);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 5.31);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 32.8055);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 38.1155);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 4.29);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.231);
+    }
+
+    // https://www.hilmar.com/wp-content/uploads/2023/07/Hilmar-9000-WPI.pdf
+    pub(crate) const ING_SPEC_DAIRY_SHEET_WPI_HILMAR_STR: &str = r#"{
+      "name": "Hilmar 9000 Whey Protein Isolate",
+      "category": "Dairy",
+      "DairySheetSpec": {
+        "water": 4.5,
+        "energy": 372,
+        "fat": 0.5,
+        "sugars": { "lactose": 1 },
+        "protein": 89,
+        "ash": 2.5,
+        "solids_source": "Whey"
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_SHEET_WPI_HILMAR: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Hilmar 9000 Whey Protein Isolate".to_string(),
+        category: Category::Dairy,
+        spec: DairySheetSpec {
+            water: 4.5,
+            energy: Some(372.0),
+            fat: 0.5,
+            saturated_fat: None,
+            trans_fat: None,
+            sugars: Sugars::new().lactose(1.0),
+            protein: 89.0,
+            ash: Some(2.5),
+            solids_source: Some(SolidsSource::Whey),
+        }
+        .into(),
+    });
+
+    pub(crate) static COMP_WPI_HILMAR: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(372.0)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(0.5).saturated(0.325).trans(0.0175))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(1.0)))
+                        .proteins(MilkProteins::new().whey(89.0))
+                        .others(5.0),
+                ),
+            )
+            .pod(0.16)
+            .pac(PAC::new().sugars(1.0).msnf_ws_salts(34.9034))
+    });
+
+    #[test]
+    fn to_composition_dairy_sheet_spec_wpi_hilmar() {
+        let comp = ING_SPEC_DAIRY_SHEET_WPI_HILMAR.spec.to_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 372.0);
+
+        assert_eq!(comp.get(CompKey::MilkFat), 0.5);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 1.0);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 95.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 94.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 89.0);
+        assert_eq_flt_test!(comp.get(CompKey::Whey), 89.0);
+        assert_eq_flt_test!(comp.get(CompKey::Casein), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 95.5);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 89.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 95.5);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 4.5);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.16);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 1.0);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 34.9034);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 35.9034);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.325);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0175);
+    }
+
     // https://leanfit.ca/collections/sport/products/leanfit-sport-whey-isolate-unflavoured-2kg
     pub(crate) const ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE_STR: &str = r#"{
       "name": "Leanfit Sport Whey Isolate",
@@ -2527,6 +2691,12 @@ pub(crate) mod tests {
                     ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_THELAND.clone(),
                     Some(*COMP_WHOLE_MILK_POWDER_THELAND),
                 ),
+                (
+                    ING_SPEC_DAIRY_SHEET_WPC_80_USDEC_STR,
+                    ING_SPEC_DAIRY_SHEET_WPC_80_USDEC.clone(),
+                    Some(*COMP_WPC_80_USDEC),
+                ),
+                (ING_SPEC_DAIRY_SHEET_WPI_HILMAR_STR, ING_SPEC_DAIRY_SHEET_WPI_HILMAR.clone(), Some(*COMP_WPI_HILMAR)),
                 (
                     ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE_STR,
                     ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE.clone(),
@@ -2934,20 +3104,6 @@ pub(crate) mod tests {
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
     }
 
-    fn empty_dairy_sheet_spec() -> DairySheetSpec {
-        DairySheetSpec {
-            water: 0.0,
-            energy: None,
-            fat: 0.0,
-            saturated_fat: None,
-            trans_fat: None,
-            sugars: Sugars::new(),
-            protein: 0.0,
-            ash: None,
-            solids_source: None,
-        }
-    }
-
     fn usda_whole_milk_sheet_spec() -> DairySheetSpec {
         let TaggedSpec::DairySheetSpec(spec) = ING_SPEC_DAIRY_SHEET_WHOLE_MILK_USDA.spec else {
             unreachable!("the USDA whole milk asset is a DairySheetSpec");
@@ -2959,17 +3115,7 @@ pub(crate) mod tests {
     fn dairy_sheet_spec_whey_unaccounted_solids() {
         // Hilmar 9000's bulletin sums to 97.5%, so beside its 2.5 g of ash, the other milk solids
         // hold the 2.5 g it doesn't account for
-        let comp = DairySheetSpec {
-            water: 4.5,
-            fat: 0.5,
-            sugars: Sugars::new().lactose(1.0),
-            protein: 89.0,
-            ash: Some(2.5),
-            solids_source: Some(SolidsSource::Whey),
-            ..empty_dairy_sheet_spec()
-        }
-        .to_composition()
-        .unwrap();
+        let comp = ING_SPEC_DAIRY_SHEET_WPI_HILMAR.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::MSNF), 95.0);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 1.0);

@@ -270,6 +270,82 @@ p. 48)[^20], also in agreement with bulk products, e.g. ['MMPA - Grade A Whole M
 Kg'](https://bulkmart.ca/products/mmpa-grade-a-whole-milk-powder-26-25-kg), ['Whole Milk Powder 26%
 25 kg'](https://www.pantrylot.com/products/whole-milk-powder-26-25-kg).
 
+## Whey Powder
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 1, "msnf": 96, "solids_source": "Whey" } }
+```
+
+A consolidation of various sources: Ice Cream 8th edition (Goff & Hartel, 2025, Table 3.2,
+p. 48)[^20], Reference Manual for U.S. Whey and Lactose Products (USDEC, 2003, p. 28)[^91], USDA
+FoodData Central - SR Legacy - [Whey, sweet,
+dried](https://fdc.nal.usda.gov/food-details/171283/nutrients). Its 97% solids follow the mix
+calculations (Goff & Hartel, 2025, p. 144)[^20], (Goff, n.d., "19. Mix Calculations")[^90], rather
+than the 93% of Goff & Hartel's table - see "Goff & Hartel Dry Whey" for more details. Its fat,
+moisture, and protein are within ADPI's limits for dry sweet whey (ADPI, 2023, pp. 1-2)[^93]. Goff &
+Hartel's and USDA's are also available as individual entries: "Goff & Hartel Dry Whey" and "USDA
+Sweet Whey Powder". Example bulk product listing: [Whey Powder - 25
+Kg](https://bulkmart.ca/products/whey-powder-25-kg).
+
+## Whey Protein Concentrate 34%
+
+```json
+{
+  "category": "Dairy",
+  "DairySimpleSpec": { "fat": 4, "msnf": 92, "protein": 34, "solids_source": "Whey" }
+}
+```
+
+Simplified version of 'USDEC Whey Protein Concentrate 34%' (USDEC, 2003, Table 6, pp. 51-52)[^91],
+also in agreement with the typical values of the WPC Standard (ADPI, 2023, p. 1)[^97] and with bulk
+products, e.g. ['Whey Protein Concentrate WPC 30-40% - 25
+Kg'](https://bulkmart.ca/products/whey-protein-concentrate-wpc-30-40-25-kg).
+
+## Whey Protein Concentrate 80%
+
+```json
+{
+  "category": "Dairy",
+  "DairySimpleSpec": { "fat": 7, "msnf": 89, "protein": 80, "solids_source": "Whey" }
+}
+```
+
+Simplified version of 'USDEC Whey Protein Concentrate 80%' (USDEC, 2003, Table 6, pp. 51-52)[^91],
+also in agreement with the typical values of the WPC Standard (ADPI, 2023, p. 1)[^97], other than
+its protein (83.3% on a dry basis, as in USDEC's profile, vs ADPI's 80.0-82.0%), and with bulk
+products, e.g. ['Whey Protein WPC 80% - 20
+Kg'](https://bulkmart.ca/products/whey-protein-wpc-80-20-kg).
+
+## Whey Protein Isolate
+
+```json
+{
+  "category": "Dairy",
+  "DairySimpleSpec": { "fat": 1, "msnf": 95, "protein": 90, "solids_source": "Whey" }
+}
+```
+
+Simplified version of 'USDEC Whey Protein Isolate' (USDEC, 2003, Table 6, pp. 51-52)[^91], with its
+protein at the low end of the typical 90.0-92.0% of whey protein isolate (USDEC, 2003, p. 33)[^91].
+
+## WPC 34
+
+```json
+{ "for": "Whey Protein Concentrate 34%" }
+```
+
+## WPC 80
+
+```json
+{ "for": "Whey Protein Concentrate 80%" }
+```
+
+## WPI
+
+```json
+{ "for": "Whey Protein Isolate" }
+```
+
 ## Goff & Hartel Skim Milk
 
 ```json
@@ -416,6 +492,21 @@ Kg'](https://bulkmart.ca/products/mmpa-grade-a-whole-milk-powder-26-25-kg), ['Wh
 ```
 
 (Goff & Hartel, 2025, Table 3.2, p. 48)[^20]
+
+## Goff & Hartel Dry Whey
+
+```json
+{
+  "category": "Dairy",
+  "DairySimpleSpec": { "fat": 0, "msnf": 97, "protein": 12.9, "solids_source": "Whey" }
+}
+```
+
+(Goff & Hartel, 2025, Table 3.2, p. 48)[^20], with 97% MSNF in place of the table's 93%, likely an
+error. The 93% leaves 7% water, above both the 5.0% moisture maximum for dry whey (ADPI, 2023,
+p. 2)[^93] and the under 4% usual for dried dairy products (Goff & Hill & Ferrer, 2026,
+Chapter 28)[^62], while the book's own mix calculations take whey powder at 97% solids (Goff &
+Hartel, 2025, p. 144)[^20], as does Goff's e-Book (Goff, n.d., "19. Mix Calculations")[^90].
 
 ## USDA Fat-Free (Skim) Milk
 
@@ -1072,6 +1163,145 @@ the packaging label from a bag I had on hand).
 From nutrition facts table (could not find a link - it's sold in Asian markets, but was able to use
 the packaging label from a bag I had on hand)
 
+## USDA Sweet Whey
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 93.1,
+    "energy": 27,
+    "fat": 0.36,
+    "saturated_fat": 0.23,
+    "sugars": { "lactose": 5.14 },
+    "protein": 0.85,
+    "ash": 0.53,
+    "solids_source": "Whey"
+  }
+}
+```
+
+USDA FoodData Central - SR Legacy - [Whey, sweet,
+fluid](https://fdc.nal.usda.gov/food-details/171282/nutrients)
+
+## USDA Sweet Whey Powder
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 3.19,
+    "energy": 353,
+    "fat": 1.07,
+    "saturated_fat": 0.684,
+    "sugars": { "lactose": 74.5 },
+    "protein": 12.9,
+    "ash": 8.35,
+    "solids_source": "Whey"
+  }
+}
+```
+
+USDA FoodData Central - SR Legacy - [Whey, sweet,
+dried](https://fdc.nal.usda.gov/food-details/171283/nutrients). USDEC reprints it as the dry sweet
+whey of its nutritional composition table (USDEC, 2003, Table 6, pp. 51-52)[^91].
+
+## USDEC Whey Protein Concentrate 34%
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 3.93,
+    "energy": 369,
+    "fat": 3.93,
+    "sugars": { "lactose": 50.8 },
+    "protein": 34.36,
+    "ash": 6.99,
+    "solids_source": "Whey"
+  }
+}
+```
+
+(USDEC, 2003, Table 6, pp. 51-52)[^91]
+
+## USDEC Whey Protein Concentrate 80%
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 4.11,
+    "energy": 412,
+    "fat": 6.6,
+    "sugars": { "lactose": 5.31 },
+    "protein": 80,
+    "ash": 3.98,
+    "solids_source": "Whey"
+  }
+}
+```
+
+(USDEC, 2003, Table 6, pp. 51-52)[^91]
+
+## USDEC Whey Protein Isolate
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 4.5,
+    "energy": 371,
+    "fat": 0.5,
+    "sugars": { "lactose": 0.87 },
+    "protein": 90.75,
+    "ash": 3.38,
+    "solids_source": "Whey"
+  }
+}
+```
+
+(USDEC, 2003, Table 6, pp. 51-52)[^91]
+
+## USDEC WPC 34
+
+```json
+{ "for": "USDEC Whey Protein Concentrate 34%" }
+```
+
+## USDEC WPC 80
+
+```json
+{ "for": "USDEC Whey Protein Concentrate 80%" }
+```
+
+## USDEC WPI
+
+```json
+{ "for": "USDEC Whey Protein Isolate" }
+```
+
+## Hilmar 9000 Whey Protein Isolate
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 4.5,
+    "energy": 372,
+    "fat": 0.5,
+    "sugars": { "lactose": 1 },
+    "protein": 89,
+    "ash": 2.5,
+    "solids_source": "Whey"
+  }
+}
+```
+
+From [product bulletin](https://www.hilmar.com/wp-content/uploads/2023/07/Hilmar-9000-WPI.pdf)
+(revised March 2026), typical values. They sum to 97.5%, so the 2.5 g they leave unaccounted join
+the ash under other milk solids.
+
 ## Leanfit Sport Whey Isolate
 
 ```json
@@ -1258,12 +1488,6 @@ Label lists 0.12g of salt.
 From [nutrition facts table (strawberry delight
 variant)](https://www.optimumnutrition.com/products/gold-standard-100-casein-protein-powder-eu?variant=52105828106507).
 Label lists 1.4g of salt.
-
-## Whey Isolate
-
-```json
-{ "for": "Leanfit Sport Whey Isolate" }
-```
 
 ## Casein
 

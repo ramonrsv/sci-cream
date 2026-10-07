@@ -1,7 +1,7 @@
 //! Cross-source consistency checks for dairy ingredients — milk, cream, evaporated and condensed
-//! milk, milk powders, and protein powders — comparing each Simple/default entry against USDA,
-//! Sealtest, Carnation, Goff & Hartel, and brand references. Each USDA listing is compared both as
-//! its embedded sheet and as its test-only `… (Label)` variant.
+//! milk, milk powders, whey, and protein powders — comparing each Simple/default entry against
+//! USDA, USDEC, Sealtest, Carnation, Goff & Hartel, and brand references. Each USDA listing is
+//! compared both as its embedded sheet and as its test-only `… (Label)` variant.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -382,14 +382,62 @@ fn compare_specs_whole_milk_powder() {
 }
 
 #[test]
-fn compare_specs_whey_protein() {
+fn compare_specs_sweet_whey() {
+    let sources = [("USDA", "USDA Sweet Whey"), ("USDA Label", "USDA Sweet Whey (Label)")].map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_whey_powder() {
     let sources = [
+        ("Simple", "Whey Powder"),
+        ("Goff & Hartel", "Goff & Hartel Dry Whey"),
+        ("USDA", "USDA Sweet Whey Powder"),
+        ("USDA Label", "USDA Sweet Whey Powder (Label)"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_wpc_34() {
+    assert_true!(is_alias_for("WPC 34", "Whey Protein Concentrate 34%"));
+    assert_true!(is_alias_for("USDEC WPC 34", "USDEC Whey Protein Concentrate 34%"));
+
+    let sources = [
+        ("Simple", "Whey Protein Concentrate 34%"),
+        ("USDEC", "USDEC Whey Protein Concentrate 34%"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_whey_protein() {
+    assert_true!(is_alias_for("WPC 80", "Whey Protein Concentrate 80%"));
+    assert_true!(is_alias_for("USDEC WPC 80", "USDEC Whey Protein Concentrate 80%"));
+
+    let sources = [
+        ("Simple", "Whey Protein Concentrate 80%"),
+        ("USDEC", "USDEC Whey Protein Concentrate 80%"),
         ("MyProtein", "MyProtein Impact Whey Protein"),
         ("Optimum Nutrition", "Optimum Nutrition Gold Standard 100% Whey"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 12.0);
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 21.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -397,7 +445,13 @@ fn compare_specs_whey_protein() {
 
 #[test]
 fn compare_specs_whey_isolate() {
+    assert_true!(is_alias_for("WPI", "Whey Protein Isolate"));
+    assert_true!(is_alias_for("USDEC WPI", "USDEC Whey Protein Isolate"));
+
     let sources = [
+        ("Simple", "Whey Protein Isolate"),
+        ("USDEC", "USDEC Whey Protein Isolate"),
+        ("Hilmar", "Hilmar 9000 Whey Protein Isolate"),
         ("Bulk Barn", "Bulk Barn Whey Protein Isolate 90%"),
         ("Leanfit", "Leanfit Sport Whey Isolate"),
         ("MyProtein", "MyProtein Clear Whey Isolate"),
@@ -405,14 +459,15 @@ fn compare_specs_whey_isolate() {
     ]
     .map(source_str_to_comp);
 
-    // The four isolates span very different formulations. Bulk Barn and Leanfit sit at the
-    // upper end of WPI purity (~90% protein, residual fat and sugars); ON Gold Standard
-    // 100% Isolate sits in the middle at ~83% protein with low but non-zero fat and sugar.
-    // MyProtein Clear is a hydrolyzed/extra-filtered isolate intended to mix into a clear
-    // juice-like drink rather than a shake — it lists only 80% protein and exactly 0g fat
-    // and 0g sugar, so whatever else its solids hold shows up as water. The largest misses are:
-    //    - TotalSolids    14.99 pp  (Bulk Barn, Leanfit vs MyProtein)
-    //    - Water          14.99 pp  (Bulk Barn, Leanfit vs MyProtein)
+    // The four retail isolates span very different formulations. Bulk Barn and Leanfit sit at the
+    // upper end of WPI purity (~90% protein, residual fat and sugars), as do the Simple, USDEC,
+    // and Hilmar entries; ON Gold Standard 100% Isolate sits in the middle at ~83% protein with
+    // low but non-zero fat and sugar. MyProtein Clear is a hydrolyzed/extra-filtered isolate
+    // intended to mix into a clear juice-like drink rather than a shake — it lists only 80%
+    // protein and exactly 0g fat and 0g sugar, so whatever else its solids hold shows up as
+    // water. The largest misses are:
+    //    - TotalSolids    14.99 pp  (Simple, USDEC, Hilmar, Bulk Barn, Leanfit vs MyProtein)
+    //    - Water          14.99 pp  (Simple, USDEC, Hilmar, Bulk Barn, Leanfit vs MyProtein)
     let ceiling = KeyCeiling::new(10.0)
         .with(CompKey::Energy, 13.0)
         .with(CompKey::TotalSolids, 15.0)
