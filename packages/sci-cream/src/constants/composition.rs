@@ -117,8 +117,8 @@ pub mod dairy {
     /// linearly to 99.9% in isolates. The gap is expected, as whey's total solids are not often
     /// equivalent to the sum of its separately determined constituents (de Wit, 2001, p. 15)[^92].
     /// Sources that give lactose as the carbohydrates by difference count the gap in it too, so
-    /// they run higher than the lactose constants. The rest counts with the minerals, under other
-    /// milk solids, in [`DairySimpleSpec`](crate::specs::DairySimpleSpec).
+    /// they run higher than the lactose constants. The gap, [`unaccounted_in_snf`], counts with the
+    /// minerals, under other milk solids, in the dairy [specs](crate::specs).
     #[doc = include_str!("../../docs/references/index/20.md")]
     #[doc = include_str!("../../docs/references/index/91.md")]
     #[doc = include_str!("../../docs/references/index/92.md")]
@@ -294,6 +294,39 @@ pub mod dairy {
                 [STD_MINERALS_IN_WS - slope * STD_PROTEIN_IN_WS, slope]
             }
             SolidsSource::Casein => [STD_MINERALS_IN_CASEIN, 0.0],
+        }
+    }
+
+    /// Estimate the unaccounted fraction of `source`'s solids non-fat from their protein fraction.
+    ///
+    /// Evaluates the line [`unaccounted_in_snf_coeffs`] (`a + b × protein_in_snf`).
+    ///
+    /// This is a pure evaluation and does not validate its inputs.
+    #[must_use]
+    pub const fn unaccounted_in_snf(protein_in_snf: f64, source: SolidsSource) -> f64 {
+        let [a, b] = unaccounted_in_snf_coeffs(source);
+        a + b * protein_in_snf
+    }
+
+    /// Get coefficients `[a, b]` of the line `a + b × protein_in_snf` for the unaccounted fraction
+    /// of `source`'s solids non-fat - zero for milk and casein, linear for whey.
+    ///
+    /// The unaccounted solids are what the protein, lactose, and minerals leave. Milk and casein
+    /// solids are modeled as wholly those, so their `a` and `b` are 0. Whey's is what its protein
+    /// and the [`lactose_in_snf`] and [`minerals_in_snf`] lines leave, falling from 2% in sweet
+    /// whey to 0.1% in isolates, see the [`whey`] module.
+    ///
+    /// See [`unaccounted_in_snf`] for a function doing the computation with these coefficients.
+    #[must_use]
+    pub const fn unaccounted_in_snf_coeffs(source: SolidsSource) -> [f64; 2] {
+        match source {
+            SolidsSource::Milk | SolidsSource::Casein => [0.0, 0.0],
+            SolidsSource::Whey => {
+                // `1 - protein - lactose - minerals`, lactose and minerals each `a + b × protein`
+                let [lactose_a, lactose_b] = lactose_in_snf_coeffs(source);
+                let [minerals_a, minerals_b] = minerals_in_snf_coeffs(source);
+                [1.0 - lactose_a - minerals_a, -1.0 - lactose_b - minerals_b]
+            }
         }
     }
 
@@ -780,13 +813,48 @@ mod tests {
     }
 
     #[test]
-    fn dairy_whey_lines_leave_non_negative_unaccounted_solids() {
-        // Protein, minerals, and lactose don't exceed the whey solids at either anchor, and so
-        // anywhere between, since the unaccounted solids they leave are linear in the protein too
-        for protein_fraction in [dairy::whey::STD_PROTEIN_IN_WS, dairy::whey::STD_PROTEIN_IN_WPI] {
-            let minerals_fraction = dairy::minerals_in_snf(protein_fraction, SolidsSource::Whey);
+    fn dairy_unaccounted_in_snf() {
+        // Whey's line leaves what the constants leave at each anchor, 2% of sweet whey solids and
+        // 0.1% of isolate solids, to within float rounding
+        for (protein_fraction, lactose_fraction, minerals_fraction) in [
+            (dairy::whey::STD_PROTEIN_IN_WS, dairy::whey::STD_LACTOSE_IN_WS, dairy::whey::STD_MINERALS_IN_WS),
+            (dairy::whey::STD_PROTEIN_IN_WPI, dairy::whey::STD_LACTOSE_IN_WPI, dairy::whey::STD_MINERALS_IN_WPI),
+        ] {
+            assert_abs_diff_eq!(
+                dairy::unaccounted_in_snf(protein_fraction, SolidsSource::Whey),
+                1.0 - protein_fraction - lactose_fraction - minerals_fraction,
+                epsilon = f64::EPSILON
+            );
+        }
+
+        // Milk and casein solids are wholly protein, lactose, and minerals, whatever their protein
+        for protein_fraction in [0.0, 0.5, 1.0] {
+            assert_eq!(dairy::unaccounted_in_snf(protein_fraction, SolidsSource::Milk), 0.0);
+            assert_eq!(dairy::unaccounted_in_snf(protein_fraction, SolidsSource::Casein), 0.0);
+        }
+    }
+
+    #[test]
+    fn dairy_whey_lines_partition_the_solids() {
+        // From sweet whey to isolate, protein, lactose, minerals, and unaccounted solids make up
+        // all of the whey solids, to within float rounding, with no negative unaccounted solids
+        for protein_fraction in [
+            dairy::whey::STD_PROTEIN_IN_WS,
+            0.25,
+            0.5,
+            0.75,
+            dairy::whey::STD_PROTEIN_IN_WPI,
+        ] {
             let lactose_fraction = dairy::lactose_in_snf(protein_fraction, SolidsSource::Whey);
-            assert_ge!(1.0 - protein_fraction - minerals_fraction - lactose_fraction, 0.0);
+            let minerals_fraction = dairy::minerals_in_snf(protein_fraction, SolidsSource::Whey);
+            let unaccounted_fraction = dairy::unaccounted_in_snf(protein_fraction, SolidsSource::Whey);
+
+            assert_abs_diff_eq!(
+                protein_fraction + lactose_fraction + minerals_fraction + unaccounted_fraction,
+                1.0,
+                epsilon = f64::EPSILON
+            );
+            assert_ge!(unaccounted_fraction, 0.0);
         }
     }
 }

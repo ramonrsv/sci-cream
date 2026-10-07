@@ -7,11 +7,17 @@
 //! measured lactose, as for milk and cream, rather than its carbohydrate by difference.
 //!
 //! The sheets' water is transcribed too. Their ash is what the solids non-fat leave beside the
-//! sugars and protein, so it misses by however far the listing's proximates miss summing to 100 g.
+//! sugars and protein, so it misses by however far the listing's proximates miss summing to 100 g,
+//! the same miss the labels spread between their water and ash. Beside measurement error, it holds
+//! the organic acids, mostly citrate, that only carbohydrate by difference counts. The composition
+//! keeps those with the minerals, not as carbohydrate, so a sheet has no carbohydrates field.
 //!
 //! The labels' water and ash show how [`DairyLabelSpec`] estimates the milk solids non-fat (MSNF)
 //! around them: sugars and protein make up all of it but its [`STD_MINERALS_IN_MSNF`] share of ash.
 //! Each listing's water and ash miss by how far its own MSNF departs from that split, either way.
+//
+// @todo Once milk solids track their minerals apart from the rest, reconcile ash against those. The
+// sheets' ash misses should then go to zero, moving to the other milk solids that aren't minerals.
 
 #![cfg_attr(coverage, coverage(off))]
 #![expect(clippy::doc_markdown)] // _FoodData_ false positive

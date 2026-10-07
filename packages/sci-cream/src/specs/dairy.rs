@@ -12,7 +12,8 @@ use crate::{
         composition::dairy::{
             STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_MSNF_IN_MILK_SERUM,
             STD_PROTEIN_IN_MSNF, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
-            STD_WHEY_PROTEIN_IN_MSNF_PROTEIN, lactose_in_snf_coeffs, minerals_in_snf_coeffs, whey::STD_PROTEIN_IN_WS,
+            STD_WHEY_PROTEIN_IN_MSNF_PROTEIN, lactose_in_snf_coeffs, minerals_in_snf_coeffs, unaccounted_in_snf_coeffs,
+            whey::STD_PROTEIN_IN_WS,
         },
         density::solve_dairy_serving_grams,
         pac,
@@ -29,7 +30,7 @@ use crate::{
         self,
         composition::dairy::{
             self, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, casein::STD_MINERALS_IN_CASEIN, lactose_in_snf,
-            minerals_in_snf,
+            minerals_in_snf, unaccounted_in_snf,
         },
     },
 };
@@ -204,6 +205,8 @@ impl ToComposition for DairySimpleSpec {
 /// [`solids_source`](Self::solids_source): [`STD_MINERALS_IN_MSNF`] for
 /// [`Milk`](SolidsSource::Milk), [`STD_MINERALS_IN_CASEIN`] for [`Casein`](SolidsSource::Casein),
 /// and for [`Whey`](SolidsSource::Whey) a line in the protein fraction, see [`minerals_in_snf`].
+/// Whey solids also hold a small fraction that their lactose, protein, and minerals leave
+/// unaccounted, see [`unaccounted_in_snf`], which the estimate adds as well.
 #[doc = include_str!("../../docs/references/index/20.md")]
 #[doc = include_str!("../../docs/references/index/90.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
@@ -249,14 +252,17 @@ pub struct DairyLabelSpec {
     /// those cases, specifying the total carbohydrate content is recommended, as it allows for a
     /// more accurate estimation of the composition solids breakdown, water content, etc.
     ///
-    /// Note that any difference is included under [`Solids::other`], not under [`Solids::milk`].
+    /// Note that any difference is included under [`Solids::other`], not under [`Solids::milk`],
+    /// less whey's unaccounted solids, see [`unaccounted_in_snf`], to avoid counting them twice:
+    /// both carbohydrates by difference and the solids non-fat estimate include them.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub carbohydrates: Option<f64>,
     /// Sugars content per serving, in grams; the detailed composition is determined by
     /// [`lactose_free`](Self::lactose_free) and [`sucrose`](Self::sucrose).
     ///
-    /// If [`carbohydrates`](Self::carbohydrates) is specified, this must be a subset of it. If not
-    /// specified, they are assumed to be equal, which is the case for most dairy products.
+    /// These are the measured sugars that nutrition facts labels list; they must be a subset of
+    /// [`carbohydrates`](Self::carbohydrates) (by difference) if those are specified. If they are
+    /// not, then the two are assumed to be equal, which should be the case for most dairy products.
     pub sugars: f64,
     /// Protein content per serving, in grams.
     ///
@@ -313,10 +319,12 @@ impl ToComposition for DairyLabelSpec {
         let sucrose = sucrose.unwrap_or(0.0);
         let dairy_sugars = sugars - sucrose;
         let carbohydrates = carbohydrates.unwrap_or(sugars);
-        let other_carbohydrates = carbohydrates - sugars;
         let solids_source = solids_source.unwrap_or(SolidsSource::Milk);
 
         let calculated_snf = estimate_snf(dairy_sugars, protein, solids_source);
+        let unaccounted = estimate_unaccounted(calculated_snf, protein, solids_source);
+        let other_carbohydrates = f64::max(carbohydrates - sugars - unaccounted, 0.0);
+
         let max_solids = 1.0 - STD_MIN_WATER_CONTENT_IN_MILK_POWDER;
         let snf_ceiling = |size: f64, fat| max_solids * size - fat - sucrose - other_carbohydrates;
 
@@ -545,13 +553,23 @@ const fn split_milk_sugars(sugars: Sugars) -> (Sugars, Sugars) {
     (milk_sugars, other_sugars)
 }
 
-/// Estimates the solids non-fat from their `sugars` and `protein`, adding `source`'s minerals
+/// Estimates the solids non-fat from their `sugars` and `protein`, adding `source`'s minerals and
+/// unaccounted solids, see [`minerals_in_snf`] and [`unaccounted_in_snf`].
 const fn estimate_snf(sugars: f64, protein: f64, source: SolidsSource) -> f64 {
-    // Solves `snf = sugars + protein + snf × minerals_in_snf(protein / snf)`. The fraction is
-    // linear, `a + b × protein / snf`, so `snf = sugars + protein + snf × (a + b × protein / snf)`.
-    // Solving for `snf` gives `snf = (sugars + (1 + b) × protein) / (1 - a)`
-    let [a, b] = minerals_in_snf_coeffs(source);
+    // Solves `snf = sugars + protein + snf × (minerals + unaccounted)`, both fractions linear in
+    // `protein / snf` and summing to `a + b × protein / snf`. Subbing in gives `snf = sugars +
+    // protein + snf × (a + b × protein / snf)`, so `snf = (sugars + (1 + b) × protein) / (1 - a)`
+    let [minerals_a, minerals_b] = minerals_in_snf_coeffs(source);
+    let [unaccounted_a, unaccounted_b] = unaccounted_in_snf_coeffs(source);
+    let (a, b) = (minerals_a + unaccounted_a, minerals_b + unaccounted_b);
     (sugars + (1.0 + b) * protein) / (1.0 - a)
+}
+
+/// Estimates the unaccounted solids in `snf` grams of `source`'s solids non-fat from its `protein`
+const fn estimate_unaccounted(snf: f64, protein: f64, source: SolidsSource) -> f64 {
+    // The solids, `snf × unaccounted_in_snf(protein / snf, source)`, are `a × snf + b × protein`
+    let [a, b] = unaccounted_in_snf_coeffs(source);
+    a * snf + b * protein
 }
 
 /// Estimates the lactose in `snf` grams of `source`'s solids non-fat from their `protein` content
@@ -587,8 +605,9 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         composition::{CompKey, SolidsBreakdown},
-        constants::composition::dairy::whey::{
-            STD_LACTOSE_IN_WPI, STD_LACTOSE_IN_WS, STD_MINERALS_IN_WPI, STD_MINERALS_IN_WS, STD_PROTEIN_IN_WPI,
+        constants::composition::dairy::{
+            lactose_in_snf, unaccounted_in_snf,
+            whey::{STD_LACTOSE_IN_WPI, STD_LACTOSE_IN_WS, STD_PROTEIN_IN_WPI},
         },
         error::Error,
         ingredient::Category,
@@ -2203,11 +2222,11 @@ pub(crate) mod tests {
                         .fats(Fats::new().total(1.2821).saturated(0.7692).trans(0.0449))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(2.5641)))
                         .proteins(MilkProteins::new().whey(89.7436))
-                        .others(3.5586),
+                        .others(3.7141),
                 ),
             )
             .pod(0.4103)
-            .pac(PAC::new().sugars(2.5641).msnf_ws_salts(35.2217))
+            .pac(PAC::new().sugars(2.5641).msnf_ws_salts(35.2788))
     });
 
     #[test]
@@ -2218,16 +2237,16 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 1.2821);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 2.5641);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 95.8663);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 93.3022);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 96.0218);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 93.4577);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 89.7436);
         assert_eq_flt_test!(comp.get(CompKey::Whey), 89.7436);
         assert_eq_flt_test!(comp.get(CompKey::Casein), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 97.1484);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 97.3039);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 89.7436);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 97.1484);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 2.8516);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 97.3039);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 2.6961);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
@@ -2237,8 +2256,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 2.5641);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.2217);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 37.7858);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.2788);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 37.8429);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.7692);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0449);
@@ -2290,12 +2309,12 @@ pub(crate) mod tests {
                             .fats(Fats::new().total(4.0).saturated(1.4).trans(0.14))
                             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(3.3)))
                             .proteins(MilkProteins::new().whey(80.0))
-                            .others(3.2759),
+                            .others(3.4436),
                     )
-                    .other(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().others(0.9))),
+                    .other(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().others(0.7478))),
             )
             .pod(0.528)
-            .pac(PAC::new().sugars(3.3).msnf_ws_salts(31.8083))
+            .pac(PAC::new().sugars(3.3).msnf_ws_salts(31.87))
     });
 
     #[test]
@@ -2309,16 +2328,16 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 4.0);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 3.3);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 86.5759);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 83.2759);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 86.7436);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 83.4436);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 80.0);
         assert_eq_flt_test!(comp.get(CompKey::Whey), 80.0);
         assert_eq_flt_test!(comp.get(CompKey::Casein), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 90.5759);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 90.7436);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 80.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 91.4759);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 8.5241);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 91.4915);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 8.5085);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
@@ -2328,8 +2347,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 3.3);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 31.8083);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 35.1083);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 31.87);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 35.17);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.4);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.14);
@@ -2560,33 +2579,57 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
     }
 
+    /// A label for 90 g of whey solids and 1 g of fat, whose sugars are the solids' lactose
+    fn whey_label_spec(protein_fraction: f64, carbohydrates: Option<f64>) -> DairyLabelSpec {
+        DairyLabelSpec {
+            serving_size: Unit::Grams(100.0),
+            energy: None,
+            total_fat: Unit::Grams(1.0),
+            saturated_fat: None,
+            trans_fat: None,
+            carbohydrates,
+            sugars: 90.0 * lactose_in_snf(protein_fraction, SolidsSource::Whey),
+            protein: 90.0 * protein_fraction,
+            lactose_free: None,
+            sucrose: None,
+            solids_source: Some(SolidsSource::Whey),
+        }
+    }
+
     #[test]
-    fn dairy_label_spec_whey_minerals_line_endpoints() {
-        // 90g of whey solids at each end of the line, sweet whey and isolate, with 1g of fat. The
-        // label's sugars are by difference, as USDA's are, so they hold the unaccounted solids too
-        for (protein_fraction, minerals_fraction) in [
-            (STD_PROTEIN_IN_WS, STD_MINERALS_IN_WS),
-            (STD_PROTEIN_IN_WPI, STD_MINERALS_IN_WPI),
-        ] {
-            let sugars_by_difference = 1.0 - protein_fraction - minerals_fraction;
-            let comp = DairyLabelSpec {
-                serving_size: Unit::Grams(100.0),
-                energy: None,
-                total_fat: Unit::Grams(1.0),
-                saturated_fat: None,
-                trans_fat: None,
-                carbohydrates: None,
-                sugars: 90.0 * sugars_by_difference,
-                protein: 90.0 * protein_fraction,
-                lactose_free: None,
-                sucrose: None,
-                solids_source: Some(SolidsSource::Whey),
+    fn dairy_label_spec_whey_lines_endpoints() {
+        // At both anchors the estimate adds minerals and unaccounted solids to lactose and protein;
+        // carbohydrates by difference hold the latter too, which leaves no other carbohydrates
+        for protein_fraction in [STD_PROTEIN_IN_WS, STD_PROTEIN_IN_WPI] {
+            let sugars = 90.0 * lactose_in_snf(protein_fraction, SolidsSource::Whey);
+            let unaccounted = 90.0 * unaccounted_in_snf(protein_fraction, SolidsSource::Whey);
+
+            for carbohydrates in [None, Some(sugars + unaccounted)] {
+                let comp = whey_label_spec(protein_fraction, carbohydrates)
+                    .to_composition()
+                    .unwrap();
+
+                assert_eq_flt_test!(comp.get(CompKey::MSNF), 90.0);
+                assert_eq_flt_test!(comp.get(CompKey::OtherSNFS), 0.0);
+                assert_eq_flt_test!(comp.get(CompKey::Water), 9.0);
             }
-            .to_composition()
-            .unwrap();
+        }
+    }
+
+    #[test]
+    fn dairy_label_spec_whey_other_carbohydrates_beyond_unaccounted_solids() {
+        // Carbohydrates beyond the sugars and the 1.8 g of unaccounted solids, e.g. from additives,
+        // are other carbohydrates; any up to that are already in the solids non-fat
+        let sugars = 90.0 * STD_LACTOSE_IN_WS;
+
+        for (carbohydrates, other_carbohydrates) in [(sugars + 1.8 + 2.0, 2.0), (sugars + 1.0, 0.0)] {
+            let comp = whey_label_spec(STD_PROTEIN_IN_WS, Some(carbohydrates))
+                .to_composition()
+                .unwrap();
 
             assert_eq_flt_test!(comp.get(CompKey::MSNF), 90.0);
-            assert_eq_flt_test!(comp.get(CompKey::Water), 9.0);
+            assert_eq_flt_test!(comp.get(CompKey::OtherSNFS), other_carbohydrates);
+            assert_eq_flt_test!(comp.get(CompKey::Water), 9.0 - other_carbohydrates);
         }
     }
 
