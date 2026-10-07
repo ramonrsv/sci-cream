@@ -4,8 +4,10 @@
 //! it deserializes, resolves to an ingredient, and satisfies the composition invariants. The others
 //! validate each ingredient's modeled composition against an external reference: a published label
 //! or listing (in [`reconciliation`]) or cross-checked across sources (in [`compare_specs`]).
-//! Unlike the colocated unit tests, these have no single code module to live beside.
+//! Unlike the colocated unit tests, these have no single code module to live beside. The latter two
+//! also check test-only variants of some entries, from [`variants`].
 
 mod compare_specs;
 mod integrity;
 mod reconciliation;
+pub(super) mod variants;

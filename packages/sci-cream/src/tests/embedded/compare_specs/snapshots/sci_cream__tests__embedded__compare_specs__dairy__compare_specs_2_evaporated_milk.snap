@@ -2,7 +2,23 @@
 source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
 expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
-sources: USDA, Carnation
+sources: USDA, USDA Label, Carnation
+
+Energy               2.73 pp  (USDA vs USDA Label)
+MilkFat              0.06 pp  (USDA vs USDA Label)
+Lactose              0.33 pp  (USDA vs USDA Label)
+MSNF                 0.06 pp  (USDA vs USDA Label)
+MilkSNFS             0.39 pp  (USDA vs USDA Label)
+MilkProteins         0.22 pp  (USDA vs USDA Label)
+MilkSolids           0.00 pp  (USDA vs USDA Label)
+TotalSolids          0.14 pp  (USDA vs USDA Label)
+Water                0.14 pp  (USDA vs USDA Label)
+POD                  0.05 pp  (USDA vs USDA Label)
+PACsgr               0.33 pp  (USDA vs USDA Label)
+PACmlk               0.02 pp  (USDA vs USDA Label)
+TotalPAC             0.31 pp  (USDA vs USDA Label)
+SaturatedFat         0.04 pp  (USDA vs USDA Label)
+TransFat             0.00 pp  (USDA vs USDA Label)
 
 Energy              11.64 pp  (USDA vs Carnation)
 MilkFat              0.14 pp  (USDA vs Carnation)
@@ -19,3 +35,19 @@ PACmlk              10.58 pp  (USDA vs Carnation)
 TotalPAC            32.61 pp  (USDA vs Carnation)
 SaturatedFat         0.21 pp  (USDA vs Carnation)
 TransFat             0.01 pp  (USDA vs Carnation)
+
+Energy              14.37 pp  (USDA Label vs Carnation)
+MilkFat              0.20 pp  (USDA Label vs Carnation)
+Lactose             21.70 pp  (USDA Label vs Carnation)
+MSNF                28.86 pp  (USDA Label vs Carnation)
+MilkSNFS             7.16 pp  (USDA Label vs Carnation)
+MilkProteins         4.85 pp  (USDA Label vs Carnation)
+MilkSolids          28.65 pp  (USDA Label vs Carnation)
+TotalSolids          0.05 pp  (USDA Label vs Carnation)
+Water                0.05 pp  (USDA Label vs Carnation)
+POD                  3.47 pp  (USDA Label vs Carnation)
+PACsgr              21.70 pp  (USDA Label vs Carnation)
+PACmlk              10.60 pp  (USDA Label vs Carnation)
+TotalPAC            32.30 pp  (USDA Label vs Carnation)
+SaturatedFat         0.25 pp  (USDA Label vs Carnation)
+TransFat             0.01 pp  (USDA Label vs Carnation)

@@ -1,8 +1,17 @@
 //! Reconciles the `USDA …` dairy entries against the proximates their listings measure.
 //!
-//! Each entry is a [`DairySheetSpec`], whose water, protein, fat and sugars are transcribed inputs,
-//! so they match exactly. Its ash is what the solids non-fat leave beside the sugars and protein,
-//! so it misses by however far the listing's proximates miss summing to 100 g.
+//! Each listing is reconciled twice, as its embedded [`DairySheetSpec`] and as the test-only
+//! [`DairyLabelSpec`] of the same listing, named `… (Label)`. Protein, fat and sugars are
+//! transcribed inputs to both, so they match exactly. Both take the carbohydrate as the sugars,
+//! except heavy cream's label, which transcribes it, so it misses wherever a listing's sugars are
+//! measured lactose, as for milk and cream, rather than its carbohydrate by difference.
+//!
+//! The sheets' water is transcribed too. Their ash is what the solids non-fat leave beside the
+//! sugars and protein, so it misses by however far the listing's proximates miss summing to 100 g.
+//!
+//! The labels' water and ash show how [`DairyLabelSpec`] estimates the milk solids non-fat (MSNF)
+//! around them: sugars and protein make up all of it but its [`STD_MINERALS_IN_MSNF`] share of ash.
+//! Each listing's water and ash miss by how far its own MSNF departs from that split, either way.
 
 #![cfg_attr(coverage, coverage(off))]
 #![expect(clippy::doc_markdown)] // _FoodData_ false positive
@@ -11,12 +20,16 @@ use super::util::{Proximates, reconcile_proximates};
 use crate::tests::asserts::TESTS_EPSILON;
 
 #[cfg(doc)]
-use crate::specs::DairySheetSpec;
+use crate::{
+    constants::composition::dairy::STD_MINERALS_IN_MSNF,
+    specs::{DairyLabelSpec, DairySheetSpec},
+};
 
-/// Measured proximates of each `USDA …` dairy entry, from its FoodData Central listing.
+/// Measured proximates of each `USDA …` dairy entry, from its FoodData Central listing, with the
+/// ceilings for its sheet and its label.
 ///
 /// Foundation listings report no fiber, taken as zero since dairy has none.
-const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
+const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
     // https://fdc.nal.usda.gov/food-details/746776/nutrients
     (
         "USDA Fat-Free (Skim) Milk",
@@ -29,7 +42,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 5.05,
             ash: 0.77,
         },
-        MILK_CEILING,
+        MILK_SHEET_CEILING,
+        MILK_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/746778/nutrients
     (
@@ -43,7 +57,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 4.89,
             ash: 0.75,
         },
-        MILK_CEILING,
+        MILK_SHEET_CEILING,
+        MILK_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/746782/nutrients
     (
@@ -57,7 +72,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 4.81,
             ash: 0.8,
         },
-        MILK_CEILING,
+        MILK_SHEET_CEILING,
+        MILK_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/171255/nutrients
     (
@@ -71,7 +87,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 4.13,
             ash: 0.51,
         },
-        CREAM_CEILING,
+        CREAM_SHEET_CEILING,
+        CREAM_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/170857/nutrients
     (
@@ -85,7 +102,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 3.67,
             ash: 0.61,
         },
-        CREAM_CEILING,
+        CREAM_SHEET_CEILING,
+        CREAM_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/2705597/nutrients
     //
@@ -101,7 +119,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 2.92,
             ash: 0.49,
         },
-        HEAVY_CREAM_CEILING,
+        HEAVY_CREAM_SHEET_CEILING,
+        CREAM_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/170878/nutrients
     (
@@ -115,7 +134,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 11.4,
             ash: 1.5,
         },
-        EVAPORATED_CEILING,
+        EVAPORATED_SHEET_CEILING,
+        EVAPORATED_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/2705400/nutrients
     //
@@ -131,7 +151,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 11.15,
             ash: 1.47,
         },
-        EVAPORATED_CEILING,
+        EVAPORATED_SHEET_CEILING,
+        EVAPORATED_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/171276/nutrients
     (
@@ -145,7 +166,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 10.0,
             ash: 1.55,
         },
-        EVAPORATED_CEILING,
+        EVAPORATED_SHEET_CEILING,
+        EVAPORATED_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/171275/nutrients
     (
@@ -159,7 +181,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 54.4,
             ash: 1.83,
         },
-        CONDENSED_CEILING,
+        CONDENSED_SHEET_CEILING,
+        CONDENSED_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/170877/nutrients
     (
@@ -173,7 +196,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 52.0,
             ash: 7.93,
         },
-        POWDER_CEILING,
+        POWDER_SHEET_CEILING,
+        POWDER_LABEL_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/173454/nutrients
     (
@@ -187,64 +211,103 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             sugars: 38.4,
             ash: 6.08,
         },
-        POWDER_CEILING,
+        POWDER_SHEET_CEILING,
+        POWDER_LABEL_CEILING,
     ),
 ];
 
-/// Per-field ceilings on relative error against the measured value, in percent — fluid milk.
-///
-/// Carbohydrate reads each listing's measured lactose against its carbohydrate by difference.
-const MILK_CEILING: Proximates = Proximates {
+/// Per-field ceilings on relative error vs the measured value, in percent — fluid milk sheets.
+const MILK_SHEET_CEILING: Proximates = Proximates {
     carbohydrate: 4.0,
     ash: 23.0,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
-/// Per-field ceilings on relative error against the measured value, in percent — cream.
-///
-/// Carbohydrate reads measured lactose as in [`MILK_CEILING`].
-const CREAM_CEILING: Proximates = Proximates {
+/// Per-field ceilings on relative error vs the measured value, in percent — fluid milk labels.
+const MILK_LABEL_CEILING: Proximates = Proximates {
+    water: 0.5,
+    carbohydrate: 4.0,
+    ash: 12.5,
+    ..Proximates::splat(TESTS_EPSILON)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — cream sheets.
+const CREAM_SHEET_CEILING: Proximates = Proximates {
     carbohydrate: 4.0,
     ash: 23.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
-/// Per-field ceilings on relative error against the measured value, in percent — heavy cream.
+/// Per-field ceilings on relative error vs the measured value, in percent — heavy cream sheet.
 ///
-/// Its listing's carbohydrate exceeds its sugars by 0.88 g, which a sheet doesn't carry, so the
-/// carbohydrate misses it and the ash holds it.
-const HEAVY_CREAM_CEILING: Proximates = Proximates {
+/// The 0.88 g by which its listing's carbohydrate exceeds its sugars lands in the sheet's ash.
+const HEAVY_CREAM_SHEET_CEILING: Proximates = Proximates {
     carbohydrate: 23.5,
     ash: 64.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
-/// Per-field ceilings on relative error against the measured value, in percent — evaporated milk.
-///
-/// The listings give sugars equal to carbohydrate by difference, so carbohydrate matches exactly.
-const EVAPORATED_CEILING: Proximates = Proximates {
+/// Per-field ceilings on relative error vs the measured value, in percent — cream labels.
+const CREAM_LABEL_CEILING: Proximates = Proximates {
+    water: 0.5,
+    carbohydrate: 4.0,
+    ash: 19.5,
+    ..Proximates::splat(TESTS_EPSILON)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — evaporated milk sheets.
+const EVAPORATED_SHEET_CEILING: Proximates = Proximates {
     ash: 5.0,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
-/// Per-field ceilings on relative error against the measured value, in percent — condensed milk.
-///
-/// Sugars, added sucrose included, equal carbohydrate by difference, as in [`EVAPORATED_CEILING`].
-const CONDENSED_CEILING: Proximates = Proximates {
+/// Per-field ceilings on relative error vs the measured value, in percent — evaporated milk labels.
+const EVAPORATED_LABEL_CEILING: Proximates = Proximates {
+    water: 0.5,
+    ash: 9.0,
+    ..Proximates::splat(TESTS_EPSILON)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — condensed milk sheet.
+const CONDENSED_SHEET_CEILING: Proximates = Proximates {
     ash: 2.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
-/// Per-field ceilings on relative error against the measured value, in percent — milk powders.
-///
-/// Carbohydrate matches exactly, as in [`EVAPORATED_CEILING`].
-const POWDER_CEILING: Proximates = Proximates {
+/// Per-field ceilings on relative error vs the measured value, in percent — condensed milk label.
+const CONDENSED_LABEL_CEILING: Proximates = Proximates {
+    water: 1.0,
+    ash: 17.0,
+    ..Proximates::splat(TESTS_EPSILON)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — milk powder sheets.
+const POWDER_SHEET_CEILING: Proximates = Proximates {
     ash: 1.0,
+    ..Proximates::splat(TESTS_EPSILON)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — milk powder labels.
+///
+/// A powder holds little water, so even a small MSNF miss is a large relative water miss.
+const POWDER_LABEL_CEILING: Proximates = Proximates {
+    water: 17.0,
+    ash: 7.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
 #[test]
 fn usda_dairy_reconcile() {
-    let lines = reconcile_proximates(USDA_LISTINGS);
+    let listings: Vec<(String, Proximates, Proximates)> = USDA_LISTINGS
+        .iter()
+        .flat_map(|&(name, measured, sheet_ceiling, label_ceiling)| {
+            [
+                (name.to_string(), measured, sheet_ceiling),
+                (format!("{name} (Label)"), measured, label_ceiling),
+            ]
+        })
+        .collect();
+
+    let lines = reconcile_proximates(&listings);
     insta::assert_snapshot!(lines.join("\n"));
 }

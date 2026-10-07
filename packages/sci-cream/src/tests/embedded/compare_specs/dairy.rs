@@ -1,6 +1,7 @@
 //! Cross-source consistency checks for dairy ingredients — milk, cream, evaporated and condensed
 //! milk, milk powders, and protein powders — comparing each Simple/default entry against USDA,
-//! Sealtest, Carnation, Goff & Hartel, and brand references.
+//! Sealtest, Carnation, Goff & Hartel, and brand references. Each USDA listing is compared both as
+//! its embedded sheet and as its test-only `… (Label)` variant.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -50,11 +51,12 @@ fn compare_specs_skim_milk() {
         ("Simple", "0% Milk"),
         ("Goff & Hartel", "Goff & Hartel Skim Milk"),
         ("USDA", "USDA Fat-Free (Skim) Milk"),
+        ("USDA Label", "USDA Fat-Free (Skim) Milk (Label)"),
         ("Sealtest", "Sealtest 0% Skim Milk"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 28.0);
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 29.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -65,6 +67,7 @@ fn compare_specs_2_milk() {
     let sources = [
         ("Simple", "2% Milk"),
         ("USDA", "USDA 2% Reduced-Fat Milk"),
+        ("USDA Label", "USDA 2% Reduced-Fat Milk (Label)"),
         ("Sealtest", "Sealtest 2% Milk"),
     ]
     .map(source_str_to_comp);
@@ -83,6 +86,7 @@ fn compare_specs_whole_milk() {
         ("Simple", "3.25% Milk"),
         ("Goff & Hartel", "Goff & Hartel 3% Milk"),
         ("USDA", "USDA Whole Milk"),
+        ("USDA Label", "USDA Whole Milk (Label)"),
         ("Sealtest", "Sealtest 3.25% Milk"),
     ]
     .map(source_str_to_comp);
@@ -103,9 +107,8 @@ fn compare_specs_5_cream() {
     .map(source_str_to_comp);
 
     // Sealtest's small 15ml serving rounds energy coarsely, in addition to the usual issue with
-    // energy's higher fractional precision vs mass components, pushing a heigh error, ~150 pp.
-    //    - Energy        148.19 pp  (Simple vs Sealtest)
-    //    - Energy        137.34 pp  (Goff & Hartel vs Sealtest)
+    // energy's higher fractional precision vs mass components, pushing a high error, ~150 pp.
+    //    - Energy        148.19 pp  (Simple, Goff & Hartel vs Sealtest)
     let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 149.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
@@ -119,16 +122,16 @@ fn compare_specs_half_and_half() {
     let sources = [
         ("Simple", "10% Cream"),
         ("USDA", "USDA Half and Half Cream"),
+        ("USDA Label", "USDA Half and Half Cream (Label)"),
         ("Sealtest", "Sealtest Half and Half Cream 10%"),
     ]
     .map(source_str_to_comp);
 
     // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), pulling
-    // Lactose, PACsgr, and TotalPAC a few pp above the default ceiling. The exceptions are:
-    //    - Lactose        11.41 pp  (USDA vs Sealtest)
-    //    - PACsgr         11.41 pp  (USDA vs Sealtest)
-    //    - TotalPAC       10.15 pp  (Simple vs Sealtest)
-    //    - TotalPAC       14.73 pp  (USDA vs Sealtest)
+    // Lactose, PACsgr, and TotalPAC a few pp above the default ceiling. The largest misses are:
+    //    - Lactose        11.41 pp  (USDA, USDA Label vs Sealtest)
+    //    - PACsgr         11.41 pp  (USDA, USDA Label vs Sealtest)
+    //    - TotalPAC       14.73 pp  (Simple, USDA, USDA Label vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
         .with(CompKey::Energy, 22.0)
         .with(CompKey::Lactose, 12.0)
@@ -146,14 +149,14 @@ fn compare_specs_18_cream() {
     let sources = [
         ("Simple", "18% Cream"),
         ("USDA", "USDA Light Cream"),
+        ("USDA Label", "USDA Light Cream (Label)"),
         ("Sealtest", "Sealtest Table Cream 18%"),
     ]
     .map(source_str_to_comp);
 
     // Sealtest's 15ml serving rounds sugars and saturated fat coarsely, pushing TotalPAC
-    // and SaturatedFat above the default ceiling. The exceptions are:
-    //    - TotalPAC       10.05 pp  (Simple vs Sealtest)
-    //    - TotalPAC       12.62 pp  (USDA vs Sealtest)
+    // and SaturatedFat above the default ceiling. The largest misses are:
+    //    - TotalPAC       12.62 pp  (Simple, USDA, USDA Label vs Sealtest)
     //    - SaturatedFat   10.90 pp  (Simple vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
         .with(CompKey::Energy, 42.0)
@@ -172,6 +175,7 @@ fn compare_specs_whipping_cream() {
         ("Simple", "35% Cream"),
         ("Goff & Hartel", "Goff & Hartel 35% Cream"),
         ("USDA", "USDA Heavy Cream"),
+        ("USDA Label", "USDA Heavy Cream (Label)"),
         ("Sealtest", "Sealtest Whipping Cream 35%"),
     ]
     .map(source_str_to_comp);
@@ -182,14 +186,10 @@ fn compare_specs_whipping_cream() {
     // missing solids). Its 3g saturated fat label is also only ~58% of its fat, against the
     // standard 65%. USDA's sheet counts the 0.88 g by which its listing's carbohydrate
     // exceeds its sugars as MSNF, taking its MSNF gap with Sealtest just past the default
-    // ceiling. The exceptions are:
+    // ceiling. The largest misses are:
     //    - MSNF           10.10 pp  (USDA vs Sealtest)
-    //    - MilkSolids     15.24 pp  (Simple vs Sealtest)
-    //    - MilkSolids     15.24 pp  (Goff & Hartel vs Sealtest)
-    //    - MilkSolids     15.24 pp  (USDA vs Sealtest)
-    //    - TotalPAC       11.24 pp  (Simple vs Sealtest)
-    //    - TotalPAC       10.93 pp  (Goff & Hartel vs Sealtest)
-    //    - TotalPAC       10.69 pp  (USDA vs Sealtest)
+    //    - MilkSolids     15.24 pp  (Simple, Goff & Hartel, USDA, USDA Label vs Sealtest)
+    //    - TotalPAC       11.24 pp  (Simple, Goff & Hartel, USDA vs Sealtest)
     //    - SaturatedFat   10.19 pp  (Goff & Hartel vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
         .with(CompKey::Energy, 64.0)
@@ -239,6 +239,7 @@ fn compare_specs_skim_evaporated_milk() {
     let sources = [
         ("Goff & Hartel", "Goff & Hartel Condensed Skim Milk, 20% MSNF"),
         ("USDA", "USDA Fat-Free Evaporated Milk"),
+        ("USDA Label", "USDA Fat-Free Evaporated Milk (Label)"),
         ("Carnation", "Carnation Fat Free Evaporated Milk"),
     ]
     .map(source_str_to_comp);
@@ -253,6 +254,7 @@ fn compare_specs_skim_evaporated_milk() {
 fn compare_specs_2_evaporated_milk() {
     let sources = [
         ("USDA", "USDA 2% Reduced-Fat Evaporated Milk"),
+        ("USDA Label", "USDA 2% Reduced-Fat Evaporated Milk (Label)"),
         ("Carnation", "Carnation 2% Evaporated Partly Skimmed Milk"),
     ]
     .map(source_str_to_comp);
@@ -261,18 +263,18 @@ fn compare_specs_2_evaporated_milk() {
     // between the 2g of total carbohydrates and 1g of sugars (i.e. 1.5g) causes a big
     // difference in Lactose content, which cascades into every lactose-derived field
     // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
-    // MilkSolids, PACmlk, and TotalPAC. The exceptions are:
-    //    - Lactose        22.03 pp  (USDA vs Carnation)
-    //    - MSNF           28.80 pp  (USDA vs Carnation)
-    //    - MilkSolids     28.65 pp  (USDA vs Carnation)
-    //    - PACsgr         22.03 pp  (USDA vs Carnation)
-    //    - PACmlk         10.58 pp  (USDA vs Carnation)
-    //    - TotalPAC       32.61 pp  (USDA vs Carnation)
+    // MilkSolids, PACmlk, and TotalPAC. The largest misses are:
+    //    - Lactose        22.03 pp  (USDA, USDA Label vs Carnation)
+    //    - MSNF           28.86 pp  (USDA, USDA Label vs Carnation)
+    //    - MilkSolids     28.65 pp  (USDA, USDA Label vs Carnation)
+    //    - PACsgr         22.03 pp  (USDA, USDA Label vs Carnation)
+    //    - PACmlk         10.60 pp  (USDA, USDA Label vs Carnation)
+    //    - TotalPAC       32.61 pp  (USDA, USDA Label vs Carnation)
     //
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 12.0)
+        .with(CompKey::Energy, 15.0)
         .with(CompKey::Lactose, 23.0)
         .with(CompKey::MSNF, 29.0)
         .with(CompKey::MilkSolids, 29.0)
@@ -289,6 +291,7 @@ fn compare_specs_whole_evaporated_milk() {
     let sources = [
         ("Goff & Hartel", "Goff & Hartel 8% Condensed Milk"),
         ("USDA", "USDA Whole Evaporated Milk"),
+        ("USDA Label", "USDA Whole Evaporated Milk (Label)"),
         ("Carnation", "Carnation Evaporated Milk"),
     ]
     .map(source_str_to_comp);
@@ -297,22 +300,17 @@ fn compare_specs_whole_evaporated_milk() {
     // between the 2g of total carbohydrates and 1g of sugars (i.e. 1.5g) causes a big
     // difference in Lactose content, which cascades into every lactose-derived field
     // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
-    // MilkSolids, PACmlk, and TotalPAC. The exceptions are:
-    //    - Lactose        16.01 pp  (Goff & Hartel vs Carnation)
-    //    - MSNF           21.25 pp  (Goff & Hartel vs Carnation)
-    //    - MilkSolids     23.96 pp  (Goff & Hartel vs Carnation)
-    //    - PACsgr         16.01 pp  (Goff & Hartel vs Carnation)
-    //    - TotalPAC       23.82 pp  (Goff & Hartel vs Carnation)
-    //    - Lactose        14.50 pp  (USDA vs Carnation)
-    //    - MSNF           18.84 pp  (USDA vs Carnation)
-    //    - MilkSolids     23.96 pp  (USDA vs Carnation)
-    //    - PACsgr         14.50 pp  (USDA vs Carnation)
-    //    - TotalPAC       21.43 pp  (USDA vs Carnation)
+    // MilkSolids, PACmlk, and TotalPAC. The largest misses are:
+    //    - Lactose        16.01 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
+    //    - MSNF           21.25 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
+    //    - MilkSolids     23.96 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
+    //    - PACsgr         16.01 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
+    //    - TotalPAC       23.82 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
     //
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 37.0)
+        .with(CompKey::Energy, 40.0)
         .with(CompKey::Lactose, 17.0)
         .with(CompKey::MSNF, 22.0)
         .with(CompKey::MilkSolids, 24.0)
@@ -327,6 +325,7 @@ fn compare_specs_whole_evaporated_milk() {
 fn compare_specs_sweetened_condensed_milk() {
     let sources = [
         ("USDA", "USDA Sweetened Condensed Milk"),
+        ("USDA Label", "USDA Sweetened Condensed Milk (Label)"),
         ("Goff & Hartel", "Goff & Hartel Sweetened Condensed Milk"),
         ("Eagle Brand", "Eagle Brand Original Sweetened Condensed Milk"),
         ("Carnation", "Carnation Sweetened Condensed Milk (US)"),
@@ -352,6 +351,7 @@ fn compare_specs_skim_milk_powder() {
         ("Simple", "Skimmed Milk Powder"),
         ("Goff & Hartel", "Goff & Hartel Skim Milk Powder"),
         ("USDA", "USDA Skim Milk Powder"),
+        ("USDA Label", "USDA Skim Milk Powder (Label)"),
         ("Medallion", "Medallion Skim Milk Powder"),
         ("Theland", "Theland Skim Milk Powder"),
     ]
@@ -369,6 +369,7 @@ fn compare_specs_whole_milk_powder() {
         ("Simple", "Whole Milk Powder"),
         ("Goff & Hartel", "Goff & Hartel Whole Milk Powder"),
         ("USDA", "USDA Whole Milk Powder"),
+        ("USDA Label", "USDA Whole Milk Powder (Label)"),
         ("Medallion", "Medallion Whole Milk Powder"),
         ("Theland", "Theland Whole Milk Powder"),
     ]
@@ -409,11 +410,9 @@ fn compare_specs_whey_isolate() {
     // 100% Isolate sits in the middle at ~83% protein with low but non-zero fat and sugar.
     // MyProtein Clear is a hydrolyzed/extra-filtered isolate intended to mix into a clear
     // juice-like drink rather than a shake — it lists only 80% protein and exactly 0g fat
-    // and 0g sugar, so whatever else its solids hold shows up as water. The exceptions are:
-    //    - TotalSolids    15.06 pp  (Bulk Barn vs MyProtein)
-    //    - TotalSolids    14.21 pp  (Leanfit vs MyProtein)
-    //    - Water          15.06 pp  (Bulk Barn vs MyProtein)
-    //    - Water          14.21 pp  (Leanfit vs MyProtein)
+    // and 0g sugar, so whatever else its solids hold shows up as water. The largest misses are:
+    //    - TotalSolids    15.06 pp  (Bulk Barn, Leanfit vs MyProtein)
+    //    - Water          15.06 pp  (Bulk Barn, Leanfit vs MyProtein)
     let ceiling = KeyCeiling::new(10.0)
         .with(CompKey::Energy, 13.0)
         .with(CompKey::TotalSolids, 16.0)

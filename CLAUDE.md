@@ -205,8 +205,8 @@ stay consistent with the crate's own composition model.
 The named-source entries, `USDA …` (`DairySheetSpec`) and `Sealtest …`, `Carnation …`,
 `Eagle Brand …` (`DairyLabelSpec`), are real-world **reference data**, not defaults. They back the
 cross-source `compare_specs_*` tests in `src/tests/embedded/compare_specs/` — which treat the Simple
-specs as the baseline — and are selectable alternatives. Label values can be coarsely rounded and
-should not be taken as canonical.
+specs as the baseline, and also compare test-only `USDA … (Label)` variants of the sheets — and are
+selectable alternatives. Label values can be coarsely rounded and should not be taken as canonical.
 
 ### TypeScript package (`packages/sci-cream/src/ts/`)
 

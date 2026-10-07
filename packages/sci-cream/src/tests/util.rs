@@ -16,7 +16,7 @@ use crate::{
 use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
 use crate::tests::asserts::*;
 
-use crate::tests::assets::get_comp_by_name;
+use crate::tests::embedded::variants::get_comp_by_name;
 
 /// Checks that `comp` satisfies the structural forest's additive invariants: every roll-up's parts
 /// sum to no more than the roll-up, and residual-free roll-ups equal their parts exactly.
@@ -247,8 +247,8 @@ pub(crate) fn compare_compositions(sources: &[(&str, Composition)], keys: &[Comp
     lines.join("\n")
 }
 
-/// Pairs a source label with the named ingredient's embedded composition, for the cross-source
-/// `compare_specs` suites that line up several labelled sources of one conceptual ingredient.
+/// Pairs a source label with the named ingredient's composition, embedded or test-only, for the
+/// cross-source `compare_specs` suites that line up labelled sources of one conceptual ingredient.
 pub(crate) fn source_str_to_comp(names: (&'static str, &str)) -> (&'static str, Composition) {
     (names.0, get_comp_by_name(names.1))
 }

@@ -8,7 +8,7 @@ use crate::{
     composition::{CompKey, Composition},
     constants::density::{MixDensityParams, OTHER_DISSOLVED_SOLIDS, mixture_density, sugars::SUCROSE},
     error::Result,
-    tests::{assets::get_comp_by_name, util::relative_diff_percent},
+    tests::{embedded::variants::get_comp_by_name, util::relative_diff_percent},
 };
 
 /// Proximate analysis of an ingredient, per 100 g.
@@ -50,7 +50,7 @@ impl Proximates {
             .map(|(name, value)| (name, *value.downcast_ref::<f64>().unwrap()))
     }
 
-    /// The modeled proximates of an embedded ingredient.
+    /// The modeled proximates of an embedded or test-only ingredient.
     ///
     /// Ash has no [`CompKey`]: cacao's ash is the cocoa solids' `others`, and milk's the milk
     /// solids' `others`, the MSNF remainder beyond its sugars and protein. `solids.other` is a
@@ -74,11 +74,12 @@ impl Proximates {
 /// proximates, asserting each field's relative error, in percent, within its ceiling.
 ///
 /// Returns the report lines, one table per listing, for a review snapshot.
-pub(super) fn reconcile_proximates(listings: &[(&str, Proximates, Proximates)]) -> Vec<String> {
+pub(super) fn reconcile_proximates<S: AsRef<str>>(listings: &[(S, Proximates, Proximates)]) -> Vec<String> {
     let mut lines = Vec::new();
 
     for (name, measured, ceiling) in listings {
-        lines.push((*name).to_string());
+        let name = name.as_ref();
+        lines.push(name.to_string());
         lines.push("  [     key      | modeled | measured |  diff  ]".to_string());
 
         let ingredient = Proximates::modeled(name);

@@ -1,0 +1,160 @@
+[
+  {
+    "name": "USDA Fat-Free (Skim) Milk (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 34,
+      "total_fat": { "grams": 0.08 },
+      "saturated_fat": 0.049,
+      "sugars": 5.05,
+      "protein": 3.43
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/746776/nutrients"
+  },
+  {
+    "name": "USDA 2% Reduced-Fat Milk (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 50,
+      "total_fat": { "grams": 1.9 },
+      "saturated_fat": 1.11,
+      "sugars": 4.89,
+      "protein": 3.36
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/746778/nutrients"
+  },
+  {
+    "name": "USDA Whole Milk (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 61,
+      "total_fat": { "grams": 3.2 },
+      "saturated_fat": 1.86,
+      "sugars": 4.81,
+      "protein": 3.27
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/746782/nutrients"
+  },
+  {
+    "name": "USDA Half and Half Cream (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 131,
+      "total_fat": { "grams": 11.5 },
+      "saturated_fat": 7.03,
+      "sugars": 4.13,
+      "protein": 3.13
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/171255/nutrients"
+  },
+  {
+    "name": "USDA Light Cream (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 195,
+      "total_fat": { "grams": 19.1 },
+      "saturated_fat": 10.2,
+      "sugars": 3.67,
+      "protein": 2.96
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/170857/nutrients"
+  },
+  {
+    "name": "USDA Heavy Cream (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 343,
+      "total_fat": { "grams": 35.56 },
+      "saturated_fat": 20.4,
+      "carbohydrates": 3.8,
+      "sugars": 2.92,
+      "protein": 2.02
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/2705597/nutrients, whose 3.8 g of carbohydrate by difference exceeds its 2.92 g of sugars, which the sheet can't carry"
+  },
+  {
+    "name": "USDA Fat-Free Evaporated Milk (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 78,
+      "total_fat": { "grams": 0.2 },
+      "saturated_fat": 0.121,
+      "sugars": 11.4,
+      "protein": 7.55
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/170878/nutrients"
+  },
+  {
+    "name": "USDA 2% Reduced-Fat Evaporated Milk (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 92,
+      "total_fat": { "grams": 1.96 },
+      "saturated_fat": 1.214,
+      "sugars": 11.15,
+      "protein": 7.42
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/2705400/nutrients"
+  },
+  {
+    "name": "USDA Whole Evaporated Milk (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 134,
+      "total_fat": { "grams": 7.56 },
+      "saturated_fat": 4.59,
+      "sugars": 10,
+      "protein": 6.81
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/171276/nutrients"
+  },
+  {
+    "name": "USDA Sweetened Condensed Milk (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 321,
+      "total_fat": { "grams": 8.7 },
+      "saturated_fat": 5.49,
+      "sugars": 54.4,
+      "protein": 7.91,
+      "sucrose": 44.8
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/171275/nutrients, with sucrose from https://fdc.nal.usda.gov/food-details/2758990/nutrients"
+  },
+  {
+    "name": "USDA Skim Milk Powder (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 362,
+      "total_fat": { "grams": 0.77 },
+      "saturated_fat": 0.499,
+      "sugars": 52,
+      "protein": 36.2
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/170877/nutrients"
+  },
+  {
+    "name": "USDA Whole Milk Powder (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 496,
+      "total_fat": { "grams": 26.7 },
+      "saturated_fat": 16.7,
+      "sugars": 38.4,
+      "protein": 26.3
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/173454/nutrients"
+  }
+]

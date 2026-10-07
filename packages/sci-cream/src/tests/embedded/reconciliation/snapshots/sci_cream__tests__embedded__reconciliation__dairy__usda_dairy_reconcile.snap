@@ -12,6 +12,16 @@ USDA Fat-Free (Skim) Milk
   sugars             5.05      5.05      0.00 %
   ash                0.64      0.77     16.88 %
 
+USDA Fat-Free (Skim) Milk (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             90.70     90.80      0.11 %
+  protein            3.43      3.43      0.00 %
+  fat                0.08      0.08      0.00 %
+  carbohydrate       5.05      4.92      2.57 %
+  fiber              0.00      0.00      0.00 %
+  sugars             5.05      5.05      0.00 %
+  ash                0.74      0.77      4.23 %
+
 USDA 2% Reduced-Fat Milk
   [     key      | modeled | measured |  diff  ]
   water             89.10     89.10      0.00 %
@@ -21,6 +31,16 @@ USDA 2% Reduced-Fat Milk
   fiber              0.00      0.00      0.00 %
   sugars             4.89      4.89      0.00 %
   ash                0.75      0.75      0.00 %
+
+USDA 2% Reduced-Fat Milk (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             89.13     89.10      0.04 %
+  protein            3.36      3.36      0.00 %
+  fat                1.90      1.90      0.00 %
+  carbohydrate       4.89      4.90      0.20 %
+  fiber              0.00      0.00      0.00 %
+  sugars             4.89      4.89      0.00 %
+  ash                0.72      0.75      4.35 %
 
 USDA Whole Milk
   [     key      | modeled | measured |  diff  ]
@@ -32,6 +52,16 @@ USDA Whole Milk
   sugars             4.81      4.81      0.00 %
   ash                0.62      0.80     22.50 %
 
+USDA Whole Milk (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             88.02     88.10      0.09 %
+  protein            3.27      3.27      0.00 %
+  fat                3.20      3.20      0.00 %
+  carbohydrate       4.81      4.63      3.74 %
+  fiber              0.00      0.00      0.00 %
+  sugars             4.81      4.81      0.00 %
+  ash                0.70      0.80     12.17 %
+
 USDA Half and Half Cream
   [     key      | modeled | measured |  diff  ]
   water             80.60     80.60      0.00 %
@@ -41,6 +71,16 @@ USDA Half and Half Cream
   fiber              0.00      0.00      0.00 %
   sugars             4.13      4.13      0.00 %
   ash                0.64      0.51     20.31 %
+
+USDA Half and Half Cream (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             80.61     80.60      0.01 %
+  protein            3.13      3.13      0.00 %
+  fat               11.50     11.50      0.00 %
+  carbohydrate       4.13      4.30      3.95 %
+  fiber              0.00      0.00      0.00 %
+  sugars             4.13      4.13      0.00 %
+  ash                0.63      0.51     19.21 %
 
 USDA Light Cream
   [     key      | modeled | measured |  diff  ]
@@ -52,6 +92,16 @@ USDA Light Cream
   sugars             3.67      3.67      0.00 %
   ash                0.47      0.61     22.95 %
 
+USDA Light Cream (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             73.69     73.80      0.14 %
+  protein            2.96      2.96      0.00 %
+  fat               19.10     19.10      0.00 %
+  carbohydrate       3.67      3.66      0.27 %
+  fiber              0.00      0.00      0.00 %
+  sugars             3.67      3.67      0.00 %
+  ash                0.58      0.61      5.49 %
+
 USDA Heavy Cream
   [     key      | modeled | measured |  diff  ]
   water             58.13     58.13      0.00 %
@@ -61,6 +111,16 @@ USDA Heavy Cream
   fiber              0.00      0.00      0.00 %
   sugars             2.92      2.92      0.00 %
   ash                1.37      0.49     64.23 %
+
+USDA Heavy Cream (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             58.19     58.13      0.10 %
+  protein            2.02      2.02      0.00 %
+  fat               35.56     35.56      0.00 %
+  carbohydrate       3.80      3.80      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars             2.92      2.92      0.00 %
+  ash                0.43      0.49     12.33 %
 
 USDA Fat-Free Evaporated Milk
   [     key      | modeled | measured |  diff  ]
@@ -72,6 +132,16 @@ USDA Fat-Free Evaporated Milk
   sugars            11.40     11.40      0.00 %
   ash                1.45      1.50      3.33 %
 
+USDA Fat-Free Evaporated Milk (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             79.20     79.40      0.25 %
+  protein            7.55      7.55      0.00 %
+  fat                0.20      0.20      0.00 %
+  carbohydrate      11.40     11.40      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            11.40     11.40      0.00 %
+  ash                1.65      1.50      8.97 %
+
 USDA 2% Reduced-Fat Evaporated Milk
   [     key      | modeled | measured |  diff  ]
   water             78.00     78.00      0.00 %
@@ -81,6 +151,16 @@ USDA 2% Reduced-Fat Evaporated Milk
   fiber              0.00      0.00      0.00 %
   sugars            11.15     11.15      0.00 %
   ash                1.47      1.47      0.00 %
+
+USDA 2% Reduced-Fat Evaporated Milk (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             77.86     78.00      0.19 %
+  protein            7.42      7.42      0.00 %
+  fat                1.96      1.96      0.00 %
+  carbohydrate      11.15     11.15      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            11.15     11.15      0.00 %
+  ash                1.61      1.47      8.97 %
 
 USDA Whole Evaporated Milk
   [     key      | modeled | measured |  diff  ]
@@ -92,6 +172,16 @@ USDA Whole Evaporated Milk
   sugars            10.00     10.00      0.00 %
   ash                1.63      1.55      4.91 %
 
+USDA Whole Evaporated Milk (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             74.17     74.00      0.23 %
+  protein            6.81      6.81      0.00 %
+  fat                7.56      7.56      0.00 %
+  carbohydrate      10.00     10.00      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            10.00     10.00      0.00 %
+  ash                1.46      1.55      5.69 %
+
 USDA Sweetened Condensed Milk
   [     key      | modeled | measured |  diff  ]
   water             27.20     27.20      0.00 %
@@ -101,6 +191,16 @@ USDA Sweetened Condensed Milk
   fiber              0.00      0.00      0.00 %
   sugars            54.40     54.40      0.00 %
   ash                1.79      1.83      2.19 %
+
+USDA Sweetened Condensed Milk (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             27.47     27.20      0.97 %
+  protein            7.91      7.91      0.00 %
+  fat                8.70      8.70      0.00 %
+  carbohydrate      54.40     54.40      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            54.40     54.40      0.00 %
+  ash                1.52      1.83     16.80 %
 
 USDA Skim Milk Powder
   [     key      | modeled | measured |  diff  ]
@@ -112,6 +212,16 @@ USDA Skim Milk Powder
   sugars            52.00     52.00      0.00 %
   ash                7.87      7.93      0.76 %
 
+USDA Skim Milk Powder (Label)
+  [     key      | modeled | measured |  diff  ]
+  water              3.36      3.16      5.96 %
+  protein           36.20     36.20      0.00 %
+  fat                0.77      0.77      0.00 %
+  carbohydrate      52.00     52.00      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            52.00     52.00      0.00 %
+  ash                7.67      7.93      3.28 %
+
 USDA Whole Milk Powder
   [     key      | modeled | measured |  diff  ]
   water              2.47      2.47      0.00 %
@@ -121,3 +231,13 @@ USDA Whole Milk Powder
   fiber              0.00      0.00      0.00 %
   sugars            38.40     38.40      0.00 %
   ash                6.13      6.08      0.82 %
+
+USDA Whole Milk Powder (Label)
+  [     key      | modeled | measured |  diff  ]
+  water              2.97      2.47     16.94 %
+  protein           26.30     26.30      0.00 %
+  fat               26.70     26.70      0.00 %
+  carbohydrate      38.40     38.40      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars            38.40     38.40      0.00 %
+  ash                5.63      6.08      7.47 %
