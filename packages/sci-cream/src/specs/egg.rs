@@ -44,7 +44,7 @@ pub enum EggSource {
 /// Based on a combination of multiple sources:
 ///
 /// - Water: 52.1%, Protein: 16.2%, Total Lipid: 28.8% (USDA, 2019,
-///   "Eggs, Grade A, Large, egg yolk")[^100]
+///   "Eggs, Grade A, Large, egg yolk")[^500]
 /// - Fat: 33%, Protein: 15.8%, Total Solids: 51.2% (Goff & Hartel, 2013, p. 49)[^2]
 /// - Water: 50%, Protein: 16%, Other Fat: 23% (Clarke, 2004, p. 49)[^4]
 ///
@@ -75,7 +75,7 @@ pub enum EggSource {
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
 #[doc = include_str!("../../docs/references/index/2.md")]
 #[doc = include_str!("../../docs/references/index/4.md")]
-#[doc = include_str!("../../docs/references/index/100.md")]
+#[doc = include_str!("../../docs/references/index/500.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct EggSpec {

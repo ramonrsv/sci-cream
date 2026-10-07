@@ -13,7 +13,7 @@
 #![doc = include_str!("../docs/chocolate.md")]
 // References
 #![doc = include_str!("../docs/references/literature.md")]
-#![doc = include_str!("../docs/references/index/116.md")]
+#![doc = include_str!("../docs/references/index/516.md")]
 
 #[cfg(doc)]
 use crate::{
@@ -96,13 +96,13 @@ pub mod ingredients {
     #![doc = include_str!("../data/ingredients/sweeteners.md")]
     // References
     #![doc = include_str!("../docs/references/literature.md")]
-    #![doc = include_str!("../docs/references/index/117.md")]
-    #![doc = include_str!("../docs/references/index/119.md")]
-    #![doc = include_str!("../docs/references/index/122.md")]
-    #![doc = include_str!("../docs/references/index/123.md")]
-    #![doc = include_str!("../docs/references/index/124.md")]
-    #![doc = include_str!("../docs/references/index/125.md")]
-    #![doc = include_str!("../docs/references/index/126.md")]
+    #![doc = include_str!("../docs/references/index/517.md")]
+    #![doc = include_str!("../docs/references/index/519.md")]
+    #![doc = include_str!("../docs/references/index/522.md")]
+    #![doc = include_str!("../docs/references/index/523.md")]
+    #![doc = include_str!("../docs/references/index/524.md")]
+    #![doc = include_str!("../docs/references/index/525.md")]
+    #![doc = include_str!("../docs/references/index/526.md")]
 
     #[cfg(doc)]
     use crate::{

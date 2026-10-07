@@ -169,7 +169,7 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
 
   Guar Gum can have a strong flavour that is detectable in ice creams, which is undesirable in most
   applications. Some market products claim to have removed this flavour (Carl, 2024, April)[^43],
-  (Modernist Pantry, 2026, "Perfected Guar Gum")[^116].
+  (Modernist Pantry, 2026, "Perfected Guar Gum")[^516].
 
   Guar Gum is commonly used in concentrations of 0.1% by weight, although it is often used in
   combination with other stabilizers, usually Locust Bean Gum and Carrageenan, due to their

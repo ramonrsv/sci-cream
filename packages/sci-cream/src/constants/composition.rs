@@ -6,13 +6,13 @@
 /// these milks, evaporated milks, and milk powders in the
 /// [USDA FoodData Central](https://fdc.nal.usda.gov/) database:
 ///
-/// - (USDA, 2019, "Milk, nonfat, fluid, with added vitamin ... (fat free or skim)")[^130]
-/// - (USDA, 2019, "Milk, reduced fat, fluid, 2% milkfat, with added vitamin ...")[^131]
-/// - (USDA, 2019, "Milk, whole, 3.25% milkfat, with added vitamin ...")[^103]
-/// - (USDA, 2019, "Milk, canned, evaporated, nonfat, with added vitamin ...")[^132]
-/// - (USDA, 2019, "Milk, canned, evaporated, with added vitamin ... and without added ...")[^133]
-/// - (USDA, 2019, "Milk, dry, nonfat, regular, without added vitamin ...")[^134]
-/// - (USDA, 2019, "Milk, dry, whole, without added vitamin ...")[^135]
+/// - (USDA, 2019, "Milk, nonfat, fluid, with added vitamin ... (fat free or skim)")[^530]
+/// - (USDA, 2019, "Milk, reduced fat, fluid, 2% milkfat, with added vitamin ...")[^531]
+/// - (USDA, 2019, "Milk, whole, 3.25% milkfat, with added vitamin ...")[^503]
+/// - (USDA, 2019, "Milk, canned, evaporated, nonfat, with added vitamin ...")[^532]
+/// - (USDA, 2019, "Milk, canned, evaporated, with added vitamin ... and without added ...")[^533]
+/// - (USDA, 2019, "Milk, dry, nonfat, regular, without added vitamin ...")[^534]
+/// - (USDA, 2019, "Milk, dry, whole, without added vitamin ...")[^535]
 ///
 /// The creams and sweetened condensed milk scatter more widely, e.g. 32.0-41.7% protein, so they
 /// are left out, as is the 2% evaporated milk, which FNDDS calculates from the nonfat one.
@@ -22,13 +22,13 @@
 /// listing's sugars, protein, and ash, but that is not always the case, e.g. skim milk's calculated
 /// MSNF of 9.12g differs from the 9.25g sum of those, a ~1.4% discrepancy. The listings'
 /// discrepancies range from 0% to ~2.1%.
-#[doc = include_str!("../../docs/references/index/103.md")]
-#[doc = include_str!("../../docs/references/index/130.md")]
-#[doc = include_str!("../../docs/references/index/131.md")]
-#[doc = include_str!("../../docs/references/index/132.md")]
-#[doc = include_str!("../../docs/references/index/133.md")]
-#[doc = include_str!("../../docs/references/index/134.md")]
-#[doc = include_str!("../../docs/references/index/135.md")]
+#[doc = include_str!("../../docs/references/index/503.md")]
+#[doc = include_str!("../../docs/references/index/530.md")]
+#[doc = include_str!("../../docs/references/index/531.md")]
+#[doc = include_str!("../../docs/references/index/532.md")]
+#[doc = include_str!("../../docs/references/index/533.md")]
+#[doc = include_str!("../../docs/references/index/534.md")]
+#[doc = include_str!("../../docs/references/index/535.md")]
 pub mod dairy {
     use crate::specs::SolidsSource;
     use {
@@ -90,8 +90,8 @@ pub mod dairy {
     /// these _sweet_ whey listings in the
     /// [USDA FoodData Central](https://fdc.nal.usda.gov/) database:
     ///
-    /// - (USDA, 2019, "Whey, sweet, dried")[^136]
-    /// - (USDA, 2019, "Whey, sweet, fluid")[^137]
+    /// - (USDA, 2019, "Whey, sweet, dried")[^536]
+    /// - (USDA, 2019, "Whey, sweet, fluid")[^537]
     ///
     /// The acid wheys are left out of the analysis, since they have different compositions with
     /// higher minerals (de Wit, 2001, p. 15)[^92], and this model explicitly targets only sweet
@@ -123,8 +123,8 @@ pub mod dairy {
     #[doc = include_str!("../../docs/references/index/91.md")]
     #[doc = include_str!("../../docs/references/index/92.md")]
     #[doc = include_str!("../../docs/references/index/93.md")]
-    #[doc = include_str!("../../docs/references/index/136.md")]
-    #[doc = include_str!("../../docs/references/index/137.md")]
+    #[doc = include_str!("../../docs/references/index/536.md")]
+    #[doc = include_str!("../../docs/references/index/537.md")]
     pub mod whey {
         /// Percentage of lactose typically found in sweet whey solids (WS)
         ///
@@ -172,7 +172,7 @@ pub mod dairy {
         ///
         /// Taken as 0.8%, in line with the typical 0.5-1.0% of WPI powder (USDEC, 2003,
         /// p. 33)[^91], (ADPI, 2023)[^95], ~0.8% of the solids at the midpoint, a typical
-        /// WPI's 0.5% (Kuntz, 2010)[^94], and Hilmar 9000's 1.0% (Hilmar Ingredients, 2026)[^138].
+        /// WPI's 0.5% (Kuntz, 2010)[^94], and Hilmar 9000's 1.0% (Hilmar Ingredients, 2026)[^538].
         /// The WPI profile (USDEC, 2003, Table 6, pp. 51-52)[^91] has a higher ~0.9%, as its
         /// lactose is the carbohydrates by difference.
         ///
@@ -181,7 +181,7 @@ pub mod dairy {
         #[doc = include_str!("../../docs/references/index/91.md")]
         #[doc = include_str!("../../docs/references/index/94.md")]
         #[doc = include_str!("../../docs/references/index/95.md")]
-        #[doc = include_str!("../../docs/references/index/138.md")]
+        #[doc = include_str!("../../docs/references/index/538.md")]
         pub const STD_LACTOSE_IN_WPI: f64 = 0.008;
 
         /// Percentage of protein typical of whey protein isolate (WPI) solids
@@ -189,13 +189,13 @@ pub mod dairy {
         /// Calculated from the 90.75g of protein in 95.0g of solids of the WPI profile (USDEC,
         /// 2003, Table 6, pp. 51-52)[^91], in line with the typical 90.0-92.0% of WPI powder
         /// (USDEC, 2003, p. 33)[^91], a typical WPI's 92.0% (Kuntz, 2010)[^94], and Hilmar 9000's
-        /// 89.0% (Hilmar Ingredients, 2026)[^138], ~93.7-97.4% of the solids. ADPI gives USDEC's
+        /// 89.0% (Hilmar Ingredients, 2026)[^538], ~93.7-97.4% of the solids. ADPI gives USDEC's
         /// typical range on a dry basis (ADPI, 2023)[^95], ~90.7-92.7% of the solids, but only the
         /// as-is reading adds up with its other typical values.
         #[doc = include_str!("../../docs/references/index/91.md")]
         #[doc = include_str!("../../docs/references/index/94.md")]
         #[doc = include_str!("../../docs/references/index/95.md")]
-        #[doc = include_str!("../../docs/references/index/138.md")]
+        #[doc = include_str!("../../docs/references/index/538.md")]
         pub const STD_PROTEIN_IN_WPI: f64 = 0.955;
 
         /// Percentage of minerals (ash) typical of whey protein isolate (WPI) solids
@@ -203,7 +203,7 @@ pub mod dairy {
         /// Calculated from the 3.38g of ash in 95.0g of solids of the WPI profile (USDEC, 2003,
         /// Table 6, pp. 51-52)[^91]. Typical isolates run lower, ~2.1-3.2% of the solids: the
         /// 2.0-3.0% of WPI powder (USDEC, 2003, p. 33)[^91], (ADPI, 2023)[^95], a typical WPI's
-        /// 2.0% (Kuntz, 2010)[^94], and Hilmar 9000's 2.5% (Hilmar Ingredients, 2026)[^138], whose
+        /// 2.0% (Kuntz, 2010)[^94], and Hilmar 9000's 2.5% (Hilmar Ingredients, 2026)[^538], whose
         /// 3.5% maximum is ~3.7% of the solids.
         ///
         /// The [line](super::minerals_in_snf) from [`STD_MINERALS_IN_WS`] to this fits USDA's sweet
@@ -212,7 +212,7 @@ pub mod dairy {
         #[doc = include_str!("../../docs/references/index/91.md")]
         #[doc = include_str!("../../docs/references/index/94.md")]
         #[doc = include_str!("../../docs/references/index/95.md")]
-        #[doc = include_str!("../../docs/references/index/138.md")]
+        #[doc = include_str!("../../docs/references/index/538.md")]
         pub const STD_MINERALS_IN_WPI: f64 = 0.036;
     }
 
@@ -355,11 +355,11 @@ pub mod dairy {
     /// Percentage of butterfat typically found in whole milk powder
     ///
     /// (Goff & Hartel, 2025, Table 3.2, p. 48)[^20], (Parmalat Whole Milk Powder 26%, 2026,
-    /// PantryLot)[^120], (MMPA - Grade A Whole Milk Powder 26%, 2026, BulkMart)[^121]
+    /// PantryLot)[^520], (MMPA - Grade A Whole Milk Powder 26%, 2026, BulkMart)[^521]
     #[expect(clippy::doc_markdown)] // _PantryLot_  and _BulkMart_ false positives
     #[doc = include_str!("../../docs/references/index/20.md")]
-    #[doc = include_str!("../../docs/references/index/120.md")]
-    #[doc = include_str!("../../docs/references/index/121.md")]
+    #[doc = include_str!("../../docs/references/index/520.md")]
+    #[doc = include_str!("../../docs/references/index/521.md")]
     pub const STD_BUTTERFAT_IN_WHOLE_MILK_POWDER: f64 = 0.26;
 
     /// Percentage of saturated fats typical of milk fat (Board on Agriculture.., 1974, p. 203)[^12]
@@ -368,9 +368,9 @@ pub mod dairy {
 
     /// Percentage of trans fats typically found in milk fat
     ///
-    /// (USDA, 2019, "Milk, whole, 3.25% milkfat, with added vitamin D")[^103]
+    /// (USDA, 2019, "Milk, whole, 3.25% milkfat, with added vitamin D")[^503]
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
-    #[doc = include_str!("../../docs/references/index/103.md")]
+    #[doc = include_str!("../../docs/references/index/503.md")]
     pub const STD_TRANS_FAT_IN_MILK_FAT: f64 = 0.035;
 }
 
@@ -387,58 +387,58 @@ pub mod egg {
     /// Percentage of protein typically found in egg yolk
     ///
     /// (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p. 48)[^20], (USDA, 2019,
-    /// "Eggs, Grade A, Large, egg yolk")[^100].
+    /// "Eggs, Grade A, Large, egg yolk")[^500].
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
     #[doc = include_str!("../../docs/references/index/20.md")]
-    #[doc = include_str!("../../docs/references/index/100.md")]
+    #[doc = include_str!("../../docs/references/index/500.md")]
     pub const STD_PROTEIN_IN_EGG_YOLK: f64 = 0.16;
 
     /// Percentage of protein typically found in egg white
     ///
-    /// (USDA, 2019, "Eggs, Grade A, Large, egg white")[^118]
+    /// (USDA, 2019, "Eggs, Grade A, Large, egg white")[^518]
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
-    #[doc = include_str!("../../docs/references/index/118.md")]
+    #[doc = include_str!("../../docs/references/index/518.md")]
     pub const STD_PROTEIN_IN_EGG_WHITE: f64 = 0.11;
 
     /// Percentage of solids typically found in egg yolk
     ///
     /// Sources list the total solids content of egg yolks to be between 48-51% by weight; 50% is a
     /// reasonable average of these values (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p.
-    /// 48)[^20], (USDA, 2019, "Eggs, Grade A, Large, egg yolk")[^100].
+    /// 48)[^20], (USDA, 2019, "Eggs, Grade A, Large, egg yolk")[^500].
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
     #[doc = include_str!("../../docs/references/index/20.md")]
-    #[doc = include_str!("../../docs/references/index/100.md")]
+    #[doc = include_str!("../../docs/references/index/500.md")]
     pub const STD_SOLIDS_IN_EGG_YOLK: f64 = 0.50;
 
     /// Percentage of solids typically found in egg white
     ///
-    /// (USDA, 2019, "Eggs, Grade A, Large, egg white")[^118]
+    /// (USDA, 2019, "Eggs, Grade A, Large, egg white")[^518]
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
-    #[doc = include_str!("../../docs/references/index/118.md")]
+    #[doc = include_str!("../../docs/references/index/518.md")]
     pub const STD_SOLIDS_IN_EGG_WHITE: f64 = 0.14;
 
     /// Percentage of protein typically found in egg yolk solids
     ///
     /// Sources list the protein content of egg yolk solids to be between 30.9-33.75% by weight; 32%
     /// is a reasonable average of these values (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p.
-    /// 48)[^20], (USDA, 2019, "Eggs, Grade A, Large, egg yolk")[^100].
+    /// 48)[^20], (USDA, 2019, "Eggs, Grade A, Large, egg yolk")[^500].
     ///
     /// Consistent with [`STD_PROTEIN_IN_EGG_YOLK`] / [`STD_SOLIDS_IN_EGG_YOLK`].
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
     #[doc = include_str!("../../docs/references/index/20.md")]
-    #[doc = include_str!("../../docs/references/index/100.md")]
+    #[doc = include_str!("../../docs/references/index/500.md")]
     pub const STD_PROTEIN_IN_EGG_YOLK_SOLIDS: f64 = 0.32;
 
     /// Percentage of protein typically found in egg white solids
     ///
-    /// (USDA, 2019, "Eggs, Grade A, Large, egg white")[^118]
+    /// (USDA, 2019, "Eggs, Grade A, Large, egg white")[^518]
     ///
     /// Consistent-ish with [`STD_PROTEIN_IN_EGG_WHITE`] / [`STD_SOLIDS_IN_EGG_WHITE`].
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
-    #[doc = include_str!("../../docs/references/index/118.md")]
+    #[doc = include_str!("../../docs/references/index/518.md")]
     pub const STD_PROTEIN_IN_EGG_WHITE_SOLIDS: f64 = 0.78;
 
     /// Percentage of whole-egg solids contributed by the yolk
@@ -484,14 +484,14 @@ pub mod egg {
     /// of between ~16-21% by weight; 19% is a reasonable average of these values (Clarke, 2004, p.
     /// 49)[^4], (Goff & Hartel, 2025, p. 84)[^20], (Manley, 2000, 12.3.1 Lecithin)[^68], (Zhao, et
     /// al., 2023, 1. Introduction)[^69], (Palacios, et al., 2020)[^70], (USDA, 2019,
-    /// "Eggs, Grade A, Large, egg yolk")[^100]
+    /// "Eggs, Grade A, Large, egg yolk")[^500]
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
     #[doc = include_str!("../../docs/references/index/20.md")]
     #[doc = include_str!("../../docs/references/index/68.md")]
     #[doc = include_str!("../../docs/references/index/69.md")]
     #[doc = include_str!("../../docs/references/index/70.md")]
-    #[doc = include_str!("../../docs/references/index/100.md")]
+    #[doc = include_str!("../../docs/references/index/500.md")]
     pub const STD_LECITHIN_IN_EGG_YOLK_SOLIDS: f64 = 0.19;
 }
 
@@ -500,11 +500,11 @@ pub mod nut {
     /// Percentage of saturated fats typical of nut fat; see [`NutSpec`](crate::specs::NutSpec).
     ///
     /// This value is an average compiled from the nutrient profiles of various nuts in the _USDA
-    /// FoodData Central_ database (USDA, 2019, "Nuts, almonds")[^102], (USDA, 2019, "Nuts,
-    /// pistachio nuts, raw")[^112], (USDA, 2019, "Nuts, hazelnuts or filberts")[^113].
-    #[doc = include_str!("../../docs/references/index/102.md")]
-    #[doc = include_str!("../../docs/references/index/112.md")]
-    #[doc = include_str!("../../docs/references/index/113.md")]
+    /// FoodData Central_ database (USDA, 2019, "Nuts, almonds")[^502], (USDA, 2019, "Nuts,
+    /// pistachio nuts, raw")[^512], (USDA, 2019, "Nuts, hazelnuts or filberts")[^513].
+    #[doc = include_str!("../../docs/references/index/502.md")]
+    #[doc = include_str!("../../docs/references/index/512.md")]
+    #[doc = include_str!("../../docs/references/index/513.md")]
     pub const STD_SATURATED_FAT_IN_NUT_FAT: f64 = 0.09;
 }
 
@@ -514,23 +514,23 @@ pub mod nut {
 /// These values are averages compiled from the nutrient profiles of various cacao products in the
 /// [USDA FoodData Central](https://fdc.nal.usda.gov/) database:
 ///
-/// - (USDA, 2019, "Chocolate, dark, 45-59% cacao solids")[^127]
-/// - (USDA, 2019, "Chocolate, dark, 60-69% cacao solids")[^104]
-/// - (USDA, 2019, "Chocolate, dark, 70-85% cacao solids")[^105]
-/// - (USDA, 2019, "Cocoa, dry powder, unsweetened")[^106]
-/// - (USDA, 2019, "Cocoa, dry powder, unsweetened, processed with alkali")[^128]
-/// - (USDA, 2019, "Cocoa, dry powder, hi-fat or breakfast, processed with alkali")[^129]
+/// - (USDA, 2019, "Chocolate, dark, 45-59% cacao solids")[^527]
+/// - (USDA, 2019, "Chocolate, dark, 60-69% cacao solids")[^504]
+/// - (USDA, 2019, "Chocolate, dark, 70-85% cacao solids")[^505]
+/// - (USDA, 2019, "Cocoa, dry powder, unsweetened")[^506]
+/// - (USDA, 2019, "Cocoa, dry powder, unsweetened, processed with alkali")[^528]
+/// - (USDA, 2019, "Cocoa, dry powder, hi-fat or breakfast, processed with alkali")[^529]
 ///
 /// The values are very consistent between the different cacao products, usually all within ~4
 /// percentage points of each other (fiber was the only exception, varying between 33% and 46%).
 ///
 /// The values are also consistent with the nutrition facts tables of various market cacao products:
 ///
-/// - (Lindt 70% Cacao Dark Chocolate, 2025)[^107]
-/// - (Lindt 85% Cacao Dark Chocolate, 2025)[^108]
-/// - (Lindt 95% Cacao Dark Chocolate, 2025)[^109]
-/// - (Lindt 100% Cacao Dark Chocolate, 2025)[^110]
-/// - (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^111]
+/// - (Lindt 70% Cacao Dark Chocolate, 2025)[^507]
+/// - (Lindt 85% Cacao Dark Chocolate, 2025)[^508]
+/// - (Lindt 95% Cacao Dark Chocolate, 2025)[^509]
+/// - (Lindt 100% Cacao Dark Chocolate, 2025)[^510]
+/// - (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^511]
 ///
 /// **Note:** The `_IN_COCOA_SOLIDS` constants are calculated as fractions of the dry, fat-free
 /// cacao solids of each listing, including sugars intrinsic to the cacao nuts. For cocoa powders,
@@ -554,17 +554,17 @@ pub mod nut {
 /// - [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`]
 /// - [`cacao::STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS`]
 /// - [`cacao::STD_ASH_IN_DUTCHED_COCOA_SOLIDS`]
-#[doc = include_str!("../../docs/references/index/104.md")]
-#[doc = include_str!("../../docs/references/index/105.md")]
-#[doc = include_str!("../../docs/references/index/106.md")]
-#[doc = include_str!("../../docs/references/index/107.md")]
-#[doc = include_str!("../../docs/references/index/108.md")]
-#[doc = include_str!("../../docs/references/index/109.md")]
-#[doc = include_str!("../../docs/references/index/110.md")]
-#[doc = include_str!("../../docs/references/index/111.md")]
-#[doc = include_str!("../../docs/references/index/127.md")]
-#[doc = include_str!("../../docs/references/index/128.md")]
-#[doc = include_str!("../../docs/references/index/129.md")]
+#[doc = include_str!("../../docs/references/index/504.md")]
+#[doc = include_str!("../../docs/references/index/505.md")]
+#[doc = include_str!("../../docs/references/index/506.md")]
+#[doc = include_str!("../../docs/references/index/507.md")]
+#[doc = include_str!("../../docs/references/index/508.md")]
+#[doc = include_str!("../../docs/references/index/509.md")]
+#[doc = include_str!("../../docs/references/index/510.md")]
+#[doc = include_str!("../../docs/references/index/511.md")]
+#[doc = include_str!("../../docs/references/index/527.md")]
+#[doc = include_str!("../../docs/references/index/528.md")]
+#[doc = include_str!("../../docs/references/index/529.md")]
 pub mod cacao {
     #[cfg(doc)]
     pub use crate::{
@@ -576,27 +576,27 @@ pub mod cacao {
     ///
     /// This is a rough average of the water content of several natural and alkalized powders:
     ///
-    /// - (USDA, 2019, "Cocoa, dry powder, unsweetened")[^106]
-    /// - (USDA, 2019, "Cocoa, dry powder, unsweetened, processed with alkali")[^128]
-    /// - (USDA, 2019, "Cocoa, dry powder, hi-fat or breakfast, processed with alkali")[^129]
+    /// - (USDA, 2019, "Cocoa, dry powder, unsweetened")[^506]
+    /// - (USDA, 2019, "Cocoa, dry powder, unsweetened, processed with alkali")[^528]
+    /// - (USDA, 2019, "Cocoa, dry powder, hi-fat or breakfast, processed with alkali")[^529]
     ///
     /// The EU caps cocoa powder at 9% water (Directive 2000/36/EC, 2000, Annex I 2.(a))[^84].
     #[doc = include_str!("../../docs/references/index/84.md")]
-    #[doc = include_str!("../../docs/references/index/106.md")]
-    #[doc = include_str!("../../docs/references/index/128.md")]
-    #[doc = include_str!("../../docs/references/index/129.md")]
+    #[doc = include_str!("../../docs/references/index/506.md")]
+    #[doc = include_str!("../../docs/references/index/528.md")]
+    #[doc = include_str!("../../docs/references/index/529.md")]
     pub const STD_WATER_IN_COCOA_POWDER: f64 = 0.03;
 
     /// Water content of chocolate, as a percentage of the product as a whole
     ///
     /// This is a rough average of the water content of several chocolate products:
     ///
-    /// - (USDA, 2019, "Chocolate, dark, 45-59% cacao solids")[^127]
-    /// - (USDA, 2019, "Chocolate, dark, 60-69% cacao solids")[^104]
-    /// - (USDA, 2019, "Chocolate, dark, 70-85% cacao solids")[^105]
-    #[doc = include_str!("../../docs/references/index/104.md")]
-    #[doc = include_str!("../../docs/references/index/105.md")]
-    #[doc = include_str!("../../docs/references/index/127.md")]
+    /// - (USDA, 2019, "Chocolate, dark, 45-59% cacao solids")[^527]
+    /// - (USDA, 2019, "Chocolate, dark, 60-69% cacao solids")[^504]
+    /// - (USDA, 2019, "Chocolate, dark, 70-85% cacao solids")[^505]
+    #[doc = include_str!("../../docs/references/index/504.md")]
+    #[doc = include_str!("../../docs/references/index/505.md")]
+    #[doc = include_str!("../../docs/references/index/527.md")]
     pub const STD_WATER_IN_CHOCOLATE: f64 = 0.01;
 
     /// Sugar content that is intrinsic to cocoa solids, naturally in the cacao nuts
@@ -650,7 +650,7 @@ pub mod cacao {
     /// 105)[^20], (Miller et al., 2008)[^85]. This is also corroborated by their measured potassium
     /// content where, between listings differing only by the alkalization treatment, the alkalized
     /// ones show ~2.5g of potassium per 100g compared to the natural's ~1.5g (USDA, 2019, "Cocoa,
-    /// dry powder, unsweetened")[^106], (USDA, 2019, "... processed with alkali")[^128]. Alkali
+    /// dry powder, unsweetened")[^506], (USDA, 2019, "... processed with alkali")[^528]. Alkali
     /// ingredients are capped at the neutralizing value of 3 parts by weight of anhydrous potassium
     /// carbonate per 100 parts nibs (U.S. FDA, CFR 21, 163.110(b)(1))[^86]. This puts the USDA pair
     /// at about a third of the regulatory limit, a reasonably typical value. See the documentation
@@ -662,8 +662,8 @@ pub mod cacao {
     #[doc = include_str!("../../docs/references/index/20.md")]
     #[doc = include_str!("../../docs/references/index/85.md")]
     #[doc = include_str!("../../docs/references/index/86.md")]
-    #[doc = include_str!("../../docs/references/index/106.md")]
-    #[doc = include_str!("../../docs/references/index/128.md")]
+    #[doc = include_str!("../../docs/references/index/506.md")]
+    #[doc = include_str!("../../docs/references/index/528.md")]
     pub const STD_ASH_IN_DUTCHED_COCOA_SOLIDS: f64 = 0.093;
 
     /// Percentage of carbohydrates typically found in natural cocoa solids

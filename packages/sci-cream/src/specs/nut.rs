@@ -30,7 +30,7 @@ use crate::composition::CompKey;
 ///
 /// # Examples
 ///
-/// (USDA, 2019, "Nuts, almonds")[^102] per 100g:
+/// (USDA, 2019, "Nuts, almonds")[^502] per 100g:
 /// - Water: 4.41g
 /// - Protein: 21.2g
 /// - Total lipid (fat): 49.9g
@@ -69,7 +69,7 @@ use crate::composition::CompKey;
 /// # Ok(()) }
 /// ```
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
-#[doc = include_str!("../../docs/references/index/102.md")]
+#[doc = include_str!("../../docs/references/index/502.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct NutSpec {

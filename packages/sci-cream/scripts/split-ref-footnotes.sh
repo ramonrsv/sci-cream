@@ -13,6 +13,8 @@
 # and `docs/references/ingredients.md`, generating a file `docs/references/index/N.md` for each
 # footnote `[^N]: ...` found in those files markdown, containing just that footnote line.
 #
+# Either mode fails on a footnote numbered outside its bibliography's range (`INGREDIENTS_FIRST`).
+#
 # @todo Look into using https://pandoc.org/ for this instead of a hacky script.
 #
 # Usage: ./scripts/split-ref-footnotes.sh [--check]
@@ -26,7 +28,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PKG_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 REFERENCES_DIR="$PKG_ROOT/docs/references"
 INDICES_DIR="$REFERENCES_DIR/index"
-REFERENCES_FILES=("$REFERENCES_DIR/literature.md" "$REFERENCES_DIR/ingredients.md")
+LITERATURE_FILE="$REFERENCES_DIR/literature.md"
+INGREDIENTS_FILE="$REFERENCES_DIR/ingredients.md"
+REFERENCES_FILES=("$LITERATURE_FILE" "$INGREDIENTS_FILE")
+
+# Ingredient footnotes number from here up, literature ones below, so the two never collide.
+INGREDIENTS_FIRST=500
 
 case "${1-}" in
   "") check=false ;;
@@ -42,6 +49,7 @@ esac
 # definition that has since been deleted; the writing path never removes anything.
 declare -A defined=()
 stale=()
+misplaced=()
 
 $check || mkdir -p "$INDICES_DIR"
 
@@ -60,6 +68,12 @@ for refs_file in "${REFERENCES_FILES[@]}"; do
     output_file="$INDICES_DIR/${footnote_num}.md"
     defined["$footnote_num"]=1
 
+    expected_file="$LITERATURE_FILE"
+    ((footnote_num < INGREDIENTS_FIRST)) || expected_file="$INGREDIENTS_FILE"
+    if [[ $refs_file != "$expected_file" ]]; then
+      misplaced+=("[^$footnote_num] in ${refs_file#"$PKG_ROOT/"}")
+    fi
+
     if $check; then
       if [[ ! -f "$output_file" || "$(cat "$output_file")" != "$line" ]]; then
         stale+=("${output_file#"$PKG_ROOT/"}")
@@ -70,6 +84,12 @@ for refs_file in "${REFERENCES_FILES[@]}"; do
     fi
   done <"$refs_file"
 done
+
+if ((${#misplaced[@]} > 0)); then
+  echo "Footnote numbers must be < $INGREDIENTS_FIRST in literature, >= in ingredients:" >&2
+  printf '  %s\n' "${misplaced[@]}" >&2
+  exit 1
+fi
 
 $check || exit 0
 

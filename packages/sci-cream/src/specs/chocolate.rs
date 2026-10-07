@@ -86,7 +86,7 @@ pub enum ChocolateFat {
 ///
 /// # Examples
 ///
-/// (Lindt 70% Cacao Dark Chocolate, 2025)[^107] per 40g serving:
+/// (Lindt 70% Cacao Dark Chocolate, 2025)[^507] per 40g serving:
 /// - Cacao solids: 70%
 /// - Cocoa butter: 16g fat => 40%
 /// - Sugars: 12g => 30%
@@ -118,7 +118,7 @@ pub enum ChocolateFat {
 /// assert_eq!(comp.get(CompKey::TotalFiber), 11.34);
 /// # Ok(()) }
 /// ```
-#[doc = include_str!("../../docs/references/index/107.md")]
+#[doc = include_str!("../../docs/references/index/507.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct ChocolateSpec {
@@ -275,7 +275,7 @@ fn make_milk_solids(milk_solids: f64, milk_fat: f64, lactose: &Sugars) -> Result
 ///
 /// # Examples
 ///
-/// (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^111] per 6g serving:
+/// (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^511] per 6g serving:
 /// - Cocoa butter: 1g fat => 16.67%
 /// - Cacao solids: 100% less the default 3% water => 97% (calculated internally)
 ///
@@ -307,7 +307,7 @@ fn make_milk_solids(milk_solids: f64, milk_fat: f64, lactose: &Sugars) -> Result
 /// assert_eq_float!(comp.get(CompKey::TotalFiber), 30.36474);
 /// # Ok(()) }
 /// ```
-#[doc = include_str!("../../docs/references/index/111.md")]
+#[doc = include_str!("../../docs/references/index/511.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct CocoaPowderSpec {

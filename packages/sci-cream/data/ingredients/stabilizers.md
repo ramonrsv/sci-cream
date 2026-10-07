@@ -22,7 +22,7 @@ This models pure pectin E440, which requires a minimum of 65% galacturonic acid 
 anhydrous basis, and allows up to 12% water (The European Commission, 2025, E440)[^10]. Unlike the
 other entries of individual stabilizers, it does _not_ model most retail pectin products, which
 typically include fillers like dextrose, often at higher proportions than the active pectin (Kraft
-Heinz, 2026, "Sure-Jell")[^124]. Those should be modeled via [`CompositeSpec`] including pure pectin
+Heinz, 2026, "Sure-Jell")[^524]. Those should be modeled via [`CompositeSpec`] including pure pectin
 and fillers as separate ingredients.
 
 ## Gelatin
@@ -416,7 +416,7 @@ order, and the manufacturer recommended dosage:
 
 The manufacturer's website information is also corroborated by the technical datasheet, with some
 additional composition clarifications and expanded dosage information (Louis Francois, 2014, "Super
-Neutrose Gallia")[^125]:
+Neutrose Gallia")[^525]:
 
 > **Composition**
 >
@@ -496,5 +496,5 @@ above 1%, since the value was determined via a remainder in the estimated formul
 A generic commercial stabilizer blend, i.e. gums cut with a filler, and no emulsifier. Commercial
 blends vary in how much filler they carry: "Louis Francois Super Neutrose" leads with it, whereas
 _"Modernist Pantry Perfect Ice Cream"_ declares "Guar Gum, Dextrose, Carrageenan, ..." in that
-order, so its filler is a minority (Modernist Pantry, 2026, "Perfect Ice Cream")[^126]. As such, the
+order, so its filler is a minority (Modernist Pantry, 2026, "Perfect Ice Cream")[^526]. As such, the
 aliased ingredient is just an example of a popular commercial product, not a principled "standard".

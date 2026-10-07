@@ -25,7 +25,7 @@ use crate::{
 ///
 /// # Examples
 ///
-/// (USDA, 2019, "Strawberries, raw")[^101] per 100g:
+/// (USDA, 2019, "Strawberries, raw")[^501] per 100g:
 /// - Water: 91g
 /// - Energy: 32 kcal
 /// - Protein: 0.67g
@@ -68,7 +68,7 @@ use crate::{
 /// # Ok(()) }
 /// ```
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
-#[doc = include_str!("../../docs/references/index/101.md")]
+#[doc = include_str!("../../docs/references/index/501.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct FruitSpec {

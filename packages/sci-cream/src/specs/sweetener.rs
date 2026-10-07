@@ -94,7 +94,7 @@ use crate::{
 /// # Ok(()) }
 /// ```
 ///
-/// (USDA, 2018, "Syrup, maple, Canadian")[^114], from _USDA FoodData Central_:
+/// (USDA, 2018, "Syrup, maple, Canadian")[^514], from _USDA FoodData Central_:
 /// - 60% mixed sugars (59% sucrose, 1% glucose/fructose)
 /// - 7.5% oligosaccharides
 /// - 0.5% minerals
@@ -134,7 +134,7 @@ use crate::{
 /// # Ok(()) }
 /// ```
 ///
-/// (Splenda Sweetener Packets)[^115], from the manufacturer:
+/// (Splenda Sweetener Packets)[^515], from the manufacturer:
 /// - Bulked with Dextrose and Maltodextrin
 /// - Explicitly specified [`POD`](crate::docs#pod) (840)
 /// - Explicitly specified [`PAC`](crate::docs#pac-afp-fpdf-se) (112.6g/100g).
@@ -179,8 +179,8 @@ use crate::{
 /// # Ok(()) }
 /// ```
 #[doc = include_str!("../../docs/references/index/15.md")]
-#[doc = include_str!("../../docs/references/index/114.md")]
-#[doc = include_str!("../../docs/references/index/115.md")]
+#[doc = include_str!("../../docs/references/index/514.md")]
+#[doc = include_str!("../../docs/references/index/515.md")]
 #[allow(clippy::doc_markdown)] // false positive on 'FoodData'
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]

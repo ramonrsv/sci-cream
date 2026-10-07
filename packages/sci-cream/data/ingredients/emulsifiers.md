@@ -14,7 +14,7 @@
 
 De-oiled soy lecithin powder with a purity (acetone insoluble substances) of ~95%; the remaining
 substances are mostly triglycerides (EFSA et al., 2017, 3.1.1 Identity of the substance)[^75], (East
-Harbour Group, 2026, "Lecithin, Technical Specification")[^122].
+Harbour Group, 2026, "Lecithin, Technical Specification")[^522].
 
 ## Liquid Soy Lecithin
 
@@ -30,8 +30,8 @@ Harbour Group, 2026, "Lecithin, Technical Specification")[^122].
 
 Liquid soy lecithin with a minimum purity (acetone insoluble substances) of ~60%; the remaining
 substances are mostly triglycerides (The European Commission, 2025, E322)[^10], (East Harbour Group,
-2026, "Lecithin, Technical Specification")[^122], (Konsonet, 2026, "Soya Lecithin Liquid
-GMO")[^123], (EFSA et al., 2017, 3.1.1 Identity of the substance)[^75].
+2026, "Lecithin, Technical Specification")[^522], (Konsonet, 2026, "Soya Lecithin Liquid
+GMO")[^523], (EFSA et al., 2017, 3.1.1 Identity of the substance)[^75].
 
 ## Sunflower Lecithin Powder
 
