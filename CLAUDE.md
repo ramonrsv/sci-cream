@@ -202,11 +202,11 @@ The brand- and country-neutral `DairySimpleSpec` milk/cream entries (`0% Milk`, 
 ladder (only the Simple set covers every rung), model milk salts as a distinct MSNF component, and
 stay consistent with the crate's own composition model.
 
-The named-source `DairyLabelSpec` entries (`USDA …`, `Sealtest …`, `Carnation …`, `Eagle Brand …`)
-are real-world **reference data**, not defaults. They back the cross-source `compare_specs_*` tests
-in `src/tests/embedded/compare_specs/` — which treat the Simple specs as the baseline — and are
-selectable alternatives. These values can be coarsely label-rounded and should not be treated as
-canonical.
+The named-source entries, `USDA …` (`DairySheetSpec`) and `Sealtest …`, `Carnation …`,
+`Eagle Brand …` (`DairyLabelSpec`), are real-world **reference data**, not defaults. They back the
+cross-source `compare_specs_*` tests in `src/tests/embedded/compare_specs/` — which treat the Simple
+specs as the baseline — and are selectable alternatives. Label values can be coarsely rounded and
+should not be taken as canonical.
 
 ### TypeScript package (`packages/sci-cream/src/ts/`)
 

@@ -422,13 +422,15 @@ Kg'](https://bulkmart.ca/products/mmpa-grade-a-whole-milk-powder-26-25-kg), ['Wh
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 90.8,
     "energy": 34,
-    "total_fat": { "grams": 0.08 },
+    "fat": 0.08,
     "saturated_fat": 0.049,
-    "sugars": 5.05,
-    "protein": 3.43
+    "trans_fat": 0,
+    "sugars": { "lactose": 5.05 },
+    "protein": 3.43,
+    "ash": 0.77
   }
 }
 ```
@@ -441,13 +443,15 @@ free or skim)](https://fdc.nal.usda.gov/food-details/746776/nutrients)
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 89.1,
     "energy": 50,
-    "total_fat": { "grams": 1.9 },
+    "fat": 1.9,
     "saturated_fat": 1.11,
-    "sugars": 4.89,
-    "protein": 3.36
+    "trans_fat": 0.07,
+    "sugars": { "lactose": 4.89 },
+    "protein": 3.36,
+    "ash": 0.75
   }
 }
 ```
@@ -460,13 +464,15 @@ vitamin D](https://fdc.nal.usda.gov/food-details/746778/nutrients)
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 88.1,
     "energy": 61,
-    "total_fat": { "grams": 3.2 },
+    "fat": 3.2,
     "saturated_fat": 1.86,
-    "sugars": 4.81,
-    "protein": 3.27
+    "trans_fat": 0.112,
+    "sugars": { "lactose": 4.81 },
+    "protein": 3.27,
+    "ash": 0.8
   }
 }
 ```
@@ -479,13 +485,15 @@ D](https://fdc.nal.usda.gov/food-details/746782/nutrients)
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 80.6,
     "energy": 131,
-    "total_fat": { "grams": 11.5 },
+    "fat": 11.5,
     "saturated_fat": 7.03,
-    "sugars": 4.13,
-    "protein": 3.13
+    "trans_fat": 0.464,
+    "sugars": { "lactose": 4.13 },
+    "protein": 3.13,
+    "ash": 0.51
   }
 }
 ```
@@ -498,13 +506,15 @@ half](https://fdc.nal.usda.gov/food-details/171255/nutrients)
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 73.8,
     "energy": 195,
-    "total_fat": { "grams": 19.1 },
+    "fat": 19.1,
     "saturated_fat": 10.2,
-    "sugars": 3.67,
-    "protein": 2.96
+    "trans_fat": 0.625,
+    "sugars": { "lactose": 3.67 },
+    "protein": 2.96,
+    "ash": 0.61
   }
 }
 ```
@@ -517,13 +527,12 @@ cream)](https://fdc.nal.usda.gov/food-details/170857/nutrients)
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 58.13,
     "energy": 343,
-    "total_fat": { "grams": 35.56 },
+    "fat": 35.56,
     "saturated_fat": 20.4,
-    "carbohydrates": 3.8,
-    "sugars": 2.92,
+    "sugars": { "lactose": 2.92 },
     "protein": 2.02
   }
 }
@@ -747,13 +756,14 @@ From [nutrition facts table](https://fairlife.com/ultra-filtered-milk/whole-milk
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 79.4,
     "energy": 78,
-    "total_fat": { "grams": 0.2 },
+    "fat": 0.2,
     "saturated_fat": 0.121,
-    "sugars": 11.4,
-    "protein": 7.55
+    "sugars": { "lactose": 11.4 },
+    "protein": 7.55,
+    "ash": 1.5
   }
 }
 ```
@@ -766,12 +776,12 @@ vitamin D](https://fdc.nal.usda.gov/food-details/170878/nutrients)
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 78,
     "energy": 92,
-    "total_fat": { "grams": 1.96 },
+    "fat": 1.96,
     "saturated_fat": 1.214,
-    "sugars": 11.15,
+    "sugars": { "lactose": 11.15 },
     "protein": 7.42
   }
 }
@@ -790,13 +800,14 @@ milk](https://fdc.nal.usda.gov/food-details/171302/nutrients) is not lab-analyze
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 74,
     "energy": 134,
-    "total_fat": { "grams": 7.56 },
+    "fat": 7.56,
     "saturated_fat": 4.59,
-    "sugars": 10,
-    "protein": 6.81
+    "sugars": { "lactose": 10 },
+    "protein": 6.81,
+    "ash": 1.55
   }
 }
 ```
@@ -864,14 +875,14 @@ From [nutrition facts table](https://www.carnationmilk.ca/en/products/evaporated
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 27.2,
     "energy": 321,
-    "total_fat": { "grams": 8.7 },
+    "fat": 8.7,
     "saturated_fat": 5.49,
-    "sugars": 54.4,
+    "sugars": { "lactose": 9.6, "sucrose": 44.8 },
     "protein": 7.91,
-    "sucrose": 44.8
+    "ash": 1.83
   }
 }
 ```
@@ -879,7 +890,8 @@ From [nutrition facts table](https://www.carnationmilk.ca/en/products/evaporated
 USDA FoodData Central - SR Legacy - [Milk, canned, condensed,
 sweetened](https://fdc.nal.usda.gov/food-details/171275/nutrients). Sucrose content from USDA
 FoodData Central - Foundation - [Sweetened condensed
-milk](https://fdc.nal.usda.gov/food-details/2758990/nutrients)
+milk](https://fdc.nal.usda.gov/food-details/2758990/nutrients), with lactose as the rest of the
+54.4 g of total sugars.
 
 ## Eagle Brand Original Sweetened Condensed Milk
 
@@ -953,13 +965,14 @@ Table 3.2, p. 48)[^20].
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 3.16,
     "energy": 362,
-    "total_fat": { "grams": 0.77 },
+    "fat": 0.77,
     "saturated_fat": 0.499,
-    "sugars": 52,
-    "protein": 36.2
+    "sugars": { "lactose": 52 },
+    "protein": 36.2,
+    "ash": 7.93
   }
 }
 ```
@@ -972,13 +985,14 @@ D](https://fdc.nal.usda.gov/food-details/170877/nutrients)
 ```json
 {
   "category": "Dairy",
-  "DairyLabelSpec": {
-    "serving_size": { "grams": 100 },
+  "DairySheetSpec": {
+    "water": 2.47,
     "energy": 496,
-    "total_fat": { "grams": 26.7 },
+    "fat": 26.7,
     "saturated_fat": 16.7,
-    "sugars": 38.4,
-    "protein": 26.3
+    "sugars": { "lactose": 38.4 },
+    "protein": 26.3,
+    "ash": 6.08
   }
 }
 ```

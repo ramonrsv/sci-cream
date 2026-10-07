@@ -14,16 +14,20 @@ pub(crate) fn bench_sweetener_spec_to_composition(c: &mut Criterion) {
     let sweetener_spec = get_spec("High Fructose Corn Syrup 42").into_sweetener_spec().unwrap();
 
     let simple_milk = "2% Milk";
-    let label_milk_g = "USDA Whole Milk";
+    let label_milk_g = "Devon Cream Company Double Cream";
     let label_milk_ml = "Sealtest 3.25% Milk";
-    let label_sweet_g = "USDA Sweetened Condensed Milk";
+    let label_sweet_g = "Carnation Condensed Milk (UK)";
     let label_sweet_ml = "Eagle Brand Original Sweetened Condensed Milk";
+    let sheet_milk = "USDA Whole Milk";
+    let sheet_sweet = "USDA Sweetened Condensed Milk";
 
     let dairy_simple_spec = get_spec(simple_milk).into_dairy_simple_spec().unwrap();
     let dairy_label_spec_milk_g = get_spec(label_milk_g).into_dairy_label_spec().unwrap();
     let dairy_label_spec_milk_ml = get_spec(label_milk_ml).into_dairy_label_spec().unwrap();
     let dairy_label_spec_sweet_g = get_spec(label_sweet_g).into_dairy_label_spec().unwrap();
     let dairy_label_spec_sweet_ml = get_spec(label_sweet_ml).into_dairy_label_spec().unwrap();
+    let dairy_sheet_spec_milk = get_spec(sheet_milk).into_dairy_sheet_spec().unwrap();
+    let dairy_sheet_spec_sweet = get_spec(sheet_sweet).into_dairy_sheet_spec().unwrap();
 
     let _ = c.bench_function("sweetener_spec_to_composition", |b| {
         b.iter(|| black_box(sweetener_spec.to_composition().unwrap()));
@@ -47,6 +51,14 @@ pub(crate) fn bench_sweetener_spec_to_composition(c: &mut Criterion) {
 
     let _ = c.bench_function("dairy_label_spec_to_composition(sweet_ml)", |b| {
         b.iter(|| black_box(dairy_label_spec_sweet_ml.to_composition().unwrap()));
+    });
+
+    let _ = c.bench_function("dairy_sheet_spec_to_composition(milk)", |b| {
+        b.iter(|| black_box(dairy_sheet_spec_milk.to_composition().unwrap()));
+    });
+
+    let _ = c.bench_function("dairy_sheet_spec_to_composition(sweet)", |b| {
+        b.iter(|| black_box(dairy_sheet_spec_sweet.to_composition().unwrap()));
     });
 }
 

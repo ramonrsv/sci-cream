@@ -584,8 +584,6 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::tests::util::relative_diff_percent;
-
     use super::*;
     use crate::{
         composition::{CompKey, SolidsBreakdown},
@@ -594,7 +592,7 @@ pub(crate) mod tests {
         },
         error::Error,
         ingredient::Category,
-        specs::IngredientSpec,
+        specs::{IngredientSpec, TaggedSpec},
     };
 
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_0_MILK_STR: &str = r#"{
@@ -1192,35 +1190,35 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
-    // https://fdc.nal.usda.gov/food-details/2705385/nutrients
-    pub(crate) const ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA_STR: &str = r#"{
+    // https://fdc.nal.usda.gov/food-details/746782/nutrients
+    pub(crate) const ING_SPEC_DAIRY_SHEET_WHOLE_MILK_USDA_STR: &str = r#"{
       "name": "USDA Whole Milk",
       "category": "Dairy",
-      "DairyLabelSpec": {
-        "serving_size": { "grams": 100 },
+      "DairySheetSpec": {
+        "water": 88.1,
         "energy": 61,
-        "total_fat": { "grams": 3.2 },
+        "fat": 3.2,
         "saturated_fat": 1.86,
-        "sugars": 4.81,
-        "protein": 3.27
+        "trans_fat": 0.112,
+        "sugars": { "lactose": 4.81 },
+        "protein": 3.27,
+        "ash": 0.8
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA: LazyLock<IngredientSpec> =
+    pub(crate) static ING_SPEC_DAIRY_SHEET_WHOLE_MILK_USDA: LazyLock<IngredientSpec> =
         LazyLock::new(|| IngredientSpec {
             name: "USDA Whole Milk".to_string(),
             category: Category::Dairy,
-            spec: DairyLabelSpec {
-                serving_size: Unit::Grams(100.0),
+            spec: DairySheetSpec {
+                water: 88.1,
                 energy: Some(61.0),
-                total_fat: Unit::Grams(3.2),
+                fat: 3.2,
                 saturated_fat: Some(1.86),
-                trans_fat: None,
-                carbohydrates: None,
-                sugars: 4.81,
+                trans_fat: Some(0.112),
+                sugars: Sugars::new().lactose(4.81),
                 protein: 3.27,
-                lactose_free: None,
-                sucrose: None,
+                ash: Some(0.8),
                 solids_source: None,
             }
             .into(),
@@ -1235,34 +1233,31 @@ pub(crate) mod tests {
                         .fats(Fats::new().total(3.2).saturated(1.86).trans(0.112))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.81)))
                         .proteins(MilkProteins::new().casein(2.616).whey(0.654))
-                        .others(0.7026),
+                        .others(0.62),
                 ),
             )
             .pod(0.7696)
-            .pac(PAC::new().sugars(4.81).msnf_ws_salts(3.2268))
+            .pac(PAC::new().sugars(4.81).msnf_ws_salts(3.1964))
     });
 
     #[test]
-    fn to_composition_dairy_label_spec_whole_milk_usda() {
-        let comp = ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA.spec.to_composition().unwrap();
+    fn to_composition_dairy_sheet_spec_whole_milk_usda() {
+        let comp = ING_SPEC_DAIRY_SHEET_WHOLE_MILK_USDA.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 61.0);
 
         assert_eq!(comp.get(CompKey::MilkFat), 3.2);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.81);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 8.7826);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 3.9726);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 8.7);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 3.89);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 3.27);
         assert_eq_flt_test!(comp.get(CompKey::Casein), 2.616);
         assert_eq_flt_test!(comp.get(CompKey::Whey), 0.654);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 11.9826);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 11.9);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.27);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.9826);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 88.0174);
-
-        // USDA lists water as 88.1
-        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 88.1), 0.0938);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.9);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 88.1);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
@@ -1272,8 +1267,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.81);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.2268);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 8.0368);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.1964);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 8.0064);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.86);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.112);
@@ -1455,34 +1450,32 @@ pub(crate) mod tests {
     }
 
     // https://fdc.nal.usda.gov/food-details/2705400/nutrients
-    pub(crate) const ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_USDA_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_SHEET_2_EVAPORATED_MILK_USDA_STR: &str = r#"{
       "name": "USDA 2% Reduced-Fat Evaporated Milk",
       "category": "Dairy",
-      "DairyLabelSpec": {
-        "serving_size": { "grams": 100 },
+      "DairySheetSpec": {
+        "water": 78,
         "energy": 92,
-        "total_fat": { "grams": 1.96 },
+        "fat": 1.96,
         "saturated_fat": 1.214,
-        "sugars": 11.15,
+        "sugars": { "lactose": 11.15 },
         "protein": 7.42
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_USDA: LazyLock<IngredientSpec> =
+    pub(crate) static ING_SPEC_DAIRY_SHEET_2_EVAPORATED_MILK_USDA: LazyLock<IngredientSpec> =
         LazyLock::new(|| IngredientSpec {
             name: "USDA 2% Reduced-Fat Evaporated Milk".to_string(),
             category: Category::Dairy,
-            spec: DairyLabelSpec {
-                serving_size: Unit::Grams(100.0), // 100g serving size
+            spec: DairySheetSpec {
+                water: 78.0,
                 energy: Some(92.0),
-                total_fat: Unit::Grams(1.96),
+                fat: 1.96,
                 saturated_fat: Some(1.214),
                 trans_fat: None,
-                carbohydrates: None,
-                sugars: 11.15,
+                sugars: Sugars::new().lactose(11.15),
                 protein: 7.42,
-                lactose_free: None,
-                sucrose: None,
+                ash: None,
                 solids_source: None,
             }
             .into(),
@@ -1497,16 +1490,16 @@ pub(crate) mod tests {
                         .fats(Fats::new().total(1.96).saturated(1.214).trans(0.0686))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(11.15)))
                         .proteins(MilkProteins::new().casein(5.936).whey(1.484))
-                        .others(1.6148),
+                        .others(1.47),
                 ),
             )
             .pod(1.784)
-            .pac(PAC::new().sugars(11.15).msnf_ws_salts(7.416))
+            .pac(PAC::new().sugars(11.15).msnf_ws_salts(7.3628))
     });
 
     #[test]
-    fn to_composition_dairy_label_spec_2_evaporated_milk_usda() {
-        let comp = ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_USDA
+    fn to_composition_dairy_sheet_spec_2_evaporated_milk_usda() {
+        let comp = ING_SPEC_DAIRY_SHEET_2_EVAPORATED_MILK_USDA
             .spec
             .to_composition()
             .unwrap();
@@ -1515,19 +1508,16 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::MilkFat), 1.96);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 11.15);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 20.1848);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 9.0348);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 20.04);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 8.89);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 7.42);
         assert_eq_flt_test!(comp.get(CompKey::Casein), 5.936);
         assert_eq_flt_test!(comp.get(CompKey::Whey), 1.484);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 22.1448);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 22.0);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 7.42);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 22.1448);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 77.8552);
-
-        // USDA lists water as 78
-        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 78.0), 0.1856);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 22.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 78.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
@@ -1537,8 +1527,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 11.15);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 7.416);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 18.566);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 7.3628);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 18.5128);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.214);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0686);
@@ -1636,35 +1626,33 @@ pub(crate) mod tests {
 
     // https://fdc.nal.usda.gov/food-details/171275/nutrients
     // https://fdc.nal.usda.gov/food-details/2758990/nutrients
-    pub(crate) const ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_SHEET_SWEETENED_CONDENSED_MILK_USDA_STR: &str = r#"{
       "name": "USDA Sweetened Condensed Milk",
       "category": "Dairy",
-      "DairyLabelSpec": {
-        "serving_size": { "grams": 100 },
+      "DairySheetSpec": {
+        "water": 27.2,
         "energy": 321,
-        "total_fat": { "grams": 8.7 },
+        "fat": 8.7,
         "saturated_fat": 5.49,
-        "sugars": 54.4,
+        "sugars": { "lactose": 9.6, "sucrose": 44.8 },
         "protein": 7.91,
-        "sucrose": 44.8
+        "ash": 1.83
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA: LazyLock<IngredientSpec> =
+    pub(crate) static ING_SPEC_DAIRY_SHEET_SWEETENED_CONDENSED_MILK_USDA: LazyLock<IngredientSpec> =
         LazyLock::new(|| IngredientSpec {
             name: "USDA Sweetened Condensed Milk".to_string(),
             category: Category::Dairy,
-            spec: DairyLabelSpec {
-                serving_size: Unit::Grams(100.0),
+            spec: DairySheetSpec {
+                water: 27.2,
                 energy: Some(321.0),
-                total_fat: Unit::Grams(8.7),
+                fat: 8.7,
                 saturated_fat: Some(5.49),
                 trans_fat: None,
-                carbohydrates: None,
-                sugars: 54.4,
+                sugars: Sugars::new().lactose(9.6).sucrose(44.8),
                 protein: 7.91,
-                lactose_free: None,
-                sucrose: Some(44.8),
+                ash: Some(1.83),
                 solids_source: None,
             }
             .into(),
@@ -1680,19 +1668,19 @@ pub(crate) mod tests {
                             .fats(Fats::new().total(8.7).saturated(5.49).trans(0.3045))
                             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(9.6)))
                             .proteins(MilkProteins::new().casein(6.328).whey(1.582))
-                            .others(1.5226),
+                            .others(1.79),
                     )
                     .other(
                         SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(44.8))),
                     ),
             )
             .pod(46.336)
-            .pac(PAC::new().sugars(54.4).msnf_ws_salts(6.9927))
+            .pac(PAC::new().sugars(54.4).msnf_ws_salts(7.0909))
     });
 
     #[test]
-    fn to_composition_dairy_label_spec_sweetened_condensed_milk_usda() {
-        let comp = ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA
+    fn to_composition_dairy_sheet_spec_sweetened_condensed_milk_usda() {
+        let comp = ING_SPEC_DAIRY_SHEET_SWEETENED_CONDENSED_MILK_USDA
             .spec
             .to_composition()
             .unwrap();
@@ -1701,22 +1689,19 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::MilkFat), 8.7);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 9.6);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 19.0326);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 9.4326);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 19.3);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 9.7);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 7.91);
         assert_eq_flt_test!(comp.get(CompKey::Casein), 6.328);
         assert_eq_flt_test!(comp.get(CompKey::Whey), 1.582);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 27.7326);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 28.0);
 
         assert_eq_flt_test!(comp.get(CompKey::Sucrose), 44.8);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 54.4);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 7.91);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 72.5326);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 27.4674); // USDA lists 27.2
-
-        // USDA lists water as 27.2
-        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 27.2), 0.9735);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 72.8);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 27.2);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
@@ -1726,8 +1711,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 54.4);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 6.9927);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 61.3927);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 7.0909);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 61.4909);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 5.49);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.3045);
@@ -2469,8 +2454,8 @@ pub(crate) mod tests {
                     Some(*COMP_SKIM_MILK_GOFF_HARTEL),
                 ),
                 (
-                    ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA_STR,
-                    ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA.clone(),
+                    ING_SPEC_DAIRY_SHEET_WHOLE_MILK_USDA_STR,
+                    ING_SPEC_DAIRY_SHEET_WHOLE_MILK_USDA.clone(),
                     Some(*COMP_WHOLE_MILK_USDA),
                 ),
                 (
@@ -2484,8 +2469,8 @@ pub(crate) mod tests {
                     Some(*COMP_WHOLE_ULTRA_FILTERED_LACTOSE_FREE),
                 ),
                 (
-                    ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_USDA_STR,
-                    ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_USDA.clone(),
+                    ING_SPEC_DAIRY_SHEET_2_EVAPORATED_MILK_USDA_STR,
+                    ING_SPEC_DAIRY_SHEET_2_EVAPORATED_MILK_USDA.clone(),
                     Some(*COMP_2_EVAPORATED_MILK_USDA),
                 ),
                 (
@@ -2494,8 +2479,8 @@ pub(crate) mod tests {
                     Some(*COMP_2_EVAPORATED_MILK_CARNATION),
                 ),
                 (
-                    ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA_STR,
-                    ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA.clone(),
+                    ING_SPEC_DAIRY_SHEET_SWEETENED_CONDENSED_MILK_USDA_STR,
+                    ING_SPEC_DAIRY_SHEET_SWEETENED_CONDENSED_MILK_USDA.clone(),
                     Some(*COMP_SWEETENED_CONDENSED_MILK_USDA),
                 ),
                 (
@@ -2920,18 +2905,11 @@ pub(crate) mod tests {
         }
     }
 
-    // https://fdc.nal.usda.gov/food-details/746782/nutrients
     fn usda_whole_milk_sheet_spec() -> DairySheetSpec {
-        DairySheetSpec {
-            water: 88.1,
-            energy: Some(61.0),
-            fat: 3.2,
-            saturated_fat: Some(1.86),
-            sugars: Sugars::new().lactose(4.81),
-            protein: 3.27,
-            ash: Some(0.8),
-            ..empty_dairy_sheet_spec()
-        }
+        let TaggedSpec::DairySheetSpec(spec) = ING_SPEC_DAIRY_SHEET_WHOLE_MILK_USDA.spec else {
+            unreachable!("the USDA whole milk asset is a DairySheetSpec");
+        };
+        spec
     }
 
     #[test]
