@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792614159447,
+  "lastUpdate": 1792614498993,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -533152,6 +533152,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 523,
             "range": "8.29",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "441f42610899834a9f6f024987021ba6a2eae82e",
+          "message": "Model micellar casein and caseinate solids\n\nCasein products are now modeled as two solids sources. MicellarCasein,\nrenamed from Casein, covers concentrates and isolates, whose\nmicrofiltration keeps the casein micelles and their calcium phosphate.\nCaseinate covers caseinates, made from acid casein, which loses them,\nand holds fixed fractions based on sodium caseinate.\n\nMicellar casein's lactose, minerals, and casein share follow its protein\nalong lines from milk solids to an isolate, so a concentrate's grade\nsets its composition. The isolate anchors average the lines through four\npublished compositions, as a new reconciliation suite checks.\nDairySimpleSpec requires micellar casein's protein, and the dairy specs\nreject protein fractions below milk solids'.\n\nThe dairy entries gain Sodium Caseinate, an MCC 42 to isolate ladder,\nand reference sheets from Southward, USDEC, and Kommineni et al.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-21T13:13:54-04:00",
+          "tree_id": "460ee787b20e738ce3786577d54e1dd288544ef8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/441f42610899834a9f6f024987021ba6a2eae82e"
+        },
+        "date": 1792614432207,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51,
+            "range": "3.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52,
+            "range": "3.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 62.13,
+            "range": "3.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2557,
+            "range": "57.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 320.75,
+            "range": "5.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 335.63,
+            "range": "7.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 353.88,
+            "range": "3.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16873.13,
+            "range": "87.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 974.13,
+            "range": "15.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 57.25,
+            "range": "1.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 62,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 43.88,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.13,
+            "range": "1.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 137.88,
+            "range": "2.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 92.63,
+            "range": "2.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 59.29,
+            "range": "1.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 44.86,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 667.25,
+            "range": "12.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 740,
+            "range": "9.06",
             "unit": "ms"
           }
         ]
