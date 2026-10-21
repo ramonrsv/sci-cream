@@ -199,3 +199,21 @@
 [^98]: American Dairy Products Institute. (n.d.). [_Ingredient Resource Center_](https://adpi.org/ingredient-resources/).
 
 [^99]: American Dairy Products Institute. (n.d.). [_The Powerful List of Dairy Ingredients_](https://adpi.org/the-powerful-list-of-dairy-ingredients/).
+
+[^100]: U.S. Dairy Export Council. (2015). [_Micellar Casein Concentrate_](https://www.thinkusadairy.org/assets/documents/Customer%20Site/C3-Using%20Dairy/C3.7-Resources%20and%20Insights/02-Product%20Resources/MCC_Spec_Sheet_06-08-15.pdf).
+
+[^101]: Kommineni, A., Sunkesula, V., Marella, C., & Metzger, L. E. (2022, May). [_Calcium-Reduced Micellar Casein Concentrate—Physicochemical Properties of Powders and Functional Properties of the Dispersions_](https://www.mdpi.com/2304-8158/11/10/1377). Foods, 11(10), 1377.
+
+[^102]: American Dairy Products Institute. (2024). [_Edible Caseinates Standard_](https://adpi.org/wp-content/uploads/2024/02/Edible-Caseinates-Standard-v1.0_2024.pdf).
+
+[^103]: American Dairy Products Institute. (2023). [_Concentrated Milk Proteins Standard_](https://adpi.org/wp-content/uploads/2023/10/Concentrated-Milk-Proteins-Standard-v2.1_2023.pdf).
+
+[^104]: Codex Alimentarius Commission. (2014). [_Standard for Edible Casein Products (CXS 290-1995)_](https://www.fao.org/input/download/standards/185/CXS_290e.pdf). FAO/WHO.
+
+[^105]: Schulnies, F., Höhme, L., & Kleinschmidt, T. (2023, December). [_Ultrasonication of Micellar Casein Concentrate to Reduce Viscosity—Role of Undissolved Material_](https://www.mdpi.com/2304-8158/12/24/4519). Foods, 12(24), 4519.
+
+[^106]: McSweeney, D. J., Maidannyk, V., Montgomery, S., O'Mahony, J. A., & McCarthy, N. A. (2020, February). [_The Influence of Composition and Manufacturing Approach on the Physical and Rehydration Properties of Milk Protein Concentrate Powders_](https://www.mdpi.com/2304-8158/9/2/236). Foods, 9(2), 236.
+
+[^107]: Azevedo Scudeller, L., Feichtinger, A., Bellayer, S., Six, T., Hiolle, M., Delaplace, G., Sholten, E., & Fameau, A.-L. (2026, February). [_Oil foam based on dairy proteins particles and surfactant_](https://www.sciencedirect.com/science/article/pii/S2665927126000432). Current Research in Food Science, 12, 101343.
+
+[^108]: Eljabali, M. K., Nogueira Silva, N. F., Shokrollahi Yancheshmeh, B., Petersen, H. O., Casanova, F., Feyissa, A. H., & Regier, M. (2026, June). [_Effect of High-Intensity Ultrasound and Calcium Chelation on Functional Properties of Casein Micelles_](https://www.mdpi.com/2304-8158/15/12/2246). Foods, 15(12), 2246.

@@ -243,7 +243,7 @@ fn make_milk_solids(milk_solids: f64, milk_fat: f64, lactose: &Sugars) -> Result
                 .trans(milk_fat * STD_TRANS_FAT_IN_MILK_FAT),
         )
         .carbohydrates(Carbohydrates::new().sugars(*lactose))
-        .proteins(make_milk_proteins(proteins, SolidsSource::Milk))
+        .proteins(make_milk_proteins(proteins, STD_PROTEIN_IN_MSNF, SolidsSource::Milk)?)
         .others_from_total(milk_solids)
 }
 

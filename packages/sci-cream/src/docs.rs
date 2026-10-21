@@ -1,5 +1,7 @@
 // Each page includes the whole shared bibliography but cites only part of it.
 #![expect(rustdoc::unused_footnote_definition)]
+// _McSweeney_ and _McCarthy_ false positives, in the bibliography
+#![expect(clippy::doc_markdown)]
 #![doc = include_str!("../docs/table-of-contents.md")]
 #![doc = include_str!("../docs/sweeteners.md")]
 #![doc = include_str!("../docs/sugars.md")]
@@ -103,6 +105,8 @@ pub mod ingredients {
     #![doc = include_str!("../docs/references/index/524.md")]
     #![doc = include_str!("../docs/references/index/525.md")]
     #![doc = include_str!("../docs/references/index/526.md")]
+    #![doc = include_str!("../docs/references/index/539.md")]
+    #![doc = include_str!("../docs/references/index/540.md")]
 
     #[cfg(doc)]
     use crate::{

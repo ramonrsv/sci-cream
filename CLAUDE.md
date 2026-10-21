@@ -201,7 +201,9 @@ The brand- and country-neutral `DairySimpleSpec` milk/cream entries (`0% Milk`, 
 `Half and Half`, `Whipping Cream`, …). They are preferred as defaults because they span the full fat
 ladder (only the Simple set covers every rung), model milk salts as a distinct MSNF component, and
 stay consistent with the crate's own composition model. The Simple whey entries (`Whey Powder`,
-`Whey Protein Concentrate 34%` and `80%`, `Whey Protein Isolate`) span the protein ladder likewise.
+`Whey Protein Concentrate 34%` and `80%`, `Whey Protein Isolate`) span the protein ladder likewise,
+as do the micellar casein ones (`Micellar Casein Concentrate 42%`, `70%`, and `80%`, and
+`Micellar Casein Isolate`), beside `Sodium Caseinate`.
 
 The named-source entries, `USDA …` and `USDEC …` (`DairySheetSpec`) and `Sealtest …`, `Carnation …`,
 `Eagle Brand …` (`DairyLabelSpec`), are real-world **reference data**, not defaults. They back the

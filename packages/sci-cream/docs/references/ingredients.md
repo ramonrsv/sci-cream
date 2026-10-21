@@ -79,3 +79,9 @@
 [^537]: U.S. Department of Agriculture. (2019). [_Whey, sweet, fluid_](https://fdc.nal.usda.gov/food-details/171282/nutrients). FoodData Central - SR Legacy.
 
 [^538]: Hilmar Ingredients. (2026, March). [_Hilmar 9000 Whey Protein Isolate_](https://www.hilmar.com/wp-content/uploads/2023/07/Hilmar-9000-WPI.pdf).
+
+[^539]: Ornua. (n.d.). [_Sodium Caseinate_](https://www.ornua.com/wp-content/uploads/2018/07/Sodium-Caseinate.pdf).
+
+[^540]: Glenstal Foods. (n.d.). [_Sodium Caseinate_](https://www.glenstalfoods.com/wordpress/wp-content/uploads/2021/01/Glenstal_S-Caseinate.pdf).
+
+[^541]: Rogers & Company Foods. (2025, April). [_Micellar Casein Isolate_](https://rogersfoods.com.au/wp-content/uploads/Micellar-Casein-Isolate-Specifications.pdf).

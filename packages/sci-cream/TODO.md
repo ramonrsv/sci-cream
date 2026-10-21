@@ -32,8 +32,6 @@
 - [ ] Add support for `data` to resolve `AliasSpec` and `CompositeSpec` on per-spec requests.
 - [ ] Add more reference recipes from Underbelly, Dana, Corvitto, Ice Cream Science, etc.
 - [ ] Consider adding `compare_specs_*` tests for simple and label lactose-free dairy products.
-- [ ] Add whey and casein concentrate products, e.g. "Whey Powder", "Whey Protein Concentrate 80%",
-      "Whey Protein Isolate 90%", "Sodium Caseinate", "Buttermilk Powder", etc.
 - [ ] Carry the original target key through proxy translation so downstream balancing warnings
       (reachability, ratio bands, etc.) name what the user targeted (e.g. `ServingTemp`), not the
       substituted proxy (e.g. `AbsNetPAC`); see `translate_balancing_targets`.
@@ -70,8 +68,15 @@
 - [ ] Add proper support for `FullSpec` and convert "Vegetable Oil" and "Palm Oil" to it; they use
       `FruitSpec`/`NutSpec` today, so their fat lands under fruit/nut fat rather than `OtherFats`.
 - [ ] Consider supporting ignored ingredients — ones strained out before freezing, e.g. herbs, etc.
-- [ ] Add a buttermilk ingredient (Goff & Hartel), distinct from the "Buttermilk Powder" listed
-      above, and look into the stabilizing role that Underbelly and Goff & Hartel both mention.
+- [ ] Add butter products, e.g. "Butter", "Butter Oil", "Anhydrous Milk Fat", etc., all listed in
+      Goff & Hartel's Table 3.2, though its unsalted butter row lists 0.8% protein in 0.5% MSNF.
+- [ ] Add sweet cream buttermilk products, liquid, concentrated, and dried ("Buttermilk Powder"),
+      with the usual USDA, Goff & Hartel, and spec sheet entries. Look into the stabilizing role
+      that Underbelly and Goff & Hartel mention, from its milk fat globule membrane material.
+- [ ] Add cultured buttermilk, the fermented low-fat milk sold at retail, liquid and powdered, with
+      the usual USDA and label entries.
+- [ ] Add support for milk concentrates, e.g. ultrafiltered milk, with lactose and minerals along
+      protein lines, as McSweeney et al.'s (2020) MPCs show, per the `@todo` on `DairySimpleSpec`.
 - [ ] Put a space between numbers and unit symbols, per SI, e.g. "100 g" rather than "100g"; most
       comments and docs omit it, except the newer `DairySheetSpec` docs.
 - [ ] Add a spec-level fats type, a total with optional `saturated`/`trans`, for `DairySheetSpec`,
@@ -137,6 +142,8 @@
 
 ## Completed
 
+- [x] Add whey and casein concentrate products, e.g. "Whey Powder", "Whey Protein Concentrate 80%",
+      "Whey Protein Isolate 90%", "Sodium Caseinate", ~~"Buttermilk Powder"~~, etc.
 - [x] Add milk solids support to `ChocolateSpec` and add milk chocolate Callebaut ingredients.
 - [x] Add a `dutch_processed` field to `CocoaPowderSpec`; alkalization lifts ash from ~0.074 to
       ~0.093 of cocoa solids, the loosest reconciliation ceiling at 19.3%, on one un-imputed pair.

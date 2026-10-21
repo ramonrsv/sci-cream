@@ -1,7 +1,7 @@
 //! Cross-source consistency checks for dairy ingredients — milk, cream, evaporated and condensed
-//! milk, milk powders, whey, and protein powders — comparing each Simple/default entry against
-//! USDA, USDEC, Sealtest, Carnation, Goff & Hartel, and brand references. Each USDA listing is
-//! compared both as its embedded sheet and as its test-only `… (Label)` variant.
+//! milk, milk powders, whey, casein, and protein powders — comparing each Simple/default entry
+//! against USDA, USDEC, Sealtest, Carnation, Goff & Hartel, Southward, and brand references. Each
+//! USDA listing is compared both as its embedded sheet and as its test-only `… (Label)` variant.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -478,11 +478,54 @@ fn compare_specs_whey_isolate() {
 }
 
 #[test]
-fn compare_specs_casein() {
+fn compare_specs_mcc_80() {
+    assert_true!(is_alias_for("MCC 80", "Micellar Casein Concentrate 80%"));
+
     let sources = [
+        ("Simple", "Micellar Casein Concentrate 80%"),
+        ("Kommineni", "Kommineni Micellar Casein Concentrate 80%"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_micellar_casein() {
+    assert_true!(is_alias_for("MCI", "Micellar Casein Isolate"));
+
+    let sources = [
+        ("Simple", "Micellar Casein Isolate"),
+        ("USDEC", "USDEC Micellar Casein Concentrate"),
         ("California Gold", "California Gold Nutrition, Sport, Micellar Casein"),
         ("MyProtein", "MyProtein Slow-Release Casein"),
         ("Optimum Nutrition", "Optimum Nutrition Gold Standard 100% Casein"),
+    ]
+    .map(source_str_to_comp);
+
+    // MyProtein and Optimum Nutrition are flavored blends, ~73-77% protein with 6.7 g of other
+    // carbohydrates per 100 g, while the Simple and USDEC entries are unflavored, ~83-86% protein.
+    // Between them, the largest misses are:
+    //    - MilkSNFS       12.01 pp  (Simple, USDEC vs MyProtein, Optimum Nutrition)
+    //    - MilkProteins   11.32 pp  (Simple vs MyProtein, Optimum Nutrition)
+    let ceiling = KeyCeiling::new(10.0)
+        .with(CompKey::Energy, 17.0)
+        .with(CompKey::MilkSNFS, 13.0)
+        .with(CompKey::MilkProteins, 12.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_sodium_caseinate() {
+    let sources = [
+        ("Simple", "Sodium Caseinate"),
+        ("Southward", "Southward Sodium Caseinate"),
+        ("USDEC", "USDEC Sodium Caseinate"),
     ]
     .map(source_str_to_comp);
 

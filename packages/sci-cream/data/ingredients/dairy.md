@@ -346,6 +346,98 @@ protein at the low end of the typical 90.0-92.0% of whey protein isolate (USDEC,
 { "for": "Whey Protein Isolate" }
 ```
 
+## Micellar Casein Concentrate 42%
+
+```json
+{
+  "category": "Dairy",
+  "DairySimpleSpec": { "fat": 1, "msnf": 94, "protein": 42, "solids_source": "MicellarCasein" }
+}
+```
+
+Simplified version of ADPI's micellar casein concentrate, 42% grade (ADPI, 2023, p. 2)[^103], with
+the 1% fat and 5% moisture of USDEC's typical MCC (USDEC, 2015, Figure 1, p. 1)[^100], both within
+ADPI's limits for the grade.
+
+## Micellar Casein Concentrate 70%
+
+```json
+{
+  "category": "Dairy",
+  "DairySimpleSpec": { "fat": 1, "msnf": 94, "protein": 70, "solids_source": "MicellarCasein" }
+}
+```
+
+Simplified version of ADPI's micellar casein concentrate, 70% grade (ADPI, 2023, p. 2)[^103], with
+the 1% fat and 5% moisture of USDEC's typical MCC (USDEC, 2015, Figure 1, p. 1)[^100], both within
+ADPI's limits for the grade.
+
+## Micellar Casein Concentrate 80%
+
+```json
+{
+  "category": "Dairy",
+  "DairySimpleSpec": { "fat": 1, "msnf": 94, "protein": 80, "solids_source": "MicellarCasein" }
+}
+```
+
+Simplified version of ADPI's micellar casein concentrate, 80% grade (ADPI, 2023, p. 2)[^103], with
+the 1% fat and 5% moisture of USDEC's typical MCC (USDEC, 2015, Figure 1, p. 1)[^100], both within
+ADPI's limits for the grade. Kommineni et al.'s pilot-scale powder of the grade is also available as
+an individual entry: "Kommineni Micellar Casein Concentrate 80%".
+
+## Micellar Casein Isolate
+
+```json
+{
+  "category": "Dairy",
+  "DairySimpleSpec": { "fat": 1, "msnf": 94, "protein": 85.5, "solids_source": "MicellarCasein" }
+}
+```
+
+Simplified version of ADPI's micellar casein isolate (ADPI, 2023, p. 2)[^103], at 90.0% protein on a
+dry basis, just above its 89.5% minimum, with the 1% fat and 5% moisture of USDEC's typical MCC
+(USDEC, 2015, Figure 1, p. 1)[^100], both within ADPI's limits for isolates. USDEC's typical
+concentrate is also available as an individual entry: "USDEC Micellar Casein Concentrate".
+
+## MCC 42
+
+```json
+{ "for": "Micellar Casein Concentrate 42%" }
+```
+
+## MCC 70
+
+```json
+{ "for": "Micellar Casein Concentrate 70%" }
+```
+
+## MCC 80
+
+```json
+{ "for": "Micellar Casein Concentrate 80%" }
+```
+
+## MCI
+
+```json
+{ "for": "Micellar Casein Isolate" }
+```
+
+## Sodium Caseinate
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 1, "msnf": 95, "solids_source": "Caseinate" } }
+```
+
+A consolidation of various sodium caseinate sources: (Southward, n.d., Table 1, p. 9)[^96], (USDEC,
+2015, Figure 1, p. 1)[^100], (Ornua, n.d.)[^539], (Glenstal Foods, n.d.)[^540]. Its protein, fat,
+and moisture are within the limits for edible caseinates of ADPI (ADPI, 2024, p. 1)[^102] and Codex
+(Codex, CXS 290-1995, §3.3)[^104]. Southward's and USDEC's are also available as individual entries:
+"Southward Sodium Caseinate" and "USDEC Sodium Caseinate". Example bulk product listings: [Sodium
+Caseinate - 25 Kg](https://bulkmart.ca/products/sodium-caseinate-25-kg), [NZMP Sodium Caseinate
+180](https://www.nzmp.com/global/en/ingredients/proteins/caseins-and-caseinates/caseinates/nzmp-sodium-caseinate-180.html).
+
 ## Goff & Hartel Skim Milk
 
 ```json
@@ -1302,6 +1394,80 @@ From [product bulletin](https://www.hilmar.com/wp-content/uploads/2023/07/Hilmar
 (revised March 2026), typical values. They sum to 97.5%, so the 2.5 g they leave unaccounted join
 the ash under other milk solids.
 
+## USDEC Micellar Casein Concentrate
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 5,
+    "fat": 1,
+    "sugars": { "lactose": 1 },
+    "protein": 83,
+    "ash": 7.8,
+    "solids_source": "MicellarCasein"
+  }
+}
+```
+
+(USDEC, 2015, Figure 1, p. 1)[^100]. Its values sum to 97.8%, so the 2.2 g they leave unaccounted
+are counted under other milk solids.
+
+## Kommineni Micellar Casein Concentrate 80%
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 4.49,
+    "fat": 2.98,
+    "sugars": { "lactose": 5.13 },
+    "protein": 79.25,
+    "ash": 8.15,
+    "solids_source": "MicellarCasein"
+  }
+}
+```
+
+(Kommineni et al., 2022, Tables 1-2)[^101], a pilot-scale powder averaged over three batches.
+
+## Southward Sodium Caseinate
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 3.8,
+    "fat": 1.1,
+    "sugars": { "lactose": 0.1 },
+    "protein": 91.4,
+    "ash": 3.6,
+    "solids_source": "Caseinate"
+  }
+}
+```
+
+(Southward, n.d., Table 1, p. 9)[^96]
+
+## USDEC Sodium Caseinate
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 4.3,
+    "fat": 0.7,
+    "sugars": { "lactose": 0.3 },
+    "protein": 92.7,
+    "ash": 3,
+    "solids_source": "Caseinate"
+  }
+}
+```
+
+(USDEC, 2015, Figure 1, p. 1)[^100]. Its values sum to 101.0%, so other milk solids hold 2.0 g,
+short of its 3.0 g of ash.
+
 ## Leanfit Sport Whey Isolate
 
 ```json
@@ -1355,7 +1521,7 @@ From [nutrition facts table
     "carbohydrates": 2,
     "sugars": 1,
     "protein": 25,
-    "solids_source": "Casein"
+    "solids_source": "MicellarCasein"
   }
 }
 ```
@@ -1415,7 +1581,7 @@ variant)](https://ca.myprotein.com/p/sports-nutrition/clear-whey-isolate/1209586
     "carbohydrates": 3,
     "sugars": 1,
     "protein": 23,
-    "solids_source": "Casein"
+    "solids_source": "MicellarCasein"
   }
 }
 ```
@@ -1480,7 +1646,7 @@ Label lists 0.12g of salt.
     "carbohydrates": 11,
     "sugars": 4.3,
     "protein": 73,
-    "solids_source": "Casein"
+    "solids_source": "MicellarCasein"
   }
 }
 ```
@@ -1488,12 +1654,6 @@ Label lists 0.12g of salt.
 From [nutrition facts table (strawberry delight
 variant)](https://www.optimumnutrition.com/products/gold-standard-100-casein-protein-powder-eu?variant=52105828106507).
 Label lists 1.4g of salt.
-
-## Casein
-
-```json
-{ "for": "California Gold Nutrition, Sport, Micellar Casein" }
-```
 
 ## Organic Valley Organic Whole Milk
 
