@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791411638884,
+  "lastUpdate": 1792599056142,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -572765,6 +572765,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.90%",
             "unit": "ops/sec",
             "extra": "96 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5ba907a3e4314ede236a077b443ed66de79f23de",
+          "message": "Run local visual tests with TMPDIR=/dev/shm\n\nPlaywright launches Chromium with --disable-dev-shm-usage, putting its\nshared memory in TMPDIR. On a disk-backed /tmp, as on WSL2, each tall\nall-content capture dirties tens of megabytes of page cache. Once the\nsuite's earlier steps leave memory tight, concurrent captures cross the\ndirty-writeback limits and stall every browser on I/O, so the capture\ninside toHaveScreenshot times out.\n\n/dev/shm is tmpfs, so those pages never reach the disk. The change is\nlocal to this script; CI and act are unaffected.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-21T12:07:44-04:00",
+          "tree_id": "b7979d82b02a84b693cc7f512647d7792cc38504",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5ba907a3e4314ede236a077b443ed66de79f23de"
+        },
+        "date": 1792599017902,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 107279,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 837754,
+            "range": "±0.62%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 68984,
+            "range": "±0.49%",
+            "unit": "ops/sec",
+            "extra": "99 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 614017,
+            "range": "±0.53%",
+            "unit": "ops/sec",
+            "extra": "99 samples"
           }
         ]
       }
