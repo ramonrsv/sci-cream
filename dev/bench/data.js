@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792599056142,
+  "lastUpdate": 1792599123725,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -661064,6 +661064,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (packed)",
             "value": 617.47,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2052.26,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5ba907a3e4314ede236a077b443ed66de79f23de",
+          "message": "Run local visual tests with TMPDIR=/dev/shm\n\nPlaywright launches Chromium with --disable-dev-shm-usage, putting its\nshared memory in TMPDIR. On a disk-backed /tmp, as on WSL2, each tall\nall-content capture dirties tens of megabytes of page cache. Once the\nsuite's earlier steps leave memory tight, concurrent captures cross the\ndirty-writeback limits and stall every browser on I/O, so the capture\ninside toHaveScreenshot times out.\n\n/dev/shm is tmpfs, so those pages never reach the disk. The change is\nlocal to this script; CI and act are unaffected.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-21T12:07:44-04:00",
+          "tree_id": "b7979d82b02a84b693cc7f512647d7792cc38504",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5ba907a3e4314ede236a077b443ed66de79f23de"
+        },
+        "date": 1792599058819,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1158.35,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 351.31,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1846.12,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 569.36,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 617.12,
             "unit": "KB"
           },
           {
