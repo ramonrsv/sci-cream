@@ -75,7 +75,10 @@ else
     execute env CI=true pnpm test:e2e
 fi
 
-execute pnpm test:visual
+# Playwright launches Chromium with `--disable-dev-shm-usage`, putting its shared memory in TMPDIR.
+# On a disk-backed /tmp, tall full-page captures then stall on writeback; /dev/shm is tmpfs.
+execute env TMPDIR=/dev/shm pnpm test:visual
+
 execute pnpm doc
 execute pnpm coverage
 
