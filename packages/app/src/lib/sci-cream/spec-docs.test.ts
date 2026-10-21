@@ -40,6 +40,9 @@ describe("specDocLinks", () => {
     expect(labelsFor("70% Dark Chocolate")).toContain("Chocolate");
     expect(labelsFor("Sucrose")).toContain("Sweeteners");
     expect(labelsFor("Sucrose")).toContain("PAC, AFP, FPDF, SE");
+    expect(labelsFor("3.25% Milk")).toContain("Dairy");
+    expect(labelsFor("Sealtest 3.25% Milk")).toContain("Dairy");
+    expect(labelsFor("USDA Whole Milk")).toContain("Dairy");
   });
 
   test("field rules distinguish sugars, polyols, artificial sweeteners, and fibers", () => {

@@ -102,6 +102,8 @@ pub struct DairySimpleSpec {
     /// detailed proteins breakdown is determined by [`solids_source`](Self::solids_source). If that
     /// is [`SolidsSource::Whey`] or [`SolidsSource::MicellarCasein`], the lactose content is also
     /// determined by the protein content, as given by [`lactose_in_snf`].
+    ///
+    /// This is [crude protein](crate::docs#crude-and-true-protein), as sources list it.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protein: Option<f64>,
     /// Sucrose content by weight; optional, assumed to be zero if not specified.
@@ -278,7 +280,8 @@ pub struct DairyLabelSpec {
     pub sugars: f64,
     /// Protein content per serving, in grams.
     ///
-    /// The detailed proteins breakdown is determined by [`solids_source`](Self::solids_source).
+    /// This is [crude protein](crate::docs#crude-and-true-protein), as labels list it. The detailed
+    /// proteins breakdown is determined by [`solids_source`](Self::solids_source).
     pub protein: f64,
     /// Whether the dairy product is lactose-free, which affects the detailed composition of
     /// [`sugars`](Self::sugars).
@@ -461,8 +464,18 @@ pub struct DairySheetSpec {
     pub sugars: Sugars,
     /// Protein content, in grams per 100 g, as-is rather than on a dry basis
     ///
-    /// The detailed proteins breakdown is determined by [`solids_source`](Self::solids_source).
+    /// This is [crude protein](crate::docs#crude-and-true-protein), as sheets list it.
+    ///
+    /// The detailed breakdown of the proteins is determined by [`casein`](Self::casein), if listed,
+    /// or else by [`solids_source`](Self::solids_source).
     pub protein: f64,
+    /// Casein content, in grams per 100 g, if listed; a subset of [`protein`](Self::protein)
+    ///
+    /// If specified, it replaces the casein share that [`solids_source`](Self::solids_source)
+    /// gives, and whey makes up the rest of the protein, non-protein nitrogen included.
+    /// See [crude and true protein](crate::docs#crude-and-true-protein) for more details.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub casein: Option<f64>,
     /// Ash or mineral content, in grams per 100 g, if listed
     ///
     /// This does not currently affect the composition; minerals are implicitly counted as part of
@@ -476,7 +489,8 @@ pub struct DairySheetSpec {
     pub ash: Option<f64>,
     /// Source of the solids non-fat in this product, [`SolidsSource::Milk`] if unspecified
     ///
-    /// This affects the detailed protein composition of the solids non-fat.
+    /// This affects the detailed protein composition of the solids non-fat, unless
+    /// [`casein`](Self::casein) is listed.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub solids_source: Option<SolidsSource>,
 }
@@ -491,6 +505,7 @@ impl ToComposition for DairySheetSpec {
             trans_fat,
             sugars,
             protein,
+            casein,
             ash,
             solids_source,
         } = *self;
@@ -501,18 +516,31 @@ impl ToComposition for DairySheetSpec {
 
         sugars.validate()?;
 
-        verify_are_positive(&[water, fat, saturated_fat, trans_fat, protein, ash.unwrap_or(0.0)])?;
+        verify_are_positive(&[
+            water,
+            fat,
+            saturated_fat,
+            trans_fat,
+            protein,
+            casein.unwrap_or(0.0),
+            ash.unwrap_or(0.0),
+        ])?;
         verify_is_within_100_percent(water + fat + sugars.total() + protein)?;
         verify_is_subset(saturated_fat, fat, "saturated_fat <= fat")?;
         verify_is_subset(trans_fat, fat, "trans_fat <= fat")?;
+        verify_is_subset(casein.unwrap_or(0.0), protein, "casein <= protein")?;
 
         let (milk_sugars, other_sugars) = split_milk_sugars(sugars);
         let snf = 100.0 - water - fat - other_sugars.total();
+        let proteins = match casein {
+            Some(casein) => MilkProteins::new().casein(casein).whey(protein - casein),
+            None => make_milk_proteins(protein, protein / snf, solids_source)?,
+        };
 
         let milk_solids = MilkSolids::new()
             .fats(Fats::new().total(fat).saturated(saturated_fat).trans(trans_fat))
             .carbohydrates(Carbohydrates::new().sugars(milk_sugars))
-            .proteins(make_milk_proteins(protein, protein / snf, solids_source)?)
+            .proteins(proteins)
             .others_from_total(fat + snf)?;
 
         let other_solids = SimpleSolids::new().carbohydrates(Carbohydrates::new().sugars(other_sugars));
@@ -1267,6 +1295,7 @@ pub(crate) mod tests {
                 trans_fat: Some(0.112),
                 sugars: Sugars::new().lactose(4.81),
                 protein: 3.27,
+                casein: None,
                 ash: Some(0.8),
                 solids_source: None,
             }
@@ -1524,6 +1553,7 @@ pub(crate) mod tests {
                 trans_fat: None,
                 sugars: Sugars::new().lactose(11.15),
                 protein: 7.42,
+                casein: None,
                 ash: None,
                 solids_source: None,
             }
@@ -1701,6 +1731,7 @@ pub(crate) mod tests {
                 trans_fat: None,
                 sugars: Sugars::new().lactose(9.6).sucrose(44.8),
                 protein: 7.91,
+                casein: None,
                 ash: Some(1.83),
                 solids_source: None,
             }
@@ -2236,6 +2267,7 @@ pub(crate) mod tests {
             trans_fat: None,
             sugars: Sugars::new().lactose(5.31),
             protein: 80.0,
+            casein: None,
             ash: Some(3.98),
             solids_source: Some(SolidsSource::Whey),
         }
@@ -2318,6 +2350,7 @@ pub(crate) mod tests {
             trans_fat: None,
             sugars: Sugars::new().lactose(1.0),
             protein: 89.0,
+            casein: None,
             ash: Some(2.5),
             solids_source: Some(SolidsSource::Whey),
         }
@@ -2650,6 +2683,7 @@ pub(crate) mod tests {
         "fat": 2.98,
         "sugars": { "lactose": 5.13 },
         "protein": 79.25,
+        "casein": 71.74,
         "ash": 8.15,
         "solids_source": "MicellarCasein"
       }
@@ -2667,6 +2701,7 @@ pub(crate) mod tests {
                 trans_fat: None,
                 sugars: Sugars::new().lactose(5.13),
                 protein: 79.25,
+                casein: Some(71.74),
                 ash: Some(8.15),
                 solids_source: Some(SolidsSource::MicellarCasein),
             }
@@ -2681,7 +2716,7 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(2.98).saturated(1.937).trans(0.1043))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(5.13)))
-                        .proteins(MilkProteins::new().casein(72.7417).whey(6.5083))
+                        .proteins(MilkProteins::new().casein(71.74).whey(7.51))
                         .others(8.15),
                 ),
             )
@@ -2700,8 +2735,8 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::MSNF), 92.53);
         assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 87.4);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 79.25);
-        assert_eq_flt_test!(comp.get(CompKey::Casein), 72.7417);
-        assert_eq_flt_test!(comp.get(CompKey::Whey), 6.5083);
+        assert_eq_flt_test!(comp.get(CompKey::Casein), 71.74);
+        assert_eq_flt_test!(comp.get(CompKey::Whey), 7.51);
         assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 95.51);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 79.25);
@@ -2750,6 +2785,7 @@ pub(crate) mod tests {
                 trans_fat: None,
                 sugars: Sugars::new().lactose(0.1),
                 protein: 91.4,
+                casein: None,
                 ash: Some(3.6),
                 solids_source: Some(SolidsSource::Caseinate),
             }
@@ -3228,6 +3264,7 @@ pub(crate) mod tests {
             trans_fat: None,
             sugars: Sugars::new().lactose(50.0),
             protein: 30.0,
+            casein: None,
             ash: None,
             solids_source: Some(SolidsSource::MicellarCasein),
         }
@@ -3533,6 +3570,31 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn dairy_sheet_spec_casein_replaces_solids_source_split() {
+        // A listed casein sets the split whatever the solids source, and whey takes the rest
+        let milk = DairySheetSpec {
+            casein: Some(2.5),
+            ..usda_whole_milk_sheet_spec()
+        };
+        let comp = milk.to_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Casein), 2.5);
+        assert_eq_flt_test!(comp.get(CompKey::Whey), milk.protein - 2.5);
+
+        for source in [
+            SolidsSource::Whey,
+            SolidsSource::MicellarCasein,
+            SolidsSource::Caseinate,
+        ] {
+            let spec = DairySheetSpec {
+                solids_source: Some(source),
+                ..milk
+            };
+            assert_eq!(spec.to_composition().unwrap(), comp);
+        }
+    }
+
+    #[test]
     fn dairy_sheet_spec_err_on_negative_field() {
         let base = usda_whole_milk_sheet_spec();
 
@@ -3556,6 +3618,10 @@ pub(crate) mod tests {
                 ..base
             },
             DairySheetSpec { protein: -1.0, ..base },
+            DairySheetSpec {
+                casein: Some(-1.0),
+                ..base
+            },
             DairySheetSpec {
                 ash: Some(-1.0),
                 ..base
@@ -3593,6 +3659,17 @@ pub(crate) mod tests {
         let result = DairySheetSpec {
             trans_fat: Some(4.0),
             ..usda_whole_milk_sheet_spec()
+        }
+        .to_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn dairy_sheet_spec_err_when_casein_exceeds_protein() {
+        let base = usda_whole_milk_sheet_spec();
+        let result = DairySheetSpec {
+            casein: Some(base.protein + 0.1),
+            ..base
         }
         .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));

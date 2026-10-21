@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD033 -- needed for id attribute anchors -->
 <!-- markdownlint-disable MD041 -- files are concatenated together -->
 
-## Stabilizers
+# Stabilizers
 
 Stabilizers, usually polysaccharides, are a group of ingredients commonly referred to as
 'hydrocolloids' - water soluble substances that form suspensions or gels in the presence of water,

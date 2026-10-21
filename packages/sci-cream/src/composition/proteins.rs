@@ -45,6 +45,10 @@ pub trait ProteinComponents: ScaleComponents + Validate + AbsDiffEq<Epsilon = f6
 ///
 /// Milk protein is roughly 80% casein and 20% whey, although concentrates and isolates can vary;
 /// see [`STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`] and [`STD_WHEY_PROTEIN_IN_MSNF_PROTEIN`].
+///
+/// As dairy sources list it, the total is [crude protein](crate::docs#crude-and-true-protein), so
+/// casein and whey also include its non-protein nitrogen, e.g. urea (Barbano & Lynch, n.d.)[^109].
+#[doc = include_str!("../../docs/references/index/109.md")]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct MilkProteins {

@@ -330,7 +330,8 @@ pub mod dairy {
         /// Taken as 93%, the average at [`STD_PROTEIN_IN_MCI`] of the lines from milk solids
         /// through the casein shares of the [compositions](self). Ingredia's isolate reports none.
         ///
-        /// The [line](super::casein_in_protein) gives ~82% for micellar casein concentrate 42, the
+        /// The [line](super::casein_in_protein) from milk solids to this fits the reported shares
+        /// within 1.4 percentage points. It gives ~82% for micellar casein concentrate 42, the
         /// lower end of the 82:18 to 95:5 of commercial products (ADPI, 2023, p. 1)[^103], and
         /// agrees with USDEC's typical micellar casein, at least 92:8 (USDEC, 2015, p. 1)[^100].
         ///

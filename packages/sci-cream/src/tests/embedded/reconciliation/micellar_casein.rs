@@ -1,9 +1,9 @@
 //! Reconciles the micellar casein lines against the micellar casein compositions at hand.
 //!
-//! [`lactose_in_snf`] and [`minerals_in_snf`] run from milk solids to the `_IN_MCI` anchors, which
-//! average the lines from milk solids through each complete composition, scaled to 100% of its
-//! solids non-fat, at the protein of Ingredia's isolate, see the [`casein`] module. These suites
-//! derive the anchors again from the compositions, and check the misses their docs describe.
+//! [`lactose_in_snf`], [`minerals_in_snf`], and [`casein_in_protein`] run from milk solids to the
+//! `_IN_MCI` anchors, which average the lines through each complete composition, scaled to 100% of
+//! its solids non-fat, at the protein of Ingredia's isolate, see the [`casein`] module. These
+//! suites derive the anchors again from the compositions, and check the misses their docs describe.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -13,7 +13,7 @@ use crate::{
     constants::composition::dairy::{
         STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MSNF,
         casein::{STD_CASEIN_PROTEIN_IN_MCI_PROTEIN, STD_LACTOSE_IN_MCI, STD_MINERALS_IN_MCI, STD_PROTEIN_IN_MCI},
-        lactose_in_snf, minerals_in_snf,
+        casein_in_protein, lactose_in_snf, minerals_in_snf,
     },
     specs::SolidsSource,
 };
@@ -127,6 +127,16 @@ fn mean(values: &[f64]) -> f64 {
     values.iter().sum::<f64>() / values.len() as f64
 }
 
+/// `fraction` as a percentage, to two decimals
+fn percent(fraction: f64) -> String {
+    format!("{:.2}", fraction * 100.0)
+}
+
+/// `fraction` as a signed percentage, to two decimals
+fn signed(fraction: f64) -> String {
+    format!("{:+.2}", fraction * 100.0)
+}
+
 /// A row of the fit report, with each column as wide as the header's longest label
 fn report_row(name: &str, cells: [&str; 7]) -> String {
     let [
@@ -142,6 +152,11 @@ fn report_row(name: &str, cells: [&str; 7]) -> String {
         "{name:<32} {protein:>7} | {lactose:>7} {lactose_line:>6} {lactose_miss:>6} | {minerals:>8} \
          {minerals_line:>6} {minerals_miss:>6}"
     )
+}
+
+/// A row of the casein share report, with each column as wide as the header's longest label
+fn share_report_row(name: &str, [casein, line, miss]: [&str; 3]) -> String {
+    format!("{name:<32} {casein:>6} {line:>6} {miss:>6}")
 }
 
 #[test]
@@ -183,8 +198,6 @@ fn micellar_casein_anchors_average_the_source_lines() {
 fn micellar_casein_lines_fit_the_sources() {
     // The lactose line passes within 0.6 percentage points of each averaged composition, and the
     // minerals line misses it by as much the other way, as both close at 100% with its protein
-    let percent = |fraction: f64| format!("{:.2}", fraction * 100.0);
-    let signed = |fraction: f64| format!("{:+.2}", fraction * 100.0);
     let mut lines = vec![report_row(
         "% of solids non-fat",
         ["protein", "lactose", "line", "miss", "minerals", "line", "miss"],
@@ -211,6 +224,24 @@ fn micellar_casein_lines_fit_the_sources() {
 
         assert_le!(lactose_miss.abs(), 0.006, "{}: lactose misses by {lactose_miss:.4}", source.name);
         assert_abs_diff_eq!(minerals_miss, -lactose_miss, epsilon = f64::EPSILON);
+    }
+
+    insta::assert_snapshot!(lines.join("\n"));
+}
+
+#[test]
+fn micellar_casein_share_line_fits_the_sources() {
+    // The casein share line passes within 1.4 percentage points of each reported share
+    let mut lines = vec![share_report_row("% of protein", ["casein", "line", "miss"])];
+
+    for source in AVERAGED {
+        let Some(casein) = source.casein else { continue };
+        let [protein, _, _] = source.scaled();
+        let line = casein_in_protein(protein, SolidsSource::MicellarCasein);
+        let miss = casein - line;
+
+        lines.push(share_report_row(source.name, [&percent(casein), &percent(line), &signed(miss)]));
+        assert_le!(miss.abs(), 0.014, "{}: casein share misses by {miss:.4}", source.name);
     }
 
     insta::assert_snapshot!(lines.join("\n"));

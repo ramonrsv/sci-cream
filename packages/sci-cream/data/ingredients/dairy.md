@@ -1423,6 +1423,7 @@ are counted under other milk solids.
     "fat": 2.98,
     "sugars": { "lactose": 5.13 },
     "protein": 79.25,
+    "casein": 71.74,
     "ash": 8.15,
     "solids_source": "MicellarCasein"
   }

@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD033 -- needed for id attribute anchors -->
 <!-- markdownlint-disable MD041 -- files are concatenated together -->
 
-## Emulsifiers
+# Emulsifiers
 
 Emulsifiers are substances that produce a stable suspension of two liquids that do not mix naturally
 (are immiscible), typically oil and water. They are two-faced molecules that have both a hydrophilic

@@ -217,3 +217,11 @@
 [^107]: Azevedo Scudeller, L., Feichtinger, A., Bellayer, S., Six, T., Hiolle, M., Delaplace, G., Sholten, E., & Fameau, A.-L. (2026, February). [_Oil foam based on dairy proteins particles and surfactant_](https://www.sciencedirect.com/science/article/pii/S2665927126000432). Current Research in Food Science, 12, 101343.
 
 [^108]: Eljabali, M. K., Nogueira Silva, N. F., Shokrollahi Yancheshmeh, B., Petersen, H. O., Casanova, F., Feyissa, A. H., & Regier, M. (2026, June). [_Effect of High-Intensity Ultrasound and Calcium Chelation on Functional Properties of Casein Micelles_](https://www.mdpi.com/2304-8158/15/12/2246). Foods, 15(12), 2246.
+
+[^109]: Barbano, D. M., & Lynch, J. M. (n.d.). [_Milk Protein Testing: Changing From Crude To True Protein_](https://web.archive.org/web/20240705092249/https://usjersey.com/Portals/0/NAJ/2_Docs/FAQ_TrueProtein_Barbano1999.pdf). National All-Jersey Inc.
+
+[^110]: DePeters, E. J., & Ferguson, J. D. (1992, November). [_Nonprotein Nitrogen and Protein Distribution in the Milk of Cows_](https://www.sciencedirect.com/science/article/pii/S0022030292780850). Journal of Dairy Science, 75(11), 3192-3209.
+
+[^111]: U.S. Department of Agriculture. (2016, May). [_USDA National Nutrient Database for Standard Reference, Release 28: Documentation and User Guide_](https://www.ars.usda.gov/ARSUserFiles/80400525/Data/SR/sr28/sr28_doc.pdf). Agricultural Research Service.
+
+[^112]: U.S. Department of Agriculture. (n.d.). [_Foundation Foods Documentation_](https://fdc.nal.usda.gov/Foundation_Foods_Documentation). FoodData Central.

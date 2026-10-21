@@ -81,6 +81,8 @@
       comments and docs omit it, except the newer `DairySheetSpec` docs.
 - [ ] Add a spec-level fats type, a total with optional `saturated`/`trans`, for `DairySheetSpec`,
       `DairyLabelSpec`, and `NutSpec`; `Fats` defaults them to 0. Stored user specs need migrating.
+- [ ] Check whether chocolate and egg proteins are crude or true protein, as dairy's are crude.
+      USDA's cocoa and chocolate protein is adjusted for non-protein nitrogen (SR28 docs, p. 12).
 
 ## Backlog
 

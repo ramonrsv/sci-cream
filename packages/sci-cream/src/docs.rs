@@ -9,6 +9,8 @@
 #![doc = include_str!("../docs/artificial-sweeteners.md")]
 #![doc = include_str!("../docs/fibers.md")]
 #![doc = include_str!("../docs/glucose-syrup.md")]
+#![doc = include_str!("../docs/dairy.md")]
+#![doc = include_str!("../docs/milk-proteins.md")]
 #![doc = include_str!("../docs/freezing-point-depression.md")]
 #![doc = include_str!("../docs/stabilizers.md")]
 #![doc = include_str!("../docs/emulsifiers.md")]
@@ -26,7 +28,9 @@ use crate::{
             STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_PROTEIN_IN_MSNF, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN,
         },
     },
-    specs::{ChocolateFat, ChocolateSpec, CocoaPowderSpec},
+    specs::{
+        ChocolateFat, ChocolateSpec, CocoaPowderSpec, DairyLabelSpec, DairySheetSpec, DairySimpleSpec, SolidsSource,
+    },
 };
 
 /// Asserts for floating point comparisons in doc tests

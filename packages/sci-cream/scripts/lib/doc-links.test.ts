@@ -156,6 +156,7 @@ describe("the generated link map", () => {
       "artificial-sweeteners",
       "fibers",
       "glucose-syrups-and-powders",
+      "dairy",
       "freezing-point-depression",
       "pac-afp-fpdf-se",
       "absolute-pac",

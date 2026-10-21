@@ -1,0 +1,8 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/micellar_casein.rs
+expression: "lines.join(\"\\n\")"
+---
+% of protein                     casein   line   miss
+Kommineni MCC 80, control         90.52  91.79  -1.26
+Ingredia Promilk 852B             92.00  92.16  -0.16
+FrieslandCampina Refit            93.98  92.65  +1.33
