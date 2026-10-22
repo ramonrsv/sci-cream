@@ -10,10 +10,15 @@ use crate::{
     },
     constants::{
         composition::dairy::{
-            STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_MSNF_IN_MILK_SERUM,
-            STD_PROTEIN_IN_MSNF, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
-            STD_WHEY_PROTEIN_IN_MSNF_PROTEIN, casein::STD_PROTEIN_IN_CASEINATE, casein_in_protein,
-            lactose_in_snf_coeffs, minerals_in_snf_coeffs, unaccounted_in_snf_coeffs, whey::STD_PROTEIN_IN_WS,
+            STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
+            casein::STD_PROTEIN_IN_CASEINATE,
+            casein_in_protein, lactose_in_snf_coeffs,
+            milk::{
+                STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_MSNF_IN_MILK_SERUM, STD_PROTEIN_IN_MSNF,
+                STD_WHEY_PROTEIN_IN_MSNF_PROTEIN,
+            },
+            minerals_in_snf_coeffs, unaccounted_in_snf_coeffs,
+            whey::STD_PROTEIN_IN_WS,
         },
         density::solve_dairy_serving_grams,
         pac,
@@ -29,9 +34,11 @@ use crate::{
     constants::{
         self,
         composition::dairy::{
-            self, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF,
+            self,
             casein::{STD_LACTOSE_IN_CASEINATE, STD_MINERALS_IN_CASEINATE},
-            lactose_in_snf, minerals_in_snf, unaccounted_in_snf,
+            lactose_in_snf,
+            milk::{STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF},
+            minerals_in_snf, unaccounted_in_snf,
         },
     },
 };

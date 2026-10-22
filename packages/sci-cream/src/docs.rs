@@ -24,7 +24,7 @@ use crate::{
     composition::{ArtificialSweeteners, CompKey, Composition, Emulsifiers, Fibers, Polyols, Stabilizers, Sugars},
     constants::{
         self,
-        composition::dairy::{
+        composition::dairy::milk::{
             STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_PROTEIN_IN_MSNF, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN,
         },
     },
@@ -116,7 +116,7 @@ pub mod ingredients {
     use crate::{
         constants::composition::{
             cacao::STD_WATER_IN_COCOA_POWDER,
-            dairy::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MSNF},
+            dairy::milk::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MSNF},
         },
         specs::{ChocolateSpec, CocoaPowderSpec, CompositeSpec, NutSpec},
     };

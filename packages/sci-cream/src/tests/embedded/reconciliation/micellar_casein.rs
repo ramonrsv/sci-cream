@@ -11,9 +11,10 @@ use crate::tests::asserts::*;
 
 use crate::{
     constants::composition::dairy::{
-        STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MSNF,
         casein::{STD_CASEIN_PROTEIN_IN_MCI_PROTEIN, STD_LACTOSE_IN_MCI, STD_MINERALS_IN_MCI, STD_PROTEIN_IN_MCI},
-        casein_in_protein, lactose_in_snf, minerals_in_snf,
+        casein_in_protein, lactose_in_snf,
+        milk::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MSNF},
+        minerals_in_snf,
     },
     specs::SolidsSource,
 };

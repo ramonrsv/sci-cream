@@ -191,7 +191,7 @@ from the `constants` module, e.g. `STD_MSNF_IN_MILK_SERUM`, `STD_LACTOSE_IN_MSNF
 <br>
 
 ```rust
-use sci_cream::{CompKey, composition::*, constants::{composition::*, pac}};
+use sci_cream::{CompKey, composition::*, constants::{composition::dairy::{*, milk::*}, pac}};
 
 let msnf = (100.0 - 2.0) * STD_MSNF_IN_MILK_SERUM;
 let lactose = msnf * STD_LACTOSE_IN_MSNF;

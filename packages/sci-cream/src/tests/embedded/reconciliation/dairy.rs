@@ -32,7 +32,7 @@ use crate::tests::asserts::TESTS_EPSILON;
 
 #[cfg(doc)]
 use crate::{
-    constants::composition::dairy::{STD_MINERALS_IN_MSNF, unaccounted_in_snf},
+    constants::composition::dairy::{milk::STD_MINERALS_IN_MSNF, unaccounted_in_snf},
     specs::{DairyLabelSpec, DairySheetSpec},
 };
 

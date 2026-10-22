@@ -15,8 +15,8 @@ use crate::{
             STD_SATURATED_FAT_IN_COCOA_BUTTER, STD_WATER_IN_COCOA_POWDER,
         },
         composition::dairy::{
-            STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MSNF,
-            STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
+            STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
+            milk::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MSNF},
         },
         hf, pac,
     },
@@ -30,7 +30,7 @@ use crate::{
     composition::CompKey,
     constants::{
         self,
-        composition::{cacao, dairy},
+        composition::{cacao, dairy, dairy::milk},
     },
 };
 
@@ -128,7 +128,7 @@ pub struct ChocolateSpec {
     ///
     /// Assumed to be zero if not specified, as dark chocolates do not contain any milk ingredients.
     /// If non-zero, it is broken down into subcomponents based on standard dairy values, e.g.
-    /// [`dairy::STD_LACTOSE_IN_MSNF`], [`dairy::STD_PROTEIN_IN_MSNF`], etc. The ratio of butter fat
+    /// [`milk::STD_LACTOSE_IN_MSNF`], [`milk::STD_PROTEIN_IN_MSNF`], etc. The ratio of butter fat
     /// is determined from the [`ChocolateFat::Split::milk_fat`] value, if specified, otherwise from
     /// the standard content in whole milk powder [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`].
     #[serde(skip_serializing_if = "Option::is_none")]
