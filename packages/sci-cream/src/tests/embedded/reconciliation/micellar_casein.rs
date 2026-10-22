@@ -163,7 +163,7 @@ fn share_report_row(name: &str, [casein, line, miss]: [&str; 3]) -> String {
 fn micellar_casein_anchors_average_the_source_lines() {
     // The protein anchor is Ingredia's isolate's, to the nearest 0.1 percentage point
     let [isolate_protein, _, _] = INGREDIA_ISOLATE.scaled();
-    assert_abs_diff_eq!(round_to(isolate_protein, 0.001), STD_PROTEIN_IN_MCI, epsilon = f64::EPSILON);
+    assert_abs_diff_eq!(round_to(isolate_protein, 0.001), STD_PROTEIN_IN_MCI);
 
     // At that protein, the lines through each source average to the lactose and minerals anchors
     let lactose = mean(&AVERAGED.map(|source| {
@@ -174,8 +174,8 @@ fn micellar_casein_anchors_average_the_source_lines() {
         let [protein, _, minerals] = source.scaled();
         extend_to_isolate(STD_MINERALS_IN_MSNF, [protein, minerals])
     }));
-    assert_abs_diff_eq!(round_to(lactose, 0.001), STD_LACTOSE_IN_MCI, epsilon = f64::EPSILON);
-    assert_abs_diff_eq!(round_to(minerals, 0.001), STD_MINERALS_IN_MCI, epsilon = f64::EPSILON);
+    assert_abs_diff_eq!(round_to(lactose, 0.001), STD_LACTOSE_IN_MCI);
+    assert_abs_diff_eq!(round_to(minerals, 0.001), STD_MINERALS_IN_MCI);
 
     // Those that report a casein share average to the casein anchor, to the nearest point
     let casein_shares: Vec<f64> = AVERAGED
@@ -187,11 +187,7 @@ fn micellar_casein_anchors_average_the_source_lines() {
                 .map(|casein| extend_to_isolate(STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, [protein, casein]))
         })
         .collect();
-    assert_abs_diff_eq!(
-        round_to(mean(&casein_shares), 0.01),
-        STD_CASEIN_PROTEIN_IN_MCI_PROTEIN,
-        epsilon = f64::EPSILON
-    );
+    assert_abs_diff_eq!(round_to(mean(&casein_shares), 0.01), STD_CASEIN_PROTEIN_IN_MCI_PROTEIN);
 }
 
 #[test]
@@ -223,7 +219,7 @@ fn micellar_casein_lines_fit_the_sources() {
         ));
 
         assert_le!(lactose_miss.abs(), 0.006, "{}: lactose misses by {lactose_miss:.4}", source.name);
-        assert_abs_diff_eq!(minerals_miss, -lactose_miss, epsilon = f64::EPSILON);
+        assert_abs_diff_eq!(minerals_miss, -lactose_miss);
     }
 
     insta::assert_snapshot!(lines.join("\n"));

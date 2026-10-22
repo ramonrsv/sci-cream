@@ -903,15 +903,13 @@ mod tests {
             cacao::STD_PROTEIN_IN_COCOA_SOLIDS
                 + cacao::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS
                 + cacao::STD_ASH_IN_NATURAL_COCOA_SOLIDS,
-            1.0,
-            epsilon = f64::EPSILON
+            1.0
         );
         assert_abs_diff_eq!(
             cacao::STD_PROTEIN_IN_COCOA_SOLIDS
                 + cacao::STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS
                 + cacao::STD_ASH_IN_DUTCHED_COCOA_SOLIDS,
-            1.0,
-            epsilon = f64::EPSILON
+            1.0
         );
 
         // Alkalization only moves mass from carbohydrates into ash
@@ -963,11 +961,7 @@ mod tests {
             (SolidsSource::MicellarCasein, dairy::STD_PROTEIN_IN_MSNF, dairy::STD_MINERALS_IN_MSNF),
             (SolidsSource::MicellarCasein, dairy::casein::STD_PROTEIN_IN_MCI, dairy::casein::STD_MINERALS_IN_MCI),
         ] {
-            assert_abs_diff_eq!(
-                dairy::minerals_in_snf(protein_fraction, source),
-                minerals_fraction,
-                epsilon = f64::EPSILON
-            );
+            assert_abs_diff_eq!(dairy::minerals_in_snf(protein_fraction, source), minerals_fraction);
         }
 
         // Milk and caseinate solids hold fixed fractions, whatever their protein
@@ -989,11 +983,7 @@ mod tests {
             (SolidsSource::MicellarCasein, dairy::STD_PROTEIN_IN_MSNF, dairy::STD_LACTOSE_IN_MSNF),
             (SolidsSource::MicellarCasein, dairy::casein::STD_PROTEIN_IN_MCI, dairy::casein::STD_LACTOSE_IN_MCI),
         ] {
-            assert_abs_diff_eq!(
-                dairy::lactose_in_snf(protein_fraction, source),
-                lactose_fraction,
-                epsilon = f64::EPSILON
-            );
+            assert_abs_diff_eq!(dairy::lactose_in_snf(protein_fraction, source), lactose_fraction);
         }
 
         // Milk and caseinate solids hold fixed fractions, whatever their protein
@@ -1016,8 +1006,7 @@ mod tests {
         ] {
             assert_abs_diff_eq!(
                 dairy::unaccounted_in_snf(protein_fraction, SolidsSource::Whey),
-                1.0 - protein_fraction - lactose_fraction - minerals_fraction,
-                epsilon = f64::EPSILON
+                1.0 - protein_fraction - lactose_fraction - minerals_fraction
             );
         }
 
@@ -1038,8 +1027,7 @@ mod tests {
         ] {
             assert_abs_diff_eq!(
                 dairy::casein_in_protein(protein_fraction, SolidsSource::MicellarCasein),
-                casein_fraction,
-                epsilon = f64::EPSILON
+                casein_fraction
             );
         }
 
@@ -1069,11 +1057,7 @@ mod tests {
             let minerals_fraction = dairy::minerals_in_snf(protein_fraction, SolidsSource::Whey);
             let unaccounted_fraction = dairy::unaccounted_in_snf(protein_fraction, SolidsSource::Whey);
 
-            assert_abs_diff_eq!(
-                protein_fraction + lactose_fraction + minerals_fraction + unaccounted_fraction,
-                1.0,
-                epsilon = f64::EPSILON
-            );
+            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction + unaccounted_fraction, 1.0);
             assert_ge!(unaccounted_fraction, 0.0);
         }
     }
@@ -1093,7 +1077,7 @@ mod tests {
                 dairy::casein::STD_MINERALS_IN_CASEINATE,
             ),
         ] {
-            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction, 1.0, epsilon = f64::EPSILON);
+            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction, 1.0);
         }
     }
 
@@ -1104,7 +1088,7 @@ mod tests {
             let lactose_fraction = dairy::lactose_in_snf(protein_fraction, SolidsSource::MicellarCasein);
             let minerals_fraction = dairy::minerals_in_snf(protein_fraction, SolidsSource::MicellarCasein);
 
-            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction, 1.0, epsilon = f64::EPSILON);
+            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction, 1.0);
             assert_ge!(lactose_fraction, 0.0);
         }
     }
