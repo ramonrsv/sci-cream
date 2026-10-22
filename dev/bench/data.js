@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792652776549,
+  "lastUpdate": 1792652780219,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -656575,6 +656575,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/daae58202c8450badef7ef1a8da44b3476dcbe7b"
         },
         "date": 1792649334990,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2b3b1c360242b475a310e5bf08480069a930b3d8",
+          "message": "Move milk solids constants into dairy::milk\n\nThe milk constants move from `dairy` into a `milk` submodule, beside\n`whey` and `casein`: the solids non-fat in milk serum, their lactose,\nprotein, and minerals fractions, and the casein and whey split. Its\ndoc takes the USDA listings behind the `_IN_MSNF` constants, while\n`dairy` keeps the lines every solids source uses and the values for\nall dairy, such as milk fat's saturated and trans fractions.\n\nThis prepares for milk concentrates, whose isolate end will join the\nmilk constants. The README's composition example now imports the\nconstants it uses, as the crate docs' does.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T03:00:26-04:00",
+          "tree_id": "14b29b117919e6f967443024c2ed39aebbe60294",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2b3b1c360242b475a310e5bf08480069a930b3d8"
+        },
+        "date": 1792652779460,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
