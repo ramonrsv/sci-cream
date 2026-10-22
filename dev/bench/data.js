@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792708319749,
+  "lastUpdate": 1792708337999,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -580867,6 +580867,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.25%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "eef62bd07a0c759a99a847e61ebb6c1376a16f82",
+          "message": "Match the MPC grade test to the MPC 80 entry\n\nThe DairySimpleSpec test for a milk protein concentrate grade still\nused the MPC 80 rung's earlier 94 g of solids non-fat. It now uses the\nentry's 95 g, so its lactose, minerals, and water match the ladder.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:53:32-04:00",
+          "tree_id": "248f419d7adc9f06eb5a6e7826a1d915c0088167",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/eef62bd07a0c759a99a847e61ebb6c1376a16f82"
+        },
+        "date": 1792708268450,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 57040,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 423530,
+            "range": "±0.80%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 40789,
+            "range": "±1.44%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 325446,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
