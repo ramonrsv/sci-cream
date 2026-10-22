@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792708344215,
+  "lastUpdate": 1792708348640,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -660497,6 +660497,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/8790e42f1e7cd6abc2783efdb41f8d46077bfd89"
         },
         "date": 1792707882704,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "eef62bd07a0c759a99a847e61ebb6c1376a16f82",
+          "message": "Match the MPC grade test to the MPC 80 entry\n\nThe DairySimpleSpec test for a milk protein concentrate grade still\nused the MPC 80 rung's earlier 94 g of solids non-fat. It now uses the\nentry's 95 g, so its lactose, minerals, and water match the ladder.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:53:32-04:00",
+          "tree_id": "248f419d7adc9f06eb5a6e7826a1d915c0088167",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/eef62bd07a0c759a99a847e61ebb6c1376a16f82"
+        },
+        "date": 1792708347573,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
