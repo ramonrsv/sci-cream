@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792706709521,
+  "lastUpdate": 1792706718892,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -649292,6 +649292,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.57,
             "range": "0.26",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "435161f39e6ba302d05837c464b883f0f444c8b2",
+          "message": "Group the dairy reconciliation suites\n\nThe dairy reconciliation suites move into a dairy submodule, named\nconsistently: usda for the USDA listings' proximates, and milk_protein,\nrenamed from ultrafiltered_milk, and micellar_casein for the two lines\nagainst concentrate compositions. The helpers the line suites\nduplicated move into a shared util, and the snapshots follow their new\nmodule paths, unchanged.\n\nCLAUDE.md now states that a mod.rs holds only its doc, submodule\ndeclarations, and re-exports, with code in sibling files.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:43:30-04:00",
+          "tree_id": "721e1660618857fea8b2aa683807bd4b02f551f6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/435161f39e6ba302d05837c464b883f0f444c8b2"
+        },
+        "date": 1792706677708,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 44.26,
+            "range": "6.08",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 10.88,
+            "range": "0.70",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 10.85,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 115.5,
+            "range": "7.86",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.32,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 115.5,
+            "range": "7.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 40.44,
+            "range": "4.32",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.86,
+            "range": "0.30",
             "unit": "ms"
           }
         ]
