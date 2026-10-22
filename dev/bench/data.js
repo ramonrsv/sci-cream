@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792706982309,
+  "lastUpdate": 1792707030764,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -650650,6 +650650,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.86,
             "range": "0.30",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6d11b5cc859f4efe4a552c116436ef0925059361",
+          "message": "Model milk protein concentrates and isolates\n\nMilk solids' lactose and minerals now follow lines in their protein\nfraction, from plain milk to an isolate end, as whey's do, so a\nconcentrate's grade sets its composition. The isolate anchors, 91.1%\nprotein, 1.7% lactose, and 7.2% minerals of the solids non-fat, average\nthe lines through four published compositions at McSweeney et al.'s\nprotein. Casein stays 80% of the protein, as ultrafiltration keeps\nmilk's ratio.\n\nThe dairy entries gain an MPC 42 to isolate ladder, with aliases, and\nreference sheets from USDEC and VanWees et al. A new reconciliation\nsuite derives the anchors again and checks the lines' fit, compare_specs\ncovers each grade, and the dairy fixtures and a few ceilings move with\nmilk's slightly shifted minerals.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:39:00-04:00",
+          "tree_id": "edbaaa4bdaee6eae86a9b2a7011580b399d34732",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6d11b5cc859f4efe4a552c116436ef0925059361"
+        },
+        "date": 1792706975543,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 51.84,
+            "range": "5.99",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.52,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.5,
+            "range": "0.67",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 135.5,
+            "range": "7.05",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.36,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 135.5,
+            "range": "7.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 48.61,
+            "range": "5.91",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.82,
+            "range": "0.33",
             "unit": "ms"
           }
         ]
