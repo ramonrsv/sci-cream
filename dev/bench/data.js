@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792706821465,
+  "lastUpdate": 1792706825469,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -658365,6 +658365,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/6d11b5cc859f4efe4a552c116436ef0925059361"
         },
         "date": 1792706469572,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "435161f39e6ba302d05837c464b883f0f444c8b2",
+          "message": "Group the dairy reconciliation suites\n\nThe dairy reconciliation suites move into a dairy submodule, named\nconsistently: usda for the USDA listings' proximates, and milk_protein,\nrenamed from ultrafiltered_milk, and micellar_casein for the two lines\nagainst concentrate compositions. The helpers the line suites\nduplicated move into a shared util, and the snapshots follow their new\nmodule paths, unchanged.\n\nCLAUDE.md now states that a mod.rs holds only its doc, submodule\ndeclarations, and re-exports, with code in sibling files.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:43:30-04:00",
+          "tree_id": "721e1660618857fea8b2aa683807bd4b02f551f6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/435161f39e6ba302d05837c464b883f0f444c8b2"
+        },
+        "date": 1792706824478,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
