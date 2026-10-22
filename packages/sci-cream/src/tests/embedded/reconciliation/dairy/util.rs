@@ -1,7 +1,10 @@
-//! Helpers shared by the two line suites: extending a source's line to the isolate's protein,
-//! rounding and averaging, and the fit report's rows and cells.
+//! Helpers shared by the two line suites: extending a source's line to the isolate's protein, its
+//! misses from the lines with its row of the fit report, and rounding, averaging, and formatting.
 
-use crate::constants::composition::dairy::milk::STD_PROTEIN_IN_MSNF;
+use crate::{
+    constants::composition::dairy::{lactose_in_snf, milk::STD_PROTEIN_IN_MSNF, minerals_in_snf},
+    specs::SolidsSource,
+};
 
 /// The value at `isolate_protein` of the line from milk solids' `milk_solids_value` through a
 /// source's `value` at its `protein`
@@ -50,4 +53,30 @@ pub(super) fn report_row(name: &str, cells: [&str; 7]) -> String {
 /// The header row of the fit report
 pub(super) fn report_header() -> String {
     report_row("% of solids non-fat", ["protein", "lactose", "line", "miss", "minerals", "line", "miss"])
+}
+
+/// How far the source `name`'s lactose and minerals miss `solids_source`'s lines at its protein,
+/// all fractions of its solids non-fat, with its row of the fit report
+pub(super) fn misses(
+    name: &str,
+    [protein, lactose, minerals]: [f64; 3],
+    solids_source: SolidsSource,
+) -> ([f64; 2], String) {
+    let lactose_line = lactose_in_snf(protein, solids_source);
+    let minerals_line = minerals_in_snf(protein, solids_source);
+    let (lactose_miss, minerals_miss) = (lactose - lactose_line, minerals - minerals_line);
+
+    let row = report_row(
+        name,
+        [
+            &percent(protein),
+            &percent(lactose),
+            &percent(lactose_line),
+            &signed(lactose_miss),
+            &percent(minerals),
+            &percent(minerals_line),
+            &signed(minerals_miss),
+        ],
+    );
+    ([lactose_miss, minerals_miss], row)
 }

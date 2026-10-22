@@ -7,7 +7,7 @@
 
 #![cfg_attr(coverage, coverage(off))]
 
-use super::util::{extend_to_isolate, mean, percent, report_header, report_row, round_to, signed};
+use super::util::{extend_to_isolate, mean, misses, percent, report_header, round_to, signed};
 use crate::tests::asserts::*;
 
 use crate::{
@@ -15,7 +15,6 @@ use crate::{
         casein::{STD_CASEIN_PROTEIN_IN_MCI_PROTEIN, STD_LACTOSE_IN_MCI, STD_MINERALS_IN_MCI, STD_PROTEIN_IN_MCI},
         casein_in_protein, lactose_in_snf,
         milk::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF},
-        minerals_in_snf,
     },
     specs::SolidsSource,
 };
@@ -155,23 +154,8 @@ fn micellar_casein_lines_fit_the_sources() {
     let mut lines = vec![report_header()];
 
     for source in AVERAGED {
-        let [protein, lactose, minerals] = source.scaled();
-        let lactose_line = lactose_in_snf(protein, SolidsSource::MicellarCasein);
-        let minerals_line = minerals_in_snf(protein, SolidsSource::MicellarCasein);
-        let (lactose_miss, minerals_miss) = (lactose - lactose_line, minerals - minerals_line);
-
-        lines.push(report_row(
-            source.name,
-            [
-                &percent(protein),
-                &percent(lactose),
-                &percent(lactose_line),
-                &signed(lactose_miss),
-                &percent(minerals),
-                &percent(minerals_line),
-                &signed(minerals_miss),
-            ],
-        ));
+        let ([lactose_miss, minerals_miss], row) = misses(source.name, source.scaled(), SolidsSource::MicellarCasein);
+        lines.push(row);
 
         assert_le!(lactose_miss.abs(), 0.006, "{}: lactose misses by {lactose_miss:.4}", source.name);
         assert_abs_diff_eq!(minerals_miss, -lactose_miss);

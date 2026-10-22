@@ -9,16 +9,12 @@
 // _McSweeney_, _McCarthy_, and _VanWees_ false positives
 #![expect(clippy::doc_markdown)]
 
-use super::util::{extend_to_isolate, mean, percent, report_header, report_row, round_to, signed};
+use super::util::{extend_to_isolate, mean, misses, report_header, round_to};
 use crate::tests::asserts::*;
 
 use crate::{
-    constants::composition::dairy::{
-        lactose_in_snf,
-        milk::{
-            STD_LACTOSE_IN_MPI, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MPI, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MPI,
-        },
-        minerals_in_snf,
+    constants::composition::dairy::milk::{
+        STD_LACTOSE_IN_MPI, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MPI, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MPI,
     },
     specs::SolidsSource,
 };
@@ -136,28 +132,6 @@ const USDEC_LOWER_GRADES: [Reported; 3] = [
     },
 ];
 
-/// How far `source`'s lactose and minerals miss the milk lines, with its row of the fit report
-fn misses(source: &Reported) -> ([f64; 2], String) {
-    let [protein, lactose, minerals] = source.scaled();
-    let lactose_line = lactose_in_snf(protein, SolidsSource::Milk);
-    let minerals_line = minerals_in_snf(protein, SolidsSource::Milk);
-    let (lactose_miss, minerals_miss) = (lactose - lactose_line, minerals - minerals_line);
-
-    let row = report_row(
-        source.name,
-        [
-            &percent(protein),
-            &percent(lactose),
-            &percent(lactose_line),
-            &signed(lactose_miss),
-            &percent(minerals),
-            &percent(minerals_line),
-            &signed(minerals_miss),
-        ],
-    );
-    ([lactose_miss, minerals_miss], row)
-}
-
 #[test]
 fn milk_protein_anchors_average_the_source_lines() {
     // The protein anchor is McSweeney et al.'s concentrate's, to the nearest 0.1 percentage point
@@ -184,7 +158,7 @@ fn milk_protein_lines_fit_the_sources() {
     let mut lines = vec![report_header()];
 
     for source in AVERAGED.into_iter().chain(MCSWEENEY_BLENDS) {
-        let ([lactose_miss, minerals_miss], row) = misses(&source);
+        let ([lactose_miss, minerals_miss], row) = misses(source.name, source.scaled(), SolidsSource::Milk);
         lines.push(row);
 
         assert_le!(lactose_miss.abs(), 0.003, "{}: lactose misses by {lactose_miss:.4}", source.name);
@@ -202,7 +176,7 @@ fn milk_protein_minerals_line_runs_above_usdec_lower_grades() {
     let mut lines = vec![report_header()];
 
     for source in USDEC_LOWER_GRADES {
-        let ([lactose_miss, minerals_miss], row) = misses(&source);
+        let ([lactose_miss, minerals_miss], row) = misses(source.name, source.scaled(), SolidsSource::Milk);
         lines.push(row);
 
         assert_lt!(minerals_miss, 0.0, "{}: minerals miss by {minerals_miss:.4}", source.name);
