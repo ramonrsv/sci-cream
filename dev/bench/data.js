@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792647244396,
+  "lastUpdate": 1792647263005,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -575144,6 +575144,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.22%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4bd0e81855c50bba347ed69f5cd64dc337598411",
+          "message": "Add sheet casein and document crude protein\n\nDairySheetSpec gains an optional casein, for sheets that list it: it\nreplaces the casein share the solids source gives, and whey takes the\nrest of the protein. Kommineni et al.'s concentrate now lists its\nmeasured casein instead of the micellar casein line's.\n\nThe protein the crate takes is crude protein, from total nitrogen, as\nlabels and USDA's FoodData Central list it, so casein and whey include\nthe non-protein nitrogen. A new Dairy docs page explains crude and true\nprotein, cited to Barbano & Lynch, DePeters & Ferguson, and USDA, and\nthe dairy specs' protein docs link to it. Stabilizers and Emulsifiers\nbecome top-level docs sections, as the table of contents lists them.\n\nA reconciliation test checks that the casein share line fits the\nreported shares within 1.4 percentage points, as its constant now says.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T01:22:59-04:00",
+          "tree_id": "984a20350a60f5acdebe80e347d1a7beb6e0c208",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4bd0e81855c50bba347ed69f5cd64dc337598411"
+        },
+        "date": 1792647224793,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 105266,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 808341,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 70946,
+            "range": "±1.07%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 478526,
+            "range": "±4.92%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
           }
         ]
       }
