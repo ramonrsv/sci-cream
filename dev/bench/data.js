@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792647687805,
+  "lastUpdate": 1792647816672,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -534568,6 +534568,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 707.13,
             "range": "17.99",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4bd0e81855c50bba347ed69f5cd64dc337598411",
+          "message": "Add sheet casein and document crude protein\n\nDairySheetSpec gains an optional casein, for sheets that list it: it\nreplaces the casein share the solids source gives, and whey takes the\nrest of the protein. Kommineni et al.'s concentrate now lists its\nmeasured casein instead of the micellar casein line's.\n\nThe protein the crate takes is crude protein, from total nitrogen, as\nlabels and USDA's FoodData Central list it, so casein and whey include\nthe non-protein nitrogen. A new Dairy docs page explains crude and true\nprotein, cited to Barbano & Lynch, DePeters & Ferguson, and USDA, and\nthe dairy specs' protein docs link to it. Stabilizers and Emulsifiers\nbecome top-level docs sections, as the table of contents lists them.\n\nA reconciliation test checks that the casein share line fits the\nreported shares within 1.4 percentage points, as its constant now says.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T01:22:59-04:00",
+          "tree_id": "984a20350a60f5acdebe80e347d1a7beb6e0c208",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4bd0e81855c50bba347ed69f5cd64dc337598411"
+        },
+        "date": 1792647776728,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 29,
+            "range": "2.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 37.13,
+            "range": "3.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 44.25,
+            "range": "3.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1741.25,
+            "range": "52.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 199.88,
+            "range": "2.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 208.38,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 221.13,
+            "range": "10.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 10384.75,
+            "range": "94.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 750.5,
+            "range": "21.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 34.38,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 37.38,
+            "range": "1.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 25.88,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 28.13,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 99,
+            "range": "4.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 48.63,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.62,
+            "range": "0.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 25.81,
+            "range": "0.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 474.38,
+            "range": "11.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 518.63,
+            "range": "11.98",
             "unit": "ms"
           }
         ]
