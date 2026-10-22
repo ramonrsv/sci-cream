@@ -28,8 +28,8 @@
 #![cfg_attr(coverage, coverage(off))]
 #![expect(clippy::doc_markdown)] // _FoodData_ false positive
 
-use super::util::{Proximates, reconcile_proximates};
 use crate::tests::asserts::TESTS_EPSILON;
+use crate::tests::embedded::reconciliation::util::{Proximates, reconcile_proximates};
 
 #[cfg(doc)]
 use crate::{

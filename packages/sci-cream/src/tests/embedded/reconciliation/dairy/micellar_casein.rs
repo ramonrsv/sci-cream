@@ -7,13 +7,14 @@
 
 #![cfg_attr(coverage, coverage(off))]
 
+use super::util::{extend_to_isolate, mean, percent, report_header, report_row, round_to, signed};
 use crate::tests::asserts::*;
 
 use crate::{
     constants::composition::dairy::{
         casein::{STD_CASEIN_PROTEIN_IN_MCI_PROTEIN, STD_LACTOSE_IN_MCI, STD_MINERALS_IN_MCI, STD_PROTEIN_IN_MCI},
         casein_in_protein, lactose_in_snf,
-        milk::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MSNF},
+        milk::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF},
         minerals_in_snf,
     },
     specs::SolidsSource,
@@ -49,7 +50,7 @@ impl Reported {
 }
 
 /// The control of a pilot micellar casein concentrate 80 (Kommineni et al., 2022, Tables 1-2)[^101]
-#[doc = include_str!("../../../../docs/references/index/101.md")]
+#[doc = include_str!("../../../../../docs/references/index/101.md")]
 const KOMMINENI: Reported = Reported {
     name: "Kommineni MCC 80, control",
     water: 4.49,
@@ -61,7 +62,7 @@ const KOMMINENI: Reported = Reported {
 };
 
 /// Ingredia's Promilk 852B, a micellar casein concentrate (Eljabali et al., 2026, §2.1)[^108]
-#[doc = include_str!("../../../../docs/references/index/108.md")]
+#[doc = include_str!("../../../../../docs/references/index/108.md")]
 const PROMILK: Reported = Reported {
     name: "Ingredia Promilk 852B",
     water: 5.0,
@@ -73,7 +74,7 @@ const PROMILK: Reported = Reported {
 };
 
 /// Refit, a commercial concentrate, per 100 g of dry matter (Schulnies et al., 2023, Table 1)[^105]
-#[doc = include_str!("../../../../docs/references/index/105.md")]
+#[doc = include_str!("../../../../../docs/references/index/105.md")]
 const REFIT: Reported = Reported {
     name: "FrieslandCampina Refit",
     water: 0.0,
@@ -85,7 +86,7 @@ const REFIT: Reported = Reported {
 };
 
 /// Ingredia's micellar casein isolate (Azevedo Scudeller et al., 2026, Table 1)[^107]
-#[doc = include_str!("../../../../docs/references/index/107.md")]
+#[doc = include_str!("../../../../../docs/references/index/107.md")]
 const INGREDIA_ISOLATE: Reported = Reported {
     name: "Ingredia micellar casein isolate",
     water: 6.31,
@@ -97,7 +98,7 @@ const INGREDIA_ISOLATE: Reported = Reported {
 };
 
 /// A typical micellar casein concentrate, summing to 97.8% (USDEC, 2015, Figure 1, p. 1)[^100]
-#[doc = include_str!("../../../../docs/references/index/100.md")]
+#[doc = include_str!("../../../../../docs/references/index/100.md")]
 const USDEC: Reported = Reported {
     name: "USDEC typical micellar casein concentrate",
     water: 5.0,
@@ -110,50 +111,6 @@ const USDEC: Reported = Reported {
 
 /// The compositions the `_IN_MCI` anchors average
 const AVERAGED: [Reported; 4] = [KOMMINENI, PROMILK, REFIT, INGREDIA_ISOLATE];
-
-/// The value at the isolate's protein, [`STD_PROTEIN_IN_MCI`], of the line from milk solids'
-/// `milk_solids_value` through a source's `value` at its `protein`
-fn extend_to_isolate(milk_solids_value: f64, [protein, value]: [f64; 2]) -> f64 {
-    let slope = (value - milk_solids_value) / (protein - STD_PROTEIN_IN_MSNF);
-    milk_solids_value + slope * (STD_PROTEIN_IN_MCI - STD_PROTEIN_IN_MSNF)
-}
-
-/// `value` rounded to the nearest multiple of `step`, e.g. a tenth of a percentage point for 0.001
-fn round_to(value: f64, step: f64) -> f64 {
-    (value / step).round() * step
-}
-
-#[expect(clippy::cast_precision_loss, reason = "a handful of sources")]
-fn mean(values: &[f64]) -> f64 {
-    values.iter().sum::<f64>() / values.len() as f64
-}
-
-/// `fraction` as a percentage, to two decimals
-fn percent(fraction: f64) -> String {
-    format!("{:.2}", fraction * 100.0)
-}
-
-/// `fraction` as a signed percentage, to two decimals
-fn signed(fraction: f64) -> String {
-    format!("{:+.2}", fraction * 100.0)
-}
-
-/// A row of the fit report, with each column as wide as the header's longest label
-fn report_row(name: &str, cells: [&str; 7]) -> String {
-    let [
-        protein,
-        lactose,
-        lactose_line,
-        lactose_miss,
-        minerals,
-        minerals_line,
-        minerals_miss,
-    ] = cells;
-    format!(
-        "{name:<32} {protein:>7} | {lactose:>7} {lactose_line:>6} {lactose_miss:>6} | {minerals:>8} \
-         {minerals_line:>6} {minerals_miss:>6}"
-    )
-}
 
 /// A row of the casein share report, with each column as wide as the header's longest label
 fn share_report_row(name: &str, [casein, line, miss]: [&str; 3]) -> String {
@@ -169,11 +126,11 @@ fn micellar_casein_anchors_average_the_source_lines() {
     // At that protein, the lines through each source average to the lactose and minerals anchors
     let lactose = mean(&AVERAGED.map(|source| {
         let [protein, lactose, _] = source.scaled();
-        extend_to_isolate(STD_LACTOSE_IN_MSNF, [protein, lactose])
+        extend_to_isolate(STD_PROTEIN_IN_MCI, STD_LACTOSE_IN_MSNF, [protein, lactose])
     }));
     let minerals = mean(&AVERAGED.map(|source| {
         let [protein, _, minerals] = source.scaled();
-        extend_to_isolate(STD_MINERALS_IN_MSNF, [protein, minerals])
+        extend_to_isolate(STD_PROTEIN_IN_MCI, STD_MINERALS_IN_MSNF, [protein, minerals])
     }));
     assert_abs_diff_eq!(round_to(lactose, 0.001), STD_LACTOSE_IN_MCI);
     assert_abs_diff_eq!(round_to(minerals, 0.001), STD_MINERALS_IN_MCI);
@@ -183,9 +140,9 @@ fn micellar_casein_anchors_average_the_source_lines() {
         .iter()
         .filter_map(|source| {
             let [protein, _, _] = source.scaled();
-            source
-                .casein
-                .map(|casein| extend_to_isolate(STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, [protein, casein]))
+            source.casein.map(|casein| {
+                extend_to_isolate(STD_PROTEIN_IN_MCI, STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, [protein, casein])
+            })
         })
         .collect();
     assert_abs_diff_eq!(round_to(mean(&casein_shares), 0.01), STD_CASEIN_PROTEIN_IN_MCI_PROTEIN);
@@ -195,10 +152,7 @@ fn micellar_casein_anchors_average_the_source_lines() {
 fn micellar_casein_lines_fit_the_sources() {
     // The lactose line passes within 0.6 percentage points of each averaged composition, and the
     // minerals line misses it by as much the other way, as both close at 100% with its protein
-    let mut lines = vec![report_row(
-        "% of solids non-fat",
-        ["protein", "lactose", "line", "miss", "minerals", "line", "miss"],
-    )];
+    let mut lines = vec![report_header()];
 
     for source in AVERAGED {
         let [protein, lactose, minerals] = source.scaled();

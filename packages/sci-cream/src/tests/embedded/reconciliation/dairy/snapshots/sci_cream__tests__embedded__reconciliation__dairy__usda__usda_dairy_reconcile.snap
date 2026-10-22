@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/tests/embedded/reconciliation/dairy.rs
+source: packages/sci-cream/src/tests/embedded/reconciliation/dairy/usda.rs
 expression: "lines.join(\"\\n\")"
 ---
 USDA Fat-Free (Skim) Milk

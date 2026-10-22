@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/tests/embedded/reconciliation/micellar_casein.rs
+source: packages/sci-cream/src/tests/embedded/reconciliation/dairy/micellar_casein.rs
 expression: "lines.join(\"\\n\")"
 ---
 % of protein                     casein   line   miss

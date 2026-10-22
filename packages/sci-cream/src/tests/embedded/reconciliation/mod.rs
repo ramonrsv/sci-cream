@@ -5,6 +5,4 @@
 mod chocolate;
 mod dairy;
 mod flavourings;
-mod micellar_casein;
-mod ultrafiltered_milk;
 mod util;

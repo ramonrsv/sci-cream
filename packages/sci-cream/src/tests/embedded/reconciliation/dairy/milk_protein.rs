@@ -9,6 +9,7 @@
 // _McSweeney_, _McCarthy_, and _VanWees_ false positives
 #![expect(clippy::doc_markdown)]
 
+use super::util::{extend_to_isolate, mean, percent, report_header, report_row, round_to, signed};
 use crate::tests::asserts::*;
 
 use crate::{
@@ -16,7 +17,6 @@ use crate::{
         lactose_in_snf,
         milk::{
             STD_LACTOSE_IN_MPI, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MPI, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MPI,
-            STD_PROTEIN_IN_MSNF,
         },
         minerals_in_snf,
     },
@@ -44,7 +44,7 @@ impl Reported {
 }
 
 /// A typical milk protein concentrate 85 (USDEC, 2018, Table 13, p. 35)[^113]
-#[doc = include_str!("../../../../docs/references/index/113.md")]
+#[doc = include_str!("../../../../../docs/references/index/113.md")]
 const USDEC_85: Reported = Reported {
     name: "USDEC typical MPC 85",
     protein: 85.0,
@@ -53,7 +53,7 @@ const USDEC_85: Reported = Reported {
 };
 
 /// An ultrafiltered milk protein concentrate 85 (McSweeney et al., 2020, Table 1)[^106]
-#[doc = include_str!("../../../../docs/references/index/106.md")]
+#[doc = include_str!("../../../../../docs/references/index/106.md")]
 const MCSWEENEY_85: Reported = Reported {
     name: "McSweeney MPC85",
     protein: 84.7,
@@ -62,7 +62,7 @@ const MCSWEENEY_85: Reported = Reported {
 };
 
 /// Idaho Milk Products' concentrate (VanWees et al., 2026, Table 1)[^115]
-#[doc = include_str!("../../../../docs/references/index/115.md")]
+#[doc = include_str!("../../../../../docs/references/index/115.md")]
 const IDAHO: Reported = Reported {
     name: "Idaho Milk Products MPC 80",
     protein: 80.40,
@@ -71,7 +71,7 @@ const IDAHO: Reported = Reported {
 };
 
 /// Hochdorf's Ledor MI 85T, whose moisture is not given (Seo & Oh, 2023, "Materials")[^116]
-#[doc = include_str!("../../../../docs/references/index/116.md")]
+#[doc = include_str!("../../../../../docs/references/index/116.md")]
 const HOCHDORF: Reported = Reported {
     name: "Hochdorf Ledor MI 85T",
     protein: 81.0,
@@ -84,7 +84,7 @@ const AVERAGED: [Reported; 4] = [USDEC_85, MCSWEENEY_85, IDAHO, HOCHDORF];
 
 /// McSweeney et al.'s lower-protein concentrates, their concentrate 85 diluted with milk permeate
 /// (McSweeney et al., 2020, §2.1, Table 1)[^106]
-#[doc = include_str!("../../../../docs/references/index/106.md")]
+#[doc = include_str!("../../../../../docs/references/index/106.md")]
 const MCSWEENEY_BLENDS: [Reported; 4] = [
     Reported {
         name: "McSweeney MPC75",
@@ -114,7 +114,7 @@ const MCSWEENEY_BLENDS: [Reported; 4] = [
 
 /// USDEC's typical lower-protein concentrates, left out of the anchors
 /// (USDEC, 2018, Table 13, p. 35)[^113]
-#[doc = include_str!("../../../../docs/references/index/113.md")]
+#[doc = include_str!("../../../../../docs/references/index/113.md")]
 const USDEC_LOWER_GRADES: [Reported; 3] = [
     Reported {
         name: "USDEC typical MPC 70",
@@ -135,55 +135,6 @@ const USDEC_LOWER_GRADES: [Reported; 3] = [
         ash: 6.5,
     },
 ];
-
-/// The value at the isolate's protein, [`STD_PROTEIN_IN_MPI`], of the line from milk solids'
-/// `milk_solids_value` through a source's `value` at its `protein`
-fn extend_to_isolate(milk_solids_value: f64, [protein, value]: [f64; 2]) -> f64 {
-    let slope = (value - milk_solids_value) / (protein - STD_PROTEIN_IN_MSNF);
-    milk_solids_value + slope * (STD_PROTEIN_IN_MPI - STD_PROTEIN_IN_MSNF)
-}
-
-/// `value` rounded to the nearest multiple of `step`, e.g. a tenth of a percentage point for 0.001
-fn round_to(value: f64, step: f64) -> f64 {
-    (value / step).round() * step
-}
-
-#[expect(clippy::cast_precision_loss, reason = "a handful of sources")]
-fn mean(values: &[f64]) -> f64 {
-    values.iter().sum::<f64>() / values.len() as f64
-}
-
-/// `fraction` as a percentage, to two decimals
-fn percent(fraction: f64) -> String {
-    format!("{:.2}", fraction * 100.0)
-}
-
-/// `fraction` as a signed percentage, to two decimals
-fn signed(fraction: f64) -> String {
-    format!("{:+.2}", fraction * 100.0)
-}
-
-/// A row of the fit report, with each column as wide as the header's longest label
-fn report_row(name: &str, cells: [&str; 7]) -> String {
-    let [
-        protein,
-        lactose,
-        lactose_line,
-        lactose_miss,
-        minerals,
-        minerals_line,
-        minerals_miss,
-    ] = cells;
-    format!(
-        "{name:<32} {protein:>7} | {lactose:>7} {lactose_line:>6} {lactose_miss:>6} | {minerals:>8} \
-         {minerals_line:>6} {minerals_miss:>6}"
-    )
-}
-
-/// The header row of the fit report
-fn report_header() -> String {
-    report_row("% of solids non-fat", ["protein", "lactose", "line", "miss", "minerals", "line", "miss"])
-}
 
 /// How far `source`'s lactose and minerals miss the milk lines, with its row of the fit report
 fn misses(source: &Reported) -> ([f64; 2], String) {
@@ -208,7 +159,7 @@ fn misses(source: &Reported) -> ([f64; 2], String) {
 }
 
 #[test]
-fn ultrafiltered_milk_anchors_average_the_source_lines() {
+fn milk_protein_anchors_average_the_source_lines() {
     // The protein anchor is McSweeney et al.'s concentrate's, to the nearest 0.1 percentage point
     let [mcsweeney_protein, _, _] = MCSWEENEY_85.scaled();
     assert_abs_diff_eq!(round_to(mcsweeney_protein, 0.001), STD_PROTEIN_IN_MPI);
@@ -216,18 +167,18 @@ fn ultrafiltered_milk_anchors_average_the_source_lines() {
     // At that protein, the lines through each source average to the lactose and minerals anchors
     let lactose = mean(&AVERAGED.map(|source| {
         let [protein, lactose, _] = source.scaled();
-        extend_to_isolate(STD_LACTOSE_IN_MSNF, [protein, lactose])
+        extend_to_isolate(STD_PROTEIN_IN_MPI, STD_LACTOSE_IN_MSNF, [protein, lactose])
     }));
     let minerals = mean(&AVERAGED.map(|source| {
         let [protein, _, minerals] = source.scaled();
-        extend_to_isolate(STD_MINERALS_IN_MSNF, [protein, minerals])
+        extend_to_isolate(STD_PROTEIN_IN_MPI, STD_MINERALS_IN_MSNF, [protein, minerals])
     }));
     assert_abs_diff_eq!(round_to(lactose, 0.001), STD_LACTOSE_IN_MPI);
     assert_abs_diff_eq!(round_to(minerals, 0.001), STD_MINERALS_IN_MPI);
 }
 
 #[test]
-fn ultrafiltered_milk_lines_fit_the_sources() {
+fn milk_protein_lines_fit_the_sources() {
     // The lactose line passes within 0.3 percentage points of each source, and the minerals line
     // misses each by as much the other way, as both close at 100% with its protein
     let mut lines = vec![report_header()];
@@ -244,7 +195,7 @@ fn ultrafiltered_milk_lines_fit_the_sources() {
 }
 
 #[test]
-fn ultrafiltered_milk_minerals_line_runs_above_usdec_lower_grades() {
+fn milk_protein_minerals_line_runs_above_usdec_lower_grades() {
     // USDEC lists nearly the same ash at every grade, 6.5-6.8 g, so its share of the solids non-fat
     // stays near the isolates' as protein falls, while the minerals line rises toward milk's,
     // running up to 1.1 percentage points above them, and the lactose line as far below

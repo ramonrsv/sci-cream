@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/tests/embedded/reconciliation/micellar_casein.rs
+source: packages/sci-cream/src/tests/embedded/reconciliation/dairy/micellar_casein.rs
 expression: "lines.join(\"\\n\")"
 ---
 % of solids non-fat              protein | lactose   line   miss | minerals   line   miss

@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/tests/embedded/reconciliation/ultrafiltered_milk.rs
+source: packages/sci-cream/src/tests/embedded/reconciliation/dairy/milk_protein.rs
 expression: "lines.join(\"\\n\")"
 ---
 % of solids non-fat              protein | lactose   line   miss | minerals   line   miss

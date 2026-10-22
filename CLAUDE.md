@@ -129,6 +129,10 @@ Core data flow: Specs → Composition → Ingredient → Recipe → MixPropertie
   provides `calculate_recipe_mix_properties(light_recipe)` to minimize expensive JS↔WASM boundary
   crossings. Prefer adding methods to `Bridge` over exposing more individual types.
 
+A `mod.rs` holds only its module doc, submodule declarations, and re-exports, with any
+`#[cfg(doc)]` imports its doc links need. Code goes in a sibling file, such as a `util.rs` for the
+helpers its submodules share.
+
 #### Crate features
 
 - `data` (default) — embeds the JSON files in `data/ingredients/*.json` at compile time via
