@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792706803847,
+  "lastUpdate": 1792706821465,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -622892,6 +622892,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/recipes first-load JS (gzip)",
             "value": 878.05,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 681.83,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 850.28,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 683.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 851.77,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1090.91,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "435161f39e6ba302d05837c464b883f0f444c8b2",
+          "message": "Group the dairy reconciliation suites\n\nThe dairy reconciliation suites move into a dairy submodule, named\nconsistently: usda for the USDA listings' proximates, and milk_protein,\nrenamed from ultrafiltered_milk, and micellar_casein for the two lines\nagainst concentrate compositions. The helpers the line suites\nduplicated move into a shared util, and the snapshots follow their new\nmodule paths, unchanged.\n\nCLAUDE.md now states that a mod.rs holds only its doc, submodule\ndeclarations, and re-exports, with code in sibling files.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:43:30-04:00",
+          "tree_id": "721e1660618857fea8b2aa683807bd4b02f551f6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/435161f39e6ba302d05837c464b883f0f444c8b2"
+        },
+        "date": 1792706754945,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 762.22,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 930.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 699.33,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 867.78,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 709.61,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 878.06,
             "unit": "KB"
           },
           {
