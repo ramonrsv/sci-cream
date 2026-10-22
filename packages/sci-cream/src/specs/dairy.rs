@@ -3104,22 +3104,22 @@ pub(crate) mod tests {
 
     #[test]
     fn dairy_simple_spec_milk_protein_concentrate_grade() {
-        // A milk protein concentrate 80's protein, 85.1% of its solids non-fat, sets its lactose
-        // and minerals along the lines, 7.6% and 7.3%, and its protein keeps milk's casein share
+        // A milk protein concentrate 80's protein, 84.2% of its solids non-fat, sets its lactose
+        // and minerals along the lines, 8.5% and 7.3%, and its protein keeps milk's casein share
         let comp = DairySimpleSpec {
             fat: 1.0,
-            msnf: Some(94.0),
+            msnf: Some(95.0),
             protein: Some(80.0),
             ..empty_dairy_simple_spec()
         }
         .to_composition()
         .unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Lactose), 7.1479);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS) - comp.get(CompKey::MilkProteins), 6.8521);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 8.0623);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS) - comp.get(CompKey::MilkProteins), 6.9377);
         assert_eq_flt_test!(comp.get(CompKey::Casein), 64.0);
         assert_eq_flt_test!(comp.get(CompKey::Whey), 16.0);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 5.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 4.0);
     }
 
     #[test]
