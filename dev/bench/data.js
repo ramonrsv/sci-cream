@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792647271552,
+  "lastUpdate": 1792647414010,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -645092,6 +645092,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.66,
             "range": "0.73",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4bd0e81855c50bba347ed69f5cd64dc337598411",
+          "message": "Add sheet casein and document crude protein\n\nDairySheetSpec gains an optional casein, for sheets that list it: it\nreplaces the casein share the solids source gives, and whey takes the\nrest of the protein. Kommineni et al.'s concentrate now lists its\nmeasured casein instead of the micellar casein line's.\n\nThe protein the crate takes is crude protein, from total nitrogen, as\nlabels and USDA's FoodData Central list it, so casein and whey include\nthe non-protein nitrogen. A new Dairy docs page explains crude and true\nprotein, cited to Barbano & Lynch, DePeters & Ferguson, and USDA, and\nthe dairy specs' protein docs link to it. Stabilizers and Emulsifiers\nbecome top-level docs sections, as the table of contents lists them.\n\nA reconciliation test checks that the casein share line fits the\nreported shares within 1.4 percentage points, as its constant now says.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T01:22:59-04:00",
+          "tree_id": "984a20350a60f5acdebe80e347d1a7beb6e0c208",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4bd0e81855c50bba347ed69f5cd64dc337598411"
+        },
+        "date": 1792647349715,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 69.02,
+            "range": "11.62",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.03,
+            "range": "2.19",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.96,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 180,
+            "range": "16.73",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.38,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 180,
+            "range": "16.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 64.71,
+            "range": "11.38",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.25,
+            "range": "0.39",
             "unit": "ms"
           }
         ]
