@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792648759527,
+  "lastUpdate": 1792648887175,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -646129,6 +646129,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.25,
             "range": "0.39",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "16b4346a72f595e8083d2dc068b354193a4a0ace",
+          "message": "Fix the suite shebang and two e2e helper races\n\nrun-local-test-suite.sh opened with \"# !/bin/bash\", a comment rather\nthan a shebang, so it only ran because bash falls back to interpreting\na file it cannot exec. It now uses #!/usr/bin/env bash, as the other\nscripts do.\n\npasteToClipboard did not await grantPermissions, leaving the grant to\nrace the clipboard write. loginAsTestUserWithCredentials waited with\nwaitForNavigation, deprecated as racy, which also resolves on any\nnavigation: a failed sign-in, redirected back to /signin?error=...,\npassed as signed in. It now uses waitForURL, waiting to leave /signin.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T01:47:22-04:00",
+          "tree_id": "7f079fe833577cb9b71c93868b2321fee1f89f12",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/16b4346a72f595e8083d2dc068b354193a4a0ace"
+        },
+        "date": 1792648821452,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 72.38,
+            "range": "14.93",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.77,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.75,
+            "range": "1.10",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 196,
+            "range": "18.97",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.59,
+            "range": "0.11",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 196,
+            "range": "18.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 66.4,
+            "range": "14.95",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.89,
+            "range": "0.78",
             "unit": "ms"
           }
         ]
