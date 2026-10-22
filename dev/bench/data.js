@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792707928079,
+  "lastUpdate": 1792707955489,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -651366,6 +651366,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.82,
             "range": "0.33",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8790e42f1e7cd6abc2783efdb41f8d46077bfd89",
+          "message": "Share `misses` between the dairy line suites\n\nThe micellar casein fit test wrote out what milk_protein's misses\nhelper does. The helper moves to the dairy reconciliation util, taking\nthe source's name, scaled fractions, and solids source, and both fit\ntests call it. Their reports are unchanged.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:52:21-04:00",
+          "tree_id": "47a053d61b7c8f627550f0adbafca3baddd6c16e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8790e42f1e7cd6abc2783efdb41f8d46077bfd89"
+        },
+        "date": 1792707914660,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 44.38,
+            "range": "8.17",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 10.98,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 10.98,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 117,
+            "range": "11.27",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.39,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 117,
+            "range": "11.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 42.28,
+            "range": "7.25",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.95,
+            "range": "0.29",
             "unit": "ms"
           }
         ]
