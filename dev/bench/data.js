@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792647816672,
+  "lastUpdate": 1792648690939,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -665028,6 +665028,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/4bd0e81855c50bba347ed69f5cd64dc337598411"
         },
         "date": 1792647205984,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1163.58,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 356.08,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1860.92,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 574.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 622.51,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2067.48,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "16b4346a72f595e8083d2dc068b354193a4a0ace",
+          "message": "Fix the suite shebang and two e2e helper races\n\nrun-local-test-suite.sh opened with \"# !/bin/bash\", a comment rather\nthan a shebang, so it only ran because bash falls back to interpreting\na file it cannot exec. It now uses #!/usr/bin/env bash, as the other\nscripts do.\n\npasteToClipboard did not await grantPermissions, leaving the grant to\nrace the clipboard write. loginAsTestUserWithCredentials waited with\nwaitForNavigation, deprecated as racy, which also resolves on any\nnavigation: a failed sign-in, redirected back to /signin?error=...,\npassed as signed in. It now uses waitForURL, waiting to leave /signin.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T01:47:22-04:00",
+          "tree_id": "7f079fe833577cb9b71c93868b2321fee1f89f12",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/16b4346a72f595e8083d2dc068b354193a4a0ace"
+        },
+        "date": 1792648650495,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
