@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792708376700,
+  "lastUpdate": 1792708418420,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -652259,6 +652259,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.95,
             "range": "0.29",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "eef62bd07a0c759a99a847e61ebb6c1376a16f82",
+          "message": "Match the MPC grade test to the MPC 80 entry\n\nThe DairySimpleSpec test for a milk protein concentrate grade still\nused the MPC 80 rung's earlier 94 g of solids non-fat. It now uses the\nentry's 95 g, so its lactose, minerals, and water match the ladder.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:53:32-04:00",
+          "tree_id": "248f419d7adc9f06eb5a6e7826a1d915c0088167",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/eef62bd07a0c759a99a847e61ebb6c1376a16f82"
+        },
+        "date": 1792708351864,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 67.66,
+            "range": "8.95",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.06,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.03,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 181.5,
+            "range": "7.73",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.11",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 181.5,
+            "range": "7.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 63.39,
+            "range": "9.25",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.58,
+            "range": "0.65",
             "unit": "ms"
           }
         ]
