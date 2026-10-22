@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792648708166,
+  "lastUpdate": 1792648755978,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -619395,6 +619395,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1089.43,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "16b4346a72f595e8083d2dc068b354193a4a0ace",
+          "message": "Fix the suite shebang and two e2e helper races\n\nrun-local-test-suite.sh opened with \"# !/bin/bash\", a comment rather\nthan a shebang, so it only ran because bash falls back to interpreting\na file it cannot exec. It now uses #!/usr/bin/env bash, as the other\nscripts do.\n\npasteToClipboard did not await grantPermissions, leaving the grant to\nrace the clipboard write. loginAsTestUserWithCredentials waited with\nwaitForNavigation, deprecated as racy, which also resolves on any\nnavigation: a failed sign-in, redirected back to /signin?error=...,\npassed as signed in. It now uses waitForURL, waiting to leave /signin.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T01:47:22-04:00",
+          "tree_id": "7f079fe833577cb9b71c93868b2321fee1f89f12",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/16b4346a72f595e8083d2dc068b354193a4a0ace"
+        },
+        "date": 1792648690700,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 760.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 929.19,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 697.85,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 866.3,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 708.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 876.57,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 680.35,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 848.8,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 681.84,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 850.29,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1089.42,
             "unit": "KB"
           },
           {
