@@ -225,3 +225,13 @@
 [^111]: U.S. Department of Agriculture. (2016, May). [_USDA National Nutrient Database for Standard Reference, Release 28: Documentation and User Guide_](https://www.ars.usda.gov/ARSUserFiles/80400525/Data/SR/sr28/sr28_doc.pdf). Agricultural Research Service.
 
 [^112]: U.S. Department of Agriculture. (n.d.). [_Foundation Foods Documentation_](https://fdc.nal.usda.gov/Foundation_Foods_Documentation). FoodData Central.
+
+[^113]: U.S. Dairy Export Council. (2018). [_Reference Manual for U.S. Milk Powders and Microfiltered Ingredients_](https://www.thinkusadairy.org/assets/documents/Customer%20Site/C3-Using%20Dairy/C3.7-Resources%20and%20Insights/02-Product%20Resources/USD5163-US-Milk-Powders_LIVE_Web.pdf).
+
+[^114]: Patel, H., & Patel, S. (2014). [_Milk Protein Concentrates: Manufacturing and Applications_](https://www.thinkusadairy.org/assets/documents/Customer%20Site/C3-Using%20Dairy/C3.7-Resources%20and%20Insights/03-Application%20and%20Technical%20Materials/Milk_Protein_Concentrates_Technical_Report.pdf). U.S. Dairy Export Council.
+
+[^115]: VanWees, S. R., Rankin, S. A., & Hartel, R. W. (2026, February). [_Microstructural and Physical Properties of High-Protein, High-Overrun Frozen Desserts_](https://ift.onlinelibrary.wiley.com/doi/10.1111/1750-3841.70944). Journal of Food Science, 91(3), e70944.
+
+[^116]: Seo, C. W., & Oh, N. S. (2023, May). [_Rheological, Physicochemical, Microbiological, and Aroma Characteristics of Sour Creams Supplemented with Milk Protein Concentrate_](https://pmc.ncbi.nlm.nih.gov/articles/PMC10172817/). Food Science of Animal Resources, 43(3), 540-551.
+
+[^117]: Don, P. U., Modi, Z., Shah, K., & Salunke, P. (2025, April). [_Ultrafiltration of Whole Milk: Impact of Homogenization and Ultrafiltration Temperature on Processing Efficiency and Component Retention_](https://www.mdpi.com/2304-8158/14/8/1370). Foods, 14(8), 1370.

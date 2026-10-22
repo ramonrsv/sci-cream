@@ -1,0 +1,13 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/ultrafiltered_milk.rs
+expression: "lines.join(\"\\n\")"
+---
+% of solids non-fat              protein | lactose   line   miss | minerals   line   miss
+USDEC typical MPC 85               89.66 |    3.38   3.12  +0.26 |     6.96   7.22  -0.26
+McSweeney MPC85                    91.12 |    1.47   1.68  -0.20 |     7.40   7.20  +0.20
+Idaho Milk Products MPC 80         85.64 |    7.02   7.08  -0.06 |     7.34   7.28  +0.06
+Hochdorf Ledor MI 85T              85.99 |    6.90   6.74  +0.16 |     7.11   7.28  -0.16
+McSweeney MPC75                    79.09 |   13.45  13.53  -0.08 |     7.46   7.38  +0.08
+McSweeney MPC65                    67.97 |   24.37  24.48  -0.12 |     7.66   7.55  +0.12
+McSweeney MPC55                    56.81 |   35.33  35.48  -0.15 |     7.86   7.71  +0.15
+McSweeney MPC40                    40.98 |   50.78  51.07  -0.29 |     8.24   7.95  +0.29

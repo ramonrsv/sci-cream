@@ -1,0 +1,21 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
+expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
+---
+sources: Simple, VanWees
+
+Energy               0.24 pp  (Simple vs VanWees)
+MilkFat              0.02 pp  (Simple vs VanWees)
+Lactose              1.45 pp  (Simple vs VanWees)
+MSNF                 0.02 pp  (Simple vs VanWees)
+MilkSNFS             1.47 pp  (Simple vs VanWees)
+MilkProteins         1.43 pp  (Simple vs VanWees)
+MilkSolids           0.00 pp  (Simple vs VanWees)
+TotalSolids          1.15 pp  (Simple vs VanWees)
+Water                1.15 pp  (Simple vs VanWees)
+POD                  0.23 pp  (Simple vs VanWees)
+PACsgr               1.45 pp  (Simple vs VanWees)
+PACmlk               0.01 pp  (Simple vs VanWees)
+TotalPAC             1.44 pp  (Simple vs VanWees)
+SaturatedFat         0.01 pp  (Simple vs VanWees)
+TransFat             0.00 pp  (Simple vs VanWees)

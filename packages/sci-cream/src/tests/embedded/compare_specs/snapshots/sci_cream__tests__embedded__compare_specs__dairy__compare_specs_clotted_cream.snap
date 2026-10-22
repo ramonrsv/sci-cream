@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: Simple, Devon
 
-Energy              14.21 pp  (Simple vs Devon)
+Energy              14.22 pp  (Simple vs Devon)
 MilkFat              0.13 pp  (Simple vs Devon)
 Lactose              0.02 pp  (Simple vs Devon)
 MSNF                 0.13 pp  (Simple vs Devon)

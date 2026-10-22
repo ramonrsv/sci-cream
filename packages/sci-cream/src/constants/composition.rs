@@ -14,14 +14,17 @@ pub mod dairy {
             STD_CASEIN_PROTEIN_IN_MCI_PROTEIN, STD_LACTOSE_IN_CASEINATE, STD_LACTOSE_IN_MCI, STD_MINERALS_IN_CASEINATE,
             STD_MINERALS_IN_MCI, STD_PROTEIN_IN_MCI,
         },
-        milk::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MSNF},
+        milk::{
+            STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MPI, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MPI,
+            STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MPI, STD_PROTEIN_IN_MSNF,
+        },
         whey::{
             STD_LACTOSE_IN_WPI, STD_LACTOSE_IN_WS, STD_MINERALS_IN_WPI, STD_MINERALS_IN_WS, STD_PROTEIN_IN_WPI,
             STD_PROTEIN_IN_WS,
         },
     };
 
-    /// Standard composition values for milk and its solids non-fat (MSNF)
+    /// Standard composition values for milk solids (MSNF): plain milk, concentrates, and isolates
     ///
     /// The `_IN_MSNF` constants are corroborated by averages compiled from the nutrient profiles of
     /// these milks, evaporated milks, and milk powders in the
@@ -43,6 +46,53 @@ pub mod dairy {
     /// of the listing's sugars, protein, and ash, but that is not always the case, e.g. skim milk's
     /// calculated MSNF of 9.12g differs from the 9.25g sum of those, a ~1.4% discrepancy. The
     /// listings' discrepancies range from 0% to ~2.1%.
+    ///
+    /// Milk protein concentrates and isolates (MPC, MPI) are made by ultrafiltration of skim milk,
+    /// which allows lactose, soluble minerals, and non-protein nitrogen to pass into the permeate,
+    /// while retaining the caseins and whey proteins (USDEC, 2018, p. 21)[^113], (Patel & Patel,
+    /// 2014, p. 2)[^114], (Goff & Hartel, 2025, p. 61)[^20].
+    ///
+    /// As concentration proceeds, the protein fraction of the solids non-fat rises, while their
+    /// lactose and minerals decrease along lines in that fraction, [`lactose_in_snf`] and
+    /// [`minerals_in_snf`], from plain milk solids given by the `_IN_MSNF` constants to the isolate
+    /// end given by the `_IN_MPI` constants. Below plain milk's protein fraction, the lines
+    /// continue toward the permeate's composition. The casein share of the protein stays
+    /// [`STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`], as ultrafiltration concentrates all the proteins
+    /// from milk and therefore leaves the casein-to-whey ratio essentially unchanged from the
+    /// original milk's, generally 80:20 (ADPI, 2023, p. 1)[^103], (USDEC, 2018, p. 21)[^113].
+    ///
+    /// Casein's share of the crude protein rises somewhat, from 76% in skim milk to 82% in its
+    /// final retentate (Don et al., 2025, Tables 1, 4)[^117], on either side of the 80% taken.
+    ///
+    /// The `_IN_MPI` constants average the lines from milk solids through these complete milk
+    /// protein concentrate compositions, at the protein of McSweeney et al.'s, the highest, and an
+    /// isolate by ADPI's minimum (ADPI, 2023, p. 2)[^103]:
+    ///
+    /// - (USDEC, 2018, Table 13, p. 35)[^113], a typical concentrate 85
+    /// - (McSweeney et al., 2020, Table 1)[^106], an ultrafiltered concentrate 85
+    /// - (VanWees et al., 2026, Table 1)[^115], Idaho Milk Products' concentrate
+    /// - (Seo & Oh, 2023, "Materials")[^116], Hochdorf's Ledor MI 85T
+    ///
+    /// Their protein, lactose, and ash, scaled to sum to 100% of their solids non-fat, are (%):
+    ///
+    /// | Source                   | Protein | Lactose | Minerals |
+    /// | ------------------------ | ------- | ------- | -------- |
+    /// | USDEC, MPC 85            | 89.7    | 3.4     | 7.0      |
+    /// | McSweeney et al., MPC 85 | 91.1    | 1.5     | 7.4      |
+    /// | VanWees et al., MPC 80   | 85.6    | 7.0     | 7.3      |
+    /// | Seo & Oh, MI 85T         | 86.0    | 6.9     | 7.1      |
+    ///
+    /// USDEC's typical isolate, which gives mostly limits (USDEC, 2018, Table 13, p. 35)[^113], and
+    /// its 2015 concentrate, which sums to 97.6% (USDEC, 2015, Figure 1, p. 1)[^100], are left out.
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/100.md")]
+    #[doc = include_str!("../../docs/references/index/103.md")]
+    #[doc = include_str!("../../docs/references/index/106.md")]
+    #[doc = include_str!("../../docs/references/index/113.md")]
+    #[doc = include_str!("../../docs/references/index/114.md")]
+    #[doc = include_str!("../../docs/references/index/115.md")]
+    #[doc = include_str!("../../docs/references/index/116.md")]
+    #[doc = include_str!("../../docs/references/index/117.md")]
     #[doc = include_str!("../../docs/references/index/503.md")]
     #[doc = include_str!("../../docs/references/index/530.md")]
     #[doc = include_str!("../../docs/references/index/531.md")]
@@ -50,6 +100,7 @@ pub mod dairy {
     #[doc = include_str!("../../docs/references/index/533.md")]
     #[doc = include_str!("../../docs/references/index/534.md")]
     #[doc = include_str!("../../docs/references/index/535.md")]
+    #[expect(clippy::doc_markdown)] // _McSweeney_, _McCarthy_, and _VanWees_ false positives
     pub mod milk {
         /// Percentage milk solids non-fat (MSNF) typical of milk serum
         ///
@@ -94,6 +145,51 @@ pub mod dairy {
         #[doc = include_str!("../../docs/references/index/90.md")]
         #[doc = include_str!("../../docs/references/index/20.md")]
         pub const STD_MINERALS_IN_MSNF: f64 = 0.08;
+
+        /// Percentage of lactose typical of milk protein isolate (MPI) solids non-fat
+        ///
+        /// Taken as 1.7%, the average at [`STD_PROTEIN_IN_MPI`] of the lines from milk solids
+        /// through the [compositions](self). This is well within ADPI's 5.0% maximum for milk
+        /// protein isolate (ADPI, 2023, p. 2)[^103].
+        ///
+        /// The [line](super::lactose_in_snf) from milk solids to this fits the compositions within
+        /// 0.3 percentage points, and McSweeney et al.'s MPC 75 to MPC 40 too, which they made by
+        /// diluting their MPC 85 with milk permeate (McSweeney et al., 2020, §2.1, Table 1)[^106].
+        ///
+        /// Calculated values are (%): 2.0, 1.5, 1.6, 1.9
+        #[doc = include_str!("../../docs/references/index/103.md")]
+        #[doc = include_str!("../../docs/references/index/106.md")]
+        pub const STD_LACTOSE_IN_MPI: f64 = 0.017;
+
+        /// Percentage of protein typical of milk protein isolate (MPI) solids non-fat
+        ///
+        /// Taken as 91.1%, the protein of McSweeney et al.'s among the [compositions](self), where
+        /// the averaged lines give [`STD_LACTOSE_IN_MPI`] and [`STD_MINERALS_IN_MPI`].
+        ///
+        /// At 5% moisture and 1% fat, this is 90.1% protein on a dry basis, above ADPI's 89.5%
+        /// minimum for milk protein isolate (ADPI, 2023, p. 2)[^103] and in line with the 90-91%
+        /// typical of isolates (Patel & Patel, 2014, p. 2)[^114].
+        #[doc = include_str!("../../docs/references/index/103.md")]
+        #[doc = include_str!("../../docs/references/index/114.md")]
+        pub const STD_PROTEIN_IN_MPI: f64 = 0.911;
+
+        /// Percentage of minerals (ash) typical of milk protein isolate (MPI) solids non-fat
+        ///
+        /// Taken as 7.2%, the average at [`STD_PROTEIN_IN_MPI`] of the lines from milk solids
+        /// through the [compositions](self). ADPI's 8.0% maximum ash for milk protein isolate
+        /// (ADPI, 2023, p. 2)[^103] is ~8.5% of the solids non-fat at 5% moisture and 1% fat, and
+        /// USDEC's typical isolate's 6.0% is ~6.4% (USDEC, 2018, Table 13, p. 35)[^113].
+        ///
+        /// The [line](super::minerals_in_snf) from milk solids to this fits the compositions within
+        /// 0.3 percentage points, and McSweeney et al.'s MPC 75 to MPC 40 too (McSweeney et al.,
+        /// 2020, Table 1)[^106]. It runs 0.3-1.1 percentage points above USDEC's MPC 70 to MPC 42,
+        /// as USDEC lists nearly the same ash at every grade (USDEC, 2018, Table 13, p. 35)[^113].
+        ///
+        /// Calculated values are (%): 6.9, 7.4, 7.3, 7.0
+        #[doc = include_str!("../../docs/references/index/103.md")]
+        #[doc = include_str!("../../docs/references/index/106.md")]
+        #[doc = include_str!("../../docs/references/index/113.md")]
+        pub const STD_MINERALS_IN_MPI: f64 = 0.072;
 
         /// Proportion of proteins in milk solids that is whey
         ///
@@ -194,10 +290,10 @@ pub mod dairy {
         #[doc = include_str!("../../docs/references/index/92.md")]
         pub const STD_MINERALS_IN_WS: f64 = 0.085;
 
-        /// Percentage of lactose typical of whey protein isolate (WPI) solids
+        /// Percentage of lactose typical of whey protein isolate (WPI) solids non-fat
         ///
         /// Taken as 0.8%, in line with the typical 0.5-1.0% of WPI powder (USDEC, 2003,
-        /// p. 33)[^91], (ADPI, 2023)[^95], ~0.8% of the solids at the midpoint, a typical
+        /// p. 33)[^91], (ADPI, 2023)[^95], ~0.8% of the solids non-fat at the midpoint, a typical
         /// WPI's 0.5% (Kuntz, 2010)[^94], and Hilmar 9000's 1.0% (Hilmar Ingredients, 2026)[^538].
         /// The WPI profile (USDEC, 2003, Table 6, pp. 51-52)[^91] has a higher ~0.9%, as its
         /// lactose is the carbohydrates by difference.
@@ -210,27 +306,27 @@ pub mod dairy {
         #[doc = include_str!("../../docs/references/index/538.md")]
         pub const STD_LACTOSE_IN_WPI: f64 = 0.008;
 
-        /// Percentage of protein typical of whey protein isolate (WPI) solids
+        /// Percentage of protein typical of whey protein isolate (WPI) solids non-fat
         ///
-        /// Calculated from the 90.75g of protein in 95.0g of solids of the WPI profile (USDEC,
-        /// 2003, Table 6, pp. 51-52)[^91], in line with the typical 90.0-92.0% of WPI powder
-        /// (USDEC, 2003, p. 33)[^91], a typical WPI's 92.0% (Kuntz, 2010)[^94], and Hilmar 9000's
-        /// 89.0% (Hilmar Ingredients, 2026)[^538], ~93.7-97.4% of the solids. ADPI gives USDEC's
-        /// typical range on a dry basis (ADPI, 2023)[^95], ~90.7-92.7% of the solids, but only the
-        /// as-is reading adds up with its other typical values.
+        /// Calculated from the 90.75g of protein in 95.0g of solids non-fat of the WPI profile
+        /// (USDEC, 2003, Table 6, pp. 51-52)[^91], in line with the typical 90.0-92.0% of WPI
+        /// powder (USDEC, 2003, p. 33)[^91], a typical WPI's 92.0% (Kuntz, 2010)[^94], and
+        /// Hilmar 9000's 89.0% (Hilmar Ingredients, 2026)[^538], ~93.7-97.4% of the solids non-fat.
+        /// ADPI gives USDEC's typical range on a dry basis (ADPI, 2023)[^95], ~90.7-92.7% of the
+        /// solids non-fat, but only the as-is reading adds up with its other typical values.
         #[doc = include_str!("../../docs/references/index/91.md")]
         #[doc = include_str!("../../docs/references/index/94.md")]
         #[doc = include_str!("../../docs/references/index/95.md")]
         #[doc = include_str!("../../docs/references/index/538.md")]
         pub const STD_PROTEIN_IN_WPI: f64 = 0.955;
 
-        /// Percentage of minerals (ash) typical of whey protein isolate (WPI) solids
+        /// Percentage of minerals (ash) typical of whey protein isolate (WPI) solids non-fat
         ///
-        /// Calculated from the 3.38g of ash in 95.0g of solids of the WPI profile (USDEC, 2003,
-        /// Table 6, pp. 51-52)[^91]. Typical isolates run lower, ~2.1-3.2% of the solids: the
-        /// 2.0-3.0% of WPI powder (USDEC, 2003, p. 33)[^91], (ADPI, 2023)[^95], a typical WPI's
-        /// 2.0% (Kuntz, 2010)[^94], and Hilmar 9000's 2.5% (Hilmar Ingredients, 2026)[^538], whose
-        /// 3.5% maximum is ~3.7% of the solids.
+        /// Calculated from the 3.38g of ash in 95.0g of solids non-fat of the WPI profile (USDEC,
+        /// 2003, Table 6, pp. 51-52)[^91]. Typical isolates run lower, ~2.1-3.2% of the
+        /// solids non-fat: the 2.0-3.0% of WPI powder (USDEC, 2003, p. 33)[^91], (ADPI, 2023)[^95],
+        /// a typical WPI's 2.0% (Kuntz, 2010)[^94], and Hilmar 9000's 2.5% (Hilmar Ingredients,
+        /// 2026)[^538], whose 3.5% maximum is ~3.7% of the solids non-fat.
         ///
         /// The [line](super::minerals_in_snf) from [`STD_MINERALS_IN_WS`] to this fits USDA's sweet
         /// whey and USDEC's WPC 34, WPC 80, and WPI within ~0.5 percentage points. The line would
@@ -310,7 +406,7 @@ pub mod dairy {
     #[doc = include_str!("../../docs/references/index/539.md")]
     #[doc = include_str!("../../docs/references/index/540.md")]
     pub mod casein {
-        /// Percentage of lactose typical of micellar casein isolate solids
+        /// Percentage of lactose typical of micellar casein isolate solids non-fat
         ///
         /// Taken as 1.1%, the average at [`STD_PROTEIN_IN_MCI`] of the lines from milk solids
         /// through the [compositions](self). This matches ADPI's 1.0% maximum for micellar casein
@@ -326,7 +422,7 @@ pub mod dairy {
         #[doc = include_str!("../../docs/references/index/103.md")]
         pub const STD_LACTOSE_IN_MCI: f64 = 0.011;
 
-        /// Percentage of protein typical of micellar casein isolate solids
+        /// Percentage of protein typical of micellar casein isolate solids non-fat
         ///
         /// Taken as 90.6%, the protein of Ingredia's isolate among the [compositions](self), where
         /// the averaged lines give [`STD_LACTOSE_IN_MCI`] and [`STD_MINERALS_IN_MCI`].
@@ -338,12 +434,15 @@ pub mod dairy {
         #[doc = include_str!("../../docs/references/index/541.md")]
         pub const STD_PROTEIN_IN_MCI: f64 = 0.906;
 
-        /// Percentage of minerals (ash) typical of micellar casein isolate solids
+        /// Percentage of minerals (ash) typical of micellar casein isolate solids non-fat
         ///
         /// Taken as 8.3%, the average at [`STD_PROTEIN_IN_MCI`] of the lines from milk solids
         /// through the [compositions](self). ADPI's 8.0% maximum ash for micellar casein
         /// concentrates and isolates (ADPI, 2023, p. 2)[^103] is ~8.5% of the solids non-fat at 5%
         /// moisture and 1% fat.
+        ///
+        /// The [line](super::minerals_in_snf) from milk solids to this fits each of the
+        /// compositions within 0.6 percentage points.
         ///
         /// Calculated values are (%): 8.9, 8.6, 7.8, 7.8
         #[doc = include_str!("../../docs/references/index/103.md")]
@@ -364,7 +463,7 @@ pub mod dairy {
         #[doc = include_str!("../../docs/references/index/103.md")]
         pub const STD_CASEIN_PROTEIN_IN_MCI_PROTEIN: f64 = 0.93;
 
-        /// Percentage of lactose typical of caseinate solids
+        /// Percentage of lactose typical of caseinate solids non-fat
         ///
         /// Taken as 0.2%, in line with the [sodium caseinates](self). ADPI's maximum for edible
         /// caseinates is 1.0% (ADPI, 2024, p. 1)[^102].
@@ -373,7 +472,7 @@ pub mod dairy {
         #[doc = include_str!("../../docs/references/index/102.md")]
         pub const STD_LACTOSE_IN_CASEINATE: f64 = 0.002;
 
-        /// Percentage of protein typical of caseinate solids
+        /// Percentage of protein typical of caseinate solids non-fat
         ///
         /// Calculated as 95.8%, the remainder of 100% - [`STD_LACTOSE_IN_CASEINATE`] -
         /// [`STD_MINERALS_IN_CASEINATE`], see the [module](self) documentation. This is in line
@@ -385,7 +484,7 @@ pub mod dairy {
         #[doc = include_str!("../../docs/references/index/102.md")]
         pub const STD_PROTEIN_IN_CASEINATE: f64 = 1.0 - STD_LACTOSE_IN_CASEINATE - STD_MINERALS_IN_CASEINATE;
 
-        /// Percentage of minerals (ash) typical of caseinate solids
+        /// Percentage of minerals (ash) typical of caseinate solids non-fat
         ///
         /// Taken as 4%, about the 4.1% mean of the [sodium caseinates](self). Southward's and
         /// USDEC's calcium caseinates run higher than their sodium ones, at 4.0% and 5.4%
@@ -409,21 +508,22 @@ pub mod dairy {
     }
 
     /// Get coefficients `[a, b]` of the line `a + b × protein_in_snf` for the lactose fraction of
-    /// `source`'s solids non-fat - constant for milk and caseinate, linear otherwise.
+    /// `source`'s solids non-fat - constant for caseinate, linear otherwise.
     ///
-    /// Milk and caseinate solids hold fixed fractions, [`milk::STD_LACTOSE_IN_MSNF`] and
-    /// [`casein::STD_LACTOSE_IN_CASEINATE`], so their `b` is 0. Whey's falls as the protein is
-    /// concentrated, along the line from [`whey::STD_LACTOSE_IN_WS`] at [`whey::STD_PROTEIN_IN_WS`]
-    /// protein in sweet whey to [`whey::STD_LACTOSE_IN_WPI`] at [`whey::STD_PROTEIN_IN_WPI`] in
-    /// isolates. Micellar casein's falls likewise, from milk solids' [`milk::STD_LACTOSE_IN_MSNF`]
-    /// at [`milk::STD_PROTEIN_IN_MSNF`] protein to [`casein::STD_LACTOSE_IN_MCI`] at
-    /// [`casein::STD_PROTEIN_IN_MCI`] in its isolates.
+    /// Caseinate solids hold a fixed fraction, [`casein::STD_LACTOSE_IN_CASEINATE`], so their `b`
+    /// is 0. Milk's, whey's, and micellar casein's fall as their protein is concentrated, along the
+    /// lines from [`milk::STD_LACTOSE_IN_MSNF`], [`whey::STD_LACTOSE_IN_WS`], and
+    /// [`milk::STD_LACTOSE_IN_MSNF`] to [`milk::STD_LACTOSE_IN_MPI`], [`whey::STD_LACTOSE_IN_WPI`],
+    /// and [`casein::STD_LACTOSE_IN_MCI`], respectively, each at the
+    /// protein of its `STD_PROTEIN_IN_*` counterpart.
     ///
     /// See [`lactose_in_snf`] for a function doing the computation with these coefficients.
     #[must_use]
     pub const fn lactose_in_snf_coeffs(source: SolidsSource) -> [f64; 2] {
         match source {
-            SolidsSource::Milk => [STD_LACTOSE_IN_MSNF, 0.0],
+            SolidsSource::Milk => {
+                line_through([STD_PROTEIN_IN_MSNF, STD_LACTOSE_IN_MSNF], [STD_PROTEIN_IN_MPI, STD_LACTOSE_IN_MPI])
+            }
             SolidsSource::Whey => {
                 line_through([STD_PROTEIN_IN_WS, STD_LACTOSE_IN_WS], [STD_PROTEIN_IN_WPI, STD_LACTOSE_IN_WPI])
             }
@@ -446,21 +546,22 @@ pub mod dairy {
     }
 
     /// Get coefficients `[a, b]` of the line `a + b × protein_in_snf` for the minerals fraction of
-    /// `source`'s solids non-fat - constant for milk and caseinate, linear otherwise.
+    /// `source`'s solids non-fat - constant for caseinate, linear otherwise.
     ///
-    /// Milk and caseinate solids hold fixed fractions, [`milk::STD_MINERALS_IN_MSNF`] and
-    /// [`casein::STD_MINERALS_IN_CASEINATE`], so their `b` is 0. Whey's falls as the protein is
-    /// concentrated, along the line from [`whey::STD_MINERALS_IN_WS`] at
-    /// [`whey::STD_PROTEIN_IN_WS`] protein in sweet whey to [`whey::STD_MINERALS_IN_WPI`] at
-    /// [`whey::STD_PROTEIN_IN_WPI`] in isolates. Micellar casein's falls likewise, from milk
-    /// solids' [`milk::STD_MINERALS_IN_MSNF`] at [`milk::STD_PROTEIN_IN_MSNF`] protein to
-    /// [`casein::STD_MINERALS_IN_MCI`] at [`casein::STD_PROTEIN_IN_MCI`] protein in its isolates.
+    /// Caseinate solids hold a fixed fraction, [`casein::STD_MINERALS_IN_CASEINATE`], so their `b`
+    /// is 0. Milk's, whey's, and micellar casein's fall as their protein is concentrated, along the
+    /// lines from [`milk::STD_MINERALS_IN_MSNF`], [`whey::STD_MINERALS_IN_WS`], and
+    /// [`milk::STD_MINERALS_IN_MSNF`] to [`milk::STD_MINERALS_IN_MPI`],
+    /// [`whey::STD_MINERALS_IN_WPI`], and [`casein::STD_MINERALS_IN_MCI`], respectively, each at
+    /// the protein of its `STD_PROTEIN_IN_*` counterpart.
     ///
     /// See [`minerals_in_snf`] for a function doing the computation with these coefficients.
     #[must_use]
     pub const fn minerals_in_snf_coeffs(source: SolidsSource) -> [f64; 2] {
         match source {
-            SolidsSource::Milk => [STD_MINERALS_IN_MSNF, 0.0],
+            SolidsSource::Milk => {
+                line_through([STD_PROTEIN_IN_MSNF, STD_MINERALS_IN_MSNF], [STD_PROTEIN_IN_MPI, STD_MINERALS_IN_MPI])
+            }
             SolidsSource::Whey => {
                 line_through([STD_PROTEIN_IN_WS, STD_MINERALS_IN_WS], [STD_PROTEIN_IN_WPI, STD_MINERALS_IN_WPI])
             }
@@ -518,9 +619,10 @@ pub mod dairy {
     /// Get coefficients `[a, b]` of the line `a + b × protein_in_snf` for the casein share of
     /// `source`'s protein - linear for micellar casein, constant otherwise.
     ///
-    /// Milk solids hold the natural [`milk::STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`] split, whey solids
-    /// no casein, and caseinate solids only casein, so their `b` is 0. Micellar casein's rises as
-    /// its protein is concentrated and its whey proteins filtered out, from milk solids' split at
+    /// Milk solids, their concentrates included, hold the natural
+    /// [`milk::STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`] split, whey solids no casein, and caseinate
+    /// solids only casein, so their `b` is 0. Micellar casein's rises as its protein is
+    /// concentrated and its whey proteins filtered out, from milk solids' split at
     /// [`milk::STD_PROTEIN_IN_MSNF`] protein to [`casein::STD_CASEIN_PROTEIN_IN_MCI_PROTEIN`] at
     /// [`casein::STD_PROTEIN_IN_MCI`] protein in its isolates.
     ///
@@ -964,8 +1066,10 @@ mod tests {
 
     #[test]
     fn dairy_minerals_in_snf() {
-        // Whey's and micellar casein's lines pass through their anchors, to within float rounding
+        // Each line passes through both its anchors, to within float rounding
         for (source, protein_fraction, minerals_fraction) in [
+            (SolidsSource::Milk, dairy::milk::STD_PROTEIN_IN_MSNF, dairy::milk::STD_MINERALS_IN_MSNF),
+            (SolidsSource::Milk, dairy::milk::STD_PROTEIN_IN_MPI, dairy::milk::STD_MINERALS_IN_MPI),
             (SolidsSource::Whey, dairy::whey::STD_PROTEIN_IN_WS, dairy::whey::STD_MINERALS_IN_WS),
             (SolidsSource::Whey, dairy::whey::STD_PROTEIN_IN_WPI, dairy::whey::STD_MINERALS_IN_WPI),
             (SolidsSource::MicellarCasein, dairy::milk::STD_PROTEIN_IN_MSNF, dairy::milk::STD_MINERALS_IN_MSNF),
@@ -974,9 +1078,8 @@ mod tests {
             assert_abs_diff_eq!(dairy::minerals_in_snf(protein_fraction, source), minerals_fraction);
         }
 
-        // Milk and caseinate solids hold fixed fractions, whatever their protein
+        // Caseinate solids hold a fixed fraction, whatever their protein
         for protein_fraction in [0.0, 0.5, 1.0] {
-            assert_eq!(dairy::minerals_in_snf(protein_fraction, SolidsSource::Milk), dairy::milk::STD_MINERALS_IN_MSNF);
             assert_eq!(
                 dairy::minerals_in_snf(protein_fraction, SolidsSource::Caseinate),
                 dairy::casein::STD_MINERALS_IN_CASEINATE
@@ -986,8 +1089,10 @@ mod tests {
 
     #[test]
     fn dairy_lactose_in_snf() {
-        // Whey's and micellar casein's lines pass through their anchors, to within float rounding
+        // Each line passes through both its anchors, to within float rounding
         for (source, protein_fraction, lactose_fraction) in [
+            (SolidsSource::Milk, dairy::milk::STD_PROTEIN_IN_MSNF, dairy::milk::STD_LACTOSE_IN_MSNF),
+            (SolidsSource::Milk, dairy::milk::STD_PROTEIN_IN_MPI, dairy::milk::STD_LACTOSE_IN_MPI),
             (SolidsSource::Whey, dairy::whey::STD_PROTEIN_IN_WS, dairy::whey::STD_LACTOSE_IN_WS),
             (SolidsSource::Whey, dairy::whey::STD_PROTEIN_IN_WPI, dairy::whey::STD_LACTOSE_IN_WPI),
             (SolidsSource::MicellarCasein, dairy::milk::STD_PROTEIN_IN_MSNF, dairy::milk::STD_LACTOSE_IN_MSNF),
@@ -996,9 +1101,8 @@ mod tests {
             assert_abs_diff_eq!(dairy::lactose_in_snf(protein_fraction, source), lactose_fraction);
         }
 
-        // Milk and caseinate solids hold fixed fractions, whatever their protein
+        // Caseinate solids hold a fixed fraction, whatever their protein
         for protein_fraction in [0.0, 0.5, 1.0] {
-            assert_eq!(dairy::lactose_in_snf(protein_fraction, SolidsSource::Milk), dairy::milk::STD_LACTOSE_IN_MSNF);
             assert_eq!(
                 dairy::lactose_in_snf(protein_fraction, SolidsSource::Caseinate),
                 dairy::casein::STD_LACTOSE_IN_CASEINATE
@@ -1049,6 +1153,41 @@ mod tests {
             );
             assert_eq!(dairy::casein_in_protein(protein_fraction, SolidsSource::Whey), 0.0);
             assert_eq!(dairy::casein_in_protein(protein_fraction, SolidsSource::Caseinate), 1.0);
+        }
+    }
+
+    #[test]
+    fn dairy_milk_constants_partition_the_solids() {
+        // Both anchors' protein, lactose, and minerals make up all their solids, none unaccounted
+        for (protein_fraction, lactose_fraction, minerals_fraction) in [
+            (
+                dairy::milk::STD_PROTEIN_IN_MSNF,
+                dairy::milk::STD_LACTOSE_IN_MSNF,
+                dairy::milk::STD_MINERALS_IN_MSNF,
+            ),
+            (dairy::milk::STD_PROTEIN_IN_MPI, dairy::milk::STD_LACTOSE_IN_MPI, dairy::milk::STD_MINERALS_IN_MPI),
+        ] {
+            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction, 1.0);
+        }
+    }
+
+    #[test]
+    fn dairy_milk_lines_partition_the_solids() {
+        // From permeate-diluted solids through plain milk solids to isolates, protein, lactose, and
+        // minerals fill the solids, lactose ≥ 0
+        for protein_fraction in [
+            0.0,
+            0.25,
+            dairy::milk::STD_PROTEIN_IN_MSNF,
+            0.5,
+            0.75,
+            dairy::milk::STD_PROTEIN_IN_MPI,
+        ] {
+            let lactose_fraction = dairy::lactose_in_snf(protein_fraction, SolidsSource::Milk);
+            let minerals_fraction = dairy::minerals_in_snf(protein_fraction, SolidsSource::Milk);
+
+            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction, 1.0);
+            assert_ge!(lactose_fraction, 0.0);
         }
     }
 

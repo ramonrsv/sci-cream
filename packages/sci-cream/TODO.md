@@ -75,8 +75,6 @@
       that Underbelly and Goff & Hartel mention, from its milk fat globule membrane material.
 - [ ] Add cultured buttermilk, the fermented low-fat milk sold at retail, liquid and powdered, with
       the usual USDA and label entries.
-- [ ] Add support for milk concentrates, e.g. ultrafiltered milk, with lactose and minerals along
-      protein lines, as McSweeney et al.'s (2020) MPCs show, per the `@todo` on `DairySimpleSpec`.
 - [ ] Put a space between numbers and unit symbols, per SI, e.g. "100 g" rather than "100g"; most
       comments and docs omit it, except the newer `DairySheetSpec` docs.
 - [ ] Add a spec-level fats type, a total with optional `saturated`/`trans`, for `DairySheetSpec`,
@@ -144,6 +142,8 @@
 
 ## Completed
 
+- [x] Add support for milk concentrates, e.g. ultrafiltered milk, with lactose and minerals along
+      protein lines, as McSweeney et al.'s (2020) MPCs show, per the `@todo` on `DairySimpleSpec`.
 - [x] Add whey and casein concentrate products, e.g. "Whey Powder", "Whey Protein Concentrate 80%",
       "Whey Protein Isolate 90%", "Sodium Caseinate", ~~"Buttermilk Powder"~~, etc.
 - [x] Add milk solids support to `ChocolateSpec` and add milk chocolate Callebaut ingredients.

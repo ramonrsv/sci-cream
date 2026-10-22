@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 373  (non-alias: 316, independent: 302)
+"total: 390  (non-alias: 327, independent: 313)
 
             0% Milk
             1% Milk
@@ -217,6 +217,12 @@ exports[`Embedded spec entries 1`] = `
 [alias]     MCC 70
 [alias]     MCC 80
 [alias]     MCI
+[alias]     MPC 42
+[alias]     MPC 56
+[alias]     MPC 70
+[alias]     MPC 80
+[alias]     MPC 85
+[alias]     MPI
             Maltitol
             Maltodextrin 10 DE
             Maltodextrin 15 DE
@@ -231,6 +237,12 @@ exports[`Embedded spec entries 1`] = `
             Micellar Casein Concentrate 70%
             Micellar Casein Concentrate 80%
             Micellar Casein Isolate
+            Milk Protein Concentrate 42%
+            Milk Protein Concentrate 56%
+            Milk Protein Concentrate 70%
+            Milk Protein Concentrate 80%
+            Milk Protein Concentrate 85%
+            Milk Protein Isolate
             Mona Lisa Dark Chocolate Curved Shavings
             Mona Lisa Milk Chocolate Blossoms
             Mono- and Diglycerides
@@ -343,6 +355,10 @@ exports[`Embedded spec entries 1`] = `
             USDA Whole Milk
             USDA Whole Milk Powder
             USDEC Micellar Casein Concentrate
+            USDEC Milk Protein Concentrate 42%
+            USDEC Milk Protein Concentrate 56%
+            USDEC Milk Protein Concentrate 70%
+            USDEC Milk Protein Concentrate 85%
             USDEC Sodium Caseinate
 [alias]     USDEC WPC 34
 [alias]     USDEC WPC 80
@@ -356,6 +372,7 @@ exports[`Embedded spec entries 1`] = `
 [composite] Underbelly Sorbet Stabilizer Blend
             Valrhona Guanaja 70% Dark Chocolate
             Valrhona Unsweetened Cocoa Powder
+            VanWees Milk Protein Concentrate 80%
 [alias]     Vanilla Bean Paste
             Vanilla Bean Pod (5g/pod)
             Vanilla Extract

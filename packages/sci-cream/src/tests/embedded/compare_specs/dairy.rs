@@ -1,7 +1,8 @@
 //! Cross-source consistency checks for dairy ingredients — milk, cream, evaporated and condensed
-//! milk, milk powders, whey, casein, and protein powders — comparing each Simple/default entry
-//! against USDA, USDEC, Sealtest, Carnation, Goff & Hartel, Southward, and brand references. Each
-//! USDA listing is compared both as its embedded sheet and as its test-only `… (Label)` variant.
+//! milk, milk powders, milk protein concentrates, whey, casein, and protein powders — comparing
+//! each Simple/default entry against USDA, USDEC, Sealtest, Carnation, Goff & Hartel, Southward,
+//! and brand references. Each USDA listing is compared both as its embedded sheet and as its
+//! test-only `… (Label)` variant.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -108,7 +109,7 @@ fn compare_specs_5_cream() {
 
     // Sealtest's small 15ml serving rounds energy coarsely, in addition to the usual issue with
     // energy's higher fractional precision vs mass components, pushing a high error, ~150 pp.
-    //    - Energy        148.19 pp  (Simple, Goff & Hartel vs Sealtest)
+    //    - Energy        148.50 pp  (Simple, Goff & Hartel vs Sealtest)
     let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 149.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
@@ -129,11 +130,11 @@ fn compare_specs_half_and_half() {
 
     // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), pulling
     // Lactose, PACsgr, and TotalPAC a few pp above the default ceiling. The largest misses are:
-    //    - Lactose        11.41 pp  (USDA, USDA Label vs Sealtest)
-    //    - PACsgr         11.41 pp  (USDA, USDA Label vs Sealtest)
-    //    - TotalPAC       14.73 pp  (Simple, USDA, USDA Label vs Sealtest)
+    //    - Lactose        11.38 pp  (USDA, USDA Label vs Sealtest)
+    //    - PACsgr         11.38 pp  (USDA, USDA Label vs Sealtest)
+    //    - TotalPAC       14.72 pp  (Simple, USDA, USDA Label vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 22.0)
+        .with(CompKey::Energy, 23.0)
         .with(CompKey::Lactose, 12.0)
         .with(CompKey::PACsgr, 12.0)
         .with(CompKey::TotalPAC, 15.0);
@@ -157,7 +158,7 @@ fn compare_specs_18_cream() {
     // Sealtest's 15ml serving rounds sugars and saturated fat coarsely, pushing TotalPAC
     // and SaturatedFat above the default ceiling. The largest misses are:
     //    - TotalPAC       12.62 pp  (Simple, USDA, USDA Label vs Sealtest)
-    //    - SaturatedFat   10.90 pp  (Simple vs Sealtest)
+    //    - SaturatedFat   10.93 pp  (Simple vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
         .with(CompKey::Energy, 42.0)
         .with(CompKey::TotalPAC, 13.0)
@@ -187,10 +188,10 @@ fn compare_specs_whipping_cream() {
     // standard 65%. USDA's sheet counts the 0.88 g by which its listing's carbohydrate
     // exceeds its sugars as MSNF, taking its MSNF gap with Sealtest just past the default
     // ceiling. The largest misses are:
-    //    - MSNF           10.10 pp  (USDA vs Sealtest)
-    //    - MilkSolids     15.24 pp  (Simple, Goff & Hartel, USDA, USDA Label vs Sealtest)
-    //    - TotalPAC       11.24 pp  (Simple, Goff & Hartel, USDA vs Sealtest)
-    //    - SaturatedFat   10.19 pp  (Goff & Hartel vs Sealtest)
+    //    - MSNF           10.14 pp  (USDA vs Sealtest)
+    //    - MilkSolids     15.25 pp  (Simple, Goff & Hartel, USDA, USDA Label vs Sealtest)
+    //    - TotalPAC       11.26 pp  (Simple, Goff & Hartel, USDA vs Sealtest)
+    //    - SaturatedFat   10.17 pp  (Goff & Hartel vs Sealtest)
     let ceiling = KeyCeiling::new(10.0)
         .with(CompKey::Energy, 64.0)
         .with(CompKey::MSNF, 11.0)
@@ -244,7 +245,7 @@ fn compare_specs_skim_evaporated_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 72.0);
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 73.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -264,12 +265,12 @@ fn compare_specs_2_evaporated_milk() {
     // difference in Lactose content, which cascades into every lactose-derived field
     // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
     // MilkSolids, PACmlk, and TotalPAC. The largest misses are:
-    //    - Lactose        22.03 pp  (USDA, USDA Label vs Carnation)
-    //    - MSNF           28.86 pp  (USDA, USDA Label vs Carnation)
-    //    - MilkSolids     28.65 pp  (USDA, USDA Label vs Carnation)
-    //    - PACsgr         22.03 pp  (USDA, USDA Label vs Carnation)
-    //    - PACmlk         10.60 pp  (USDA, USDA Label vs Carnation)
-    //    - TotalPAC       32.61 pp  (USDA, USDA Label vs Carnation)
+    //    - Lactose        22.00 pp  (USDA, USDA Label vs Carnation)
+    //    - MSNF           28.89 pp  (USDA, USDA Label vs Carnation)
+    //    - MilkSolids     28.68 pp  (USDA, USDA Label vs Carnation)
+    //    - PACsgr         22.00 pp  (USDA, USDA Label vs Carnation)
+    //    - PACmlk         10.61 pp  (USDA, USDA Label vs Carnation)
+    //    - TotalPAC       32.59 pp  (USDA, USDA Label vs Carnation)
     //
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
@@ -301,11 +302,11 @@ fn compare_specs_whole_evaporated_milk() {
     // difference in Lactose content, which cascades into every lactose-derived field
     // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
     // MilkSolids, PACmlk, and TotalPAC. The largest misses are:
-    //    - Lactose        16.01 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
-    //    - MSNF           21.25 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
-    //    - MilkSolids     23.96 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
-    //    - PACsgr         16.01 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
-    //    - TotalPAC       23.82 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
+    //    - Lactose        16.16 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
+    //    - MSNF           21.28 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
+    //    - MilkSolids     23.98 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
+    //    - PACsgr         16.16 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
+    //    - TotalPAC       23.98 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
     //
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
@@ -376,6 +377,86 @@ fn compare_specs_whole_milk_powder() {
     .map(source_str_to_comp);
 
     let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 27.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_mpc_42() {
+    assert_true!(is_alias_for("MPC 42", "Milk Protein Concentrate 42%"));
+
+    let sources = [
+        ("Simple", "Milk Protein Concentrate 42%"),
+        ("USDEC", "USDEC Milk Protein Concentrate 42%"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_mpc_56() {
+    assert_true!(is_alias_for("MPC 56", "Milk Protein Concentrate 56%"));
+
+    let sources = [
+        ("Simple", "Milk Protein Concentrate 56%"),
+        ("USDEC", "USDEC Milk Protein Concentrate 56%"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_mpc_70() {
+    assert_true!(is_alias_for("MPC 70", "Milk Protein Concentrate 70%"));
+
+    let sources = [
+        ("Simple", "Milk Protein Concentrate 70%"),
+        ("USDEC", "USDEC Milk Protein Concentrate 70%"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_mpc_80() {
+    assert_true!(is_alias_for("MPC 80", "Milk Protein Concentrate 80%"));
+
+    let sources = [
+        ("Simple", "Milk Protein Concentrate 80%"),
+        ("VanWees", "VanWees Milk Protein Concentrate 80%"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_mpc_85() {
+    assert_true!(is_alias_for("MPC 85", "Milk Protein Concentrate 85%"));
+
+    let sources = [
+        ("Simple", "Milk Protein Concentrate 85%"),
+        ("USDEC", "USDEC Milk Protein Concentrate 85%"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));

@@ -1,0 +1,8 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/ultrafiltered_milk.rs
+expression: "lines.join(\"\\n\")"
+---
+% of solids non-fat              protein | lactose   line   miss | minerals   line   miss
+USDEC typical MPC 70               73.84 |   18.99  18.70  +0.28 |     7.17   7.46  -0.28
+USDEC typical MPC 56               59.07 |   33.76  33.25  +0.51 |     7.17   7.68  -0.51
+USDEC typical MPC 42               43.98 |   49.21  48.12  +1.10 |     6.81   7.90  -1.10

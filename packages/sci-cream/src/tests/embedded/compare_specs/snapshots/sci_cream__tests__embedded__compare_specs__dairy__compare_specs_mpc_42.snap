@@ -1,0 +1,21 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
+expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
+---
+sources: Simple, USDEC
+
+Energy               4.30 pp  (Simple vs USDEC)
+MilkFat              0.01 pp  (Simple vs USDEC)
+Lactose              1.31 pp  (Simple vs USDEC)
+MSNF                 0.01 pp  (Simple vs USDEC)
+MilkSNFS             1.31 pp  (Simple vs USDEC)
+MilkProteins         0.23 pp  (Simple vs USDEC)
+MilkSolids           0.00 pp  (Simple vs USDEC)
+TotalSolids          0.50 pp  (Simple vs USDEC)
+Water                0.50 pp  (Simple vs USDEC)
+POD                  0.21 pp  (Simple vs USDEC)
+PACsgr               1.31 pp  (Simple vs USDEC)
+PACmlk               0.00 pp  (Simple vs USDEC)
+TotalPAC             1.32 pp  (Simple vs USDEC)
+SaturatedFat         0.00 pp  (Simple vs USDEC)
+TransFat             0.00 pp  (Simple vs USDEC)

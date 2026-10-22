@@ -270,6 +270,100 @@ p. 48)[^20], also in agreement with bulk products, e.g. ['MMPA - Grade A Whole M
 Kg'](https://bulkmart.ca/products/mmpa-grade-a-whole-milk-powder-26-25-kg), ['Whole Milk Powder 26%
 25 kg'](https://www.pantrylot.com/products/whole-milk-powder-26-25-kg).
 
+## Milk Protein Concentrate 42%
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 1, "msnf": 95, "protein": 42 } }
+```
+
+Simplified version of 'USDEC Milk Protein Concentrate 42%' (USDEC, 2018, Table 13, p. 35)[^113],
+within ADPI's limits for the grade (ADPI, 2023, p. 2)[^103].
+
+## Milk Protein Concentrate 56%
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 1, "msnf": 95, "protein": 56 } }
+```
+
+Simplified version of 'USDEC Milk Protein Concentrate 56%' (USDEC, 2018, Table 13, p. 35)[^113],
+within ADPI's limits for the grade (ADPI, 2023, p. 2)[^103].
+
+## Milk Protein Concentrate 70%
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 1, "msnf": 95, "protein": 70 } }
+```
+
+Simplified version of 'USDEC Milk Protein Concentrate 70%' (USDEC, 2018, Table 13, p. 35)[^113],
+within ADPI's limits for the grade (ADPI, 2023, p. 2)[^103].
+
+## Milk Protein Concentrate 80%
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 1, "msnf": 95, "protein": 80 } }
+```
+
+Simplified version of ADPI's milk protein concentrate, 80% grade (ADPI, 2023, p. 2)[^103], with the
+1% fat and 4% moisture of USDEC's typical concentrates (USDEC, 2018, Table 13, p. 35)[^113], both
+within ADPI's limits for the grade. VanWees et al.'s concentrate of the grade (VanWees et al., 2026,
+Table 1)[^115] is also available as an individual entry: "VanWees Milk Protein Concentrate 80%".
+
+## Milk Protein Concentrate 85%
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 1, "msnf": 95, "protein": 85 } }
+```
+
+Simplified version of 'USDEC Milk Protein Concentrate 85%' (USDEC, 2018, Table 13, p. 35)[^113],
+within ADPI's limits for the grade (ADPI, 2023, p. 2)[^103].
+
+## Milk Protein Isolate
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 1, "msnf": 95, "protein": 87 } }
+```
+
+The isolate end of the ladder, with protein at 91.1% [`STD_PROTEIN_IN_MPI`] of the solids non-fat,
+rounded to the gram, and the 1% fat and 4% moisture of USDEC's typical concentrates (USDEC, 2018,
+Table 13, p. 35)[^113]. This is 90.6% protein on a dry basis, within the 90-91% typical of isolates
+(Patel & Patel, 2014, p. 2)[^114] and ADPI's limits for isolates (ADPI, 2023, p. 2)[^103].
+
+## MPC 42
+
+```json
+{ "for": "Milk Protein Concentrate 42%" }
+```
+
+## MPC 56
+
+```json
+{ "for": "Milk Protein Concentrate 56%" }
+```
+
+## MPC 70
+
+```json
+{ "for": "Milk Protein Concentrate 70%" }
+```
+
+## MPC 80
+
+```json
+{ "for": "Milk Protein Concentrate 80%" }
+```
+
+## MPC 85
+
+```json
+{ "for": "Milk Protein Concentrate 85%" }
+```
+
+## MPI
+
+```json
+{ "for": "Milk Protein Isolate" }
+```
+
 ## Whey Powder
 
 ```json
@@ -383,8 +477,9 @@ ADPI's limits for the grade.
 
 Simplified version of ADPI's micellar casein concentrate, 80% grade (ADPI, 2023, p. 2)[^103], with
 the 1% fat and 5% moisture of USDEC's typical MCC (USDEC, 2015, Figure 1, p. 1)[^100], both within
-ADPI's limits for the grade. Kommineni et al.'s pilot-scale powder of the grade is also available as
-an individual entry: "Kommineni Micellar Casein Concentrate 80%".
+ADPI's limits for the grade. Kommineni et al.'s pilot-scale powder of the grade (Kommineni et al.,
+2022, Tables 1-2)[^101] is also available as an individual entry: "Kommineni Micellar Casein
+Concentrate 80%".
 
 ## Micellar Casein Isolate
 
@@ -1254,6 +1349,93 @@ the packaging label from a bag I had on hand).
 
 From nutrition facts table (could not find a link - it's sold in Asian markets, but was able to use
 the packaging label from a bag I had on hand)
+
+## USDEC Milk Protein Concentrate 42%
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 3.5,
+    "fat": 1,
+    "sugars": { "lactose": 47 },
+    "protein": 42,
+    "ash": 6.5
+  }
+}
+```
+
+(USDEC, 2018, Table 13, p. 35)[^113]
+
+## USDEC Milk Protein Concentrate 56%
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 4.1,
+    "fat": 1.1,
+    "sugars": { "lactose": 32 },
+    "protein": 56,
+    "ash": 6.8
+  }
+}
+```
+
+(USDEC, 2018, Table 13, p. 35)[^113]
+
+## USDEC Milk Protein Concentrate 70%
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 4,
+    "fat": 1.2,
+    "sugars": { "lactose": 18 },
+    "protein": 70,
+    "ash": 6.8
+  }
+}
+```
+
+(USDEC, 2018, Table 13, p. 35)[^113]
+
+## USDEC Milk Protein Concentrate 85%
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 3.8,
+    "fat": 1.4,
+    "sugars": { "lactose": 3.2 },
+    "protein": 85,
+    "ash": 6.6
+  }
+}
+```
+
+(USDEC, 2018, Table 13, p. 35)[^113]
+
+## VanWees Milk Protein Concentrate 80%
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 5.15,
+    "fat": 0.97,
+    "sugars": { "lactose": 6.59 },
+    "protein": 80.4,
+    "casein": 64.32,
+    "ash": 6.89
+  }
+}
+```
+
+(VanWees et al., 2026, Table 1)[^115], Idaho Milk Products' concentrate, used in their high-protein
+frozen desserts. Its listed casein is exactly 80% of its protein, the ratio of milk.
 
 ## USDA Sweet Whey
 

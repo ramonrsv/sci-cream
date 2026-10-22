@@ -13,8 +13,9 @@
 //! keeps those with the minerals, not as carbohydrate, so a sheet has no carbohydrates field.
 //!
 //! The labels' water and ash show how [`DairyLabelSpec`] estimates the milk solids non-fat (MSNF)
-//! around them: sugars and protein make up all of it but its [`STD_MINERALS_IN_MSNF`] share of ash.
-//! Each listing's water and ash miss by how far its own MSNF departs from that split, either way.
+//! around them: sugars and protein make up all of it but the share of ash that [`minerals_in_snf`]
+//! gives at their protein fraction. Each listing's water and ash miss by how far its own MSNF
+//! departs from that split, either way.
 //!
 //! For whey, the labels' estimate also adds the solids that lactose, protein, and minerals leave
 //! unaccounted, see [`unaccounted_in_snf`], keeping them with the minerals, in the ash. The whey
@@ -32,7 +33,7 @@ use crate::tests::asserts::TESTS_EPSILON;
 
 #[cfg(doc)]
 use crate::{
-    constants::composition::dairy::{milk::STD_MINERALS_IN_MSNF, unaccounted_in_snf},
+    constants::composition::dairy::{minerals_in_snf, unaccounted_in_snf},
     specs::{DairyLabelSpec, DairySheetSpec},
 };
 
@@ -305,7 +306,7 @@ const EVAPORATED_SHEET_CEILING: Proximates = Proximates {
 /// Per-field ceilings on relative error vs the measured value, in percent — evaporated milk labels.
 const EVAPORATED_LABEL_CEILING: Proximates = Proximates {
     water: 0.5,
-    ash: 9.0,
+    ash: 9.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
@@ -317,8 +318,8 @@ const CONDENSED_SHEET_CEILING: Proximates = Proximates {
 
 /// Per-field ceilings on relative error vs the measured value, in percent — condensed milk label.
 const CONDENSED_LABEL_CEILING: Proximates = Proximates {
-    water: 1.0,
-    ash: 17.0,
+    water: 1.5,
+    ash: 17.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
