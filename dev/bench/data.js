@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792649367439,
+  "lastUpdate": 1792649538524,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -535375,6 +535375,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 518.63,
             "range": "11.98",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "16b4346a72f595e8083d2dc068b354193a4a0ace",
+          "message": "Fix the suite shebang and two e2e helper races\n\nrun-local-test-suite.sh opened with \"# !/bin/bash\", a comment rather\nthan a shebang, so it only ran because bash falls back to interpreting\na file it cannot exec. It now uses #!/usr/bin/env bash, as the other\nscripts do.\n\npasteToClipboard did not await grantPermissions, leaving the grant to\nrace the clipboard write. loginAsTestUserWithCredentials waited with\nwaitForNavigation, deprecated as racy, which also resolves on any\nnavigation: a failed sign-in, redirected back to /signin?error=...,\npassed as signed in. It now uses waitForURL, waiting to leave /signin.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T01:47:22-04:00",
+          "tree_id": "7f079fe833577cb9b71c93868b2321fee1f89f12",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/16b4346a72f595e8083d2dc068b354193a4a0ace"
+        },
+        "date": 1792649473585,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 52.25,
+            "range": "2.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 56.63,
+            "range": "4.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 72.38,
+            "range": "4.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2549.88,
+            "range": "119.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 319.75,
+            "range": "5.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 331,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 352.63,
+            "range": "10.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16569.13,
+            "range": "82.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 938.25,
+            "range": "10.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.88,
+            "range": "1.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43.63,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 135.5,
+            "range": "3.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 85.38,
+            "range": "2.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 59.87,
+            "range": "1.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 45.64,
+            "range": "0.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 648.25,
+            "range": "8.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 708.13,
+            "range": "12.57",
             "unit": "ms"
           }
         ]
