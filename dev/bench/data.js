@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792649351174,
+  "lastUpdate": 1792649367439,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -647022,6 +647022,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.89,
             "range": "0.78",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "daae58202c8450badef7ef1a8da44b3476dcbe7b",
+          "message": "Drop redundant f64::EPSILON test tolerances\n\nassert_abs_diff_eq! falls back to AbsDiffEq::default_epsilon(), which\napprox defines as f64::EPSILON for f64, so passing it explicitly\nchanged nothing.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T02:02:40-04:00",
+          "tree_id": "acdb8672ea21eafe0c57f111b9641b5ca23ca896",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/daae58202c8450badef7ef1a8da44b3476dcbe7b"
+        },
+        "date": 1792649326632,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 42.16,
+            "range": "5.55",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 10.61,
+            "range": "0.94",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 10.61,
+            "range": "0.94",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 109,
+            "range": "7.94",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.35,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 109,
+            "range": "7.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 39.01,
+            "range": "4.14",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.79,
+            "range": "0.36",
             "unit": "ms"
           }
         ]
