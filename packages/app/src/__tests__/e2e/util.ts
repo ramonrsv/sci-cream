@@ -217,7 +217,7 @@ export async function pasteToClipboard(page: Page, browserName: string, text: st
   }
 
   const permissions = browserName === "firefox" ? [] : ["clipboard-read", "clipboard-write"];
-  page.context().grantPermissions(permissions);
+  await page.context().grantPermissions(permissions);
 
   await page.evaluate(async (text) => {
     await navigator.clipboard.writeText(text);
@@ -621,7 +621,8 @@ export async function clearRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID
  * Helper function to log in as a test user using email and password credentials
  *
  * This function navigates to the sign-in page, fills in the email and password fields,
- * clicks the sign-in button, and waits for navigation to complete.
+ * clicks the sign-in button, and waits for the redirect away from `/signin`. A failed sign-in
+ * returns to `/signin?error=…`, so it times out rather than passing as signed in.
  *
  * @param testUser - An object containing the email and password of the test user
  */
@@ -633,7 +634,7 @@ export async function loginAsTestUserWithCredentials(
   await getSigninEmailInput(page).fill(testUser.email);
   await getSigninPasswordInput(page).fill(testUser.password);
   await getSigninWithEmailButton(page).click();
-  await page.waitForNavigation();
+  await page.waitForURL((url) => url.pathname !== "/signin");
 }
 /* eslint-enable jsdoc/check-param-names */
 

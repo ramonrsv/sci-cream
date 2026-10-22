@@ -1,4 +1,4 @@
-# !/bin/bash
+#!/usr/bin/env bash
 
 # This script runs a subset of the CI test suite locally, using local resources without running the
 # full GitHub Actions workflow via `act`. This is useful for quick feedback during development.
