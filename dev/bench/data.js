@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792652424067,
+  "lastUpdate": 1792652735081,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -577773,6 +577773,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.97%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2b3b1c360242b475a310e5bf08480069a930b3d8",
+          "message": "Move milk solids constants into dairy::milk\n\nThe milk constants move from `dairy` into a `milk` submodule, beside\n`whey` and `casein`: the solids non-fat in milk serum, their lactose,\nprotein, and minerals fractions, and the casein and whey split. Its\ndoc takes the USDA listings behind the `_IN_MSNF` constants, while\n`dairy` keeps the lines every solids source uses and the values for\nall dairy, such as milk fat's saturated and trans fractions.\n\nThis prepares for milk concentrates, whose isolate end will join the\nmilk constants. The README's composition example now imports the\nconstants it uses, as the crate docs' does.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T03:00:26-04:00",
+          "tree_id": "14b29b117919e6f967443024c2ed39aebbe60294",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2b3b1c360242b475a310e5bf08480069a930b3d8"
+        },
+        "date": 1792652694758,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 98211,
+            "range": "±1.76%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 700214,
+            "range": "±1.54%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 64486,
+            "range": "±1.65%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 469980,
+            "range": "±1.12%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
           }
         ]
       }
