@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792706465752,
+  "lastUpdate": 1792706470515,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -657641,6 +657641,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/2b3b1c360242b475a310e5bf08480069a930b3d8"
         },
         "date": 1792652779460,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6d11b5cc859f4efe4a552c116436ef0925059361",
+          "message": "Model milk protein concentrates and isolates\n\nMilk solids' lactose and minerals now follow lines in their protein\nfraction, from plain milk to an isolate end, as whey's do, so a\nconcentrate's grade sets its composition. The isolate anchors, 91.1%\nprotein, 1.7% lactose, and 7.2% minerals of the solids non-fat, average\nthe lines through four published compositions at McSweeney et al.'s\nprotein. Casein stays 80% of the protein, as ultrafiltration keeps\nmilk's ratio.\n\nThe dairy entries gain an MPC 42 to isolate ladder, with aliases, and\nreference sheets from USDEC and VanWees et al. A new reconciliation\nsuite derives the anchors again and checks the lines' fit, compare_specs\ncovers each grade, and the dairy fixtures and a few ceilings move with\nmilk's slightly shifted minerals.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:39:00-04:00",
+          "tree_id": "edbaaa4bdaee6eae86a9b2a7011580b399d34732",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6d11b5cc859f4efe4a552c116436ef0925059361"
+        },
+        "date": 1792706469572,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
