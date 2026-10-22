@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792707883476,
+  "lastUpdate": 1792707906558,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -670853,6 +670853,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/435161f39e6ba302d05837c464b883f0f444c8b2"
         },
         "date": 1792706671505,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1165.34,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 356.42,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1872.45,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 576.06,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.18,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.48,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 624.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2079.6,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8790e42f1e7cd6abc2783efdb41f8d46077bfd89",
+          "message": "Share `misses` between the dairy line suites\n\nThe micellar casein fit test wrote out what milk_protein's misses\nhelper does. The helper moves to the dairy reconciliation util, taking\nthe source's name, scaled fractions, and solids source, and both fit\ntests call it. Their reports are unchanged.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:52:21-04:00",
+          "tree_id": "47a053d61b7c8f627550f0adbafca3baddd6c16e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8790e42f1e7cd6abc2783efdb41f8d46077bfd89"
+        },
+        "date": 1792707840470,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
