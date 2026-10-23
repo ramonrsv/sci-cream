@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792709478869,
+  "lastUpdate": 1792730461716,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -626066,6 +626066,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1090.9,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a2751cb0812f05559b5a4f1c69c24fd0aaed1e4a",
+          "message": "Add ultrafiltered milk labels and liquid UF checks\n\nLactantia UltraPur's and Fairlife's Canadian ultrafiltered milks join\nFairlife's US labels. Retail UF milks run from 13 to 20 g of protein\nper serving with no standard, so there are no generic entries; users\npick the closest label instead. All UF labels give fat in grams, as\nFairlife's 2% panels list 4.5 g, below their stated 2%; a TODO tracks\nrevising DairyLabelSpec's guidance to prefer stated percentages.\n\nThe milk protein reconciliation suite adds liquid UF compositions from\nBurrington and Hill & Ferrer, and a fixture covers a lactose-free label\nwith carbohydrates above its sugars.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-23T00:38:43-04:00",
+          "tree_id": "886c5fe125a556899edd2ba9ec23182cd5858ea1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a2751cb0812f05559b5a4f1c69c24fd0aaed1e4a"
+        },
+        "date": 1792730421803,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 762.61,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 931.06,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 699.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 868.17,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 710,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 878.44,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 682.22,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 850.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 683.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 852.16,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1091.29,
             "unit": "KB"
           },
           {
