@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792731017405,
+  "lastUpdate": 1792731022004,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -654247,6 +654247,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.58,
             "range": "0.65",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a2751cb0812f05559b5a4f1c69c24fd0aaed1e4a",
+          "message": "Add ultrafiltered milk labels and liquid UF checks\n\nLactantia UltraPur's and Fairlife's Canadian ultrafiltered milks join\nFairlife's US labels. Retail UF milks run from 13 to 20 g of protein\nper serving with no standard, so there are no generic entries; users\npick the closest label instead. All UF labels give fat in grams, as\nFairlife's 2% panels list 4.5 g, below their stated 2%; a TODO tracks\nrevising DairyLabelSpec's guidance to prefer stated percentages.\n\nThe milk protein reconciliation suite adds liquid UF compositions from\nBurrington and Hill & Ferrer, and a fixture covers a lactose-free label\nwith carbohydrates above its sugars.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-23T00:38:43-04:00",
+          "tree_id": "886c5fe125a556899edd2ba9ec23182cd5858ea1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a2751cb0812f05559b5a4f1c69c24fd0aaed1e4a"
+        },
+        "date": 1792730964612,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 52.74,
+            "range": "6.82",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.6,
+            "range": "0.69",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.6,
+            "range": "0.69",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 138,
+            "range": "6.32",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.34,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 138,
+            "range": "6.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 48.5,
+            "range": "5.47",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.83,
+            "range": "0.25",
             "unit": "ms"
           }
         ]
