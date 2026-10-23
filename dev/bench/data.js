@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792730853533,
+  "lastUpdate": 1792731017405,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -541024,6 +541024,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 711.13,
             "range": "22.81",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a2751cb0812f05559b5a4f1c69c24fd0aaed1e4a",
+          "message": "Add ultrafiltered milk labels and liquid UF checks\n\nLactantia UltraPur's and Fairlife's Canadian ultrafiltered milks join\nFairlife's US labels. Retail UF milks run from 13 to 20 g of protein\nper serving with no standard, so there are no generic entries; users\npick the closest label instead. All UF labels give fat in grams, as\nFairlife's 2% panels list 4.5 g, below their stated 2%; a TODO tracks\nrevising DairyLabelSpec's guidance to prefer stated percentages.\n\nThe milk protein reconciliation suite adds liquid UF compositions from\nBurrington and Hill & Ferrer, and a fixture covers a lactose-free label\nwith carbohydrates above its sugars.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-23T00:38:43-04:00",
+          "tree_id": "886c5fe125a556899edd2ba9ec23182cd5858ea1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a2751cb0812f05559b5a4f1c69c24fd0aaed1e4a"
+        },
+        "date": 1792730978075,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 30.75,
+            "range": "2.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 36.5,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 39.63,
+            "range": "2.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1687.75,
+            "range": "49.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 193.63,
+            "range": "2.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 194.13,
+            "range": "3.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 214.75,
+            "range": "9.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 10082.25,
+            "range": "112.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 736.63,
+            "range": "24.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 33.5,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 37.38,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 28.25,
+            "range": "1.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 30.63,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 104.38,
+            "range": "4.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 56.63,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 39.87,
+            "range": "0.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.29,
+            "range": "0.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 496.25,
+            "range": "12.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 520.5,
+            "range": "11.29",
             "unit": "ms"
           }
         ]
