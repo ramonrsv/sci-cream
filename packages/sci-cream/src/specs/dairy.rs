@@ -1532,6 +1532,100 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.1130);
     }
 
+    // https://www.lactantia.ca/food_product/lactantia-ultrapur-2-20g-protein-1-5l/
+    pub(crate) const ING_SPEC_DAIRY_LABEL_2_ULTRAFILTERED_MILK_LACTANTIA_STR: &str = r#"{
+      "name": "Lactantia UltraPur 2% Ultrafiltered Lactose-Free Milk",
+      "category": "Dairy",
+      "DairyLabelSpec": {
+        "serving_size": { "ml": 250 },
+        "energy": 170,
+        "total_fat": { "grams": 5 },
+        "saturated_fat": 3.5,
+        "trans_fat": 0.2,
+        "carbohydrates": 11,
+        "sugars": 10,
+        "protein": 20,
+        "lactose_free": true
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_LABEL_2_ULTRAFILTERED_MILK_LACTANTIA: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Lactantia UltraPur 2% Ultrafiltered Lactose-Free Milk".to_string(),
+            category: Category::Dairy,
+            spec: DairyLabelSpec {
+                serving_size: Unit::Milliliters(250.0), // 261.9516 grams
+                energy: Some(170.0),
+                total_fat: Unit::Grams(5.0), // 5g is 1.9087%
+                saturated_fat: Some(3.5),
+                trans_fat: Some(0.2),
+                carbohydrates: Some(11.0),
+                sugars: 10.0,
+                protein: 20.0,
+                lactose_free: Some(true),
+                sucrose: None,
+                solids_source: None,
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_2_ULTRAFILTERED_MILK_LACTANTIA: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(64.8975)
+            .solids(
+                Solids::new()
+                    .milk(
+                        SolidsBreakdown::new()
+                            .fats(Fats::new().total(1.9087).saturated(1.3361).trans(0.0763))
+                            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(1.9087).galactose(1.9087)))
+                            .proteins(MilkProteins::new().casein(6.108).whey(1.527))
+                            .others(0.9474),
+                    )
+                    .other(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().others(0.3817))),
+            )
+            .pod(2.7677)
+            .pac(PAC::new().sugars(7.2532).msnf_ws_salts(4.5558))
+    });
+
+    #[test]
+    fn to_composition_dairy_label_spec_2_ultrafiltered_milk_lactantia() {
+        let comp = ING_SPEC_DAIRY_LABEL_2_ULTRAFILTERED_MILK_LACTANTIA
+            .spec
+            .to_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 64.8975);
+
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 1.9087);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::Glucose), 1.9087);
+        assert_eq_flt_test!(comp.get(CompKey::Galactose), 1.9087);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 12.3999);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 8.5824);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 7.635);
+        assert_eq_flt_test!(comp.get(CompKey::Casein), 6.108);
+        assert_eq_flt_test!(comp.get(CompKey::Whey), 1.527);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 14.3087);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 7.635);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 14.6904);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 85.3096);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 2.7677);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 7.2532);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 4.5558);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 11.809);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.3361);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0763);
+    }
+
     // https://fdc.nal.usda.gov/food-details/2705400/nutrients
     pub(crate) const ING_SPEC_DAIRY_SHEET_2_EVAPORATED_MILK_USDA_STR: &str = r#"{
       "name": "USDA 2% Reduced-Fat Evaporated Milk",
@@ -2891,6 +2985,11 @@ pub(crate) mod tests {
                     ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR,
                     ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE.clone(),
                     Some(*COMP_WHOLE_ULTRA_FILTERED_LACTOSE_FREE),
+                ),
+                (
+                    ING_SPEC_DAIRY_LABEL_2_ULTRAFILTERED_MILK_LACTANTIA_STR,
+                    ING_SPEC_DAIRY_LABEL_2_ULTRAFILTERED_MILK_LACTANTIA.clone(),
+                    Some(*COMP_2_ULTRAFILTERED_MILK_LACTANTIA),
                 ),
                 (
                     ING_SPEC_DAIRY_SHEET_2_EVAPORATED_MILK_USDA_STR,

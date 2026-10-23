@@ -1,0 +1,6 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/dairy/milk_protein.rs
+expression: "[report_header(), row].join(\"\\n\")"
+---
+% of solids non-fat              protein | lactose   line   miss | minerals   line   miss
+Burrington liquid UF 65            67.27 |   28.23  25.18  +3.05 |     4.50   7.56  -3.05

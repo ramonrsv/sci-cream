@@ -4,7 +4,6 @@
 
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
-- [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [ ] Add TS-side unit tests for the `wasm::Recipe` functionality; it's independent from `Bridge`.
 - [ ] Review 'USDA Sweetened Condensed Milk' ingredient, the 45% sucrose estimate may be incorrect.
       Also review all of the dairy ingredients that derive their sucrose content from this estimate.
@@ -81,6 +80,9 @@
       `DairyLabelSpec`, and `NutSpec`; `Fats` defaults them to 0. Stored user specs need migrating.
 - [ ] Check whether chocolate and egg proteins are crude or true protein, as dairy's are crude.
       USDA's cocoa and chocolate protein is adjusted for non-protein nitrogen (SR28 docs, p. 12).
+- [ ] Investigate and revise `DairyLabelSpec::total_fat`'s guidance, which prefers a label's stated
+      fat percentage on the premise that products are exact to it: Fairlife's 2% milks list 4.5 g of
+      fat per serving, 1.7-1.8%. Then review the label entries that still give a percentage.
 
 ## Backlog
 
@@ -142,6 +144,7 @@
 
 ## Completed
 
+- [x] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [x] Add support for milk concentrates, e.g. ultrafiltered milk, with lactose and minerals along
       protein lines, as McSweeney et al.'s (2020) MPCs show, per the `@todo` on `DairySimpleSpec`.
 - [x] Add whey and casein concentrate products, e.g. "Whey Powder", "Whey Protein Concentrate 80%",

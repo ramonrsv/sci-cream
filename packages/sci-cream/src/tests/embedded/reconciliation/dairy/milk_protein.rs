@@ -1,4 +1,5 @@
-//! Reconciles the milk solids lines against the milk protein concentrate compositions at hand.
+//! Reconciles the milk solids lines against the milk protein concentrate and liquid ultrafiltered
+//! milk compositions at hand.
 //!
 //! [`lactose_in_snf`] and [`minerals_in_snf`] run from milk solids to the `_IN_MPI` anchors, which
 //! average the lines through each complete composition, scaled to 100% of its solids non-fat, at
@@ -132,6 +133,43 @@ const USDEC_LOWER_GRADES: [Reported; 3] = [
     },
 ];
 
+/// A commercial liquid ultrafiltered milk (Burrington, 2018, "UF Milk Composition")[^118]
+#[doc = include_str!("../../../../../docs/references/index/118.md")]
+const BURRINGTON_UF_85: Reported = Reported {
+    name: "Burrington liquid UF 85",
+    protein: 13.57,
+    lactose: 0.84,
+    ash: 1.14,
+};
+
+/// A commercial liquid ultrafiltered milk, with less ash than the UF 85 (Burrington, 2018, "UF Milk
+/// Composition")[^118]
+#[doc = include_str!("../../../../../docs/references/index/118.md")]
+const BURRINGTON_UF_65: Reported = Reported {
+    name: "Burrington liquid UF 65",
+    protein: 11.20,
+    lactose: 4.70,
+    ash: 0.75,
+};
+
+/// Whole milk ultrafiltered 3 and 5 times in a pilot plant at 50 °C, with crude protein, the
+/// table's protein plus its non-protein nitrogen (Hill & Ferrer, 2021, Table 24.1)[^119]
+#[doc = include_str!("../../../../../docs/references/index/119.md")]
+const HILL_FERRER: [Reported; 2] = [
+    Reported {
+        name: "Hill & Ferrer whole milk UF 3x",
+        protein: 9.8 + 0.18,
+        lactose: 4.1,
+        ash: 1.3,
+    },
+    Reported {
+        name: "Hill & Ferrer whole milk UF 5x",
+        protein: 16.1 + 0.18,
+        lactose: 3.2,
+        ash: 1.9,
+    },
+];
+
 #[test]
 fn milk_protein_anchors_average_the_source_lines() {
     // The protein anchor is McSweeney et al.'s concentrate's, to the nearest 0.1 percentage point
@@ -184,4 +222,34 @@ fn milk_protein_minerals_line_runs_above_usdec_lower_grades() {
     }
 
     insta::assert_snapshot!(lines.join("\n"));
+}
+
+#[test]
+fn milk_protein_lines_fit_liquid_ultrafiltered_milks() {
+    // The lactose line passes within 1.5 percentage points of Burrington's UF 85 and Hill &
+    // Ferrer's retentates, and the minerals line misses each by as much the other way
+    let mut lines = vec![report_header()];
+
+    for source in std::iter::once(BURRINGTON_UF_85).chain(HILL_FERRER) {
+        let ([lactose_miss, minerals_miss], row) = misses(source.name, source.scaled(), SolidsSource::Milk);
+        lines.push(row);
+
+        assert_le!(lactose_miss.abs(), 0.015, "{}: lactose misses by {lactose_miss:.4}", source.name);
+        assert_abs_diff_eq!(minerals_miss, -lactose_miss);
+    }
+
+    insta::assert_snapshot!(lines.join("\n"));
+}
+
+#[test]
+fn milk_protein_minerals_line_runs_above_burrington_uf_65() {
+    // Burrington's UF 65 lists 0.75 g of ash, 4.5% of its solids non-fat against its UF 85's 7.3%,
+    // so the minerals line runs 3.1 percentage points above it, and the lactose line as far below
+    let source = BURRINGTON_UF_65;
+    let ([lactose_miss, minerals_miss], row) = misses(source.name, source.scaled(), SolidsSource::Milk);
+
+    assert_lt!(minerals_miss, -0.03, "{}: minerals miss by {minerals_miss:.4}", source.name);
+    assert_abs_diff_eq!(minerals_miss, -lactose_miss);
+
+    insta::assert_snapshot!([report_header(), row].join("\n"));
 }

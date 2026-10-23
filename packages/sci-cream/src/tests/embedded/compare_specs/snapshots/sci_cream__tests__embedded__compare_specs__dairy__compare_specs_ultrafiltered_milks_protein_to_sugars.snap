@@ -1,0 +1,14 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
+expression: "lines.join(\"\\n\")"
+---
+g per 100 g              protein  sugars  ratio % of MSNF
+Fairlife Fat Free (US)      5.23    2.41   2.17      63.2
+Fairlife 2% (US)            5.24    2.42   2.17      63.2
+Fairlife Whole (US)         5.25    2.42   2.17      63.2
+Fairlife Skim (Canada)      5.40    2.32   2.33      64.7
+Fairlife 2% (Canada)        5.41    2.32   2.33      64.7
+Fairlife Whole (Canada)     5.42    2.32   2.33      64.7
+UltraPur 0%                 7.63    3.81   2.00      61.6
+UltraPur 2%                 7.63    3.82   2.00      61.6
+UltraPur 3.25%              7.65    3.44   2.22      63.7

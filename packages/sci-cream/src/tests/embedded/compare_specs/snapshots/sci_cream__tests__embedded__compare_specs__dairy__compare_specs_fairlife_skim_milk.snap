@@ -1,0 +1,21 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
+expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
+---
+sources: Fairlife (US), Fairlife (Canada)
+
+Energy              24.41 pp  (Fairlife (US) vs Fairlife (Canada))
+MilkFat              1.37 pp  (Fairlife (US) vs Fairlife (Canada))
+Lactose              0.00 pp  (Fairlife (US) vs Fairlife (Canada))
+MSNF                 1.37 pp  (Fairlife (US) vs Fairlife (Canada))
+MilkSNFS             0.46 pp  (Fairlife (US) vs Fairlife (Canada))
+MilkProteins         0.59 pp  (Fairlife (US) vs Fairlife (Canada))
+MilkSolids           0.00 pp  (Fairlife (US) vs Fairlife (Canada))
+TotalSolids          0.20 pp  (Fairlife (US) vs Fairlife (Canada))
+Water                0.20 pp  (Fairlife (US) vs Fairlife (Canada))
+POD                  1.33 pp  (Fairlife (US) vs Fairlife (Canada))
+PACsgr               3.48 pp  (Fairlife (US) vs Fairlife (Canada))
+PACmlk               0.50 pp  (Fairlife (US) vs Fairlife (Canada))
+TotalPAC             3.98 pp  (Fairlife (US) vs Fairlife (Canada))
+SaturatedFat         0.89 pp  (Fairlife (US) vs Fairlife (Canada))
+TransFat             0.05 pp  (Fairlife (US) vs Fairlife (Canada))

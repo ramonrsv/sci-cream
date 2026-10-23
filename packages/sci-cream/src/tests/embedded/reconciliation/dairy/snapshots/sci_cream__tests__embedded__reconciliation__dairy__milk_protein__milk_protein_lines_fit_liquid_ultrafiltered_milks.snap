@@ -1,0 +1,8 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/dairy/milk_protein.rs
+expression: "lines.join(\"\\n\")"
+---
+% of solids non-fat              protein | lactose   line   miss | minerals   line   miss
+Burrington liquid UF 85            87.27 |    5.40   5.48  -0.07 |     7.33   7.26  +0.07
+Hill & Ferrer whole milk UF 3x     64.89 |   26.66  27.52  -0.86 |     8.45   7.59  +0.86
+Hill & Ferrer whole milk UF 5x     76.15 |   14.97  16.43  -1.46 |     8.89   7.42  +1.46

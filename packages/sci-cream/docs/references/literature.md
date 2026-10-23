@@ -235,3 +235,7 @@
 [^116]: Seo, C. W., & Oh, N. S. (2023, May). [_Rheological, Physicochemical, Microbiological, and Aroma Characteristics of Sour Creams Supplemented with Milk Protein Concentrate_](https://pmc.ncbi.nlm.nih.gov/articles/PMC10172817/). Food Science of Animal Resources, 43(3), 540-551.
 
 [^117]: Don, P. U., Modi, Z., Shah, K., & Salunke, P. (2025, April). [_Ultrafiltration of Whole Milk: Impact of Homogenization and Ultrafiltration Temperature on Processing Efficiency and Component Retention_](https://www.mdpi.com/2304-8158/14/8/1370). Foods, 14(8), 1370.
+
+[^118]: Burrington, K. J. (2018). [_The Halo Effect: Dairy Ingredient Selection for Formulating High Protein Ice Cream_](https://www.idfa.org/wordpress/wp-content/uploads/2020/03/kimberlee_burrington_-_the_halo_effect_-_dairy_ingredient_selection_for_formulating_high_protein_ice_cream.pdf). International Dairy Foods Association.
+
+[^119]: Hill, A., & Ferrer, M. A. (2021). [_Cheese Making Technology e-Book_](https://books.lib.uoguelph.ca/cheesemakingtechnologyebook/). University of Guelph.

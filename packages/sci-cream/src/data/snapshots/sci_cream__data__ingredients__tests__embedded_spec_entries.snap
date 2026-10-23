@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 390  (non-alias: 327, independent: 313)
+total: 396  (non-alias: 333, independent: 319)
 
             0% Milk
             1% Milk
@@ -107,8 +107,11 @@ total: 390  (non-alias: 327, independent: 313)
             Essential Oil
 [alias]     Eucalyptus Essential Oil
             Fairlife 2% Reduced Fat Ultra-Filtered Lactose-Free Milk
+            Fairlife 2% Ultrafiltered Lactose-Free Milk (Canada)
             Fairlife Fat Free Ultra-Filtered Lactose-Free Milk
+            Fairlife Skim Ultrafiltered Lactose-Free Milk (Canada)
             Fairlife Whole Ultra-Filtered Lactose-Free Milk
+            Fairlife Whole Ultrafiltered Lactose-Free Milk (Canada)
             Fancy Molasses
 [alias]     Fresh Basil
 [alias]     Fresh Peppermint
@@ -182,6 +185,9 @@ total: 390  (non-alias: 327, independent: 313)
             Kahlua Coffee Liqueur
             Kappa Carrageenan
             Kommineni Micellar Casein Concentrate 80%
+            Lactantia UltraPur 0% Ultrafiltered Lactose-Free Milk
+            Lactantia UltraPur 2% Ultrafiltered Lactose-Free Milk
+            Lactantia UltraPur 3.25% Ultrafiltered Lactose-Free Milk
             Lactose
             Lactose-Free 0% Milk
             Lactose-Free 1% Milk

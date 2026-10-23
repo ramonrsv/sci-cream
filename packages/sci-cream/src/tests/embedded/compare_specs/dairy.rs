@@ -1,8 +1,8 @@
-//! Cross-source consistency checks for dairy ingredients — milk, cream, evaporated and condensed
-//! milk, milk powders, milk protein concentrates, whey, casein, and protein powders — comparing
-//! each Simple/default entry against USDA, USDEC, Sealtest, Carnation, Goff & Hartel, Southward,
-//! and brand references. Each USDA listing is compared both as its embedded sheet and as its
-//! test-only `… (Label)` variant.
+//! Cross-source consistency checks for dairy ingredients — milk, ultrafiltered milk, cream,
+//! evaporated and condensed milk, milk powders, milk protein concentrates, whey, casein, and
+//! protein powders — comparing each Simple/default entry against USDA, USDEC, Sealtest, Carnation,
+//! Goff & Hartel, Southward, and brand references. Each USDA listing is compared both as its
+//! embedded sheet and as its test-only `… (Label)` variant.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -96,6 +96,88 @@ fn compare_specs_whole_milk() {
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_fairlife_skim_milk() {
+    let sources = [
+        ("Fairlife (US)", "Fairlife Fat Free Ultra-Filtered Lactose-Free Milk"),
+        ("Fairlife (Canada)", "Fairlife Skim Ultrafiltered Lactose-Free Milk (Canada)"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 25.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_fairlife_2_milk() {
+    let sources = [
+        ("Fairlife (US)", "Fairlife 2% Reduced Fat Ultra-Filtered Lactose-Free Milk"),
+        ("Fairlife (Canada)", "Fairlife 2% Ultrafiltered Lactose-Free Milk (Canada)"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 19.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_fairlife_whole_milk() {
+    let sources = [
+        ("Fairlife (US)", "Fairlife Whole Ultra-Filtered Lactose-Free Milk"),
+        ("Fairlife (Canada)", "Fairlife Whole Ultrafiltered Lactose-Free Milk (Canada)"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 15.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_ultrafiltered_milks_protein_to_sugars() {
+    // Ultrafiltered milks carry 2.0-2.3 g of protein per gram of sugars, about three times plain
+    // milk's, the largest ratio within 1.2 times the smallest. That's a market regularity, not a
+    // standard, so a product outside it, like Chobani's 20 g to 6 g, isn't necessarily wrong. The
+    // protein share of the solids non-fat follows from the ratio, so it's reported, not asserted.
+    let sources = [
+        ("Fairlife Fat Free (US)", "Fairlife Fat Free Ultra-Filtered Lactose-Free Milk"),
+        ("Fairlife 2% (US)", "Fairlife 2% Reduced Fat Ultra-Filtered Lactose-Free Milk"),
+        ("Fairlife Whole (US)", "Fairlife Whole Ultra-Filtered Lactose-Free Milk"),
+        ("Fairlife Skim (Canada)", "Fairlife Skim Ultrafiltered Lactose-Free Milk (Canada)"),
+        ("Fairlife 2% (Canada)", "Fairlife 2% Ultrafiltered Lactose-Free Milk (Canada)"),
+        ("Fairlife Whole (Canada)", "Fairlife Whole Ultrafiltered Lactose-Free Milk (Canada)"),
+        ("UltraPur 0%", "Lactantia UltraPur 0% Ultrafiltered Lactose-Free Milk"),
+        ("UltraPur 2%", "Lactantia UltraPur 2% Ultrafiltered Lactose-Free Milk"),
+        ("UltraPur 3.25%", "Lactantia UltraPur 3.25% Ultrafiltered Lactose-Free Milk"),
+    ]
+    .map(source_str_to_comp);
+
+    let mut lines = vec![format!(
+        "{:<24} {:>7} {:>7} {:>6} {:>9}",
+        "g per 100 g", "protein", "sugars", "ratio", "% of MSNF"
+    )];
+    let mut ratios = Vec::new();
+
+    for (label, comp) in &sources {
+        let (protein, sugars) = (comp.get(CompKey::MilkProteins), comp.get(CompKey::TotalSugars));
+        let ratio = protein / sugars;
+        let share = protein / comp.get(CompKey::MSNF) * 100.0;
+        ratios.push(ratio);
+        lines.push(format!("{label:<24} {protein:>7.2} {sugars:>7.2} {ratio:>6.2} {share:>9.1}"));
+    }
+
+    let min = ratios.iter().copied().fold(f64::INFINITY, f64::min);
+    let max = ratios.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+    assert_le!(max / min, 1.2, "protein to sugars ratios spread {:.3} times", max / min);
+
+    insta::assert_snapshot!(lines.join("\n"));
 }
 
 #[test]

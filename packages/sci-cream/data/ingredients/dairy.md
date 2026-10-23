@@ -1029,6 +1029,123 @@ From [nutrition facts table](https://fairlife.com/ultra-filtered-milk/reduced-fa
 
 From [nutrition facts table](https://fairlife.com/ultra-filtered-milk/whole-milk/)
 
+## Fairlife Skim Ultrafiltered Lactose-Free Milk (Canada)
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 80,
+    "total_fat": { "grams": 0.3 },
+    "sugars": 6,
+    "protein": 14,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts table](https://www.coca-cola.com/ca/en/brands/fairlife/products/ultrafiltered)
+
+## Fairlife 2% Ultrafiltered Lactose-Free Milk (Canada)
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 130,
+    "total_fat": { "grams": 4.5 },
+    "saturated_fat": 3,
+    "sugars": 6,
+    "protein": 14,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts table](https://www.coca-cola.com/ca/en/brands/fairlife/products/ultrafiltered)
+
+## Fairlife Whole Ultrafiltered Lactose-Free Milk (Canada)
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 160,
+    "total_fat": { "grams": 8 },
+    "saturated_fat": 5,
+    "sugars": 6,
+    "protein": 14,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts table](https://www.coca-cola.com/ca/en/brands/fairlife/products/ultrafiltered)
+
+## Lactantia UltraPur 0% Ultrafiltered Lactose-Free Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 130,
+    "total_fat": { "grams": 0.3 },
+    "saturated_fat": 0.2,
+    "sugars": 10,
+    "protein": 20,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts table](https://www.lactantia.ca/food_product/lactantia-ultrapur-0-20g-protein-1-5l/)
+
+## Lactantia UltraPur 2% Ultrafiltered Lactose-Free Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 170,
+    "total_fat": { "grams": 5 },
+    "saturated_fat": 3.5,
+    "trans_fat": 0.2,
+    "carbohydrates": 11,
+    "sugars": 10,
+    "protein": 20,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts table](https://www.lactantia.ca/food_product/lactantia-ultrapur-2-20g-protein-1-5l/)
+
+## Lactantia UltraPur 3.25% Ultrafiltered Lactose-Free Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 200,
+    "total_fat": { "grams": 8 },
+    "saturated_fat": 6,
+    "trans_fat": 0.3,
+    "carbohydrates": 10,
+    "sugars": 9,
+    "protein": 20,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts table](https://www.lactantia.ca/food_product/lactantia-ultrapur-3-25-20g-protein-1-5l/)
+
 ## USDA Fat-Free Evaporated Milk
 
 ```json

@@ -185,10 +185,17 @@ pub mod dairy {
         /// 2020, Table 1)[^106]. It runs 0.3-1.1 percentage points above USDEC's MPC 70 to MPC 42,
         /// as USDEC lists nearly the same ash at every grade (USDEC, 2018, Table 13, p. 35)[^113].
         ///
+        /// Among liquid ultrafiltered milks, it fits Burrington's UF 85 and whole milk concentrated
+        /// 3 and 5 times within 1.5 percentage points, but runs 3.1 above Burrington's UF 65, whose
+        /// ash is 4.5% of its solids non-fat (Burrington, 2018, "UF Milk Composition")[^118],
+        /// (Hill & Ferrer, 2021, Table 24.1)[^119].
+        ///
         /// Calculated values are (%): 6.9, 7.4, 7.3, 7.0
         #[doc = include_str!("../../docs/references/index/103.md")]
         #[doc = include_str!("../../docs/references/index/106.md")]
         #[doc = include_str!("../../docs/references/index/113.md")]
+        #[doc = include_str!("../../docs/references/index/118.md")]
+        #[doc = include_str!("../../docs/references/index/119.md")]
         pub const STD_MINERALS_IN_MPI: f64 = 0.072;
 
         /// Proportion of proteins in milk solids that is whey
