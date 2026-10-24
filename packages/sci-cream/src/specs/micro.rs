@@ -21,7 +21,7 @@ impl ToComposition for MicroSpec {
     fn to_composition(&self) -> Result<Composition> {
         match *self {
             Self::Salt => Composition::new()
-                .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
+                .solids(Solids::new().other(SolidsBreakdown::new().minerals(100.0)))
                 .micro(Micro::new().salt(100.0))
                 .pac(PAC::new().salt(constants::pac::SALT))
                 .validate_into(),
@@ -62,6 +62,7 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::TotalMinerals), 100.0);
         assert_eq!(comp.get(CompKey::Salt), 100.0);
         assert_eq!(comp.get(CompKey::PACslt), 585.0);
     }

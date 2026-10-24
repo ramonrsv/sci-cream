@@ -9,9 +9,12 @@ use crate::{
     composition::field_update::field_update_methods,
     composition::{Fibers, Polyols, ScaleComponents, Sugars},
     constants,
-    error::{Error, Result},
-    validate::{Validate, verify_are_positive, verify_is_within_100_percent},
+    error::Result,
+    validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
+
+#[cfg(doc)]
+use crate::{constants::COMPOSITION_EPSILON, error::Error};
 
 /// Struct representing the detailed carbohydrate composition of a mix, including sugars, fibers,
 /// polyols, and other carbohydrates.
@@ -56,21 +59,19 @@ impl Carbohydrates {
 
     /// Sets `others = total - (fiber + sugars.total() + polyols.total())`
     ///
+    /// Where float rounding leaves the other components over `total` by no more than
+    /// [`COMPOSITION_EPSILON`], `others` is set to zero instead.
+    ///
     /// # Errors
     ///
-    /// Returns an [`Error::InvalidComposition`] if `total < (fiber + sugars.total() +
-    /// polyols.total())`; this should only be called once all other components have been set.
+    /// Returns an [`Error::InvalidComposition`] if the other components exceed `total` by more than
+    /// [`COMPOSITION_EPSILON`]; this should only be called once all of them have been set.
     pub fn others_from_total(&self, total: f64) -> Result<Self> {
-        if (self.total() - self.others) > total {
-            return Err(Error::InvalidComposition(format!(
-                "Cannot set carbohydrate others from total: total {} is less than sum of other components {}",
-                total,
-                self.total() - self.others
-            )));
-        }
+        let rest = self.total() - self.others;
+        verify_is_subset(rest, total, "fiber + sugars + polyols <= total")?;
 
         Ok(Self {
-            others: total - (self.total() - self.others),
+            others: f64::max(total - rest, 0.0),
             ..*self
         })
     }
@@ -185,7 +186,7 @@ mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::composition::*;
+    use crate::{composition::*, error::Error};
 
     const FIELD_MODIFIERS: [fn(&mut Carbohydrates, f64); 4] = [
         |c, ec| c.fiber.inulin += ec,
@@ -262,6 +263,14 @@ mod tests {
     fn carbohydrates_others_from_total_error() {
         let carbohydrates = Carbohydrates::new().fiber(Fibers::new().inulin(10.0));
         assert!(matches!(carbohydrates.others_from_total(9.0), Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn carbohydrates_others_from_total_within_epsilon() {
+        // An excess within `COMPOSITION_EPSILON`, as float rounding leaves, sets `others` to zero
+        let inulin = 10.0 + constants::COMPOSITION_EPSILON / 2.0;
+        let carbohydrates = Carbohydrates::new().fiber(Fibers::new().inulin(inulin));
+        assert_eq!(carbohydrates.others_from_total(10.0).unwrap().others, 0.0);
     }
 
     #[test]

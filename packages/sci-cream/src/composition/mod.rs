@@ -53,7 +53,7 @@
 //!             .casein(proteins * STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN)
 //!             .whey(proteins * STD_WHEY_PROTEIN_IN_MSNF_PROTEIN),
 //!     )
-//!     .others(msnf - lactose - proteins);
+//!     .minerals(msnf - lactose - proteins);
 //!
 //! let pod = milk_solids.carbohydrates.to_pod()?;
 //! let pac = PAC::new()

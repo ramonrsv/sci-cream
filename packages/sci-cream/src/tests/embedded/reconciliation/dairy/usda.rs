@@ -6,24 +6,24 @@
 //! except heavy cream's label, which transcribes it, so it misses wherever a listing's sugars are
 //! measured lactose, as for milk and cream, rather than its carbohydrate by difference.
 //!
-//! The sheets' water is transcribed too. Their ash is what the solids non-fat leave beside the
-//! sugars and protein, so it misses by however far the listing's proximates miss summing to 100 g,
-//! the same miss the labels spread between their water and ash. Beside measurement error, it holds
-//! the organic acids, mostly citrate, that only carbohydrate by difference counts. The composition
-//! keeps those with the minerals, not as carbohydrate, so a sheet has no carbohydrates field.
+//! The sheets' water and ash are transcribed too, the ash as their minerals, so both match exactly
+//! unless a listing's proximates sum past 100 g, when its water gives way to the listed solids and
+//! misses by the overshoot. Where they fall short, the other milk solids hold the rest: beside
+//! measurement error, the organic acids, mostly citrate, that only carbohydrate by difference
+//! counts. Since the composition keeps those as other milk solids rather than carbohydrate, a sheet
+//! has no carbohydrates field. The FNDDS listings report no ash, so their sheets model the
+//! minerals, reconciled against the ash their proximates leave.
 //!
 //! The labels' water and ash show how [`DairyLabelSpec`] estimates the milk solids non-fat (MSNF)
-//! around them: sugars and protein make up all of it but the share of ash that [`minerals_in_snf`]
-//! gives at their protein fraction. Each listing's water and ash miss by how far its own MSNF
-//! departs from that split, either way.
+//! around them: sugars and protein make up all of it but the minerals that [`minerals_in_snf`]
+//! gives at their protein fraction, which are the labels' ash. Each listing's water and ash miss by
+//! how far its own MSNF departs from that split, either way.
 //!
 //! For whey, the labels' estimate also adds the solids that lactose, protein, and minerals leave
-//! unaccounted, see [`unaccounted_in_snf`], keeping them with the minerals, in the ash. The whey
+//! unaccounted, see [`unaccounted_in_snf`], as other milk solids, apart from the ash. The whey
 //! listings' sugars are carbohydrate by difference, which holds them already, so the labels count
-//! them twice and fall short of water, the powder's down to the 2% floor.
-//
-// @todo Once milk solids track their minerals apart from the rest, reconcile ash against those. The
-// sheets' ash misses should then go to zero, moving to the other milk solids that aren't minerals.
+//! them twice and fall short of water, the powder's down to the 2% floor, which then cuts those
+//! solids before the minerals.
 
 #![cfg_attr(coverage, coverage(off))]
 #![expect(clippy::doc_markdown)] // _FoodData_ false positive
@@ -260,8 +260,8 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
 
 /// Per-field ceilings on relative error vs the measured value, in percent — fluid milk sheets.
 const MILK_SHEET_CEILING: Proximates = Proximates {
+    water: 0.5,
     carbohydrate: 4.0,
-    ash: 23.0,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
@@ -275,17 +275,18 @@ const MILK_LABEL_CEILING: Proximates = Proximates {
 
 /// Per-field ceilings on relative error vs the measured value, in percent — cream sheets.
 const CREAM_SHEET_CEILING: Proximates = Proximates {
+    water: 0.5,
     carbohydrate: 4.0,
-    ash: 23.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — heavy cream sheet.
 ///
-/// The 0.88 g by which its listing's carbohydrate exceeds its sugars lands in the sheet's ash.
+/// The 0.88 g by which its listing's carbohydrate exceeds its sugars isn't carbohydrate in the
+/// sheet, and its modeled minerals miss the 0.49 g of ash its proximates leave.
 const HEAVY_CREAM_SHEET_CEILING: Proximates = Proximates {
     carbohydrate: 23.5,
-    ash: 64.5,
+    ash: 4.0,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
@@ -299,7 +300,7 @@ const CREAM_LABEL_CEILING: Proximates = Proximates {
 
 /// Per-field ceilings on relative error vs the measured value, in percent — evaporated milk sheets.
 const EVAPORATED_SHEET_CEILING: Proximates = Proximates {
-    ash: 5.0,
+    water: 0.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
@@ -312,7 +313,7 @@ const EVAPORATED_LABEL_CEILING: Proximates = Proximates {
 
 /// Per-field ceilings on relative error vs the measured value, in percent — condensed milk sheet.
 const CONDENSED_SHEET_CEILING: Proximates = Proximates {
-    ash: 2.5,
+    water: 0.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
@@ -325,7 +326,7 @@ const CONDENSED_LABEL_CEILING: Proximates = Proximates {
 
 /// Per-field ceilings on relative error vs the measured value, in percent — milk powder sheets.
 const POWDER_SHEET_CEILING: Proximates = Proximates {
-    ash: 1.0,
+    water: 2.0,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
@@ -339,28 +340,25 @@ const POWDER_LABEL_CEILING: Proximates = Proximates {
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — fluid whey sheet.
-const WHEY_SHEET_CEILING: Proximates = Proximates {
-    ash: 4.0,
-    ..Proximates::splat(TESTS_EPSILON)
-};
+const WHEY_SHEET_CEILING: Proximates = Proximates::splat(TESTS_EPSILON);
 
 /// Per-field ceilings on relative error vs the measured value, in percent — fluid whey label.
 const WHEY_LABEL_CEILING: Proximates = Proximates {
     water: 0.5,
-    ash: 33.0,
+    ash: 7.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — whey powder sheet.
 const WHEY_POWDER_SHEET_CEILING: Proximates = Proximates {
-    ash: 0.5,
+    water: 0.5,
     ..Proximates::splat(TESTS_EPSILON)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — whey powder label.
 const WHEY_POWDER_LABEL_CEILING: Proximates = Proximates {
     water: 37.5,
-    ash: 14.5,
+    ash: 2.0,
     ..Proximates::splat(TESTS_EPSILON)
 };
 

@@ -16,7 +16,7 @@ use crate::{
         },
         composition::dairy::{
             STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
-            milk::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MSNF},
+            milk::{STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MSNF},
         },
         hf, pac,
     },
@@ -233,9 +233,10 @@ fn resolve_fats(cacao_solids: f64, milk_solids: f64, fat: Option<ChocolateFat>) 
 /// Blends that depart from standard composition values - added lactose, whey, buttermilk - should
 /// be specified in a [`CompositeSpec`](crate::specs::CompositeSpec) instead.
 fn make_milk_solids(milk_solids: f64, milk_fat: f64, lactose: &Sugars) -> Result<MilkSolids> {
-    let proteins = (milk_solids - milk_fat) * STD_PROTEIN_IN_MSNF;
+    let milk_snf = milk_solids - milk_fat;
+    let proteins = milk_snf * STD_PROTEIN_IN_MSNF;
 
-    MilkSolids::new()
+    Ok(MilkSolids::new()
         .fats(
             Fats::new()
                 .total(milk_fat)
@@ -244,7 +245,7 @@ fn make_milk_solids(milk_solids: f64, milk_fat: f64, lactose: &Sugars) -> Result
         )
         .carbohydrates(Carbohydrates::new().sugars(*lactose))
         .proteins(make_milk_proteins(proteins, STD_PROTEIN_IN_MSNF, SolidsSource::Milk)?)
-        .others_from_total(milk_solids)
+        .minerals(milk_snf * STD_MINERALS_IN_MSNF))
 }
 
 /// Spec for cocoa powder ingredients, with cocoa butter and optional other solids
@@ -401,7 +402,7 @@ fn make_cocoa_solids(cacao_solids: f64, cocoa_butter: f64, dutch_processed: bool
                 .fiber(Fibers::new().other(cocoa_snf * STD_FIBER_IN_COCOA_SOLIDS))
                 .others_from_total(cocoa_snf * std_carbohydrates_in_cocoa_solids)?,
         )
-        .others(cocoa_snf * std_ash_in_cocoa_solids)
+        .minerals(cocoa_snf * std_ash_in_cocoa_solids)
         .validate_into()
 }
 
@@ -486,7 +487,7 @@ pub(crate) mod tests {
                                     .unwrap(),
                             )
                             .proteins(SimpleProteins::from_total(7.05))
-                            .others(2.28),
+                            .minerals(2.28),
                     )
                     .other(
                         SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(30.0))),
@@ -516,7 +517,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
         assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
         assert_eq!(comp.get(CompKey::CocoaSolids), 30.0);
-        assert_eq!(comp.solids.cocoa.others, 2.28);
+        assert_eq!(comp.solids.cocoa.minerals, 2.28);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 30.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
@@ -568,7 +569,7 @@ pub(crate) mod tests {
                                     .unwrap(),
                             )
                             .proteins(SimpleProteins::from_total(8.8125))
-                            .others(2.85),
+                            .minerals(2.85),
                     )
                     .other(
                         SolidsBreakdown::new()
@@ -596,7 +597,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::CacaoSolids), 95.0);
         assert_eq!(comp.get(CompKey::CocoaButter), 57.5);
         assert_eq!(comp.get(CompKey::CocoaSolids), 37.5);
-        assert_eq_flt_test!(comp.solids.cocoa.others, 2.85);
+        assert_eq_flt_test!(comp.solids.cocoa.minerals, 2.85);
         assert_eq!(comp.solids.other.others, 2.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalCarbohydrates), 28.8375);
         assert_eq!(comp.get(CompKey::OtherSNFS), 2.0);
@@ -645,7 +646,7 @@ pub(crate) mod tests {
                                 .unwrap(),
                         )
                         .proteins(SimpleProteins::from_total(10.81))
-                        .others(3.496),
+                        .minerals(3.496),
                 ),
             )
             .pod(0.0)
@@ -668,7 +669,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
         assert_eq!(comp.get(CompKey::CocoaButter), 54.0);
         assert_eq!(comp.get(CompKey::CocoaSolids), 46.0);
-        assert_eq_flt_test!(comp.solids.cocoa.others, 3.496);
+        assert_eq_flt_test!(comp.solids.cocoa.minerals, 3.496);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
@@ -712,7 +713,7 @@ pub(crate) mod tests {
                                 .unwrap(),
                         )
                         .proteins(SimpleProteins::from_total(18.87755))
-                        .others(6.10508),
+                        .minerals(6.10508),
                 ),
             )
             .pod(0.0)
@@ -736,7 +737,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), 97.0);
         assert_eq!(comp.get(CompKey::CocoaButter), 16.67);
         assert_eq_flt_test!(comp.get(CompKey::CocoaSolids), 80.33);
-        assert_eq_flt_test!(comp.solids.cocoa.others, 6.10508);
+        assert_eq_flt_test!(comp.solids.cocoa.minerals, 6.10508);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 97.0);
         assert_eq_flt_test!(comp.get(CompKey::Water), 3.0);
@@ -789,7 +790,7 @@ pub(crate) mod tests {
                                     .unwrap(),
                             )
                             .proteins(SimpleProteins::from_total(16.92))
-                            .others(6.696),
+                            .minerals(6.696),
                     )
                     .other(SolidsBreakdown::new().others(4.0)),
             )
@@ -814,7 +815,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), 93.0);
         assert_eq!(comp.get(CompKey::CocoaButter), 21.0);
         assert_eq_flt_test!(comp.get(CompKey::CocoaSolids), 72.0);
-        assert_eq_flt_test!(comp.solids.cocoa.others, 6.696);
+        assert_eq_flt_test!(comp.solids.cocoa.minerals, 6.696);
         assert_eq!(comp.solids.other.others, 4.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalCarbohydrates), 48.384);
         assert_eq!(comp.get(CompKey::OtherSNFS), 4.0);
@@ -902,7 +903,7 @@ pub(crate) mod tests {
                                     .unwrap(),
                             )
                             .proteins(SimpleProteins::from_total(7.0735))
-                            .others(2.2876),
+                            .minerals(2.2876),
                     )
                     .other(
                         SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(30.0))),
@@ -927,7 +928,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), 70.0);
         assert_eq_flt_test!(comp.get(CompKey::CocoaButter), 39.9);
         assert_eq_flt_test!(comp.get(CompKey::CocoaSolids), 30.1);
-        assert_eq_flt_test!(comp.solids.cocoa.others, 2.2876);
+        assert_eq_flt_test!(comp.solids.cocoa.minerals, 2.2876);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 30.1);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 100.0);
@@ -976,7 +977,7 @@ pub(crate) mod tests {
                                     .unwrap(),
                             )
                             .proteins(SimpleProteins::from_total(9.59975))
-                            .others(3.1046),
+                            .minerals(3.1046),
                     )
                     .other(
                         SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(5.0))),
@@ -1001,7 +1002,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), 95.0);
         assert_eq_flt_test!(comp.get(CompKey::CocoaButter), 54.15);
         assert_eq_flt_test!(comp.get(CompKey::CocoaSolids), 40.85);
-        assert_eq_flt_test!(comp.solids.cocoa.others, 3.1046);
+        assert_eq_flt_test!(comp.solids.cocoa.minerals, 3.1046);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 40.85);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 100.0);
@@ -1048,7 +1049,7 @@ pub(crate) mod tests {
                                 .unwrap(),
                         )
                         .proteins(SimpleProteins::from_total(10.105))
-                        .others(3.268),
+                        .minerals(3.268),
                 ),
             )
             .pod(0.0)
@@ -1068,7 +1069,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), 100.0);
         assert_eq_flt_test!(comp.get(CompKey::CocoaButter), 57.0);
         assert_eq_flt_test!(comp.get(CompKey::CocoaSolids), 43.0);
-        assert_eq_flt_test!(comp.solids.cocoa.others, 3.268);
+        assert_eq_flt_test!(comp.solids.cocoa.minerals, 3.268);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
@@ -1259,6 +1260,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::MSNF), msnf);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), msnf * STD_LACTOSE_IN_MSNF);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), msnf * STD_PROTEIN_IN_MSNF);
+        assert_eq_flt_test!(comp.get(CompKey::MilkMinerals), msnf * STD_MINERALS_IN_MSNF);
 
         // The declared split is taken as-is, and the cacao side is untouched by the milk
         assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), 40.0);

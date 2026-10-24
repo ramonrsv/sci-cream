@@ -59,6 +59,7 @@ impl KeyAsStrings for CompKey {
             Self::MilkProteins => "Milk Proteins",
             Self::Casein => "Casein",
             Self::Whey => "Whey",
+            Self::MilkMinerals => "Milk Minerals",
 
             Self::CacaoSolids => "Cacao Solids",
             Self::CocoaButter => "Cocoa Butter",
@@ -83,6 +84,7 @@ impl KeyAsStrings for CompKey {
             Self::TotalSNF => "SNF",
             Self::TotalSNFS => "SNFS",
             Self::TotalProteins => "Proteins",
+            Self::TotalMinerals => "Minerals",
 
             Self::Water => "Water",
 
@@ -170,6 +172,7 @@ impl KeyAsStrings for CompKey {
             Self::TotalSNF => "Total Solids Non-Fat",
             Self::TotalSNFS => "Total Solids Non-Fat Non-Sugar",
             Self::TotalProteins => "Total Proteins",
+            Self::TotalMinerals => "Total Minerals",
             Self::TotalCarbohydrates => "Total Carbohydrates",
             Self::TotalFiber => "Total Fiber",
             Self::TotalSugars => "Total Sugars",

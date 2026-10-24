@@ -52,9 +52,7 @@ impl Proximates {
 
     /// The modeled proximates of an embedded or test-only ingredient.
     ///
-    /// Ash has no [`CompKey`]: cacao's ash is the cocoa solids' `others`, and milk's the milk
-    /// solids' `others`, the MSNF remainder beyond its sugars and protein. `solids.other` is a
-    /// separate bucket that is not ash.
+    /// Ash is read as [`CompKey::TotalMinerals`], the minerals of all its solids.
     fn modeled(name: &str) -> Self {
         let comp: Composition = get_comp_by_name(name);
 
@@ -65,7 +63,7 @@ impl Proximates {
             carbohydrate: comp.get(CompKey::TotalCarbohydrates),
             fiber: comp.get(CompKey::TotalFiber),
             sugars: comp.get(CompKey::TotalSugars),
-            ash: comp.solids.cocoa.others + comp.solids.milk.others,
+            ash: comp.get(CompKey::TotalMinerals),
         }
     }
 }

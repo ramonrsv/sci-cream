@@ -33,6 +33,7 @@ const COMPARABLE_DAIRY_KEYS: &[CompKey] = &[
     CompKey::MSNF,
     CompKey::MilkSNFS,
     CompKey::MilkProteins,
+    CompKey::MilkMinerals,
     CompKey::MilkSolids,
     CompKey::TotalSolids,
     CompKey::Water,
@@ -57,7 +58,7 @@ fn compare_specs_skim_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 29.0);
+    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 30.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));

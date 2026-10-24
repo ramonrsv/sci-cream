@@ -126,7 +126,7 @@ pub(crate) mod subtrees {
                     MSNF,
                     vec![
                         N::lf(MilkSugars),
-                        N::br(MilkSNFS, vec![N::br(MilkProteins, leaves(&[Casein, Whey]))]),
+                        N::br(MilkSNFS, vec![N::br(MilkProteins, leaves(&[Casein, Whey])), N::lf(MilkMinerals)]),
                     ],
                 ),
             ],
@@ -166,7 +166,15 @@ pub(crate) mod subtrees {
     }
 
     pub(crate) fn total_snf() -> N<CompKey> {
-        N::br(TotalSNF, vec![total_carbohydrates(), total_proteins(), total_artificial()])
+        N::br(
+            TotalSNF,
+            vec![
+                total_carbohydrates(),
+                total_proteins(),
+                total_minerals(),
+                total_artificial(),
+            ],
+        )
     }
 
     pub(crate) fn total_snfs() -> N<CompKey> {
@@ -175,6 +183,10 @@ pub(crate) mod subtrees {
 
     pub(crate) fn total_proteins() -> N<CompKey> {
         N::br(TotalProteins, leaves(&[MilkProteins, EggProteins]))
+    }
+
+    pub(crate) fn total_minerals() -> N<CompKey> {
+        N::br(TotalMinerals, leaves(&[MilkMinerals]))
     }
 
     // --- Carbohydrates ------------------------
@@ -584,6 +596,9 @@ mod tests {
         // MilkProteins is a part of both MilkSNFS (source) and TotalProteins (macronutrient).
         assert_eq!(MilkProteins.parents(), &[MilkSNFS, TotalProteins]);
 
+        // MilkMinerals is a part of both MilkSNFS (source) and TotalMinerals (macronutrient).
+        assert_eq!(MilkMinerals.parents(), &[MilkSNFS, TotalMinerals]);
+
         // The per-source protein subcomponents nest only under their source's protein roll-up.
         assert_eq!(MilkProteins.children(), &[Casein, Whey]);
         assert_eq!(EggProteins.children(), &[WhiteProteins, YolkProteins]);
@@ -592,14 +607,15 @@ mod tests {
     }
 
     /// Milk's non-fat solids split exactly (`MSNF = MilkSugars + MilkSNFS`, checked across every
-    /// dairy ingredient), then [`CompKey::MilkSNFS`] keeps a mineral residual beyond
-    /// [`CompKey::MilkProteins`]. The strict-subset relations need non-zero lactose (whey isolates
-    /// and label-rounded creams have none), so they are shown on lactose > 0 ingredients.
+    /// dairy ingredient), then [`CompKey::MilkSNFS`] keeps a residual beyond
+    /// [`CompKey::MilkProteins`] and [`CompKey::MilkMinerals`], e.g. whey's unaccounted solids. The
+    /// strict-subset relations need non-zero lactose (whey isolates and label-rounded creams have
+    /// none), so they are shown on lactose > 0 ingredients.
     #[test]
     fn milk_subcomponents_nest_under_milk_solids() {
         assert_eq!(MilkSolids.children(), &[MilkFat, MSNF]);
         assert_eq!(MSNF.children(), &[MilkSugars, MilkSNFS]);
-        assert_eq!(MilkSNFS.children(), &[MilkProteins]);
+        assert_eq!(MilkSNFS.children(), &[MilkProteins, MilkMinerals]);
 
         // MSNF splits exactly into its two siblings for every dairy ingredient.
         for milk in &*DAIRY_COMPS {
@@ -624,6 +640,7 @@ mod tests {
             assert_lt!(milk.get(MilkSugars), milk.get(MSNF));
             assert_lt!(milk.get(MilkSNFS), milk.get(MSNF));
             assert_lt!(milk.get(MilkProteins), milk.get(MilkSNFS));
+            assert_lt!(milk.get(MilkMinerals), milk.get(MilkSNFS));
         }
     }
 

@@ -26,11 +26,10 @@ use crate::composition::{CompKey, Solids};
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Micro {
-    /// Total salt content, excluding salts from milk ingredients
+    /// Total salt content from salt added as an ingredient
     ///
-    /// This includes any salt added as an ingredient, as well as any salt that is part of other
-    /// ingredients, e.g. the salt in chocolate or nut ingredients, but excludes salts naturally
-    /// present in milk ingredients, which are accounted for separately in [`CompKey::MilkSNFS`] .
+    /// This excludes the salts that occur naturally in other ingredients, e.g. in milk, chocolate,
+    /// or nuts; milk's are accounted for separately in [`CompKey::MilkMinerals`].
     pub salt: f64,
     /// Breakdown of stabilizer content, e.g. from Locust Bean Gum, Guar Gum, etc.
     pub stabilizers: Stabilizers,

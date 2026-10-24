@@ -37,6 +37,9 @@ use crate::constants;
 /// calculated via [`get_pac_from_fpd_polynomial(...)`](crate::fpd::get_pac_from_fpd_polynomial)
 /// with argument [`constants::fpd::FPD_CONST_FOR_MSNF_WS_SALTS`] for the target FPD, and using
 /// the polynomial described by [`constants::fpd::PAC_TO_FPD_POLY_COEFFS`].
+//
+// @todo Derive the milk salts' PAC from the milk minerals, replacing this constant, which doesn't
+// hold for concentrates that have a lower relative mineral content.
 pub const MSNF_WS_SALTS: f64 = 36.740_405_761_491_57;
 
 #[cfg(test)]

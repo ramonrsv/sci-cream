@@ -1690,8 +1690,8 @@ whey of its nutritional composition table (USDEC, 2003, Table 6, pp. 51-52)[^91]
 ```
 
 From [product bulletin](https://www.hilmar.com/wp-content/uploads/2023/07/Hilmar-9000-WPI.pdf)
-(revised March 2026), typical values. They sum to 97.5%, so the 2.5 g they leave unaccounted join
-the ash under other milk solids.
+(revised March 2026), typical values. They sum to 97.5%, so the 2.5 g they leave unaccounted are
+other milk solids, beside the ash.
 
 ## USDEC Micellar Casein Concentrate
 
@@ -1765,8 +1765,8 @@ are counted under other milk solids.
 }
 ```
 
-(USDEC, 2015, Figure 1, p. 1)[^100]. Its values sum to 101.0%, so other milk solids hold 2.0 g,
-short of its 3.0 g of ash.
+(USDEC, 2015, Figure 1, p. 1)[^100]. Its values sum to 101.0%, so its water gives way to the listed
+solids, from 4.3 g to 3.3 g.
 
 ## Leanfit Sport Whey Isolate
 

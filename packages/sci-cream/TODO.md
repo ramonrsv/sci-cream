@@ -83,6 +83,17 @@
 - [ ] Investigate and revise `DairyLabelSpec::total_fat`'s guidance, which prefers a label's stated
       fat percentage on the premise that products are exact to it: Fairlife's 2% milks list 4.5 g of
       fat per serving, 1.7-1.8%. Then review the label entries that still give a percentage.
+- [ ] Model the minerals of eggs, nuts, and fruits, which their specs leave in `others`. `NutSpec`
+      and `FruitSpec` take carbohydrate, so their ash is what the solids leave beside it, protein,
+      and fat, as USDA's proximates sum; `EggSpec` takes none, so eggs need a sourced ash fraction.
+- [ ] Derive the milk salts' PAC from the dissolved share of `MilkMinerals`, not all the ash, as
+      micellar calcium and phosphate don't depress the freezing point.
+- [ ] Revisit `DairyLabelSpec`'s 2% water floor, which keeps label sugars and protein exact by
+      cutting the modeled minerals, by up to 27% (Theland Whole Milk Powder).
+- [ ] Revisit `DairySheetSpec`'s overshoot rule, which can lower a powder's water a lot: USDEC
+      Sodium Caseinate's drops from 4.3 g to 3.3 g, as its values sum to 101.0%.
+- [ ] Add grid tests over each dairy spec's valid inputs, checking they convert and keep their
+      invariants; example fixtures missed a rounding failure in 8% of valid Simple specs.
 
 ## Backlog
 

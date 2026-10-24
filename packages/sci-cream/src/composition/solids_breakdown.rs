@@ -8,12 +8,16 @@ use crate::{
     composition::field_update::field_update_methods,
     composition::{ArtificialSweeteners, Carbohydrates, Fats, ProteinComponents, ScaleComponents, SimpleProteins},
     constants,
-    error::{Error, Result},
-    validate::{Validate, verify_are_positive, verify_is_within_100_percent},
+    error::Result,
+    validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
 #[cfg(doc)]
-use crate::composition::{EggProteins, MilkProteins, Solids};
+use crate::{
+    composition::{EggProteins, MilkProteins, Solids},
+    constants::COMPOSITION_EPSILON,
+    error::Error,
+};
 
 /// Breakdown of solid components, as grams of component per 100g of ingredient/mix
 ///
@@ -22,7 +26,7 @@ use crate::composition::{EggProteins, MilkProteins, Solids};
 /// structs provide an interface to infer breakdowns relevant for ice cream science, e.g. solids
 /// non-fat (SNF), solids non-fat non-sugar (SNFS), etc. The following relationships hold:
 ///
-/// `total() >= fats + carbohydrates + proteins.total() + artificial_sweeteners`
+/// `total() >= fats + carbohydrates + proteins.total() + minerals + artificial_sweeteners`
 /// `snf() == total() - fats`
 /// `snfs() == snf() - carbohydrates.sugars`
 ///
@@ -43,6 +47,8 @@ pub struct SolidsBreakdown<P: ProteinComponents> {
     pub carbohydrates: Carbohydrates,
     /// Protein content for this source, broken down by its source-specific subcomponents
     pub proteins: P,
+    /// Mineral content, measured as ash, the inorganic residue left after incineration
+    pub minerals: f64,
     /// Breakdown of artificial sweetener components, including total and specific sweeteners
     pub artificial_sweeteners: ArtificialSweeteners,
     /// Other components not included in the above categories
@@ -57,6 +63,7 @@ impl<P: ProteinComponents> SolidsBreakdown<P> {
             fats: Fats::empty(),
             carbohydrates: Carbohydrates::empty(),
             proteins: P::EMPTY,
+            minerals: 0.0,
             artificial_sweeteners: ArtificialSweeteners::empty(),
             others: 0.0,
         }
@@ -72,27 +79,26 @@ impl<P: ProteinComponents> SolidsBreakdown<P> {
         fats: Fats,
         carbohydrates: Carbohydrates,
         proteins: P,
+        minerals: f64,
         artificial_sweeteners: ArtificialSweeteners,
         others: f64,
     }
 
-    /// Sets `others = total - (fats + carbohydrates + proteins + artificial_sweeteners)`
+    /// Sets `others = total - (fats + carbohydrates + proteins + minerals + artificial_sweeteners)`
+    ///
+    /// Where float rounding leaves the other components over `total` by no more than
+    /// [`COMPOSITION_EPSILON`], `others` is set to zero instead.
     ///
     /// # Errors
     ///
-    /// Returns an [`Error::InvalidComposition`] if `total < fats + carbohydrates + proteins +
-    /// artificial_sweeteners`; this should only be called once all other components have been set.
+    /// Returns an [`Error::InvalidComposition`] if the other components exceed `total` by more than
+    /// [`COMPOSITION_EPSILON`]; this should only be called once all of them have been set.
     pub fn others_from_total(&self, total: f64) -> Result<Self> {
-        if (self.total() - self.others) > total {
-            return Err(Error::InvalidComposition(format!(
-                "Cannot set others from total: total {} is less than sum of other components {}",
-                total,
-                self.total() - self.others
-            )));
-        }
+        let rest = self.total() - self.others;
+        verify_is_subset(rest, total, "fats + carbohydrates + proteins + minerals + artificial_sweeteners <= total")?;
 
         Ok(Self {
-            others: total - (self.total() - self.others),
+            others: f64::max(total - rest, 0.0),
             ..*self
         })
     }
@@ -103,6 +109,7 @@ impl<P: ProteinComponents> SolidsBreakdown<P> {
         self.fats.total
             + self.carbohydrates.total()
             + self.proteins.total()
+            + self.minerals
             + self.artificial_sweeteners.total()
             + self.others
     }
@@ -115,6 +122,7 @@ impl<P: ProteinComponents> SolidsBreakdown<P> {
             fats: self.fats,
             carbohydrates: self.carbohydrates,
             proteins: SimpleProteins::from_total(self.proteins.total()),
+            minerals: self.minerals,
             artificial_sweeteners: self.artificial_sweeteners,
             others: self.others,
         }
@@ -139,6 +147,8 @@ impl<P: ProteinComponents> SolidsBreakdown<P> {
 
     /// Calculates the total energy contributed by the solids, in kcal per 100g of mix
     ///
+    /// [`minerals`](Self::minerals) contribute no energy, so they are left out of the sum.
+    ///
     /// **Note**: This method intentionally omits the [`others`](Self::others) field, since the
     /// specific solid compounds and their energy contributions are unknown. This should be
     /// inconsequential in most practical circumstances, since the vast majority of solid components
@@ -152,7 +162,7 @@ impl<P: ProteinComponents> SolidsBreakdown<P> {
     /// Returns an [`Error::CannotComputeEnergy`] if energy calculations fail for any of the
     /// components, e.g. due to the presence of "other" polyols with unknown energy contributions.
     pub fn energy(&self) -> Result<f64> {
-        // `others` is intentionally omitted; see docs above
+        // `minerals` carry no energy and `others` is intentionally omitted; see docs above
         Ok(self.fats.energy()
             + self.carbohydrates.energy()?
             + (self.proteins.total() * constants::energy::PROTEINS)
@@ -166,7 +176,7 @@ impl<P: ProteinComponents> Validate for SolidsBreakdown<P> {
         self.carbohydrates.validate()?;
         self.proteins.validate()?;
         self.artificial_sweeteners.validate()?;
-        verify_are_positive(&[self.others])?;
+        verify_are_positive(&[self.minerals, self.others])?;
         verify_is_within_100_percent(self.total())?;
         Ok(())
     }
@@ -178,6 +188,7 @@ impl<P: ProteinComponents> ScaleComponents for SolidsBreakdown<P> {
             fats: self.fats.scale(factor),
             carbohydrates: self.carbohydrates.scale(factor),
             proteins: self.proteins.scale(factor),
+            minerals: self.minerals * factor,
             artificial_sweeteners: self.artificial_sweeteners.scale(factor),
             others: self.others * factor,
         }
@@ -188,6 +199,7 @@ impl<P: ProteinComponents> ScaleComponents for SolidsBreakdown<P> {
             fats: self.fats.add(&other.fats),
             carbohydrates: self.carbohydrates.add(&other.carbohydrates),
             proteins: self.proteins.add(&other.proteins),
+            minerals: self.minerals + other.minerals,
             artificial_sweeteners: self.artificial_sweeteners.add(&other.artificial_sweeteners),
             others: self.others + other.others,
         }
@@ -205,6 +217,7 @@ impl<P: ProteinComponents> AbsDiffEq for SolidsBreakdown<P> {
         self.fats.abs_diff_eq(&other.fats, epsilon)
             && self.carbohydrates.abs_diff_eq(&other.carbohydrates, epsilon)
             && self.proteins.abs_diff_eq(&other.proteins, epsilon)
+            && self.minerals.abs_diff_eq(&other.minerals, epsilon)
             && self
                 .artificial_sweeteners
                 .abs_diff_eq(&other.artificial_sweeteners, epsilon)
@@ -238,10 +251,11 @@ mod tests {
         SimpleProteins::from_total(total)
     }
 
-    const FIELD_MODIFIERS: [fn(&mut Sb, f64); 5] = [
+    const FIELD_MODIFIERS: [fn(&mut Sb, f64); 6] = [
         |s, ec| s.fats.total += ec,
         |s, ec| s.carbohydrates.sugars.sucrose += ec,
         |s, ec| s.proteins.total += ec,
+        |s, ec| s.minerals += ec,
         |s, ec| s.artificial_sweeteners.aspartame += ec,
         |s, ec| s.others += ec,
     ];
@@ -252,11 +266,12 @@ mod tests {
             fats,
             carbohydrates,
             proteins,
+            minerals,
             artificial_sweeteners,
             others,
         } = &Sb::empty();
 
-        let fields: [&dyn Any; 5] = [fats, carbohydrates, proteins, artificial_sweeteners, others];
+        let fields: [&dyn Any; 6] = [fats, carbohydrates, proteins, minerals, artificial_sweeteners, others];
         assert_eq!(fields.len(), FIELD_MODIFIERS.len());
     }
 
@@ -269,6 +284,7 @@ mod tests {
         assert_eq!(s.fats, Fats::empty());
         assert_eq!(s.carbohydrates, Carbohydrates::empty());
         assert_eq!(s.proteins, SimpleProteins::empty());
+        assert_eq!(s.minerals, 0.0);
         assert_eq!(s.artificial_sweeteners, ArtificialSweeteners::empty());
         assert_eq!(s.others, 0.0);
 
@@ -284,12 +300,14 @@ mod tests {
             .fats(Fats::new().total(5.0))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)))
             .proteins(proteins(2.0))
+            .minerals(0.5)
             .artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0))
             .others(4.0);
 
         assert_eq!(s.fats, Fats::new().total(5.0));
         assert_eq!(s.carbohydrates, Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)));
         assert_eq!(s.proteins, proteins(2.0));
+        assert_eq!(s.minerals, 0.5);
         assert_eq!(s.artificial_sweeteners, ArtificialSweeteners::new().aspartame(1.0));
         assert_eq!(s.others, 4.0);
     }
@@ -299,11 +317,12 @@ mod tests {
         let s = Sb::new()
             .fats(Fats::new().total(5.0))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)))
-            .proteins(proteins(2.0));
-        assert_eq!(s.total(), 10.0);
+            .proteins(proteins(2.0))
+            .minerals(0.5);
+        assert_eq!(s.total(), 10.5);
 
         let s_with_others = s.others_from_total(12.0).unwrap();
-        assert_eq!(s_with_others.others, 2.0);
+        assert_eq!(s_with_others.others, 1.5);
         assert_eq!(s_with_others.total(), 12.0);
     }
 
@@ -325,15 +344,23 @@ mod tests {
     }
 
     #[test]
+    fn solids_breakdown_others_from_total_within_epsilon() {
+        // An excess within `COMPOSITION_EPSILON`, as float rounding leaves, sets `others` to zero
+        let s = Sb::new().fats(Fats::new().total(10.0 + constants::COMPOSITION_EPSILON / 2.0));
+        assert_eq!(s.others_from_total(10.0).unwrap().others, 0.0);
+    }
+
+    #[test]
     fn solids_breakdown_total() {
         let s = Sb::new()
             .fats(Fats::new().total(5.0))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)))
             .proteins(proteins(2.0))
+            .minerals(0.5)
             .artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0))
             .others(4.0);
 
-        assert_eq!(s.total(), 15.0);
+        assert_eq!(s.total(), 15.5);
     }
 
     #[test]
@@ -342,11 +369,13 @@ mod tests {
         let milk = SolidsBreakdown::<MilkProteins>::new()
             .fats(Fats::new().total(4.0))
             .proteins(MilkProteins::new().casein(2.4).whey(0.6))
+            .minerals(0.5)
             .others(1.0);
         let simple = milk.to_simple();
 
         assert_eq!(simple.proteins, SimpleProteins::from_total(3.0));
         assert_eq!(simple.fats, milk.fats);
+        assert_eq!(simple.minerals, milk.minerals);
         assert_eq!(simple.others, milk.others);
         assert_eq!(simple.total(), milk.total());
     }
@@ -357,12 +386,13 @@ mod tests {
             .fats(Fats::new().total(5.0).saturated(2.0))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)))
             .proteins(proteins(2.0))
+            .minerals(0.5)
             .others(1.0);
-        assert_eq!(s.total(), 11.0);
+        assert_eq!(s.total(), 11.5);
         assert_eq!(s.fats.total, 5.0);
 
         assert_eq!(s.snf(), s.total() - s.fats.total);
-        assert_eq!(s.snf(), 6.0);
+        assert_eq!(s.snf(), 6.5);
     }
 
     #[test]
@@ -400,6 +430,7 @@ mod tests {
             .fats(fats)
             .carbohydrates(carbohydrates)
             .proteins(proteins(2.0))
+            .minerals(100.0) // `minerals` carry no energy
             .artificial_sweeteners(artificial_sweeteners)
             .others(100.0); // `others` is intentionally omitted from energy
 
@@ -435,17 +466,19 @@ mod tests {
             .fats(Fats::new().total(4.0))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(6.0)))
             .proteins(proteins(2.0))
+            .minerals(2.0)
             .artificial_sweeteners(ArtificialSweeteners::new().aspartame(2.0))
             .others(2.0);
-        assert_eq!(s.total(), 16.0);
+        assert_eq!(s.total(), 18.0);
 
         let scaled = s.scale(0.5);
         assert_eq!(scaled.fats, Fats::new().total(2.0));
         assert_eq!(scaled.carbohydrates, Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)));
         assert_eq!(scaled.proteins, proteins(1.0));
+        assert_eq!(scaled.minerals, 1.0);
         assert_eq!(scaled.artificial_sweeteners, ArtificialSweeteners::new().aspartame(1.0));
         assert_eq!(scaled.others, 1.0);
-        assert_eq!(scaled.total(), 8.0);
+        assert_eq!(scaled.total(), 9.0);
     }
 
     #[test]
@@ -454,25 +487,28 @@ mod tests {
             .fats(Fats::new().total(5.0))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(4.0)))
             .proteins(proteins(3.0))
+            .minerals(0.5)
             .artificial_sweeteners(ArtificialSweeteners::new().aspartame(2.0))
             .others(1.0);
         let b = Sb::new()
             .fats(Fats::new().total(2.5))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(2.0)))
             .proteins(proteins(1.5))
+            .minerals(0.25)
             .artificial_sweeteners(ArtificialSweeteners::new().sucralose(1.0))
             .others(0.5);
-        assert_eq!(a.total(), 15.0);
-        assert_eq!(b.total(), 7.5);
+        assert_eq!(a.total(), 15.5);
+        assert_eq!(b.total(), 7.75);
 
         let sum = a.add(&b);
         assert_eq!(sum.fats, Fats::new().total(7.5));
         assert_eq!(sum.carbohydrates, Carbohydrates::new().sugars(Sugars::new().sucrose(4.0).glucose(2.0)));
         assert_eq!(sum.proteins, proteins(4.5));
+        assert_eq!(sum.minerals, 0.75);
         assert_eq!(sum.artificial_sweeteners, ArtificialSweeteners::new().aspartame(2.0).sucralose(1.0));
         assert_eq!(sum.others, 1.5);
         assert_eq!(sum.total(), a.total() + b.total());
-        assert_eq!(sum.total(), 22.5);
+        assert_eq!(sum.total(), 23.25);
     }
 
     #[test]
@@ -481,6 +517,7 @@ mod tests {
             .fats(Fats::new().total(4.0))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(6.0)))
             .proteins(proteins(2.0))
+            .minerals(0.5)
             .artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0))
             .others(1.0);
         let b = a;
@@ -490,6 +527,7 @@ mod tests {
             assert_ne!(v.fats.total, 0.0);
             assert_ne!(v.carbohydrates.total(), 0.0);
             assert_ne!(v.proteins.total(), 0.0);
+            assert_ne!(v.minerals, 0.0);
             assert_ne!(v.artificial_sweeteners.total(), 0.0);
             assert_ne!(v.others, 0.0);
         }
@@ -519,6 +557,7 @@ mod tests {
             .fats(Fats::new().total(10.0))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(20.0)))
             .proteins(proteins(5.0))
+            .minerals(1.0)
             .artificial_sweeteners(ArtificialSweeteners::new().aspartame(3.0))
             .others(2.0);
         assert!(s.validate().is_ok());

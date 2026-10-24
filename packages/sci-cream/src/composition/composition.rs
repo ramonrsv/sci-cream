@@ -20,7 +20,10 @@ use wasm_bindgen::prelude::*;
 
 #[cfg(doc)]
 use crate::{
-    composition::{ArtificialSweeteners, Carbohydrates, Emulsifiers, Fibers, Polyols, Stabilizers, Sugars},
+    composition::{
+        ArtificialSweeteners, Carbohydrates, Emulsifiers, Fibers, Polyols, SolidsBreakdown, Stabilizers, Sugars,
+    },
+    constants::composition::dairy::milk::STD_MINERALS_IN_MSNF,
     specs::{ChocolateSpec, CompositeSpec},
 };
 
@@ -156,7 +159,8 @@ pub enum CompKey {
     MilkSugars,
     /// Milk Solids Non-Fat Non-Sugar (SNFS), the non-fat non-lactose content of dairy ingredients
     ///
-    /// Includes proteins and minerals; equivalent to [`CompKey::MSNF`] less [`CompKey::MilkSugars`].
+    /// Includes proteins, [`CompKey::MilkProteins`], and minerals, [`CompKey::MilkMinerals`];
+    /// equivalent to [`CompKey::MSNF`] less [`CompKey::MilkSugars`].
     MilkSNFS,
     /// Protein content from milk ingredients, i.e. casein and whey proteins.
     MilkProteins,
@@ -174,6 +178,12 @@ pub enum CompKey {
     /// [emulsification](crate::docs#emulsifier-whey-proteins) and
     /// [stabilization](crate::docs#stabilizer-whey-proteins) for more details.
     Whey,
+    /// Mineral content of milk ingredients, measured as ash, see [`SolidsBreakdown::minerals`]
+    ///
+    /// These are the milk salts, mostly of calcium and potassium, which make up
+    /// [`STD_MINERALS_IN_MSNF`] of plain milk solids non-fat. They contribute to the freezing point
+    /// depression of ice cream mixes, see [`CompKey::PACmlk`].
+    MilkMinerals,
 
     // Cacao
     // -----
@@ -270,6 +280,10 @@ pub enum CompKey {
     TotalSNFS,
     /// Total Proteins, sum of all protein components
     TotalProteins,
+    /// Total Minerals, measured as ash, sum of the mineral content of all sources
+    ///
+    /// This includes [`CompKey::MilkMinerals`], the ash of cocoa solids, and added salt.
+    TotalMinerals,
     /// Water content, `100 - TotalSolids - Alcohol.by_weight`
     Water,
 
@@ -349,11 +363,10 @@ pub enum CompKey {
     // Salt
     // ----
     //
-    /// Total salt content, excluding salts from milk ingredients, as tracked in [`Micro::salt`]
+    /// Total salt content from salt added as an ingredient, as tracked in [`Micro::salt`]
     ///
-    /// This includes any salt added as an ingredient, as well as any salt that is part of other
-    /// ingredients, e.g. the salt in chocolate or nut ingredients, but excludes salts naturally
-    /// present in milk ingredients, which are accounted for separately in [`CompKey::MilkSNFS`] .
+    /// This excludes the salts that occur naturally in other ingredients, e.g. in milk, chocolate,
+    /// or nuts; milk's are accounted for separately in [`CompKey::MilkMinerals`].
     ///
     /// Note that this is a subset of [`CompKey::TotalSolids`].
     Salt,
@@ -612,6 +625,7 @@ impl Composition {
             CompKey::MilkProteins => self.solids.milk.proteins.total(),
             CompKey::Casein => self.solids.milk.proteins.casein,
             CompKey::Whey => self.solids.milk.proteins.whey,
+            CompKey::MilkMinerals => self.solids.milk.minerals,
 
             CompKey::CacaoSolids => self.solids.cocoa.total(),
             CompKey::CocoaButter => self.solids.cocoa.fats.total,
@@ -636,6 +650,7 @@ impl Composition {
             CompKey::TotalSNF => self.solids.all().snf(),
             CompKey::TotalSNFS => self.solids.all().snfs(),
             CompKey::TotalProteins => self.solids.all().proteins.total,
+            CompKey::TotalMinerals => self.solids.all().minerals,
 
             CompKey::Water => self.water(),
 
@@ -994,11 +1009,13 @@ mod tests {
             (CompKey::MilkProteins, 3.3075),
             (CompKey::Casein, 2.646),
             (CompKey::Whey, 0.6615),
+            (CompKey::MilkMinerals, 0.7056),
             (CompKey::MilkSolids, 10.82),
             (CompKey::TotalFats, 2.0),
             (CompKey::TotalSNF, 8.82),
             (CompKey::TotalSNFS, 4.0131),
             (CompKey::TotalProteins, 3.3075),
+            (CompKey::TotalMinerals, 0.7056),
             (CompKey::TotalSolids, 10.82),
             (CompKey::Water, 89.18),
             (CompKey::Lactose, 4.8069),
@@ -1033,23 +1050,27 @@ mod tests {
             .fats(Fats::new().total(4.0).saturated(2.6).trans(0.14))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(5.0)))
             .proteins(MilkProteins::new().casein(2.4).whey(0.6))
-            .others(1.0);
+            .minerals(0.7)
+            .others(0.3);
 
         let egg = SolidsBreakdown::new()
             .fats(Fats::new().total(2.0).saturated(0.56).trans(0.1))
             .proteins(EggProteins::new().yolk(1.0))
-            .others(1.0);
+            .minerals(0.2)
+            .others(0.8);
 
         let cocoa = SolidsBreakdown::new()
             .fats(Fats::new().total(3.0).saturated(1.8).trans(0.2))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(2.0)))
             .proteins(SimpleProteins::from_total(1.0))
-            .others(1.0);
+            .minerals(0.4)
+            .others(0.6);
 
         let nut = SolidsBreakdown::new()
             .fats(Fats::new().total(2.0).saturated(0.18).trans(0.3))
             .proteins(SimpleProteins::from_total(1.0))
-            .others(1.0);
+            .minerals(0.1)
+            .others(0.9);
 
         let other = SolidsBreakdown::new()
             .fats(Fats::new().total(1.0).saturated(0.5).trans(0.4))
@@ -1076,7 +1097,8 @@ mod tests {
                     .mogrosides(0.15),
             )
             .proteins(SimpleProteins::from_total(0.5))
-            .others(0.5);
+            .minerals(0.3)
+            .others(0.2);
 
         let c = Composition::new()
             .energy(100.0)
@@ -1131,6 +1153,7 @@ mod tests {
             (CompKey::MilkProteins,         3.0),
             (CompKey::Casein,               2.4),
             (CompKey::Whey,                 0.6),
+            (CompKey::MilkMinerals,         0.7),
             (CompKey::MilkSolids,          13.0),
             // Cocoa
             (CompKey::CocoaButter,          3.0),
@@ -1155,6 +1178,7 @@ mod tests {
             (CompKey::TotalSNF,            26.5),  // 38.5 - 12.0
             (CompKey::TotalSNFS,           14.5),  // 26.5 - 12.0 (TotalSugars)
             (CompKey::TotalProteins,        6.5),   // 3+1+1+1+0.5
+            (CompKey::TotalMinerals,        1.7),   // 0.7+0.2+0.4+0.1+0.3
             (CompKey::TotalSolids,         38.5),  // 13+4+7+4+10.5
             (CompKey::Water,               59.0),  // 100 - 38.5 - 2.5
             // Carbohydrates
