@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792914567625,
+  "lastUpdate": 1792914580232,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -583984,6 +583984,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.99%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "df80cf86d84e97e27d3b6acbf3769828f7853f49",
+          "message": "Add ripe and overripe banana fruit specs\n\nBoth entries come from USDA FoodData Central's Foundation Foods\nbananas, \"ripe and slightly ripe\" (1105314) and \"overripe\" (1105073).\nFiber is the AOAC 991.43 total dietary fiber, not the AOAC 2011.25\nfigure, which also counts resistant starch and non-digestible\noligosaccharides. Energy uses the Atwater general factors, carbohydrate\nis by difference, and the sugars are the sucrose, glucose, and fructose\nthe records report, in the Sugars field order.\n\nRegenerates min/fruits.json and the docs link map for the new entries.\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
+          "timestamp": "2026-10-25T03:31:27-04:00",
+          "tree_id": "3d906340139f22a1013e7949806bf5f59c28d0b7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/df80cf86d84e97e27d3b6acbf3769828f7853f49"
+        },
+        "date": 1792914511940,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 45275,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 433154,
+            "range": "±0.48%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31163,
+            "range": "±1.10%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 327928,
+            "range": "±1.14%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
