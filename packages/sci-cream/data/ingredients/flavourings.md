@@ -149,6 +149,35 @@ fresh](https://fdc.nal.usda.gov/food-details/172232/nutrients).
 { "for": "USDA Fresh Basil" }
 ```
 
+## USDA Ground Nutmeg
+
+```json
+{
+  "category": "Flavouring",
+  "FruitSpec": {
+    "water": 6.23,
+    "energy": 525,
+    "protein": 5.84,
+    "fat": 36.3,
+    "fiber": 20.8,
+    "carbohydrate": 49.3,
+    "sugars": { "glucose": 1, "fructose": 1, "sucrose": 1 }
+  }
+}
+```
+
+USDA FoodData Central - SR Legacy - [Spices, nutmeg,
+ground](https://fdc.nal.usda.gov/food-details/171326/nutrients).
+
+'Total Sugars' is listed as 2.99g with no breakdown, so assume equal parts glucose, fructose, and
+sucrose, rounded to two decimal places.
+
+## Ground Nutmeg
+
+```json
+{ "for": "USDA Ground Nutmeg" }
+```
+
 ## Nielsen-Massey Pure Vanilla Extract
 
 ```json

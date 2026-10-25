@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 398  (non-alias: 335, independent: 321)
+"total: 400  (non-alias: 336, independent: 322)
 
             0% Milk
             1% Milk
@@ -159,6 +159,7 @@ exports[`Embedded spec entries 1`] = `
             Goff & Hartel Whole Milk Powder
 [alias]     Grand Marnier
             Grand Marnier Cordon Rouge
+[alias]     Ground Nutmeg
             Guar Gum
             Gum Arabic
 [alias]     HFCS 42
@@ -341,6 +342,7 @@ exports[`Embedded spec entries 1`] = `
             USDA Frozen Pasteurized Raw Egg White
             USDA Frozen Pasteurized Raw Egg Yolk
             USDA Frozen Pasteurized Raw Whole Egg
+            USDA Ground Nutmeg
             USDA Half and Half Cream
             USDA Heavy Cream
             USDA Imitation Vanilla Extract
