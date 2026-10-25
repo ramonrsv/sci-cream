@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792731022004,
+  "lastUpdate": 1792893488303,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -674160,6 +674160,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2084.14,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5ae47c93b719abcf5a69f13341263ab4de5721e1",
+          "message": "Track minerals apart from other solids\n\nSolidsBreakdown gains a minerals field, the ash, read through the new\nMilkMinerals and TotalMinerals keys. Dairy specs model the minerals\nfirst, capped at what their sugars and protein leave, with whey's\nunaccounted solids as other solids; cocoa ash and added salt count too.\n\nSpec sheets take a listed ash as their minerals, and where their listed\nsolids overshoot 100 g, the water gives way. Without an ash, the model\napplies, capped so that it never lowers the listed water.\n\nothers_from_total tolerates rounding within COMPOSITION_EPSILON. The\nUSDA reconciliation reads ash from TotalMinerals, compare_specs checks\nMilkMinerals, and a TODO tracks egg, nut, and fruit minerals.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-24T20:59:15-04:00",
+          "tree_id": "99ab600e23bf20142a6b37f2ed8cd77e046ab3c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5ae47c93b719abcf5a69f13341263ab4de5721e1"
+        },
+        "date": 1792893420616,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1176.49,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.58,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1890.14,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.02,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.4,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2098.34,
             "unit": "KB"
           }
         ]
