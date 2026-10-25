@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792914989340,
+  "lastUpdate": 1792915094915,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -542836,6 +542836,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 744.13,
             "range": "17.55",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "df80cf86d84e97e27d3b6acbf3769828f7853f49",
+          "message": "Add ripe and overripe banana fruit specs\n\nBoth entries come from USDA FoodData Central's Foundation Foods\nbananas, \"ripe and slightly ripe\" (1105314) and \"overripe\" (1105073).\nFiber is the AOAC 991.43 total dietary fiber, not the AOAC 2011.25\nfigure, which also counts resistant starch and non-digestible\noligosaccharides. Energy uses the Atwater general factors, carbohydrate\nis by difference, and the sugars are the sucrose, glucose, and fructose\nthe records report, in the Sugars field order.\n\nRegenerates min/fruits.json and the docs link map for the new entries.\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
+          "timestamp": "2026-10-25T03:31:27-04:00",
+          "tree_id": "3d906340139f22a1013e7949806bf5f59c28d0b7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/df80cf86d84e97e27d3b6acbf3769828f7853f49"
+        },
+        "date": 1792915055575,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 32.13,
+            "range": "4.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 35.63,
+            "range": "2.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 41.13,
+            "range": "2.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1677.63,
+            "range": "51.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 225.5,
+            "range": "3.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 239.38,
+            "range": "4.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 249.13,
+            "range": "3.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 12052,
+            "range": "217.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 719.38,
+            "range": "30.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 34.75,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 37.63,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 26.63,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 28.5,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 93.75,
+            "range": "4.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 45.88,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 35.73,
+            "range": "1.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.21,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 471.88,
+            "range": "11.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 520.13,
+            "range": "48.89",
             "unit": "ms"
           }
         ]
