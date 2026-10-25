@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792893507631,
+  "lastUpdate": 1792893512851,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -654477,6 +654477,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.83,
             "range": "0.25",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5ae47c93b719abcf5a69f13341263ab4de5721e1",
+          "message": "Track minerals apart from other solids\n\nSolidsBreakdown gains a minerals field, the ash, read through the new\nMilkMinerals and TotalMinerals keys. Dairy specs model the minerals\nfirst, capped at what their sugars and protein leave, with whey's\nunaccounted solids as other solids; cocoa ash and added salt count too.\n\nSpec sheets take a listed ash as their minerals, and where their listed\nsolids overshoot 100 g, the water gives way. Without an ash, the model\napplies, capped so that it never lowers the listed water.\n\nothers_from_total tolerates rounding within COMPOSITION_EPSILON. The\nUSDA reconciliation reads ash from TotalMinerals, compare_specs checks\nMilkMinerals, and a TODO tracks egg, nut, and fruit minerals.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-24T20:59:15-04:00",
+          "tree_id": "99ab600e23bf20142a6b37f2ed8cd77e046ab3c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5ae47c93b719abcf5a69f13341263ab4de5721e1"
+        },
+        "date": 1792893472118,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 43.19,
+            "range": "5.92",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 10.56,
+            "range": "0.52",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 10.53,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 112,
+            "range": "8.00",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.35,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 112,
+            "range": "8.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 41.09,
+            "range": "5.42",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.76,
+            "range": "0.20",
             "unit": "ms"
           }
         ]
