@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792893488303,
+  "lastUpdate": 1792893499370,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -627019,6 +627019,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1091.29,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5ae47c93b719abcf5a69f13341263ab4de5721e1",
+          "message": "Track minerals apart from other solids\n\nSolidsBreakdown gains a minerals field, the ash, read through the new\nMilkMinerals and TotalMinerals keys. Dairy specs model the minerals\nfirst, capped at what their sugars and protein leave, with whey's\nunaccounted solids as other solids; cocoa ash and added salt count too.\n\nSpec sheets take a listed ash as their minerals, and where their listed\nsolids overshoot 100 g, the water gives way. Without an ash, the model\napplies, capped so that it never lowers the listed water.\n\nothers_from_total tolerates rounding within COMPOSITION_EPSILON. The\nUSDA reconciliation reads ash from TotalMinerals, compare_specs checks\nMilkMinerals, and a TODO tracks egg, nut, and fruit minerals.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-24T20:59:15-04:00",
+          "tree_id": "99ab600e23bf20142a6b37f2ed8cd77e046ab3c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5ae47c93b719abcf5a69f13341263ab4de5721e1"
+        },
+        "date": 1792893432100,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 933.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 702.15,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 870.6,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 712.43,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 880.88,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 684.66,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.1,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 686.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 854.59,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1093.72,
             "unit": "KB"
           },
           {
