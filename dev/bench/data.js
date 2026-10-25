@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792918947079,
+  "lastUpdate": 1792918967510,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -584843,6 +584843,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.14%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f3bbd2c8d16808321e8df71d2c851ee9b291fd63",
+          "message": "Add ground nutmeg flavouring spec\n\nComposition comes from USDA FoodData Central's SR Legacy \"Spices,\nnutmeg, ground\" (171326), modeled as a FruitSpec like the other herbs\nand spices. The record lists only a Total Sugars of 2.99 g with no\nbreakdown, so, as for the lemon peel, it is split into equal parts\nglucose, fructose, and sucrose. The Ground Nutmeg alias points to it.\n\nRegenerates min/flavourings.json and the docs link map for the new\nentries.\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
+          "timestamp": "2026-10-25T03:54:48-04:00",
+          "tree_id": "5dd8692ba77b61c7cbd351a54c77b0c9b2279dc7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f3bbd2c8d16808321e8df71d2c851ee9b291fd63"
+        },
+        "date": 1792918898393,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 45817,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 437886,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31610,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 337348,
+            "range": "±1.20%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
