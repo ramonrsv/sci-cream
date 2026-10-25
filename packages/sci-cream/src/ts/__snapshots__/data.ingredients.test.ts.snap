@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 396  (non-alias: 333, independent: 319)
+"total: 398  (non-alias: 335, independent: 321)
 
             0% Milk
             1% Milk
@@ -272,6 +272,7 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Orange Essential Oil
 [alias]     Orange Extract
             Organic Valley Organic Whole Milk
+            Overripe Banana
             Palm Oil
             Pectin
 [alias]     Peppermint Essential Oil
@@ -279,6 +280,7 @@ exports[`Embedded spec entries 1`] = `
             Pistachio
             Polysorbate 80
             Purest Natural Cocoa Powder
+            Ripe Banana
             Roasted Pistachio
 [alias]     Rose Essential Oil
             Salt

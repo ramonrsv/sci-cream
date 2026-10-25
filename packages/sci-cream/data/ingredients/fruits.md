@@ -57,3 +57,43 @@ navels](https://fdc.nal.usda.gov/food-details/746771/nutrients).
 
 USDA FoodData Central - SR Legacy - [Lemon juice,
 raw](https://fdc.nal.usda.gov/food-details/167747/nutrients).
+
+## Ripe Banana
+
+```json
+{
+  "category": "Fruit",
+  "FruitSpec": {
+    "water": 75.3,
+    "energy": 98,
+    "protein": 0.74,
+    "fat": 0.29,
+    "fiber": 1.7,
+    "carbohydrate": 23,
+    "sugars": { "glucose": 5.55, "fructose": 6.09, "sucrose": 4.18 }
+  }
+}
+```
+
+USDA FoodData Central - Foundation - [Bananas, ripe and slightly ripe,
+raw](https://fdc.nal.usda.gov/food-details/1105314/nutrients).
+
+## Overripe Banana
+
+```json
+{
+  "category": "Fruit",
+  "FruitSpec": {
+    "water": 78.3,
+    "energy": 85,
+    "protein": 0.73,
+    "fat": 0.22,
+    "fiber": 1.7,
+    "carbohydrate": 20.1,
+    "sugars": { "glucose": 7, "fructose": 6.7, "sucrose": 2.1 }
+  }
+}
+```
+
+USDA FoodData Central - Foundation - [Bananas, overripe,
+raw](https://fdc.nal.usda.gov/food-details/1105073/nutrients).
