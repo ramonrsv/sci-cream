@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792918920056,
+  "lastUpdate": 1792918947079,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -676741,6 +676741,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2099.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f3bbd2c8d16808321e8df71d2c851ee9b291fd63",
+          "message": "Add ground nutmeg flavouring spec\n\nComposition comes from USDA FoodData Central's SR Legacy \"Spices,\nnutmeg, ground\" (171326), modeled as a FruitSpec like the other herbs\nand spices. The record lists only a Total Sugars of 2.99 g with no\nbreakdown, so, as for the lemon peel, it is split into equal parts\nglucose, fructose, and sucrose. The Ground Nutmeg alias points to it.\n\nRegenerates min/flavourings.json and the docs link map for the new\nentries.\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
+          "timestamp": "2026-10-25T03:54:48-04:00",
+          "tree_id": "5dd8692ba77b61c7cbd351a54c77b0c9b2279dc7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f3bbd2c8d16808321e8df71d2c851ee9b291fd63"
+        },
+        "date": 1792918890206,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1177.12,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1892.35,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.88,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2100.66,
             "unit": "KB"
           }
         ]
