@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792893919386,
+  "lastUpdate": 1792894325785,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -541831,6 +541831,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 520.5,
             "range": "11.29",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5ae47c93b719abcf5a69f13341263ab4de5721e1",
+          "message": "Track minerals apart from other solids\n\nSolidsBreakdown gains a minerals field, the ash, read through the new\nMilkMinerals and TotalMinerals keys. Dairy specs model the minerals\nfirst, capped at what their sugars and protein leave, with whey's\nunaccounted solids as other solids; cocoa ash and added salt count too.\n\nSpec sheets take a listed ash as their minerals, and where their listed\nsolids overshoot 100 g, the water gives way. Without an ash, the model\napplies, capped so that it never lowers the listed water.\n\nothers_from_total tolerates rounding within COMPOSITION_EPSILON. The\nUSDA reconciliation reads ash from TotalMinerals, compare_specs checks\nMilkMinerals, and a TODO tracks egg, nut, and fruit minerals.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-24T20:59:15-04:00",
+          "tree_id": "99ab600e23bf20142a6b37f2ed8cd77e046ab3c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5ae47c93b719abcf5a69f13341263ab4de5721e1"
+        },
+        "date": 1792894244366,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.63,
+            "range": "2.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52,
+            "range": "3.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 60.75,
+            "range": "3.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2637.75,
+            "range": "41.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 365.38,
+            "range": "4.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 374.63,
+            "range": "4.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 391,
+            "range": "12.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 18977,
+            "range": "61.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 934.75,
+            "range": "11.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 55.88,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.63,
+            "range": "3.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 43.63,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46.25,
+            "range": "2.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 136.5,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 100,
+            "range": "3.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 64.54,
+            "range": "0.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 47.64,
+            "range": "0.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 667.13,
+            "range": "7.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 744.13,
+            "range": "17.55",
             "unit": "ms"
           }
         ]
