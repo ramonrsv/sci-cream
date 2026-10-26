@@ -50,7 +50,7 @@ import type {
   SavedRecipeVersionJson,
 } from "@/lib/data/recipes";
 
-/** Wrapper id, and the root of the persisted keys for this search's filter state. */
+/** Root of this search's persisted filter and retained query keys; also its wrapper id. */
 const RECIPE_SEARCH_ID = "recipe-search";
 
 /** Sources of recipes; re-export of {@link EntitySource} for backwards compatibility */

@@ -3,6 +3,7 @@
 import { ReactNode, useMemo, useState } from "react";
 
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { useRetainedState } from "@/lib/hooks/use-retained-state";
 import { ListDetailShell } from "@/app/_elements/list-detail-shell";
 
 /** Sources of entries displayed by an {@link EntitySearch}, including `All` */
@@ -80,7 +81,11 @@ export interface EntitySearchProps<E> {
    * EditableComments) for a consistent look across entity types.
    */
   renderDetailPanel: (e: Tagged<E>) => ReactNode;
-  /** Optional id for the outermost wrapper, for tests/CSS targeting */
+  /**
+   * Optional identifier for this search: the root of the keys that persist its source filter
+   * (`localStorage`) and retain its query across navigation (in memory), so without one neither is
+   * kept. Also the `id` of the outermost wrapper, for tests/CSS targeting.
+   */
   id?: string;
 }
 
@@ -106,7 +111,7 @@ export function EntitySearch<E>({
   renderDetailPanel,
   id,
 }: EntitySearchProps<E>) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useRetainedState<string>(leafKey(id, "query"), "");
   const [source, setSource] = usePersistedState<EntitySource>(
     leafKey(id, "source"),
     EntitySource.All,

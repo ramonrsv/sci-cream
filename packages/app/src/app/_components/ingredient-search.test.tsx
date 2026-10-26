@@ -12,6 +12,7 @@ import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { setKeyFilterSelect } from "@/__tests__/unit/util";
 import { getSelectedOptionLabel } from "@/__tests__/unit/select";
+import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -373,6 +374,18 @@ describe("IngredientSearch", () => {
         target: { value: "zzz-nope" },
       });
       expect(screen.getByText("No ingredients found.")).toBeInTheDocument();
+    });
+
+    it("keeps the query after leaving and returning", () => {
+      const placeholder = "Search by name or category…";
+      const { leaveAndReturn } = renderWithRetainedState(<IngredientSearch />);
+      fireEvent.change(screen.getByPlaceholderText(placeholder), { target: { value: "sucrose" } });
+
+      leaveAndReturn();
+
+      expect(screen.getByPlaceholderText(placeholder)).toHaveValue("sucrose");
+      expect(screen.getByText("Sucrose")).toBeInTheDocument();
+      expect(screen.queryByText("1% Milk")).not.toBeInTheDocument();
     });
   });
 

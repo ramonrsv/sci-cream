@@ -28,6 +28,7 @@ import {
 } from "@/app/_elements/selects/rating-filter-select";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { setQtyToggle } from "@/__tests__/unit/util";
+import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -409,6 +410,20 @@ describe("RecipeSearch", () => {
         target: { value: "zzz-no-match" },
       });
       expect(screen.getByText("No recipes found.")).toBeInTheDocument();
+    });
+
+    it("keeps the query after leaving and returning", () => {
+      const placeholder = "Search by name, author, or ingredient…";
+      const { leaveAndReturn } = renderWithRetainedState(<RecipeSearch />);
+      fireEvent.change(screen.getByPlaceholderText(placeholder), {
+        target: { value: "chocolate" },
+      });
+
+      leaveAndReturn();
+
+      expect(screen.getByPlaceholderText(placeholder)).toHaveValue("chocolate");
+      expect(screen.queryByText("Standard Base")).not.toBeInTheDocument();
+      expect(screen.getByText("Chocolate Mix")).toBeInTheDocument();
     });
   });
 

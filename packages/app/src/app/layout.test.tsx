@@ -1,7 +1,9 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+
+import { useRetainedState } from "@/lib/hooks/use-retained-state";
 
 // Mock CSS import — Vite's CSS plugin tries to run PostCSS before vi.mock can intercept,
 // so we need to stub the module at the Vite level via this vi.mock (hoisted before imports).
@@ -38,6 +40,12 @@ vi.mock("@/app/_providers/session-resources-provider", () => ({
 }));
 
 const { default: RootLayout, metadata } = await import("./layout");
+
+/** Text input whose value is retained, standing in for a page that unmounts on navigation. */
+function RetainedProbe() {
+  const [value, setValue] = useRetainedState<string>("layout-probe", "");
+  return <input aria-label="probe" value={value} onChange={(e) => setValue(e.target.value)} />;
+}
 
 // ---------------------------------------------------------------------------
 // RootLayout
@@ -116,6 +124,17 @@ describe("RootLayout", () => {
     expect(body.className).toContain("--font-geist-sans");
     expect(body.className).toContain("--font-geist-mono");
     expect(body.className).toContain("antialiased");
+  });
+
+  it("keeps retained state across a page unmounting and mounting again", () => {
+    const layoutWith = (page: React.ReactNode) => <RootLayout>{page}</RootLayout>;
+    const { rerender } = render(layoutWith(<RetainedProbe />), { container: document });
+    fireEvent.change(screen.getByLabelText("probe"), { target: { value: "kept" } });
+
+    rerender(layoutWith(null));
+    rerender(layoutWith(<RetainedProbe />));
+
+    expect(screen.getByLabelText("probe")).toHaveValue("kept");
   });
 });
 

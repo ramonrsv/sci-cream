@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 
 import { EntitySearch, EntitySource, filterTaggedEntries } from "@/app/_components/entity-search";
+import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -23,9 +24,11 @@ const getId = (e: Entry) => e.name;
 const matchesQuery = (e: Entry, q: string) =>
   e.name.toLowerCase().includes(q) || e.tag.toLowerCase().includes(q);
 
-/** Minimal default render to reduce per-test boilerplate */
-function renderShell(overrides: Partial<React.ComponentProps<typeof EntitySearch<Entry>>> = {}) {
-  return render(
+type ShellOverrides = Partial<React.ComponentProps<typeof EntitySearch<Entry>>>;
+
+/** Minimal default element to reduce per-test boilerplate */
+function shell(overrides: ShellOverrides = {}) {
+  return (
     <EntitySearch<Entry>
       embeddedEntries={[builtinA, builtinB]}
       savedEntries={[savedA, savedB]}
@@ -33,8 +36,13 @@ function renderShell(overrides: Partial<React.ComponentProps<typeof EntitySearch
       matchesQuery={matchesQuery}
       renderDetailPanel={(e) => <div data-testid="panel">panel for {e.name}</div>}
       {...overrides}
-    />,
+    />
   );
+}
+
+/** Render {@link shell} as-is, with no provider */
+function renderShell(overrides: ShellOverrides = {}) {
+  return render(shell(overrides));
 }
 
 // ---------------------------------------------------------------------------
@@ -113,6 +121,7 @@ describe("filterTaggedEntries", () => {
 describe("EntitySearch", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   afterEach(() => {
@@ -198,6 +207,70 @@ describe("EntitySearch", () => {
       renderShell({ id: "test-search" });
       expect(screen.queryByRole("button", { name: /Alpha/ })).not.toBeInTheDocument();
       expect(screen.getByRole("button", { name: /Gamma/ })).toBeInTheDocument();
+    });
+  });
+
+  describe("retained query", () => {
+    const searchInput = () => screen.getByPlaceholderText("Search…");
+    const typeQuery = (value: string) => fireEvent.change(searchInput(), { target: { value } });
+
+    it("restores the query, and the filtering it drives, after leaving and returning", () => {
+      const { leaveAndReturn } = renderWithRetainedState(shell({ id: "test-search" }));
+      typeQuery("Alpha");
+
+      leaveAndReturn();
+
+      expect(searchInput()).toHaveValue("Alpha");
+      expect(screen.getByRole("button", { name: /Alpha/ })).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /Beta/ })).not.toBeInTheDocument();
+    });
+
+    it("keeps a separate query per id", () => {
+      const { leaveAndReturn } = renderWithRetainedState(
+        <>
+          {shell({ id: "search-a" })}
+          {shell({ id: "search-b" })}
+        </>,
+      );
+      fireEvent.change(screen.getAllByPlaceholderText("Search…")[0], {
+        target: { value: "Alpha" },
+      });
+
+      leaveAndReturn();
+
+      const [first, second] = screen.getAllByPlaceholderText("Search…");
+      expect(first).toHaveValue("Alpha");
+      expect(second).toHaveValue("");
+    });
+
+    it("does not retain the query without an id", () => {
+      const { leaveAndReturn } = renderWithRetainedState(shell());
+      typeQuery("Alpha");
+
+      leaveAndReturn();
+
+      expect(searchInput()).toHaveValue("");
+      expect(screen.getByRole("button", { name: /Beta/ })).toBeInTheDocument();
+    });
+
+    it("does not retain the query without a provider", () => {
+      const { unmount } = renderShell({ id: "test-search" });
+      typeQuery("Alpha");
+      unmount();
+
+      renderShell({ id: "test-search" });
+
+      expect(searchInput()).toHaveValue("");
+    });
+
+    it("starts empty under a new provider, as after a reload", () => {
+      const first = renderWithRetainedState(shell({ id: "test-search" }));
+      typeQuery("Alpha");
+      first.unmount();
+
+      renderWithRetainedState(shell({ id: "test-search" }));
+
+      expect(searchInput()).toHaveValue("");
     });
   });
 

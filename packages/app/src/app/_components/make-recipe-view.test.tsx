@@ -30,6 +30,7 @@ import {
 } from "@/__tests__/unit/select";
 import { STORAGE_KEYS, getLocalStorage, setLocalStorage } from "@/lib/local-storage";
 import { CategoryColor } from "@/lib/styles/colors";
+import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
 
 vi.mock("next-auth/react", () => ({ useSession: vi.fn() }));
 vi.mock("@/lib/resources/session", () => ({ useSessionResources: vi.fn() }));
@@ -822,6 +823,71 @@ describe("MakeRecipeView — adding a saved recipe", () => {
 
     expect(screen.queryByRole("combobox", { name: VERSION_SELECT })).not.toBeInTheDocument();
     expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toHaveTextContent(/^100$/);
+  });
+});
+
+describe("MakeRecipeView — searching saved batches", () => {
+  const PLACEHOLDER = "Search saved batches…";
+
+  const makeSaved = (id: number, title: string, recipeName: string): SavedBatchJson => ({
+    id,
+    title,
+    date: "2026-07-01",
+    recipes: [{ name: recipeName, rows: [["Whole Milk", 500]] }],
+    createdAt: "",
+    updatedAt: "",
+  });
+  const VANILLA = makeSaved(1, "Vanilla night", "Vanilla Base");
+  const STRAWBERRY = makeSaved(2, "Strawberry night", "Strawberry Sorbet");
+
+  beforeEach(() => {
+    setSessionEmail("owner@example.com");
+    setSavedBatches([VANILLA, STRAWBERRY]);
+  });
+
+  /** Type `query` into the saved-batch search box. */
+  const search = (query: string) =>
+    fireEvent.change(screen.getByPlaceholderText(PLACEHOLDER), { target: { value: query } });
+
+  /** Expect the list to hold the strawberry batch alone. */
+  const expectOnlyStrawberryListed = () => {
+    expect(screen.getByTestId("batch-list-item-2")).toBeInTheDocument();
+    expect(screen.queryByTestId("batch-list-item-1")).not.toBeInTheDocument();
+  };
+
+  it("narrows the list to the batches matching the query", async () => {
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+
+    search("straw");
+
+    expectOnlyStrawberryListed();
+  });
+
+  it("keeps the query after leaving and returning", async () => {
+    const { leaveAndReturn } = renderWithRetainedState(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+    search("straw");
+
+    leaveAndReturn();
+    await screen.findByTestId("batch-editor");
+
+    expect(screen.getByPlaceholderText(PLACEHOLDER)).toHaveValue("straw");
+    expectOnlyStrawberryListed();
+  });
+
+  it("starts empty under a new provider, as after a reload", async () => {
+    const first = renderWithRetainedState(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+    search("straw");
+    first.unmount();
+
+    renderWithRetainedState(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+
+    expect(screen.getByPlaceholderText(PLACEHOLDER)).toHaveValue("");
+    expect(screen.getByTestId("batch-list-item-1")).toBeInTheDocument();
+    expect(screen.getByTestId("batch-list-item-2")).toBeInTheDocument();
   });
 });
 

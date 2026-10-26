@@ -249,7 +249,9 @@ Each kind of file has a consistent home:
   `tables/`, `selects/`, and `watchers/`, with cross-cutting misc (`popup`, `version-badge`,
   `web-vitals`, `text`, …) at the top level.
 - **`src/app/_providers/`** — app-wide React context providers mounted in the root layout
-  (`GroupByProvider`, `SessionResourcesProvider`); their context + hooks stay JSX-free in `src/lib/`
+  (`GroupByProvider`, `RetainedStateProvider`, `SessionResourcesProvider`); their context + hooks
+  stay JSX-free in `src/lib/`. `useRetainedState` keeps a value in memory across client-side
+  navigation but not a reload (search queries), where `usePersistedState` uses `localStorage`.
 - **Route directories** (`calculator/`, `recipes/`, `make-recipe/`, `share/`, …) hold only
   `page.tsx` and route-special files (`layout.tsx`, `route.ts`) — no ad-hoc component files. The
   `layout.tsx`, `navbar.tsx`, `globals.css`, and `favicon.ico` at the `src/app` root are the app

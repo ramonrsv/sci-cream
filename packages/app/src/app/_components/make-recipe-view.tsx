@@ -34,6 +34,7 @@ import { DATA_ERROR_MESSAGES, type DataError, type Result } from "@/lib/result";
 import { useSessionResources } from "@/lib/resources/session";
 import { useChecklistState } from "@/lib/hooks/use-checklist-state";
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { useRetainedState } from "@/lib/hooks/use-retained-state";
 import { verify } from "@/lib/util";
 import { BatchBuilder } from "@/app/_elements/tables/batch-builder";
 import {
@@ -47,6 +48,9 @@ import {
   readSavedSources,
   selectionFromSavedBatch,
 } from "@/lib/batch/builder";
+
+/** Key retaining the saved-batch search query across navigation; memory only, not `localStorage` */
+const BATCH_QUERY_KEY = "make-recipe:batch-query";
 
 /** Decode progress of the URL-fragment payload; absent fragment means owner mode. */
 type ViewState =
@@ -100,7 +104,7 @@ export function MakeRecipeView() {
     makeEmptySelection(),
     { isValid: isInlineSelection },
   );
-  const [batchQuery, setBatchQuery] = useState("");
+  const [batchQuery, setBatchQuery] = useRetainedState<string>(BATCH_QUERY_KEY, "");
   const favouritesFilterState = useFavouritesFilterState(STORAGE_KEYS.makeRecipeBatch);
   const [favouritesOnly] = favouritesFilterState;
 

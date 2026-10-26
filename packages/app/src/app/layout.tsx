@@ -10,6 +10,7 @@ import { ThemeProvider } from "next-themes";
 import { Navbar } from "@/app/navbar";
 import { SessionResourcesProvider } from "@/app/_providers/session-resources-provider";
 import { GroupByProvider } from "@/app/_providers/group-by-provider";
+import { RetainedStateProvider } from "@/app/_providers/retained-state-provider";
 import { WebVitals } from "@/app/_elements/web-vitals";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -29,7 +30,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <SessionResourcesProvider>
             <ThemeProvider attribute="class">
               <GroupByProvider>
-                <Navbar>{children}</Navbar>
+                <RetainedStateProvider>
+                  <Navbar>{children}</Navbar>
+                </RetainedStateProvider>
               </GroupByProvider>
             </ThemeProvider>
           </SessionResourcesProvider>
