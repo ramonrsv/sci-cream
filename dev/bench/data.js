@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793001860885,
+  "lastUpdate": 1793001865964,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -586311,6 +586311,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.20%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "052e0f55384d616c70013f4f2d437985c759c94a",
+          "message": "Retain search queries across navigation\n\nThe Recipes, Ingredients, and Make saved-batch searches lost their\nquery whenever the page unmounted, such as on a trip to the calculator\nand back. They now keep it in memory, so it survives client-side\nnavigation but not a reload. The existing filters still persist in\nlocalStorage.\n\nuseRetainedState is a drop-in useState over a Map owned by the new\nRetainedStateProvider, mounted in the root layout. The retained value\nseeds the initial state, so a remount renders it on the first frame\ninstead of flashing the unfiltered list. Without a provider, or without\na key (EntitySearch with no id), it is a plain useState.\n\nTests cover the hook, the provider, the layout wiring, and each search,\nincluding Make's saved-batch search, which had no tests. A Playwright\nspec drives the real sidebar navigation and a reload. CLAUDE.md lists\nthe new provider, and the id comments now lead with the keys it roots.\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
+          "timestamp": "2026-10-26T03:22:44-04:00",
+          "tree_id": "9f2a6d6807213b8052de0d3ed579c1b708409fa4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/052e0f55384d616c70013f4f2d437985c759c94a"
+        },
+        "date": 1793001789418,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47115,
+            "range": "±1.14%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 446049,
+            "range": "±0.54%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 30318,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 338164,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
