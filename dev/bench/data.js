@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793002652154,
+  "lastUpdate": 1793002898954,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -545866,6 +545866,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 705.63,
             "range": "7.50",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "052e0f55384d616c70013f4f2d437985c759c94a",
+          "message": "Retain search queries across navigation\n\nThe Recipes, Ingredients, and Make saved-batch searches lost their\nquery whenever the page unmounted, such as on a trip to the calculator\nand back. They now keep it in memory, so it survives client-side\nnavigation but not a reload. The existing filters still persist in\nlocalStorage.\n\nuseRetainedState is a drop-in useState over a Map owned by the new\nRetainedStateProvider, mounted in the root layout. The retained value\nseeds the initial state, so a remount renders it on the first frame\ninstead of flashing the unfiltered list. Without a provider, or without\na key (EntitySearch with no id), it is a plain useState.\n\nTests cover the hook, the provider, the layout wiring, and each search,\nincluding Make's saved-batch search, which had no tests. A Playwright\nspec drives the real sidebar navigation and a reload. CLAUDE.md lists\nthe new provider, and the id comments now lead with the keys it roots.\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
+          "timestamp": "2026-10-26T03:22:44-04:00",
+          "tree_id": "9f2a6d6807213b8052de0d3ed579c1b708409fa4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/052e0f55384d616c70013f4f2d437985c759c94a"
+        },
+        "date": 1793002831227,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 48.75,
+            "range": "5.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 51.38,
+            "range": "3.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 65.75,
+            "range": "7.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2451,
+            "range": "50.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 376.5,
+            "range": "3.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 392.25,
+            "range": "4.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 409.88,
+            "range": "7.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19381.88,
+            "range": "61.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 932,
+            "range": "18.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.75,
+            "range": "1.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.13,
+            "range": "2.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.88,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 125.13,
+            "range": "3.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 86.38,
+            "range": "3.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.36,
+            "range": "1.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 43.41,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 643.25,
+            "range": "7.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 723.5,
+            "range": "17.46",
             "unit": "ms"
           }
         ]
