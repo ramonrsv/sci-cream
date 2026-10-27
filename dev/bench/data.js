@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793002898954,
+  "lastUpdate": 1793078132526,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -680577,6 +680577,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/052e0f55384d616c70013f4f2d437985c759c94a"
         },
         "date": 1793001873413,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1177.12,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1892.35,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.88,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2100.66,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a86fdf73e12e00ca93f0a979645ecea7e9c8b782",
+          "message": "Retain selected recipe slots across navigation\n\nLoading a recipe opened the calculator at /calculator?slot=N. The param\nstayed in the history entry, so Back and Forward re-applied it over\nwhichever slot the user had picked since. Loading now sets the editor's\nslot in the retained store before navigating, through the new\nuseOpenCalculator hook and useRetainedStateSetter, and the URL carries\nno slot.\n\nThe slots selected in the recipe editor and the composition breakdown,\nand the Load target pickers on /recipes and /share, move from\nlocalStorage to retained state. They survive client-side navigation but\nnot a reload, so a reload can't leave a view or a Load silently on a\nreference slot. Values left in localStorage are ignored.\n\nSTORAGE_KEYS now lists the roots of both stores, since one root can\nhold persisted and retained leaves, with section headers marking each\ngroup. It gains the recipe and ingredient search roots, whose\nlocalStorage leaves were unlisted, and replaces the local key\nconstants. The saved-batch query moves under the make-recipe-batch\nroot.\n\nTests cover the new hooks, the retained slot in each view, and each\npage's handoff to the calculator; the tests of ?slot= parsing and of\nlocalStorage slot persistence go with them. A Playwright spec drives\nLoad, Back, the sidebar, and a reload. e2e specs read a select's label\nthrough a new getSelectedOptionLabel helper instead of option:checked,\nand navigateViaSidebar moves into the shared e2e utils. CLAUDE.md\ndescribes the handoff.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-27T00:35:10-04:00",
+          "tree_id": "4583fd78edba9f5e2cdb96d4506ee0353dafc2bd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a86fdf73e12e00ca93f0a979645ecea7e9c8b782"
+        },
+        "date": 1793078064977,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
