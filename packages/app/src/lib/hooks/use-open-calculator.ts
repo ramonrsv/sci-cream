@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { recipeIdxKey } from "@/app/_elements/selects/recipe-select";
 import { useRetainedStateSetter } from "@/lib/hooks/use-retained-state";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 /**
  * Returns a function that opens the calculator with its recipe editor on `slot`.

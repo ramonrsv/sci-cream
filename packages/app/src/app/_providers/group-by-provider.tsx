@@ -1,7 +1,7 @@
 "use client";
 
 import { GroupBy, GroupByContext, isGroupBy } from "@/lib/group-by";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
 
 /**

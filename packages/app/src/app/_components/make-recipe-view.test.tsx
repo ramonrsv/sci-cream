@@ -28,7 +28,8 @@ import {
   getSelectedOptionLabelByLabel,
   selectOptionByLabel,
 } from "@/__tests__/unit/select";
-import { STORAGE_KEYS, getLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { CategoryColor } from "@/lib/styles/colors";
 import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
 

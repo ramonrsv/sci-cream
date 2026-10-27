@@ -4,7 +4,8 @@ import {
   categoryColorFromName,
   categoryColorName,
 } from "@/lib/styles/colors";
-import { STORAGE_KEYS, getLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 /**
  * The owner's container colors in the order recipes take them. Learned from their picks, so the

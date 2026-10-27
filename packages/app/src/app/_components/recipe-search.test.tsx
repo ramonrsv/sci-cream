@@ -26,7 +26,7 @@ import {
   RATING_FILTER_SHORT_LABELS,
   RatingFilter,
 } from "@/app/_elements/selects/rating-filter-select";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { setQtyToggle } from "@/__tests__/unit/util";
 import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
 

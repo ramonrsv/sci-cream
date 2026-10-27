@@ -14,7 +14,8 @@ import {
   todayIsoDate,
   touchChecklist,
 } from "./batch";
-import { STORAGE_KEYS, getLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { CATEGORY_COLORS, CategoryColor } from "@/lib/styles/colors";
 
 /** A two-recipe batch sharing one ingredient, so merging and totals are exercised by default. */

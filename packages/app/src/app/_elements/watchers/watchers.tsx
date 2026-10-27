@@ -59,8 +59,8 @@ import {
   resolveStatusColor,
   useColorModeState,
 } from "@/app/_elements/selects/color-toggle-select";
-import { STORAGE_KEYS } from "@/lib/local-storage";
-import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { leafKey, STORAGE_KEYS } from "@/lib/storage-keys";
+import { usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { STATE_VAL, STATE_SET, verify } from "@/lib/util";
 

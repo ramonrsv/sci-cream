@@ -26,14 +26,14 @@ import {
 } from "@/lib/batch/share";
 import { type Batch, batchChecklistKey, todayIsoDate, touchChecklist } from "@/lib/batch/batch";
 import { deleteUserBatch, setUserBatchFavourite, type SavedBatchJson } from "@/lib/data/batches";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { leafKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { ActionError } from "@/app/_elements/action-error";
 import { useSignedIn } from "@/lib/hooks/use-signed-in";
 import { DATA_ERROR_MESSAGES, type DataError, type Result } from "@/lib/result";
 import { useSessionResources } from "@/lib/resources/session";
 import { useChecklistState } from "@/lib/hooks/use-checklist-state";
-import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { useRetainedState } from "@/lib/hooks/use-retained-state";
 import { verify } from "@/lib/util";
 import { BatchBuilder } from "@/app/_elements/tables/batch-builder";

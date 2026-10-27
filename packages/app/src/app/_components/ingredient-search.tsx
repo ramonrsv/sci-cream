@@ -17,7 +17,7 @@ import { DetailPanelHeader } from "@/app/_components/detail-panel";
 import { CompositionView } from "@/app/_elements/tables/composition";
 import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm";
 import { STATE_VAL } from "@/lib/util";
 import { JSON_VIEW_PROPS } from "@/lib/styles/json-view";

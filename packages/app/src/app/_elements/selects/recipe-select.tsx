@@ -3,7 +3,7 @@
 import { NotebookText } from "lucide-react";
 
 import { Recipe } from "@/lib/recipe/recipe";
-import { leafKey } from "@/lib/hooks/use-persisted-state";
+import { leafKey } from "@/lib/storage-keys";
 import { useRetainedState } from "@/lib/hooks/use-retained-state";
 import { SELECT_ICON_SIZE } from "@/lib/styles/sizes";
 

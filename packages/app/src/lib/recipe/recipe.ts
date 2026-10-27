@@ -1,4 +1,5 @@
-import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
+import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import { roundToStep, standardInputStepByPercent, verify } from "@/lib/util";
 

@@ -2,7 +2,8 @@
 
 import { Star } from "lucide-react";
 
-import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { leafKey } from "@/lib/storage-keys";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 /**

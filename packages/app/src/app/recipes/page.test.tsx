@@ -23,7 +23,7 @@ import { useSessionResources, type SessionResources } from "@/lib/resources/sess
 import type { WasmResourcesState } from "@/lib/resources/wasm";
 
 import RecipesPage from "./page";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 // ---------------------------------------------------------------------------
 // Mocks

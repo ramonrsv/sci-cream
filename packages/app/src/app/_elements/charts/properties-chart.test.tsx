@@ -44,7 +44,7 @@ import {
   prop_key_as_short_str,
 } from "@workspace/sci-cream";
 
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 import { RecipeID } from "@/__tests__/assets";
 import {

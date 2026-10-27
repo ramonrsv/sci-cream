@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { goToPageAndWaitFor, showHeaderActionButtons } from "@/__tests__/e2e/util";
 
 /** Read the persisted calculator-layouts payload from `localStorage` (raw string or `null`) */

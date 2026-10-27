@@ -3,7 +3,8 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { leafKey } from "@/lib/storage-keys";
 
 /**
  * Read-only markdown renderer for comments and notes. Supports GFM (tables, task lists, footnotes,

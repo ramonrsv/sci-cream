@@ -5,7 +5,7 @@ import { GripVertical } from "lucide-react";
 import { Recipe } from "@/lib/recipe/recipe";
 import { CompositionBreakdownView } from "@/app/_elements/tables/composition-breakdown";
 import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 /**
  * Calculator-page panel wrapping {@link CompositionBreakdownView} with grid-layout chrome and a

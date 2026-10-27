@@ -2,7 +2,8 @@
 
 import { ReactNode, useMemo, useState } from "react";
 
-import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { leafKey } from "@/lib/storage-keys";
 import { useRetainedState } from "@/lib/hooks/use-retained-state";
 import { ListDetailShell } from "@/app/_elements/list-detail-shell";
 

@@ -42,7 +42,7 @@ import { Logo } from "@/app/_elements/logo";
 import { APP_CONTENT_ID } from "@/lib/app-shell";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
 import { GroupBySelect } from "@/app/_elements/selects/group-by-select";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { clearStoredLayouts, dispatchLayoutReset } from "@/lib/calculator-layout";
 
 /** Primary navigation links shown in the sidebar */

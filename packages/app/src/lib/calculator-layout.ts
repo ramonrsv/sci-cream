@@ -1,11 +1,7 @@
 import type { ResponsiveLayouts } from "react-grid-layout";
 
-import {
-  getLocalStorage,
-  removeLocalStorage,
-  setLocalStorage,
-  STORAGE_KEYS,
-} from "@/lib/local-storage";
+import { getLocalStorage, removeLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 /**
  * Bump to force every user to discard their stored calculator layout on next load. Use this

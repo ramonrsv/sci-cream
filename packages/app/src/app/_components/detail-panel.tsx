@@ -7,7 +7,7 @@ import { EntitySource } from "@/app/_components/entity-search";
 import { MarkdownField } from "@/app/_elements/markdown";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
-import { leafKey } from "@/lib/hooks/use-persisted-state";
+import { leafKey } from "@/lib/storage-keys";
 import { useRetainedState } from "@/lib/hooks/use-retained-state";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 

@@ -8,7 +8,7 @@ import { WatchersView, type TargetsMap } from "@/app/_elements/watchers/watchers
 import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 
 import { Bridge as WasmBridge, type LightRecipe } from "@workspace/sci-cream";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 /**
  * Calculator-page panel wrapping {@link WatchersView} with grid-layout chrome and a drag handle.

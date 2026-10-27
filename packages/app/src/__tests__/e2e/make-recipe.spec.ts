@@ -3,7 +3,7 @@ import { test, expect, type Page } from "@playwright/test";
 import { goToPageAndWaitFor } from "@/__tests__/e2e/util";
 import type { Batch } from "@/lib/batch/batch";
 import { encodeBatchPayload, makeBatchPayload } from "@/lib/batch/share";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 /** Two recipes sharing "Sucrose", so the merged row and per-recipe cells are always exercised. */
 const BATCH: Batch = {

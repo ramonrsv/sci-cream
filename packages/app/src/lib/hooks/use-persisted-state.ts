@@ -4,16 +4,6 @@ import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 
 
 import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
 
-/**
- * Derives a `localStorage` leaf key from a persistence root and a suffix. Returns `undefined` when
- * `root` is `undefined`, making `usePersistedState` behave as plain `useState` with no storage.
- *
- * @example leafKey("properties-panel-view", "qty") // → "properties-panel-view:qty"
- */
-export function leafKey(root: string | undefined, suffix: string): string | undefined {
-  return root !== undefined ? `${root}:${suffix}` : undefined;
-}
-
 /** Options for {@link usePersistedState} */
 interface UsePersistedStateOptions<T> {
   /** Serialize `value` before writing to `localStorage`; default is JSON via `setLocalStorage` */

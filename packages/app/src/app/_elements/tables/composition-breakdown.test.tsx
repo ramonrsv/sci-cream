@@ -16,7 +16,7 @@ import { RECIPE_TOTAL_ROWS, TABLE_BODY_ROW_H_PX, TABLE_COL_HEADER_H_PX } from "@
 
 import { CompKey, comp_key_as_med_str } from "@workspace/sci-cream";
 
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
 import { renderWithRetainedState } from "@/__tests__/unit/retained-state";

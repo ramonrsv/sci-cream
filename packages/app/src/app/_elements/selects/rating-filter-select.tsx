@@ -2,7 +2,8 @@
 
 import { Award } from "lucide-react";
 
-import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { leafKey } from "@/lib/storage-keys";
 import { monoRatingGlyph, ratingRank, Rating } from "@/lib/rating";
 import { SELECT_ICON_SIZE } from "@/lib/styles/sizes";
 

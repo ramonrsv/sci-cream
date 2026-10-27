@@ -9,7 +9,7 @@ import type { IngredientSpecJson, SpecEntryJson } from "@workspace/sci-cream";
 import { makeWasmResources, useSeededWasmResources } from "@/lib/resources/wasm";
 import { IngredientSearch, ingredientMatchesQuery } from "./ingredient-search";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { setKeyFilterSelect } from "@/__tests__/unit/util";
 import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 import { renderWithRetainedState } from "@/__tests__/unit/retained-state";

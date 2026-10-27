@@ -7,7 +7,7 @@ import CalculatorPage from "./page";
 
 import { recipeIdxKey } from "@/app/_elements/selects/recipe-select";
 import { RetainedStateContext } from "@/lib/hooks/use-retained-state";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
 import { getSelectedOptionLabel, selectOption } from "@/__tests__/unit/select";
 

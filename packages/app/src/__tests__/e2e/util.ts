@@ -31,7 +31,7 @@ import {
 } from "@/__tests__/assets";
 
 import { WASM_BRIDGE } from "@/__tests__/util";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 declare global {
   interface Window {

@@ -27,7 +27,7 @@ import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
 import { DETAIL_PANEL_ACTION_ICON_SIZE, LIST_ITEM_MARKER_ICON_SIZE } from "@/lib/styles/sizes";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm";
 import { STATE_VAL } from "@/lib/util";
 import {

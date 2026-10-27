@@ -5,7 +5,7 @@ import { GripVertical } from "lucide-react";
 import { RecipeContextState } from "@/lib/recipe/recipe";
 import { RecipeEditor } from "@/app/_elements/tables/recipe";
 import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 /**
  * Calculator-page panel wrapping {@link RecipeEditor} with grid-layout chrome and a drag handle.

@@ -11,7 +11,7 @@ import { recipeIdxKey } from "@/app/_elements/selects/recipe-select";
 import { USER_DEFINED_FRUCTOSE_SPEC } from "@/__tests__/seed-assets";
 import { selectOptionByLabel } from "@/__tests__/unit/select";
 import { RetainedStateContext } from "@/lib/hooks/use-retained-state";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import {
   MAX_ENCODED_CHARS,
   SHARE_PAYLOAD_VERSION,

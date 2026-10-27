@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 
 import { WatchersPanel } from "@/app/_components/watchers-panel";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 import { CompKey, FpdKey, compToPropKey, fpdToPropKey } from "@workspace/sci-cream";
 

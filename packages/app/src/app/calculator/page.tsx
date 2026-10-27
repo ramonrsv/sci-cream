@@ -27,7 +27,7 @@ import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { useSeededWasmResources } from "@/lib/resources/wasm";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-layout";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { STATE_VAL, STATE_SET } from "@/lib/util";
 

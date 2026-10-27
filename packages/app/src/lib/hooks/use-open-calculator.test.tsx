@@ -3,7 +3,7 @@ import { act, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 
 import { useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { useOpenCalculator } from "./use-open-calculator";
 import { RetainedStateContext } from "./use-retained-state";
 

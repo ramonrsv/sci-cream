@@ -6,7 +6,7 @@ import { LoadAction } from "@/app/_components/detail-panel";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
 import { VersionBadge } from "@/app/_elements/version-badge";
 import { useOpenCalculator } from "@/lib/hooks/use-open-calculator";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import {
   getRecipeStoresFromStorage,
   makeRecipeId,

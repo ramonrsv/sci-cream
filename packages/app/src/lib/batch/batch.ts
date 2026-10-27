@@ -2,12 +2,8 @@ import type { LightRecipe } from "@workspace/sci-cream";
 
 import type { SavedRecipeRef } from "@/lib/recipe/recipe";
 import { type CategoryColor, categoryColor } from "@/lib/styles/colors";
-import {
-  STORAGE_KEYS,
-  getLocalStorage,
-  removeLocalStorage,
-  setLocalStorage,
-} from "@/lib/local-storage";
+import { getLocalStorage, removeLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 /**
  * A make-recipe batch: one weighing session covering one or more recipes, made on a given day.

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { LayoutItem, ResponsiveLayouts } from "react-grid-layout";
 
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import {
   LAYOUT_VERSION,
   clearStoredLayouts,

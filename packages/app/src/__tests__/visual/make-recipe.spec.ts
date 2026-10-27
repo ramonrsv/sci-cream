@@ -11,7 +11,7 @@ import {
   VIEWPORT_TABLET_PORTRAIT,
 } from "@/__tests__/visual/assets";
 import { encodeBatchPayload, makeBatchPayload } from "@/lib/batch/share";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { CategoryColor } from "@/lib/styles/colors";
 
 /** The ingredient column's dense-tier cap (`max-w-52`), in px: what three or four recipes leave. */

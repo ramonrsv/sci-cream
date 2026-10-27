@@ -8,7 +8,7 @@ import {
 } from "@/__tests__/e2e/util";
 
 import { sleep_ms } from "@/lib/util";
-import { STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 test.describe("Local Storage Functionality", () => {
   test("recipes should be stored in local storage and persist across page reloads", async ({
