@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793078919466,
+  "lastUpdate": 1793079075939,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -681707,6 +681707,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/a86fdf73e12e00ca93f0a979645ecea7e9c8b782"
         },
         "date": 1793078064977,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1177.12,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1892.35,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.88,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2100.66,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "20fac21875dd6242f9f050fcaabcc6535194f0a5",
+          "message": "Move STORAGE_KEYS and leafKey to storage-keys.ts\n\nSTORAGE_KEYS lists the roots of both localStorage and retained state,\nbut lived in local-storage.ts beside the localStorage helpers, so a\ncomponent that only needed a retained key imported it from\nlocal-storage. leafKey had the same problem in use-persisted-state.ts,\nthough four of its callers build retained keys.\n\nBoth move to a new storage-keys.ts, and local-storage.ts keeps only\nthe get, set, and remove helpers. Importers switch to the new module\ndirectly, without re-exports. leafKey's doc covers both stores, and the\nSTORAGE_KEYS header names it as the function that derives leaf keys.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-27T00:44:06-04:00",
+          "tree_id": "9923e710aa984d16db465587c8c0d5ec70096020",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/20fac21875dd6242f9f050fcaabcc6535194f0a5"
+        },
+        "date": 1793079035557,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
