@@ -3,9 +3,11 @@ import { test, expect, type Page } from "@playwright/test";
 import type { LightRecipe } from "@workspace/sci-cream";
 
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
+import { getSelectedOptionLabel } from "@/__tests__/e2e/select";
 import {
   fillRecipeAndWaitForUpdate,
   getIngredientNameInputAtIdx,
+  getRecipeEditorPanelRecipeSelector,
   goToPageAndWaitFor,
   loginAsTestUserWithCredentials,
 } from "@/__tests__/e2e/util";
@@ -88,7 +90,10 @@ test.describe("Recipe Share Links", () => {
     await goToPageAndWaitFor(page, await makeShareLink("To Calculator", rows));
 
     await page.getByRole("button", { name: "Open in calculator" }).click();
-    await expect(page).toHaveURL(/\/calculator\?slot=0/);
+
+    await expect(page).toHaveURL(/\/calculator$/);
+    const recipeSelect = getRecipeEditorPanelRecipeSelector(page);
+    await expect.poll(() => getSelectedOptionLabel(recipeSelect)).toBe("Recipe");
 
     await expect(getIngredientNameInputAtIdx(page, 0)).toHaveValue(String(rows[0][0]), {
       timeout: EXPECT_TIMEOUT_MS,

@@ -3,47 +3,31 @@
 import { NotebookText } from "lucide-react";
 
 import { Recipe } from "@/lib/recipe/recipe";
-import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
-import { MAX_RECIPES, SELECT_ICON_SIZE } from "@/lib/styles/sizes";
+import { leafKey } from "@/lib/hooks/use-persisted-state";
+import { useRetainedState } from "@/lib/hooks/use-retained-state";
+import { SELECT_ICON_SIZE } from "@/lib/styles/sizes";
 
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
-/** Returns `slot` if it is a valid recipe index, otherwise 0 */
-export function recipeSlotOrDefault(slot: number): number {
-  return slot >= 0 && slot < MAX_RECIPES && !Number.isNaN(slot) ? slot : 0;
-}
-
-/** `isValid` predicate for a persisted recipe slot — rejects non-numbers and out-of-range slots */
-export function isValidSlotStore(n: unknown): n is number {
-  return typeof n === "number" && recipeSlotOrDefault(n) === n;
-}
-
 /**
- * Parses a raw `?slot=` URL param string into a valid slot index, or `undefined` when the param
- * is absent (`null`). Invalid slot values are clamped to 0 via {@link recipeSlotOrDefault}.
+ * Retained-state key of the recipe slot selected in the view rooted at `persistKey`, or `undefined`
+ * when `persistKey` is, which opts out of retention. {@link useRecipeIdxState} reads it; whatever
+ * sets the slot ahead of a navigation, e.g. `useOpenCalculator`, writes it.
  */
-export function slotFromParam(raw: string | null): number | undefined {
-  return raw !== null ? recipeSlotOrDefault(parseInt(raw)) : undefined;
+export function recipeIdxKey(persistKey: string | undefined): string | undefined {
+  return leafKey(persistKey, "recipeIdx");
 }
 
 /**
- * Persisted `[value, setter]` tuple for the currently displayed recipe slot index.
- *
- * When `persistKey` is `undefined`, behaves as plain `useState`. The stored leaf key is
- * `${persistKey}:recipeIdx`. Stored values are validated/clamped via {@link isValidSlotStore}.
- *
- * When `urlSlot` is provided (i.e. `?slot=N` was present in the URL), that value is shown for
- * this mount and storage is bypassed entirely — the remembered slot is neither clobbered nor
- * read. When `urlSlot` is absent, the stored slot is restored as normal.
+ * Retained `[value, setter]` tuple for the currently displayed recipe slot index, kept under
+ * {@link recipeIdxKey}. Deliberately not persisted: a reload returns to `defaultValue`, so it
+ * can't leave the view silently on a reference recipe. Plain `useState` without a `persistKey`.
  */
 export function useRecipeIdxState(
   persistKey: string | undefined,
   defaultValue: number = 0,
-  { urlSlot }: { urlSlot?: number } = {},
 ): [number, React.Dispatch<React.SetStateAction<number>>] {
-  const effectiveKey = urlSlot !== undefined ? undefined : leafKey(persistKey, "recipeIdx");
-  const effectiveDefault = urlSlot !== undefined ? urlSlot : defaultValue;
-  return usePersistedState(effectiveKey, effectiveDefault, { isValid: isValidSlotStore });
+  return useRetainedState(recipeIdxKey(persistKey), defaultValue);
 }
 
 /** Name of the {@link RecipeSelect} control, for its accessible name and tooltip. */

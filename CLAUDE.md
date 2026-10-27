@@ -251,7 +251,10 @@ Each kind of file has a consistent home:
 - **`src/app/_providers/`** — app-wide React context providers mounted in the root layout
   (`GroupByProvider`, `RetainedStateProvider`, `SessionResourcesProvider`); their context + hooks
   stay JSX-free in `src/lib/`. `useRetainedState` keeps a value in memory across client-side
-  navigation but not a reload (search queries), where `usePersistedState` uses `localStorage`.
+  navigation but not a reload (search queries, selected recipe slots), where `usePersistedState`
+  uses `localStorage`. A route can set a value for another to read when it mounts, with
+  `useRetainedStateSetter`: loading a recipe opens the calculator on its slot this way
+  (`useOpenCalculator`), not through a URL param, which Back and Forward would keep re-applying.
 - **Route directories** (`calculator/`, `recipes/`, `make-recipe/`, `share/`, …) hold only
   `page.tsx` and route-special files (`layout.tsx`, `route.ts`) — no ad-hoc component files. The
   `layout.tsx`, `navbar.tsx`, `globals.css`, and `favicon.ico` at the `src/app` root are the app

@@ -171,7 +171,7 @@ export function IngredientSearch({ savedSpecs = [] }: IngredientSearchProps) {
 
   return (
     <EntitySearch<SpecEntryJson>
-      id="ingredient-search"
+      id={STORAGE_KEYS.ingredientSearch}
       embeddedEntries={allSpecEntries}
       savedEntries={savedSpecs}
       getId={specEntryName}

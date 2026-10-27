@@ -5,8 +5,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent, act } from "@testing-library/react";
 import CalculatorPage from "./page";
 
+import { recipeIdxKey } from "@/app/_elements/selects/recipe-select";
+import { RetainedStateContext } from "@/lib/hooks/use-retained-state";
 import { STORAGE_KEYS } from "@/lib/local-storage";
-import { getSelectedOptionLabel } from "@/__tests__/unit/select";
+import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
+import { getSelectedOptionLabel, selectOption } from "@/__tests__/unit/select";
 
 import { CompKey, compToPropKey } from "@workspace/sci-cream";
 
@@ -57,9 +60,6 @@ vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
 
-const mockUseSearchParams = vi.hoisted(() => vi.fn().mockReturnValue(new URLSearchParams()));
-vi.mock("next/navigation", () => ({ useSearchParams: mockUseSearchParams }));
-
 vi.mock("@/app/navbar", () => ({ useNavbarContext: () => ({ theme: "Light" }) }));
 
 // ---------------------------------------------------------------------------
@@ -71,8 +71,6 @@ describe("Calculator Page", () => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
     localStorage.clear();
-
-    mockUseSearchParams.mockReturnValue(new URLSearchParams());
 
     const { useSession } = await import("next-auth/react");
     vi.mocked(useSession).mockReturnValue({
@@ -111,38 +109,62 @@ describe("Calculator Page", () => {
   });
 
   // ---------------------------------------------------------------------------
-  // Slot query param
+  // Recipe slot
   // ---------------------------------------------------------------------------
 
-  describe("slot query param", () => {
-    beforeEach(() => {
-      mockUseSearchParams.mockReturnValue(new URLSearchParams());
-    });
-
+  describe("recipe slot", () => {
+    const EDITOR_SELECT = "#recipe-editor-panel #recipe-selection";
     const recipeLabel = (container: HTMLElement) =>
-      getSelectedOptionLabel(container, "#recipe-selection");
+      getSelectedOptionLabel(container, EDITOR_SELECT);
 
-    it("defaults to slot 0 when no slot param is given", () => {
+    it("defaults to slot 0 when none has been set for the editor", () => {
       const { container } = render(<CalculatorPage />);
       expect(recipeLabel(container)).toBe("Recipe");
     });
 
+    // What `useOpenCalculator` leaves in the retained store when a recipe is loaded into a slot
     it.each([
       [0, "Recipe"],
       [1, "Ref A"],
       [2, "Ref B"],
-    ])("selects slot %i when valid ?slot=%i", (slot, label) => {
-      mockUseSearchParams.mockReturnValue(new URLSearchParams(`slot=${slot}`));
+    ])("opens on slot %i when it was set for the editor beforehand", (slot, label) => {
+      const store = new Map<string, unknown>([
+        [recipeIdxKey(STORAGE_KEYS.recipeEditorPanel)!, slot],
+      ]);
 
-      const { container } = render(<CalculatorPage />);
+      const { container } = render(
+        <RetainedStateContext value={store}>
+          <CalculatorPage />
+        </RetainedStateContext>,
+      );
+
       expect(recipeLabel(container)).toBe(label);
     });
 
-    it.each([-1, 3, 99, "abc"])("defaults to slot 0 for invalid slot %s", (slot) => {
-      mockUseSearchParams.mockReturnValue(new URLSearchParams(`slot=${slot}`));
+    it("keeps the slot the user selected when the page is left and returned to", async () => {
+      const { container, leaveAndReturn } = renderWithRetainedState(<CalculatorPage />);
+      await selectOption(container, EDITOR_SELECT, "Ref A");
 
-      const { container } = render(<CalculatorPage />);
-      expect(recipeLabel(container)).toBe("Recipe");
+      leaveAndReturn();
+
+      expect(recipeLabel(container)).toBe("Ref A");
+    });
+
+    it("opens on the main recipe again after a reload", async () => {
+      const first = renderWithRetainedState(<CalculatorPage />);
+      await selectOption(first.container, EDITOR_SELECT, "Ref A");
+      first.unmount();
+
+      const second = renderWithRetainedState(<CalculatorPage />);
+
+      expect(recipeLabel(second.container)).toBe("Recipe");
+    });
+
+    it("is held in memory only, never in localStorage", async () => {
+      const { container } = renderWithRetainedState(<CalculatorPage />);
+      await selectOption(container, EDITOR_SELECT, "Ref A");
+
+      expect(Object.keys(localStorage).some((key) => key.endsWith(":recipeIdx"))).toBe(false);
     });
   });
 

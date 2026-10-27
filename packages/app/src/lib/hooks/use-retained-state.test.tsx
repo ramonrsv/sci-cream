@@ -2,7 +2,11 @@ import { describe, it, expect } from "vitest";
 import { act, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 
-import { RetainedStateContext, useRetainedState } from "./use-retained-state";
+import {
+  RetainedStateContext,
+  useRetainedState,
+  useRetainedStateSetter,
+} from "./use-retained-state";
 
 const KEY = "test-key";
 
@@ -123,5 +127,79 @@ describe("useRetainedState", () => {
     const second = renderHook(() => useRetainedState(KEY, 0));
 
     expect(second.result.current[0]).toBe(0);
+  });
+});
+
+describe("useRetainedStateSetter", () => {
+  it("hands a value to the next useRetainedState that mounts with that key", () => {
+    const wrapper = withStore(new Map());
+    const setter = renderHook(() => useRetainedStateSetter(), { wrapper });
+    setter.unmount();
+    setter.result.current(KEY, 7);
+
+    const seen: number[] = [];
+    renderHook(
+      () => {
+        const [value] = useRetainedState(KEY, 0);
+        seen.push(value);
+      },
+      { wrapper },
+    );
+
+    expect(seen[0]).toBe(7);
+    expect(seen).not.toContain(0);
+  });
+
+  it("overwrites a value the hook retained earlier", () => {
+    const wrapper = withStore(new Map());
+    const first = renderHook(() => useRetainedState(KEY, 0), { wrapper });
+    act(() => first.result.current[1](3));
+    first.unmount();
+
+    const setter = renderHook(() => useRetainedStateSetter(), { wrapper });
+    setter.result.current(KEY, 7);
+
+    const second = renderHook(() => useRetainedState(KEY, 0), { wrapper });
+    expect(second.result.current[0]).toBe(7);
+  });
+
+  it("does not move a hook that is already mounted", () => {
+    const wrapper = withStore(new Map());
+    const mounted = renderHook(() => useRetainedState(KEY, 0), { wrapper });
+    const setter = renderHook(() => useRetainedStateSetter(), { wrapper });
+
+    setter.result.current(KEY, 7);
+    mounted.rerender();
+
+    expect(mounted.result.current[0]).toBe(0);
+  });
+
+  it("returns the same function on every render", () => {
+    const { result, rerender } = renderHook(() => useRetainedStateSetter(), {
+      wrapper: withStore(new Map()),
+    });
+    const first = result.current;
+
+    rerender();
+
+    expect(result.current).toBe(first);
+  });
+
+  it("ignores an undefined key", () => {
+    const store = new Map<string, unknown>();
+    const { result } = renderHook(() => useRetainedStateSetter(), { wrapper: withStore(store) });
+
+    result.current(undefined, 7);
+
+    expect(store.size).toBe(0);
+  });
+
+  it("does nothing without a provider", () => {
+    const setter = renderHook(() => useRetainedStateSetter());
+    expect(() => setter.result.current(KEY, 7)).not.toThrow();
+
+    const { result } = renderHook(() => useRetainedState(KEY, 0));
+
+    expect(result.current[0]).toBe(0);
   });
 });

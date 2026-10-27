@@ -1,6 +1,11 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
-import { goToPageAndWaitFor, showSidebarItems, waitForHydration } from "@/__tests__/e2e/util";
+import {
+  goToPageAndWaitFor,
+  navigateViaSidebar,
+  showSidebarItems,
+  waitForHydration,
+} from "@/__tests__/e2e/util";
 
 const QUERY = "chocolate";
 
@@ -10,18 +15,6 @@ const SEARCH_ROUTES = [
   { path: "/ingredients", placeholder: "Search by name or category…" },
   { path: "/make-recipe", placeholder: "Search saved batches…" },
 ];
-
-/**
- * Follow the sidebar link to `path`: a client-side navigation, so the root layout stays mounted.
- * The sidebar must already be reachable; see `showSidebarItems`.
- */
-async function navigateViaSidebar(page: Page, path: string) {
-  await page.locator(`#sidebar a[href="${path}"]`).click();
-  await page.waitForURL(`**${path}`);
-  // Desktop: clicking a rail link hover-opens the peek overlay; move off the sidebar so it closes.
-  const size = page.viewportSize();
-  if (size) await page.mouse.move(size.width / 2, size.height / 2);
-}
 
 test.describe("Search query retention", () => {
   for (const { path, placeholder } of SEARCH_ROUTES) {

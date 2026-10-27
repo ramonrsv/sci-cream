@@ -24,8 +24,8 @@ export function getOpenSelectMenu(page: Page) {
  *
  * Implementation detail: the shared `Select` is a native `<select>`; `ThemeSelect` is a Headless UI
  * listbox trigger (`aria-haspopup="listbox"`). Matching either — and taking the first — picks the
- * select while skipping sibling buttons (like KeyFilter's "customize" button). Only this function
- * and {@link selectOption} know about the underlying widgets.
+ * select while skipping sibling buttons (like KeyFilter's "customize" button). Only this function,
+ * {@link getSelectedOptionLabel}, and {@link selectOption} know about the underlying widgets.
  */
 export function getSelectControl(page: Page, scopeSelector: string): Locator {
   return page
@@ -41,6 +41,19 @@ export function getSelectControl(page: Page, scopeSelector: string): Locator {
  */
 export function getSelectBox(page: Page, scopeSelector: string): Locator {
   return page.locator(scopeSelector);
+}
+
+/**
+ * Get the label of the option selected in the `Select` whose control element is `control`.
+ *
+ * A one-off read, unlike a locator assertion, so wrap it in `expect.poll` to retry.
+ */
+export async function getSelectedOptionLabel(control: Locator): Promise<string> {
+  return control.evaluate((el) =>
+    el instanceof HTMLSelectElement
+      ? (el.options[el.selectedIndex]?.text.trim() ?? "")
+      : (el.textContent?.trim() ?? ""),
+  );
 }
 
 /**

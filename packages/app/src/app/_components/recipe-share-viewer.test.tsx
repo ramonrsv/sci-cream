@@ -7,7 +7,10 @@ import { render, screen, cleanup, fireEvent, act } from "@testing-library/react"
 import type { LightRecipe } from "@workspace/sci-cream";
 
 import { ShareViewer } from "./recipe-share-viewer";
+import { recipeIdxKey } from "@/app/_elements/selects/recipe-select";
 import { USER_DEFINED_FRUCTOSE_SPEC } from "@/__tests__/seed-assets";
+import { selectOptionByLabel } from "@/__tests__/unit/select";
+import { RetainedStateContext } from "@/lib/hooks/use-retained-state";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import {
   MAX_ENCODED_CHARS,
@@ -192,13 +195,32 @@ describe("ShareViewer", () => {
 
       fireEvent.click(await screen.findByRole("button", { name: "Open in calculator" }));
 
-      expect(routerPush).toHaveBeenCalledWith("/calculator?slot=0");
+      expect(routerPush).toHaveBeenCalledWith("/calculator");
       const stores = JSON.parse(localStorage.getItem(STORAGE_KEYS.recipeStores) ?? "[]");
       expect(stores[0]).toEqual({
         name: "To Calculator",
         serializedRows: "Whole Milk\t500\nSucrose\t100",
         evaporation: 50,
       });
+    });
+
+    it("opens the calculator's editor on the slot it loaded into", async () => {
+      const store = new Map<string, unknown>();
+      const encoded = await encodeSharePayload(makeSharePayload("To Ref B", ROWS));
+      await renderWithHash(
+        encoded,
+        <RetainedStateContext value={store}>
+          <ShareViewer />
+        </RetainedStateContext>,
+      );
+      await screen.findByRole("button", { name: "Open in calculator" });
+      await selectOptionByLabel("Target slot", "Ref B");
+
+      fireEvent.click(screen.getByRole("button", { name: "Open in calculator" }));
+
+      const stores = JSON.parse(localStorage.getItem(STORAGE_KEYS.recipeStores) ?? "[]");
+      expect(stores[2].name).toBe("To Ref B");
+      expect(store.get(recipeIdxKey(STORAGE_KEYS.recipeEditorPanel)!)).toBe(2);
     });
   });
 

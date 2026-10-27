@@ -12,7 +12,12 @@ import {
   LoadAction,
 } from "@/app/_components/detail-panel";
 import { EntitySource } from "@/app/_components/entity-search";
-import { getSelectOptionLabelsByLabel, selectOptionByLabel } from "@/__tests__/unit/select";
+import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
+import {
+  getSelectedOptionLabelByLabel,
+  getSelectOptionLabelsByLabel,
+  selectOptionByLabel,
+} from "@/__tests__/unit/select";
 
 afterEach(() => cleanup());
 
@@ -124,6 +129,62 @@ describe("LoadAction", () => {
     render(<LoadAction onLoad={onLoad} />);
     fireEvent.click(screen.getByRole("button", { name: "Load" }));
     expect(onLoad).toHaveBeenCalledWith(0);
+  });
+
+  describe("target slot retention", () => {
+    const ROOT = "test-load-action";
+
+    beforeEach(() => localStorage.clear());
+
+    const loadAction = (persistKey: string | undefined, onLoad: () => void = vi.fn()) => (
+      <LoadAction onLoad={onLoad} slots={[0, 1, 2]} persistKey={persistKey} />
+    );
+
+    it("keeps the target slot when left and returned to", async () => {
+      const onLoad = vi.fn();
+      const { leaveAndReturn } = renderWithRetainedState(loadAction(ROOT, onLoad));
+      await selectOptionByLabel("Target slot", "2");
+
+      leaveAndReturn();
+
+      expect(getSelectedOptionLabelByLabel("Target slot")).toBe("2");
+      fireEvent.click(screen.getByRole("button", { name: "Load" }));
+      expect(onLoad).toHaveBeenCalledWith(2);
+    });
+
+    it("starts on the first slot again after a reload", async () => {
+      const first = renderWithRetainedState(loadAction(ROOT));
+      await selectOptionByLabel("Target slot", "2");
+      first.unmount();
+
+      renderWithRetainedState(loadAction(ROOT));
+
+      expect(getSelectedOptionLabelByLabel("Target slot")).toBe("0");
+    });
+
+    it("is held in memory only, never in localStorage", async () => {
+      renderWithRetainedState(loadAction(ROOT));
+      await selectOptionByLabel("Target slot", "2");
+
+      expect(localStorage).toHaveLength(0);
+    });
+
+    it("ignores a slot left in localStorage", () => {
+      localStorage.setItem(`${ROOT}:slot`, JSON.stringify(2));
+
+      renderWithRetainedState(loadAction(ROOT));
+
+      expect(getSelectedOptionLabelByLabel("Target slot")).toBe("0");
+    });
+
+    it("retains nothing without a persistKey", async () => {
+      const { leaveAndReturn } = renderWithRetainedState(loadAction(undefined));
+      await selectOptionByLabel("Target slot", "2");
+
+      leaveAndReturn();
+
+      expect(getSelectedOptionLabelByLabel("Target slot")).toBe("0");
+    });
   });
 });
 

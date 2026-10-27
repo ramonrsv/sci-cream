@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { RecipeSearch, type GroupedRecipe } from "@/app/_components/recipe-search";
 import { ActionError } from "@/app/_elements/action-error";
 import { RECIPE_ERROR_MESSAGES, RecipeError } from "@/lib/recipe/recipe";
 import type { DataError, Result } from "@/lib/result";
+import { useOpenCalculator } from "@/lib/hooks/use-open-calculator";
 import { useSignedIn } from "@/lib/hooks/use-signed-in";
 import { useSessionResources } from "@/lib/resources/session";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
@@ -29,7 +29,7 @@ import {
 
 /** Recipes page: browse and load recipes from embedded data and the user's saved versions */
 export default function RecipesPage() {
-  const router = useRouter();
+  const openCalculator = useOpenCalculator();
   const { savedRecipes, refreshUserRecipes } = useSessionResources();
 
   const signedIn = useSignedIn();
@@ -46,9 +46,9 @@ export default function RecipesPage() {
   }
 
   /**
-   * Write the chosen version into the given localStorage slot and navigate to the calculator. For
-   * embedded entries (`recipeId === undefined`) the slot is populated anonymously; for saved ones
-   * the slot carries a `savedRef` so the editor knows it is editing a specific saved version.
+   * Write the chosen version into the given localStorage slot and open the calculator on that slot.
+   * For embedded entries (`recipeId === undefined`) the slot is populated anonymously; for saved
+   * ones the slot carries a `savedRef` so the editor knows it is editing a specific saved version.
    */
   function handleLoadRecipe(
     entry: GroupedRecipe,
@@ -69,7 +69,7 @@ export default function RecipesPage() {
     stores[slotIndex] = store;
 
     setRecipeStoresToStorage(stores);
-    router.push(`/calculator?slot=${String(slotIndex)}`);
+    openCalculator(slotIndex);
   }
 
   /** Delete the entry (all versions) from the user's saved recipes and refresh the list */

@@ -6,6 +6,7 @@ import { render, cleanup } from "@testing-library/react";
 import { useState, useEffect } from "react";
 
 import { type Recipe } from "@/lib/recipe/recipe";
+import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
 import {
   getSelectControl,
   getSelectControlByLabel,
@@ -14,7 +15,7 @@ import {
   selectOption,
 } from "@/__tests__/unit/select";
 
-import { RecipeSelect, recipeSlotOrDefault } from "./recipe-select";
+import { RecipeSelect, recipeIdxKey, useRecipeIdxState } from "./recipe-select";
 
 // ---------------------------------------------------------------------------
 // Test helpers, mocks, and setup
@@ -146,23 +147,103 @@ describe("RecipeSelect", () => {
 });
 
 // ---------------------------------------------------------------------------
-// clampRecipeSlot
+// recipeIdxKey
 // ---------------------------------------------------------------------------
 
-describe("recipeSlotOrDefault", () => {
-  it("returns a valid index unchanged", () => {
-    expect(recipeSlotOrDefault(1)).toBe(1);
+describe("recipeIdxKey", () => {
+  it("derives the leaf key from the view's root", () => {
+    expect(recipeIdxKey("view")).toBe("view:recipeIdx");
   });
 
-  it("returns 0 for a value above the range", () => {
-    expect(recipeSlotOrDefault(5)).toBe(0);
+  it("is undefined without a root, which opts out of retention", () => {
+    expect(recipeIdxKey(undefined)).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// useRecipeIdxState
+// ---------------------------------------------------------------------------
+
+describe("useRecipeIdxState", () => {
+  const ROOT = "test-view";
+  const SELECTOR = "#recipe-selection";
+
+  /** A `RecipeSelect` driven by `useRecipeIdxState`, as the calculator's views are */
+  function Probe({
+    persistKey,
+    defaultValue,
+  }: {
+    persistKey: string | undefined;
+    defaultValue?: number;
+  }) {
+    const state = useRecipeIdxState(persistKey, defaultValue);
+    return (
+      <RecipeSelect
+        allRecipes={ALL_RECIPES}
+        enabledRecipeIndices={[0, 1, 2]}
+        currentRecipeIdxState={state}
+      />
+    );
+  }
+
+  beforeEach(() => {
+    localStorage.clear();
   });
 
-  it("returns 0 for a negative value", () => {
-    expect(recipeSlotOrDefault(-1)).toBe(0);
+  afterEach(() => {
+    cleanup();
   });
 
-  it("returns 0 for NaN", () => {
-    expect(recipeSlotOrDefault(NaN)).toBe(0);
+  it("starts on the main recipe", () => {
+    const { container } = render(<Probe persistKey={ROOT} />);
+    expect(getSelectedOptionLabel(container, SELECTOR)).toBe("Recipe");
+  });
+
+  it("starts on the given default", () => {
+    const { container } = render(<Probe persistKey={ROOT} defaultValue={2} />);
+    expect(getSelectedOptionLabel(container, SELECTOR)).toBe("Ref B");
+  });
+
+  it("keeps the selected slot when the view is left and returned to", async () => {
+    const { container, leaveAndReturn } = renderWithRetainedState(<Probe persistKey={ROOT} />);
+    await selectOption(container, SELECTOR, "Ref A");
+
+    leaveAndReturn();
+
+    expect(getSelectedOptionLabel(container, SELECTOR)).toBe("Ref A");
+  });
+
+  it("starts on the default again after a reload", async () => {
+    const first = renderWithRetainedState(<Probe persistKey={ROOT} />);
+    await selectOption(first.container, SELECTOR, "Ref A");
+    first.unmount();
+
+    const second = renderWithRetainedState(<Probe persistKey={ROOT} />);
+
+    expect(getSelectedOptionLabel(second.container, SELECTOR)).toBe("Recipe");
+  });
+
+  it("is held in memory only, never in localStorage", async () => {
+    const { container } = renderWithRetainedState(<Probe persistKey={ROOT} />);
+    await selectOption(container, SELECTOR, "Ref A");
+
+    expect(localStorage).toHaveLength(0);
+  });
+
+  it("ignores a slot left in localStorage", () => {
+    localStorage.setItem(`${ROOT}:recipeIdx`, JSON.stringify(2));
+
+    const { container } = render(<Probe persistKey={ROOT} />);
+
+    expect(getSelectedOptionLabel(container, SELECTOR)).toBe("Recipe");
+  });
+
+  it("retains nothing without a persistKey", async () => {
+    const { container, leaveAndReturn } = renderWithRetainedState(<Probe persistKey={undefined} />);
+    await selectOption(container, SELECTOR, "Ref A");
+
+    leaveAndReturn();
+
+    expect(getSelectedOptionLabel(container, SELECTOR)).toBe("Recipe");
   });
 });

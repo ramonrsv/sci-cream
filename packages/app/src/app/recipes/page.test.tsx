@@ -9,6 +9,7 @@ import {
   type GroupedRecipe,
   type RecipeSearchProps,
 } from "@/app/_components/recipe-search";
+import { recipeIdxKey } from "@/app/_elements/selects/recipe-select";
 import { useSession } from "next-auth/react";
 import {
   deleteUserRecipe,
@@ -17,6 +18,7 @@ import {
   type SavedRecipeJson,
   type SavedRecipeVersionJson,
 } from "@/lib/data/recipes";
+import { RetainedStateContext } from "@/lib/hooks/use-retained-state";
 import { useSessionResources, type SessionResources } from "@/lib/resources/session";
 import type { WasmResourcesState } from "@/lib/resources/wasm";
 
@@ -265,10 +267,23 @@ describe("RecipesPage", () => {
       expect(stored[2].serializedRows).toBe("");
     });
 
-    it("navigates to /calculator with the correct slot query param", () => {
+    it("navigates to /calculator, leaving the slot out of the URL", () => {
       render(<RecipesPage />);
       capturedProps().onLoadRecipe!(entry, version, 2);
-      expect(mockPush).toHaveBeenCalledWith("/calculator?slot=2");
+      expect(mockPush).toHaveBeenCalledWith("/calculator");
+    });
+
+    it("opens the calculator's editor on the slot it loaded into", () => {
+      const store = new Map<string, unknown>();
+      render(
+        <RetainedStateContext value={store}>
+          <RecipesPage />
+        </RetainedStateContext>,
+      );
+
+      capturedProps().onLoadRecipe!(entry, version, 2);
+
+      expect(store.get(recipeIdxKey(STORAGE_KEYS.recipeEditorPanel)!)).toBe(2);
     });
 
     it("serializes each recipe row as name<tab>quantity", () => {

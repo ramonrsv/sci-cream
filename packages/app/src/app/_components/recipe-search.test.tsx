@@ -392,6 +392,21 @@ describe("RecipeSearch", () => {
         1,
       );
     });
+
+    it("keeps the target slot after leaving and returning", async () => {
+      const { leaveAndReturn } = renderWithRetainedState(
+        <RecipeSearch onLoadRecipe={vi.fn()} slots={[0, 1, 2]} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+      await selectOptionByLabel("Target slot", "Ref A");
+
+      leaveAndReturn();
+      // The selected entry isn't retained, so select it again to bring the picker back
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+
+      expect(getSelectedOptionLabelByLabel("Target slot")).toContain("Ref A");
+      expect(Object.keys(localStorage).some((key) => key.endsWith(":slot"))).toBe(false);
+    });
   });
 
   describe("search input", () => {
@@ -794,28 +809,7 @@ describe("RecipeSearch", () => {
   });
 
   describe("Select persistence", () => {
-    const SLOT_KEY = `${STORAGE_KEYS.recipeSearchLoadAction}:slot`;
     const QTY_KEY = `${STORAGE_KEYS.recipeSearchPropertiesView}:qty`;
-
-    it("writes the slot leaf key when the target slot changes", async () => {
-      render(<RecipeSearch onLoadRecipe={vi.fn()} slots={[0, 1, 2]} />);
-      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
-      await act(async () => {});
-
-      await selectOptionByLabel("Target slot", "Ref A");
-      await act(async () => {});
-
-      expect(localStorage.getItem(SLOT_KEY)).toBe(JSON.stringify(1));
-    });
-
-    it("restores the target slot on remount", async () => {
-      localStorage.setItem(SLOT_KEY, JSON.stringify(1));
-      render(<RecipeSearch onLoadRecipe={vi.fn()} slots={[0, 1, 2]} />);
-      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
-      await act(async () => {});
-
-      expect(getSelectedOptionLabelByLabel("Target slot")).toContain("Ref A");
-    });
 
     it("writes the QtyToggle leaf key when the PropertiesView select changes", async () => {
       const { container } = render(<RecipeSearch />);

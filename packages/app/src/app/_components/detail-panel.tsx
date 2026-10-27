@@ -7,8 +7,8 @@ import { EntitySource } from "@/app/_components/entity-search";
 import { MarkdownField } from "@/app/_elements/markdown";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
-import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
-import { isValidSlotStore } from "@/app/_elements/selects/recipe-select";
+import { leafKey } from "@/lib/hooks/use-persisted-state";
+import { useRetainedState } from "@/lib/hooks/use-retained-state";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 /**
@@ -48,7 +48,8 @@ export function DetailPanelHeader({
 /**
  * Slot picker + load button. The picker is rendered only when `slots` has more than one entry;
  * with a single slot (or none), only the load button is shown. The internally-managed selection
- * defaults to the first slot.
+ * defaults to the first slot, and is retained under `${persistKey}:slot` across client-side
+ * navigation but not a reload, so a reload can't leave Load silently aimed at a reference slot.
  */
 export function LoadAction({
   onLoad,
@@ -63,10 +64,9 @@ export function LoadAction({
   label?: string;
   persistKey?: string;
 }) {
-  const [targetSlot, setTargetSlot] = usePersistedState<number>(
+  const [targetSlot, setTargetSlot] = useRetainedState<number>(
     leafKey(persistKey, "slot"),
     slots?.[0] ?? 0,
-    { isValid: isValidSlotStore },
   );
 
   const slotOptions: SelectOption<number>[] = (slots ?? []).map((slot) => ({

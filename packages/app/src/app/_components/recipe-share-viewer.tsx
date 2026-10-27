@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { LoadAction } from "@/app/_components/detail-panel";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
 import { VersionBadge } from "@/app/_elements/version-badge";
+import { useOpenCalculator } from "@/lib/hooks/use-open-calculator";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import {
   getRecipeStoresFromStorage,
@@ -49,7 +49,7 @@ function ShareErrorNotice({ message }: { message: string }) {
  * recipient's localStorage origin) is replaced by a "View full recipe" link opening in a new tab.
  */
 export function ShareViewer({ embed = false }: { embed?: boolean }) {
-  const router = useRouter();
+  const openCalculator = useOpenCalculator();
   const [state, setState] = useState<ViewerState>({ status: "decoding" });
 
   // Decode the fragment on mount and again whenever it changes (fragment edits don't remount).
@@ -90,7 +90,7 @@ export function ShareViewer({ embed = false }: { embed?: boolean }) {
   useFreeOnReplace(resolved?.bridge);
   useFreeOnReplace(resolved?.recipe.mixProperties);
 
-  /** Write the shared recipe into the chosen calculator slot and navigate to it (anonymous load) */
+  /** Write the shared recipe anonymously into the chosen slot and open the calculator on it */
   const openInCalculator = (payload: SharePayload, slot: number) => {
     const stores = getRecipeStoresFromStorage();
     stores[slot] = {
@@ -99,7 +99,7 @@ export function ShareViewer({ embed = false }: { embed?: boolean }) {
       ...(payload.e ? { evaporation: payload.e } : {}),
     };
     setRecipeStoresToStorage(stores);
-    router.push(`/calculator?slot=${String(slot)}`);
+    openCalculator(slot);
   };
 
   if (state.status === "decoding") {

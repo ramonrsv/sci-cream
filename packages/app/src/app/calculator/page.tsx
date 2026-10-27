@@ -1,7 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ResponsiveGridLayout,
   ResponsiveLayouts,
@@ -27,7 +26,6 @@ import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
 import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { useSeededWasmResources } from "@/lib/resources/wasm";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
-import { slotFromParam } from "@/app/_elements/selects/recipe-select";
 import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-layout";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
@@ -41,15 +39,10 @@ import { STATE_VAL, STATE_SET } from "@/lib/util";
  *
  * All grid items can be resized horizontally and vertically.
  *
- * On initial load, the calculator checks for a `slot` query parameter in the URL, which indicates
- * the initial recipe index to select in `RecipeEditor`'s `RecipeSelect`; default is 0 ('Recipe').
- *
- * Wrapped by {@link CalculatorPage} so that `useSearchParams` is inside required Suspense boundary
+ * `RecipeEditor`'s `RecipeSelect` opens on the slot retained for it, default 0 ('Recipe'). Loading
+ * a recipe into a slot from another route sets it first, see `useOpenCalculator`.
  */
-function CalculatorContent() {
-  const searchParams = useSearchParams();
-  const urlSlot = slotFromParam(searchParams.get("slot"));
-
+export default function CalculatorPage() {
   // `measureBeforeMount: true` keeps `mounted` false until the real width is measured, so the
   // `{mounted && ...}` gate defers the grid's first render until width measurement and layout
   // hydration have batched. Otherwise the grid mounts at the placeholder width with default
@@ -79,7 +72,6 @@ function CalculatorContent() {
 
   const recipeEditorPanelProps = {
     recipeCtxState,
-    urlSlot,
     onUserQuantityEdit: () => autoBalanceState[STATE_SET](false),
   };
 
@@ -232,14 +224,5 @@ function CalculatorContent() {
         </ResponsiveGridLayout>
       )}
     </div>
-  );
-}
-
-/** Wraps {@link CalculatorContent} in a Suspense boundary, required by `useSearchParams` */
-export default function CalculatorPage() {
-  return (
-    <Suspense>
-      <CalculatorContent />
-    </Suspense>
   );
 }

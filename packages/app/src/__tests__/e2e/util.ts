@@ -71,6 +71,19 @@ export async function showSidebarItems(page: Page) {
   }
 }
 
+/**
+ * Follow the sidebar link to `path`: a client-side navigation, so the root layout stays mounted.
+ * The sidebar must already be reachable; see {@link showSidebarItems}.
+ */
+export async function navigateViaSidebar(page: Page, path: string) {
+  await page.locator(`#sidebar a[href="${path}"]`).click();
+  await page.waitForURL(`**${path}`);
+  // Desktop: clicking a rail link hover-opens the peek overlay; move off the sidebar so it
+  // collapses before the caller clicks content. No-op on mobile (no hover; rail already pinned).
+  const size = page.viewportSize();
+  if (size) await page.mouse.move(size.width / 2, size.height / 2);
+}
+
 /** Scope of `RecipeEditorPanel`'s `RecipeSelect`; both its control and its box are read from it. */
 const RECIPE_EDITOR_RECIPE_SELECT = "#recipe-editor-panel #recipe-selection";
 

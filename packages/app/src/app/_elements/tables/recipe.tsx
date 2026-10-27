@@ -351,19 +351,18 @@ enum SaveStatus {
  * resolution, localStorage persistence, and clipboard interactions — and writes through to the
  * shared `RecipeContext` via the provided state setter.
  *
- * `urlSlot` is the recipe slot from the `?slot=` URL param; present = override display, absent =
- * restore stored. `toolbarPrefix` is rendered inside the toolbar's left-aligned group (alongside
- * `RecipeSelect`); used by the panel wrapper to inject a drag handle.
+ * The selected slot is retained under `persistKey` (see `useRecipeIdxState`), surviving navigation
+ * but not a reload, which starts on the main recipe. `toolbarPrefix` renders in the toolbar's
+ * left-aligned group, beside `RecipeSelect`; the panel wrapper uses it to inject a drag handle.
  */
 export function RecipeEditor({
   recipeCtxState: [recipeContext, setRecipeContext],
-  urlSlot,
   persistKey,
   toolbarPrefix,
   onUserQuantityEdit,
 }: {
   recipeCtxState: RecipeContextState;
-  urlSlot?: number;
+  /** Root under which the selected slot is retained across navigation; plain state if omitted. */
   persistKey?: string;
   toolbarPrefix?: ReactNode;
   /** Fired on any user-driven row quantity edit; used to cancel continuous-balance mode. */
@@ -377,7 +376,7 @@ export function RecipeEditor({
 
   const { recipes: allRecipes } = recipeContext;
 
-  const [currentRecipeIdx, setCurrentRecipeIdx] = useRecipeIdxState(persistKey, 0, { urlSlot });
+  const [currentRecipeIdx, setCurrentRecipeIdx] = useRecipeIdxState(persistKey, 0);
   const currentRecipe = allRecipes[currentRecipeIdx];
 
   // Keep every filled row reachable, plus one blank row to type the next ingredient into.

@@ -50,9 +50,6 @@ import type {
   SavedRecipeVersionJson,
 } from "@/lib/data/recipes";
 
-/** Root of this search's persisted filter and retained query keys; also its wrapper id. */
-const RECIPE_SEARCH_ID = "recipe-search";
-
 /** Sources of recipes; re-export of {@link EntitySource} for backwards compatibility */
 export const RecipeSource = EntitySource;
 export type RecipeSource = EntitySource;
@@ -325,7 +322,7 @@ function RecipeDetailPanel({
             onLoad={(slot) => onLoadRecipe(entry, selectedVersion, slot)}
             slots={slots}
             slotLabel={makeRecipeId}
-            persistKey={STORAGE_KEYS.recipeSearchLoadAction}
+            persistKey={STORAGE_KEYS.recipeSearch}
           />
         )}
         {deleteRecipeEnabled && (
@@ -436,9 +433,9 @@ export function RecipeSearch({
   const embeddedGrouped = useMemo(() => allRecipeEntries.map(adaptEmbeddedToGrouped), []);
   const savedGrouped = useMemo(() => savedRecipes.map(adaptSavedToGrouped), [savedRecipes]);
 
-  const favouritesFilterState = useFavouritesFilterState(RECIPE_SEARCH_ID);
+  const favouritesFilterState = useFavouritesFilterState(STORAGE_KEYS.recipeSearch);
   const [favouritesOnly] = favouritesFilterState;
-  const ratingFilterState = useRatingFilterState(RECIPE_SEARCH_ID);
+  const ratingFilterState = useRatingFilterState(STORAGE_KEYS.recipeSearch);
   const [ratingFilter] = ratingFilterState;
 
   const matchesFilters = useCallback(
@@ -455,7 +452,7 @@ export function RecipeSearch({
 
   return (
     <EntitySearch<GroupedRecipe>
-      id={RECIPE_SEARCH_ID}
+      id={STORAGE_KEYS.recipeSearch}
       embeddedEntries={embeddedGrouped}
       savedEntries={savedGrouped}
       getId={(e) => e.id}

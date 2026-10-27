@@ -19,6 +19,7 @@ import { CompKey, comp_key_as_med_str } from "@workspace/sci-cream";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
+import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
 import {
   makeMockRecipeContext,
   getCompColumnIdx,
@@ -614,6 +615,50 @@ describe("CompositionBreakdownView", () => {
       await setRecipeSelect(container, RecipeID.Main);
 
       expect(container.querySelector("#recipe-selection")).not.toBeInTheDocument();
+    });
+  });
+
+  // ---- Recipe slot retention --------------------------------------------------------------
+
+  describe("Recipe slot retention", () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    const view = (recipeCtx: ReturnType<typeof makeMockRecipeContext>) => (
+      <CompositionBreakdownView
+        recipes={recipeCtx.recipes}
+        persistKey={STORAGE_KEYS.compositionBreakdownPanelView}
+      />
+    );
+
+    it("keeps the selected recipe when left and returned to", async () => {
+      const { container, leaveAndReturn } = renderWithRetainedState(
+        view(makeMockRecipeContext([RecipeID.RefA])),
+      );
+      await setRecipeSelect(container, RecipeID.RefA);
+
+      leaveAndReturn();
+
+      expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Ref A");
+    });
+
+    it("starts on the main recipe again after a reload", async () => {
+      const recipeCtx = makeMockRecipeContext([RecipeID.RefA]);
+      const first = renderWithRetainedState(view(recipeCtx));
+      await setRecipeSelect(first.container, RecipeID.RefA);
+      first.unmount();
+
+      const second = renderWithRetainedState(view(recipeCtx));
+
+      expect(getSelectedOptionLabel(second.container, "#recipe-selection")).toBe("Recipe");
+    });
+
+    it("is held in memory only, never in localStorage", async () => {
+      const { container } = renderWithRetainedState(view(makeMockRecipeContext([RecipeID.RefA])));
+      await setRecipeSelect(container, RecipeID.RefA);
+
+      expect(Object.keys(localStorage).some((key) => key.endsWith(":recipeIdx"))).toBe(false);
     });
   });
 

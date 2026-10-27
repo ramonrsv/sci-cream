@@ -22,6 +22,8 @@ import {
   updateUserRecipeVersion,
 } from "@/lib/data/recipes";
 import { RecipeEditor, RecipeTable } from "@/app/_elements/tables/recipe";
+import { recipeIdxKey } from "@/app/_elements/selects/recipe-select";
+import { RetainedStateContext } from "@/lib/hooks/use-retained-state";
 
 import {
   Category,
@@ -33,6 +35,7 @@ import {
 } from "@workspace/sci-cream";
 
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
+import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
 import { makeMockRecipe } from "@/__tests__/unit/util";
 import { getSelectedOptionLabel, selectOption } from "@/__tests__/unit/select";
 
@@ -328,11 +331,34 @@ describe("RecipeEditor", () => {
     expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Recipe");
   });
 
-  it("should select the slot given by urlSlot on first render", () => {
+  it("should start on the slot retained under persistKey", () => {
+    const store = new Map<string, unknown>([[recipeIdxKey("test-editor")!, 2]]);
+
     const { container } = render(
-      <RecipeEditor {...makeRecipeEditorProps([0, 1, 2])} urlSlot={2} />,
+      <RetainedStateContext value={store}>
+        <RecipeEditor {...makeRecipeEditorProps([0, 1, 2])} persistKey="test-editor" />
+      </RetainedStateContext>,
     );
+
     expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Ref B");
+  });
+
+  it("should keep the selected slot when left and returned to", async () => {
+    const { container, leaveAndReturn } = renderWithRetainedState(
+      <RecipeEditor {...makeRecipeEditorProps([0, 1, 2])} persistKey="test-editor" />,
+    );
+    await selectOption(container, "#recipe-selection", "Ref A");
+
+    leaveAndReturn();
+
+    expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Ref A");
+  });
+
+  it("should start on the main recipe when nothing is retained, as after a reload", () => {
+    const { container } = renderWithRetainedState(
+      <RecipeEditor {...makeRecipeEditorProps([0, 1, 2])} persistKey="test-editor" />,
+    );
+    expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Recipe");
   });
 
   it("should render action buttons", () => {
@@ -1013,14 +1039,15 @@ describe("RecipeEditor", () => {
       expect(screen.getByTitle("Add ingredients to save")).toBeDisabled();
     });
 
-    it("is disabled when the selected slot is not the main recipe", () => {
+    it("is disabled when the selected slot is not the main recipe", async () => {
       mockSignedIn();
       // Populate slot 1 (Ref A) with an otherwise-saveable recipe to isolate the slot guard
       recipeContext.recipes[1].name = "Ref Recipe";
       recipeContext.recipes[1].ingredientRows[0].name = "Whole Milk";
       recipeContext.recipes[1].ingredientRows[0].quantity = 500;
       recipeContext.recipes[1].mixTotal = 500;
-      render(<RecipeEditor {...makeRecipeEditorProps([0, 1])} urlSlot={1} />);
+      const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0, 1])} />);
+      await selectOption(container, "#recipe-selection", "Ref A");
       // Off the main recipe, both the Save and branch buttons carry the wrong-slot title, disabled
       const controls = screen.getAllByTitle("Select main recipe to save");
       expect(controls).toHaveLength(2);
@@ -1375,7 +1402,7 @@ describe("RecipeEditor", () => {
       });
     });
 
-    it("on a reference slot, keeps the badge but hides the input and disables the branch button", () => {
+    it("on a reference slot, keeps the badge but hides the input and disables the branch button", async () => {
       mockSignedIn();
       // A saved recipe loaded into Ref A (slot 1): its version still shows, but it can't be
       // branched, so the new-version input is hidden and the always-shown branch button is disabled.
@@ -1384,7 +1411,8 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[1].ingredientRows[0].quantity = 500;
       recipeContext.recipes[1].mixTotal = 500;
       recipeContext.recipes[1].savedRef = { recipeId: 7, versionNumber: 3 };
-      render(<RecipeEditor {...makeRecipeEditorProps([0, 1])} urlSlot={1} />);
+      const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0, 1])} />);
+      await selectOption(container, "#recipe-selection", "Ref A");
 
       expect(screen.getByTitle("Editing version 3")).toBeInTheDocument();
       expect(screen.queryByLabelText("New version")).not.toBeInTheDocument();

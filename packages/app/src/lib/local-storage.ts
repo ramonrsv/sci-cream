@@ -1,40 +1,49 @@
 /**
- * All `localStorage` keys used by the app.
+ * All keys of state that outlives a component: in `localStorage` (`usePersistedState`), or in
+ * memory across client-side navigation but not a reload (`useRetainedState`).
  *
- * Per-view persistence uses a root key plus a colon-separated suffix, e.g.
- * `${root}:qty`, `${root}:filter`, `${root}:selected`, `${root}:recipeIdx`.
- * Roots are listed below; the full leaf keys are derived inside the colocated
- * hooks (`useQtyToggleState`, `useKeyFilterState`, `useRecipeIdxState`).
+ * Per-view state uses a root key plus a colon-separated suffix, e.g. `${root}:qty`,
+ * `${root}:filter`, `${root}:recipeIdx`, and one root can hold leaves in both stores. Roots are
+ * listed below, with their retained leaves marked; the full leaf keys are derived inside the
+ * colocated hooks (`useQtyToggleState`, `useKeyFilterState`, `useRecipeIdxState`).
  */
 export const STORAGE_KEYS = {
   recipeStores: "recipe-stores",
   sidebarPinned: "sidebar-pinned",
   calculatorLayouts: "calculator-layouts",
   groupBy: "group-by",
-  // Watcher state — targets, priorities, total, show toggles, etc.; keys via useKeyFilterState
+
+  // ---- Watchers: targets, priorities, total, show toggles; keys via useKeyFilterState -----------
   watcherTargets: "watcher-targets",
   watcherPriorities: "watcher-priorities",
   watcherTotal: "watcher-total",
   watcherShowRange: "watcher-show-range",
   watcherShowTarget: "watcher-show-target",
   watcherShowRefs: "watcher-show-refs",
-  // Per-view persistence roots (leaf keys: ${root}:qty | :filter | :selected | :recipeIdx)
+
+  // ---- Per-view roots: ${root}:qty | :filter | :selected; retained :recipeIdx | :slot -----------
   propertiesPanelView: "properties-panel-view",
   compositionBreakdownPanelView: "composition-breakdown-panel-view",
   propertiesChartPanelView: "properties-chart-panel-view",
   watchersPanelView: "watchers-panel-view",
   recipeEditorPanel: "recipe-editor-panel",
-  recipeSearchLoadAction: "recipe-search-load-action",
   recipeSearchPropertiesView: "recipe-search-properties-view",
-  // Markdown-field roots, one per render site (leaf key: ${root}:tab)
+  recipeSharePropertiesView: "share-properties-view",
+  recipeShareLoadAction: "share-load-action",
+  ingredientSearchCompositionView: "ingredient-search-composition-view",
+
+  // ---- Markdown-field roots, one per render site: ${root}:tab -----------------------------------
   recipeSearchComments: "recipe-search-comments",
   makeRecipeNotes: "make-recipe-notes",
-  recipeShareLoadAction: "share-load-action",
-  recipeSharePropertiesView: "share-properties-view",
-  ingredientSearchCompositionView: "ingredient-search-composition-view",
-  // Make-recipe: the owner's working batch, and per-batch checkoff state (leaf keys:
-  // `${root}:h<hash>` per batch, plus `${root}:index` holding the MRU list for eviction)
+
+  // ---- Search roots: ${root}:source | :favourites | :rating; retained :query | :slot ------------
+  recipeSearch: "recipe-search",
+  ingredientSearch: "ingredient-search",
+
+  // ---- Make-recipe ------------------------------------------------------------------------------
+  // The owner's working batch; also the batch list's root: ${root}:favourites, retained :query
   makeRecipeBatch: "make-recipe-batch",
+  // Per-batch checkoff state: ${root}:h<hash> per batch, plus ${root}:index, the MRU for eviction
   makeRecipeChecklist: "make-recipe-checklist",
   // The owner's container colors, in the order recipes take them (see `batch-colors.ts`)
   makeRecipeColors: "make-recipe-colors",
