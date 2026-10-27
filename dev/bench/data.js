@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793078576010,
+  "lastUpdate": 1793078919466,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -546673,6 +546673,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 723.5,
             "range": "17.46",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a86fdf73e12e00ca93f0a979645ecea7e9c8b782",
+          "message": "Retain selected recipe slots across navigation\n\nLoading a recipe opened the calculator at /calculator?slot=N. The param\nstayed in the history entry, so Back and Forward re-applied it over\nwhichever slot the user had picked since. Loading now sets the editor's\nslot in the retained store before navigating, through the new\nuseOpenCalculator hook and useRetainedStateSetter, and the URL carries\nno slot.\n\nThe slots selected in the recipe editor and the composition breakdown,\nand the Load target pickers on /recipes and /share, move from\nlocalStorage to retained state. They survive client-side navigation but\nnot a reload, so a reload can't leave a view or a Load silently on a\nreference slot. Values left in localStorage are ignored.\n\nSTORAGE_KEYS now lists the roots of both stores, since one root can\nhold persisted and retained leaves, with section headers marking each\ngroup. It gains the recipe and ingredient search roots, whose\nlocalStorage leaves were unlisted, and replaces the local key\nconstants. The saved-batch query moves under the make-recipe-batch\nroot.\n\nTests cover the new hooks, the retained slot in each view, and each\npage's handoff to the calculator; the tests of ?slot= parsing and of\nlocalStorage slot persistence go with them. A Playwright spec drives\nLoad, Back, the sidebar, and a reload. e2e specs read a select's label\nthrough a new getSelectedOptionLabel helper instead of option:checked,\nand navigateViaSidebar moves into the shared e2e utils. CLAUDE.md\ndescribes the handoff.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-27T00:35:10-04:00",
+          "tree_id": "4583fd78edba9f5e2cdb96d4506ee0353dafc2bd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a86fdf73e12e00ca93f0a979645ecea7e9c8b782"
+        },
+        "date": 1793078851100,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 44.25,
+            "range": "3.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 54.88,
+            "range": "4.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 61.13,
+            "range": "5.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2369.63,
+            "range": "53.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 370,
+            "range": "4.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 386.38,
+            "range": "4.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 406.88,
+            "range": "10.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19518,
+            "range": "119.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 920.13,
+            "range": "11.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.13,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.5,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.75,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.88,
+            "range": "1.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 126.75,
+            "range": "3.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 82.25,
+            "range": "1.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.56,
+            "range": "0.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.77,
+            "range": "0.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 631.13,
+            "range": "10.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 691.5,
+            "range": "13.19",
             "unit": "ms"
           }
         ]
