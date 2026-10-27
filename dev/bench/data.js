@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793079113261,
+  "lastUpdate": 1793079129097,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -589353,6 +589353,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.76%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "20fac21875dd6242f9f050fcaabcc6535194f0a5",
+          "message": "Move STORAGE_KEYS and leafKey to storage-keys.ts\n\nSTORAGE_KEYS lists the roots of both localStorage and retained state,\nbut lived in local-storage.ts beside the localStorage helpers, so a\ncomponent that only needed a retained key imported it from\nlocal-storage. leafKey had the same problem in use-persisted-state.ts,\nthough four of its callers build retained keys.\n\nBoth move to a new storage-keys.ts, and local-storage.ts keeps only\nthe get, set, and remove helpers. Importers switch to the new module\ndirectly, without re-exports. leafKey's doc covers both stores, and the\nSTORAGE_KEYS header names it as the function that derives leaf keys.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-27T00:44:06-04:00",
+          "tree_id": "9923e710aa984d16db465587c8c0d5ec70096020",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/20fac21875dd6242f9f050fcaabcc6535194f0a5"
+        },
+        "date": 1793079072985,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 72203,
+            "range": "±0.64%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 533146,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 50081,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 403302,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
