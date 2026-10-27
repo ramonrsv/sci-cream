@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793078462822,
+  "lastUpdate": 1793078576010,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -95854,6 +95854,204 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a86fdf73e12e00ca93f0a979645ecea7e9c8b782",
+          "message": "Retain selected recipe slots across navigation\n\nLoading a recipe opened the calculator at /calculator?slot=N. The param\nstayed in the history entry, so Back and Forward re-applied it over\nwhichever slot the user had picked since. Loading now sets the editor's\nslot in the retained store before navigating, through the new\nuseOpenCalculator hook and useRetainedStateSetter, and the URL carries\nno slot.\n\nThe slots selected in the recipe editor and the composition breakdown,\nand the Load target pickers on /recipes and /share, move from\nlocalStorage to retained state. They survive client-side navigation but\nnot a reload, so a reload can't leave a view or a Load silently on a\nreference slot. Values left in localStorage are ignored.\n\nSTORAGE_KEYS now lists the roots of both stores, since one root can\nhold persisted and retained leaves, with section headers marking each\ngroup. It gains the recipe and ingredient search roots, whose\nlocalStorage leaves were unlisted, and replaces the local key\nconstants. The saved-batch query moves under the make-recipe-batch\nroot.\n\nTests cover the new hooks, the retained slot in each view, and each\npage's handoff to the calculator; the tests of ?slot= parsing and of\nlocalStorage slot persistence go with them. A Playwright spec drives\nLoad, Back, the sidebar, and a reload. e2e specs read a select's label\nthrough a new getSelectedOptionLabel helper instead of option:checked,\nand navigateViaSidebar moves into the shared e2e utils. CLAUDE.md\ndescribes the handoff.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-27T00:35:10-04:00",
+          "tree_id": "4583fd78edba9f5e2cdb96d4506ee0353dafc2bd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a86fdf73e12e00ca93f0a979645ecea7e9c8b782"
+        },
+        "date": 1793078495188,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3851,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 128076,
+            "range": "± 1711",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2052,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 127912,
+            "range": "± 1976",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 3449,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 3305,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 3457,
+            "range": "± 81",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 3475,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 3446,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 3649,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 3455,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 3462,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 86666,
+            "range": "± 1846",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 87401,
+            "range": "± 2883",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 227963691,
+            "range": "± 1932857",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 633413,
+            "range": "± 7659",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 5047,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 4747,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 76806,
+            "range": "± 1143",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 72096,
+            "range": "± 509",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 119721,
+            "range": "± 961",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 115439,
+            "range": "± 1653",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 343899,
+            "range": "± 4449",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 15908,
+            "range": "± 78",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 688,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 15,
             "range": "± 0",
             "unit": "ns/iter"
           }
