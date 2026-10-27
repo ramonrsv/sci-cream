@@ -405,6 +405,13 @@ describe("RecipeSearch", () => {
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
 
       expect(getSelectedOptionLabelByLabel("Target slot")).toContain("Ref A");
+    });
+
+    it("is held in memory only, never in localStorage", async () => {
+      renderWithRetainedState(<RecipeSearch onLoadRecipe={vi.fn()} slots={[0, 1, 2]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+      await selectOptionByLabel("Target slot", "Ref A");
+
       expect(Object.keys(localStorage).some((key) => key.endsWith(":slot"))).toBe(false);
     });
   });

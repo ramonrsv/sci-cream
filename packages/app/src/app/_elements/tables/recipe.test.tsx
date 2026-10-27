@@ -332,7 +332,7 @@ describe("RecipeEditor", () => {
   });
 
   it("should start on the slot retained under persistKey", () => {
-    const store = new Map<string, unknown>([[recipeIdxKey("test-editor")!, 2]]);
+    const store = new Map<string, unknown>([[recipeIdxKey("test-editor"), 2]]);
 
     const { container } = render(
       <RetainedStateContext value={store}>

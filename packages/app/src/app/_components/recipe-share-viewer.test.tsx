@@ -220,7 +220,7 @@ describe("ShareViewer", () => {
 
       const stores = JSON.parse(localStorage.getItem(STORAGE_KEYS.recipeStores) ?? "[]");
       expect(stores[2].name).toBe("To Ref B");
-      expect(store.get(recipeIdxKey(STORAGE_KEYS.recipeEditorPanel)!)).toBe(2);
+      expect(store.get(recipeIdxKey(STORAGE_KEYS.recipeEditorPanel))).toBe(2);
     });
   });
 

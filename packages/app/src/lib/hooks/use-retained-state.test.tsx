@@ -185,15 +185,6 @@ describe("useRetainedStateSetter", () => {
     expect(result.current).toBe(first);
   });
 
-  it("ignores an undefined key", () => {
-    const store = new Map<string, unknown>();
-    const { result } = renderHook(() => useRetainedStateSetter(), { wrapper: withStore(store) });
-
-    result.current(undefined, 7);
-
-    expect(store.size).toBe(0);
-  });
-
   it("does nothing without a provider", () => {
     const setter = renderHook(() => useRetainedStateSetter());
     expect(() => setter.result.current(KEY, 7)).not.toThrow();

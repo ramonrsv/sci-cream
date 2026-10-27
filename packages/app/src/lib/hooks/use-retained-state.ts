@@ -47,14 +47,14 @@ export function useRetainedState<T>(
  * navigating there. It writes synchronously, so the value is in place when that route mounts.
  *
  * Only a {@link useRetainedState} that mounts afterwards picks the value up; one already mounted
- * keeps its own state. A no-op for an `undefined` key, or when no provider is mounted.
+ * keeps its own state. A no-op when no provider is mounted.
  */
-export function useRetainedStateSetter(): (key: string | undefined, value: unknown) => void {
+export function useRetainedStateSetter(): (key: string, value: unknown) => void {
   const retained = useContext(RetainedStateContext);
 
   return useCallback(
     (key, value) => {
-      if (key !== undefined) retained?.set(key, value);
+      retained?.set(key, value);
     },
     [retained],
   );

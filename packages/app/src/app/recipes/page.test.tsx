@@ -283,7 +283,7 @@ describe("RecipesPage", () => {
 
       capturedProps().onLoadRecipe!(entry, version, 2);
 
-      expect(store.get(recipeIdxKey(STORAGE_KEYS.recipeEditorPanel)!)).toBe(2);
+      expect(store.get(recipeIdxKey(STORAGE_KEYS.recipeEditorPanel))).toBe(2);
     });
 
     it("serializes each recipe row as name<tab>quantity", () => {

@@ -129,7 +129,7 @@ describe("Calculator Page", () => {
       [2, "Ref B"],
     ])("opens on slot %i when it was set for the editor beforehand", (slot, label) => {
       const store = new Map<string, unknown>([
-        [recipeIdxKey(STORAGE_KEYS.recipeEditorPanel)!, slot],
+        [recipeIdxKey(STORAGE_KEYS.recipeEditorPanel), slot],
       ]);
 
       const { container } = render(

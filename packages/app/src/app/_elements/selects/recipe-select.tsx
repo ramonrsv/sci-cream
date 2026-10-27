@@ -11,9 +11,11 @@ import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
 /**
  * Retained-state key of the recipe slot selected in the view rooted at `persistKey`, or `undefined`
- * when `persistKey` is, which opts out of retention. {@link useRecipeIdxState} reads it; whatever
- * sets the slot ahead of a navigation, e.g. `useOpenCalculator`, writes it.
+ * without one, which opts out of retention. Read by {@link useRecipeIdxState}; `useOpenCalculator`
+ * sets it to choose the slot the calculator opens on.
  */
+export function recipeIdxKey(persistKey: string): string;
+export function recipeIdxKey(persistKey: string | undefined): string | undefined;
 export function recipeIdxKey(persistKey: string | undefined): string | undefined {
   return leafKey(persistKey, "recipeIdx");
 }
