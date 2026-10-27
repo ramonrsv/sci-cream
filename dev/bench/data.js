@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793079512939,
+  "lastUpdate": 1793079959319,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -547945,6 +547945,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 691.5,
             "range": "13.19",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "20fac21875dd6242f9f050fcaabcc6535194f0a5",
+          "message": "Move STORAGE_KEYS and leafKey to storage-keys.ts\n\nSTORAGE_KEYS lists the roots of both localStorage and retained state,\nbut lived in local-storage.ts beside the localStorage helpers, so a\ncomponent that only needed a retained key imported it from\nlocal-storage. leafKey had the same problem in use-persisted-state.ts,\nthough four of its callers build retained keys.\n\nBoth move to a new storage-keys.ts, and local-storage.ts keeps only\nthe get, set, and remove helpers. Importers switch to the new module\ndirectly, without re-exports. leafKey's doc covers both stores, and the\nSTORAGE_KEYS header names it as the function that derives leaf keys.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-27T00:44:06-04:00",
+          "tree_id": "9923e710aa984d16db465587c8c0d5ec70096020",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/20fac21875dd6242f9f050fcaabcc6535194f0a5"
+        },
+        "date": 1793079891873,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 44.63,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 51.63,
+            "range": "4.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57.88,
+            "range": "5.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2448.13,
+            "range": "86.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 383.38,
+            "range": "10.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 387.88,
+            "range": "5.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 400.5,
+            "range": "4.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19446.13,
+            "range": "241.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 927.25,
+            "range": "12.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.75,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43.75,
+            "range": "1.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 123.5,
+            "range": "4.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 84.75,
+            "range": "1.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.35,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.37,
+            "range": "0.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 638.38,
+            "range": "12.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 701.88,
+            "range": "15.78",
             "unit": "ms"
           }
         ]
