@@ -302,12 +302,10 @@ impl ToComposition for SweetenerSpec {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::unwrap_used, clippy::float_cmp)]
+#[allow(clippy::unwrap_used)]
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
-    use crate::tests::asserts::shadow_asserts::assert_eq;
-    use crate::tests::asserts::*;
     use crate::tests::util::{AssertKeys, assert_comp_eq_percent};
 
     use super::*;
@@ -371,18 +369,22 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_sucrose() {
         let comp = ING_SPEC_SWEETENER_SUCROSE.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 400.0);
-
-        assert_eq!(comp.get(CompKey::Sucrose), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::POD), 100.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 100.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 400.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 0.0),
+            (CompKey::TotalCarbohydrates, 100.0),
+            (CompKey::TotalSugars, 100.0),
+            (CompKey::Sucrose, 100.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 100.0),
+            (CompKey::POD, 100.0),
+            (CompKey::NetPAC, 100.0),
+            (CompKey::TotalPAC, 100.0),
+            (CompKey::PACsgr, 100.0),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_DEXTROSE_STR: &str = r#"{
@@ -493,18 +495,22 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_fructose() {
         let comp = ING_SPEC_SWEETENER_FRUCTOSE.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 400.0);
-
-        assert_eq!(comp.get(CompKey::Fructose), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::POD), 173.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 190.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 400.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 0.0),
+            (CompKey::TotalCarbohydrates, 100.0),
+            (CompKey::TotalSugars, 100.0),
+            (CompKey::Fructose, 100.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 100.0),
+            (CompKey::POD, 173.0),
+            (CompKey::NetPAC, 190.0),
+            (CompKey::TotalPAC, 190.0),
+            (CompKey::PACsgr, 190.0),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_LACTOSE_STR: &str = r#"{
@@ -552,18 +558,22 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_lactose() {
         let comp = ING_SPEC_SWEETENER_LACTOSE.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 400.0);
-
-        assert_eq!(comp.get(CompKey::Lactose), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::POD), 16.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 100.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 400.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 0.0),
+            (CompKey::TotalCarbohydrates, 100.0),
+            (CompKey::TotalSugars, 100.0),
+            (CompKey::Lactose, 100.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 100.0),
+            (CompKey::POD, 16.0),
+            (CompKey::NetPAC, 100.0),
+            (CompKey::TotalPAC, 100.0),
+            (CompKey::PACsgr, 100.0),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_MALTOSE_STR: &str = r#"{
@@ -611,18 +621,22 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_maltose() {
         let comp = ING_SPEC_SWEETENER_MALTOSE.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 400.0);
-
-        assert_eq!(comp.get(CompKey::Maltose), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::POD), 32.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 100.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 400.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 0.0),
+            (CompKey::TotalCarbohydrates, 100.0),
+            (CompKey::TotalSugars, 100.0),
+            (CompKey::Maltose, 100.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 100.0),
+            (CompKey::POD, 32.0),
+            (CompKey::NetPAC, 100.0),
+            (CompKey::TotalPAC, 100.0),
+            (CompKey::PACsgr, 100.0),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_TREHALOSE_STR: &str = r#"{
@@ -669,18 +683,22 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_trehalose() {
         let comp = ING_SPEC_SWEETENER_TREHALOSE.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 400.0);
-
-        assert_eq!(comp.get(CompKey::Trehalose), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::POD), 45.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 100.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 400.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 0.0),
+            (CompKey::TotalCarbohydrates, 100.0),
+            (CompKey::TotalSugars, 100.0),
+            (CompKey::Trehalose, 100.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 100.0),
+            (CompKey::POD, 45.0),
+            (CompKey::NetPAC, 100.0),
+            (CompKey::TotalPAC, 100.0),
+            (CompKey::PACsgr, 100.0),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_ERYTHRITOL_STR: &str = r#"{
@@ -728,18 +746,23 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_erythritol() {
         let comp = ING_SPEC_SWEETENER_ERYTHRITOL.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 20.0);
-
-        assert_eq!(comp.get(CompKey::Erythritol), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSugars), 0.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 100.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::POD), 70.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 280.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 20.0),
+            (CompKey::OtherSNFS, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 100.0),
+            (CompKey::TotalCarbohydrates, 100.0),
+            (CompKey::TotalSugars, 0.0),
+            (CompKey::TotalPolyols, 100.0),
+            (CompKey::Erythritol, 100.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 100.0),
+            (CompKey::POD, 70.0),
+            (CompKey::NetPAC, 280.0),
+            (CompKey::TotalPAC, 280.0),
+            (CompKey::PACsgr, 280.0),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_INVERT_SUGAR_STR: &str = r#"{
@@ -778,20 +801,25 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_invert_sugar() {
         let comp = ING_SPEC_SWEETENER_INVERT_SUGAR.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 320.0);
-
-        assert_eq!(comp.get(CompKey::Glucose), 34.0);
-        assert_eq!(comp.get(CompKey::Fructose), 34.0);
-        assert_eq!(comp.get(CompKey::Sucrose), 12.0);
-        assert_eq!(comp.get(CompKey::TotalSugars), 80.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 80.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 80.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 80.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 98.02);
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 141.2);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 320.0),
+            (CompKey::TotalSolids, 80.0),
+            (CompKey::TotalSNF, 80.0),
+            (CompKey::TotalSNFS, 0.0),
+            (CompKey::Water, 20.0),
+            (CompKey::TotalCarbohydrates, 80.0),
+            (CompKey::TotalSugars, 80.0),
+            (CompKey::Glucose, 34.0),
+            (CompKey::Fructose, 34.0),
+            (CompKey::Sucrose, 12.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 80.0),
+            (CompKey::POD, 98.02),
+            (CompKey::NetPAC, 141.2),
+            (CompKey::TotalPAC, 141.2),
+            (CompKey::PACsgr, 141.2),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_HONEY_STR: &str = r#"{
@@ -840,22 +868,28 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_honey() {
         let comp = ING_SPEC_SWEETENER_HONEY.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 328.0);
-
-        assert_eq!(comp.get(CompKey::Glucose), 36.0);
-        assert_eq!(comp.get(CompKey::Fructose), 41.0);
-        assert_eq!(comp.get(CompKey::Sucrose), 2.0);
-        assert_eq!(comp.get(CompKey::Galactose), 1.5);
-        assert_eq!(comp.get(CompKey::Maltose), 1.5);
-        assert_eq!(comp.get(CompKey::TotalSugars), 82.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 82.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 82.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 1.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 83.0);
-        assert_eq!(comp.get(CompKey::POD), 103.185);
-        assert_eq!(comp.get(CompKey::PACsgr), 152.65);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 328.0),
+            (CompKey::OtherSNFS, 1.0),
+            (CompKey::TotalSolids, 83.0),
+            (CompKey::TotalSNF, 83.0),
+            (CompKey::TotalSNFS, 1.0),
+            (CompKey::Water, 17.0),
+            (CompKey::TotalCarbohydrates, 82.0),
+            (CompKey::TotalSugars, 82.0),
+            (CompKey::Glucose, 36.0),
+            (CompKey::Fructose, 41.0),
+            (CompKey::Galactose, 1.5),
+            (CompKey::Sucrose, 2.0),
+            (CompKey::Maltose, 1.5),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 82.0),
+            (CompKey::POD, 103.185),
+            (CompKey::NetPAC, 152.65),
+            (CompKey::TotalPAC, 152.65),
+            (CompKey::PACsgr, 152.65),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_MAPLE_SYRUP_STR: &str = r#"{
@@ -914,20 +948,26 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_maple_syrup() {
         let comp = ING_SPEC_SWEETENER_MAPLE_SYRUP.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 270.0);
-
-        assert_eq!(comp.get(CompKey::Glucose), 0.65);
-        assert_eq!(comp.get(CompKey::Fructose), 0.35);
-        assert_eq!(comp.get(CompKey::Sucrose), 59.0);
-        assert_eq!(comp.get(CompKey::TotalSugars), 60.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 60.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 67.5);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 8.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 68.0);
-        assert_eq!(comp.get(CompKey::POD), 60.1255);
-        assert_eq!(comp.get(CompKey::PACsgr), 60.9);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 270.0),
+            (CompKey::OtherSNFS, 8.0),
+            (CompKey::TotalSolids, 68.0),
+            (CompKey::TotalSNF, 68.0),
+            (CompKey::TotalSNFS, 8.0),
+            (CompKey::Water, 32.0),
+            (CompKey::TotalCarbohydrates, 67.5),
+            (CompKey::TotalSugars, 60.0),
+            (CompKey::Glucose, 0.65),
+            (CompKey::Fructose, 0.35),
+            (CompKey::Sucrose, 59.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 60.0),
+            (CompKey::POD, 60.1255),
+            (CompKey::NetPAC, 60.9),
+            (CompKey::TotalPAC, 60.9),
+            (CompKey::PACsgr, 60.9),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_FANCY_MOLASSES_STR: &str = r#"{
@@ -986,20 +1026,26 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_fancy_molasses() {
         let comp = ING_SPEC_SWEETENER_FANCY_MOLASSES.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 304.0);
-
-        assert_eq!(comp.get(CompKey::Glucose), 12.0);
-        assert_eq!(comp.get(CompKey::Fructose), 12.0);
-        assert_eq!(comp.get(CompKey::Sucrose), 32.0);
-        assert_eq!(comp.get(CompKey::TotalSugars), 56.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 56.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 76.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 24.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 80.0);
-        assert_eq!(comp.get(CompKey::POD), 62.36);
-        assert_eq!(comp.get(CompKey::PACsgr), 77.6);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 304.0),
+            (CompKey::OtherSNFS, 24.0),
+            (CompKey::TotalSolids, 80.0),
+            (CompKey::TotalSNF, 80.0),
+            (CompKey::TotalSNFS, 24.0),
+            (CompKey::Water, 20.0),
+            (CompKey::TotalCarbohydrates, 76.0),
+            (CompKey::TotalSugars, 56.0),
+            (CompKey::Glucose, 12.0),
+            (CompKey::Fructose, 12.0),
+            (CompKey::Sucrose, 32.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 56.0),
+            (CompKey::POD, 62.36),
+            (CompKey::NetPAC, 77.6),
+            (CompKey::TotalPAC, 77.6),
+            (CompKey::PACsgr, 77.6),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_HFCS42_STR: &str = r#"{
@@ -1047,21 +1093,27 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_hfcs42() {
         let comp = ING_SPEC_SWEETENER_HFCS42.spec.to_composition().unwrap();
 
-        // @todo This is a bit higher than reference 281
-        assert_eq!(comp.get(CompKey::Energy), 308.0);
-
-        assert_eq!(comp.get(CompKey::Fructose), 32.34);
-        assert_eq!(comp.get(CompKey::Glucose), 40.04);
-        assert_eq!(comp.get(CompKey::Maltose), 3.08);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 75.46);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 75.46);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 77.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 1.54);
-        assert_eq!(comp.get(CompKey::TotalSolids), 77.0);
-        assert_eq!(comp.get(CompKey::POD), 73.15);
-        assert_eq!(comp.get(CompKey::PACsgr), 138.6);
+        comp.assert_all_keys(&[
+            // @todo This is a bit higher than reference 281
+            (CompKey::Energy, 308.0),
+            (CompKey::OtherSNFS, 1.54),
+            (CompKey::TotalSolids, 77.0),
+            (CompKey::TotalSNF, 77.0),
+            (CompKey::TotalSNFS, 1.54),
+            (CompKey::Water, 23.0),
+            (CompKey::TotalCarbohydrates, 77.0),
+            (CompKey::TotalSugars, 75.46),
+            (CompKey::Glucose, 40.04),
+            (CompKey::Fructose, 32.34),
+            (CompKey::Maltose, 3.08),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 75.46),
+            (CompKey::POD, 73.15),
+            (CompKey::NetPAC, 138.6),
+            (CompKey::TotalPAC, 138.6),
+            (CompKey::PACsgr, 138.6),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE_STR: &str = r#"{
@@ -1109,19 +1161,25 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_maltodextrin_10_de() {
         let comp = ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 380.0);
-
-        assert_eq!(comp.get(CompKey::Fructose), 0.0);
-        assert_eq!(comp.get(CompKey::Glucose), 0.57);
-        assert_eq_flt_test!(comp.get(CompKey::Maltose), 2.66);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 3.23);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 3.23);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 95.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 91.77);
-        assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
-        assert_eq!(comp.get(CompKey::POD), 10.45);
-        assert_eq!(comp.get(CompKey::PACsgr), 18.05);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 380.0),
+            (CompKey::OtherSNFS, 91.77),
+            (CompKey::TotalSolids, 95.0),
+            (CompKey::TotalSNF, 95.0),
+            (CompKey::TotalSNFS, 91.77),
+            (CompKey::Water, 5.0),
+            (CompKey::TotalCarbohydrates, 95.0),
+            (CompKey::TotalSugars, 3.23),
+            (CompKey::Glucose, 0.57),
+            (CompKey::Fructose, 0.0),
+            (CompKey::Maltose, 2.66),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalSweeteners, 3.23),
+            (CompKey::POD, 10.45),
+            (CompKey::NetPAC, 18.05),
+            (CompKey::TotalPAC, 18.05),
+            (CompKey::PACsgr, 18.05),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE_STR: &str = r#"{
@@ -1169,20 +1227,26 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_glucose_syrup_42_de() {
         let comp = ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE.spec.to_composition().unwrap();
 
-        // @todo This is significantly higher than reference 280
-        assert_eq!(comp.get(CompKey::Energy), 320.0);
-
-        assert_eq!(comp.get(CompKey::Fructose), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::Glucose), 15.2);
-        assert_eq_flt_test!(comp.get(CompKey::Maltose), 11.2);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 26.4);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 26.4);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 80.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 53.6);
-        assert_eq!(comp.get(CompKey::TotalSolids), 80.0);
-        assert_eq!(comp.get(CompKey::POD), 40.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 63.2);
+        comp.assert_all_keys(&[
+            // @todo This is significantly higher than reference 280
+            (CompKey::Energy, 320.0),
+            (CompKey::OtherSNFS, 53.6),
+            (CompKey::TotalSolids, 80.0),
+            (CompKey::TotalSNF, 80.0),
+            (CompKey::TotalSNFS, 53.6),
+            (CompKey::Water, 20.0),
+            (CompKey::TotalCarbohydrates, 80.0),
+            (CompKey::TotalSugars, 26.4),
+            (CompKey::Glucose, 15.2),
+            (CompKey::Fructose, 0.0),
+            (CompKey::Maltose, 11.2),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalSweeteners, 26.4),
+            (CompKey::POD, 40.0),
+            (CompKey::NetPAC, 63.2),
+            (CompKey::TotalPAC, 63.2),
+            (CompKey::PACsgr, 63.2),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE_STR: &str = r#"{
@@ -1230,20 +1294,26 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_glucose_powder_25_de() {
         let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 380.0);
-
-        assert_eq!(comp.get(CompKey::Fructose), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::Glucose), 1.9);
-        assert_eq_flt_test!(comp.get(CompKey::Maltose), 9.5);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 11.4);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 11.4);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 95.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 83.6);
-        assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 26.6);
-        assert_eq!(comp.get(CompKey::PACsgr), 44.65);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 380.0),
+            (CompKey::OtherSNFS, 83.6),
+            (CompKey::TotalSolids, 95.0),
+            (CompKey::TotalSNF, 95.0),
+            (CompKey::TotalSNFS, 83.6),
+            (CompKey::Water, 5.0),
+            (CompKey::TotalCarbohydrates, 95.0),
+            (CompKey::TotalSugars, 11.4),
+            (CompKey::Glucose, 1.9),
+            (CompKey::Fructose, 0.0),
+            (CompKey::Maltose, 9.5),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 11.4),
+            (CompKey::POD, 26.6),
+            (CompKey::NetPAC, 44.65),
+            (CompKey::TotalPAC, 44.65),
+            (CompKey::PACsgr, 44.65),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE_STR: &str = r#"{
@@ -1291,20 +1361,26 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_glucose_powder_42_de() {
         let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 380.0);
-
-        assert_eq!(comp.get(CompKey::Fructose), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::Glucose), 18.05);
-        assert_eq_flt_test!(comp.get(CompKey::Maltose), 13.3);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 31.35);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 31.35);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 95.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 63.65);
-        assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
-        assert_eq!(comp.get(CompKey::POD), 47.5);
-        assert_eq!(comp.get(CompKey::PACsgr), 75.05);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 380.0),
+            (CompKey::OtherSNFS, 63.65),
+            (CompKey::TotalSolids, 95.0),
+            (CompKey::TotalSNF, 95.0),
+            (CompKey::TotalSNFS, 63.65),
+            (CompKey::Water, 5.0),
+            (CompKey::TotalCarbohydrates, 95.0),
+            (CompKey::TotalSugars, 31.35),
+            (CompKey::Glucose, 18.05),
+            (CompKey::Fructose, 0.0),
+            (CompKey::Maltose, 13.3),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 31.35),
+            (CompKey::POD, 47.5),
+            (CompKey::NetPAC, 75.05),
+            (CompKey::TotalPAC, 75.05),
+            (CompKey::PACsgr, 75.05),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_INULIN_POWDER_STR: &str = r#"{
@@ -1362,21 +1438,28 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_inulin_powder() {
         let comp = ING_SPEC_SWEETENER_INULIN_POWDER.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 169.05);
-
-        assert_eq!(comp.get(CompKey::Glucose), 2.94);
-        assert_eq!(comp.get(CompKey::Fructose), 2.94);
-        assert_eq!(comp.get(CompKey::Sucrose), 2.94);
-        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 89.18);
-        assert_eq!(comp.get(CompKey::TotalSugars), 8.82);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 8.82);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 98.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 89.18);
-        assert_eq!(comp.get(CompKey::TotalSolids), 98.0);
-        assert_eq!(comp.get(CompKey::POD), 10.3782);
-        assert_eq!(comp.get(CompKey::PACsgr), 14.112);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 169.05),
+            (CompKey::OtherSNFS, 89.18),
+            (CompKey::TotalSolids, 98.0),
+            (CompKey::TotalSNF, 98.0),
+            (CompKey::TotalSNFS, 89.18),
+            (CompKey::Water, 2.0),
+            (CompKey::TotalCarbohydrates, 98.0),
+            (CompKey::TotalFiber, 89.18),
+            (CompKey::Inulin, 89.18),
+            (CompKey::TotalSugars, 8.82),
+            (CompKey::Glucose, 2.94),
+            (CompKey::Fructose, 2.94),
+            (CompKey::Sucrose, 2.94),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 8.82),
+            (CompKey::POD, 10.3782),
+            (CompKey::NetPAC, 14.112),
+            (CompKey::TotalPAC, 14.112),
+            (CompKey::PACsgr, 14.112),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_HP_INULIN_POWDER_STR: &str = r#"{
@@ -1420,18 +1503,23 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_hp_inulin_powder() {
         let comp = ING_SPEC_SWEETENER_HP_INULIN_POWDER.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 147.0);
-
-        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 98.0);
-        assert_eq!(comp.get(CompKey::TotalSugars), 0.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 98.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 98.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 98.0);
-        assert_eq!(comp.get(CompKey::POD), 0.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 0.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 147.0),
+            (CompKey::OtherSNFS, 98.0),
+            (CompKey::TotalSolids, 98.0),
+            (CompKey::TotalSNF, 98.0),
+            (CompKey::TotalSNFS, 98.0),
+            (CompKey::Water, 2.0),
+            (CompKey::TotalCarbohydrates, 98.0),
+            (CompKey::TotalFiber, 98.0),
+            (CompKey::Inulin, 98.0),
+            (CompKey::TotalSugars, 0.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 0.0),
+            (CompKey::POD, 0.0),
+            (CompKey::PACsgr, 0.0),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER_STR: &str = r#"{
@@ -1490,21 +1578,28 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_oligofructose_powder() {
         let comp = ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 159.25);
-
-        assert_eq_flt_test!(comp.get(CompKey::Glucose), 1.6366);
-        assert_eq_flt_test!(comp.get(CompKey::Fructose), 1.6366);
-        assert_eq_flt_test!(comp.get(CompKey::Sucrose), 1.6268);
-        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 93.1);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 4.9);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 4.9);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 98.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 93.1);
-        assert_eq!(comp.get(CompKey::TotalSolids), 98.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 43.0074);
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 7.8459);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 159.25),
+            (CompKey::OtherSNFS, 93.1),
+            (CompKey::TotalSolids, 98.0),
+            (CompKey::TotalSNF, 98.0),
+            (CompKey::TotalSNFS, 93.1),
+            (CompKey::Water, 2.0),
+            (CompKey::TotalCarbohydrates, 98.0),
+            (CompKey::TotalFiber, 93.1),
+            (CompKey::Oligofructose, 93.1),
+            (CompKey::TotalSugars, 4.9),
+            (CompKey::Glucose, 1.6366),
+            (CompKey::Fructose, 1.6366),
+            (CompKey::Sucrose, 1.6268),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 0.0),
+            (CompKey::TotalSweeteners, 4.9),
+            (CompKey::POD, 43.007_398),
+            (CompKey::NetPAC, 7.84588),
+            (CompKey::TotalPAC, 7.84588),
+            (CompKey::PACsgr, 7.84588),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE_STR: &str = r#"{
@@ -1570,19 +1665,26 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_splenda_sucralose() {
         let comp = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 374.72);
-
-        assert_eq!(comp.get(CompKey::Glucose), 55.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 55.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 1.32);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 56.32);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 93.68);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 40.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 840.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 112.6);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 374.72),
+            (CompKey::OtherSNFS, 40.0),
+            (CompKey::TotalSolids, 95.0),
+            (CompKey::TotalSNF, 95.0),
+            (CompKey::TotalSNFS, 40.0),
+            (CompKey::Water, 5.0),
+            (CompKey::TotalCarbohydrates, 93.68),
+            (CompKey::TotalFiber, 0.0),
+            (CompKey::TotalSugars, 55.0),
+            (CompKey::Glucose, 55.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 1.32),
+            (CompKey::Sucralose, 1.32),
+            (CompKey::TotalSweeteners, 56.32),
+            (CompKey::POD, 840.0),
+            (CompKey::NetPAC, 112.6),
+            (CompKey::TotalPAC, 112.6),
+            (CompKey::PACsgr, 112.6),
+        ]);
     }
 
     #[test]
@@ -1655,18 +1757,25 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_splenda_stevia() {
         let comp = ING_SPEC_SWEETENER_SPLENDA_STEVIA.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 19.98);
-
-        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 99.9);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.1);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 100.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 99.9);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 200.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 279.72);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 19.98),
+            (CompKey::OtherSNFS, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 100.0),
+            (CompKey::TotalCarbohydrates, 99.9),
+            (CompKey::TotalFiber, 0.0),
+            (CompKey::TotalSugars, 0.0),
+            (CompKey::TotalPolyols, 99.9),
+            (CompKey::Erythritol, 99.9),
+            (CompKey::TotalArtificial, 0.1),
+            (CompKey::Steviosides, 0.1),
+            (CompKey::TotalSweeteners, 100.0),
+            (CompKey::POD, 200.0),
+            (CompKey::NetPAC, 279.72),
+            (CompKey::TotalPAC, 279.72),
+            (CompKey::PACsgr, 279.72),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT_STR: &str = r#"{
@@ -1726,18 +1835,25 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_splenda_monk_fruit() {
         let comp = ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 19.98);
-
-        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 99.9);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 0.1);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 100.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 99.9);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 100.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 279.72);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 19.98),
+            (CompKey::OtherSNFS, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 100.0),
+            (CompKey::TotalCarbohydrates, 99.9),
+            (CompKey::TotalFiber, 0.0),
+            (CompKey::TotalSugars, 0.0),
+            (CompKey::TotalPolyols, 99.9),
+            (CompKey::Erythritol, 99.9),
+            (CompKey::TotalArtificial, 0.1),
+            (CompKey::Mogrosides, 0.1),
+            (CompKey::TotalSweeteners, 100.0),
+            (CompKey::POD, 100.0),
+            (CompKey::NetPAC, 279.72),
+            (CompKey::TotalPAC, 279.72),
+            (CompKey::PACsgr, 279.72),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_SWEETLEAF_STEVIA_STR: &str = r#"{
@@ -1804,21 +1920,29 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_sweetleaf_stevia() {
         let comp = ING_SPEC_SWEETENER_SWEETLEAF_STEVIA.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 154.35);
-
-        assert_eq!(comp.get(CompKey::Glucose), 1.96);
-        assert_eq!(comp.get(CompKey::Fructose), 1.96);
-        assert_eq!(comp.get(CompKey::Sucrose), 1.96);
-        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 87.22);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 5.88);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 4.9);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 10.78);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 93.1);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 92.12);
-        assert_eq!(comp.get(CompKey::TotalSolids), 98.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 1050.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 9.408);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 154.35),
+            (CompKey::OtherSNFS, 92.12),
+            (CompKey::TotalSolids, 98.0),
+            (CompKey::TotalSNF, 98.0),
+            (CompKey::TotalSNFS, 92.12),
+            (CompKey::Water, 2.0),
+            (CompKey::TotalCarbohydrates, 93.1),
+            (CompKey::TotalFiber, 87.22),
+            (CompKey::Inulin, 87.22),
+            (CompKey::TotalSugars, 5.88),
+            (CompKey::Glucose, 1.96),
+            (CompKey::Fructose, 1.96),
+            (CompKey::Sucrose, 1.96),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 4.9),
+            (CompKey::Steviosides, 4.9),
+            (CompKey::TotalSweeteners, 10.78),
+            (CompKey::POD, 1050.0),
+            (CompKey::NetPAC, 9.408),
+            (CompKey::TotalPAC, 9.408),
+            (CompKey::PACsgr, 9.408),
+        ]);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_SUGAR_TWIN_STR: &str = r#"{
@@ -1877,19 +2001,26 @@ pub(crate) mod tests {
     fn to_composition_sweetener_spec_sugar_twin() {
         let comp = ING_SPEC_SWEETENER_SUGAR_TWIN.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 244.0);
-
-        assert_eq!(comp.get(CompKey::Glucose), 61.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 61.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 33.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 94.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 61.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 33.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 94.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 1050.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 172.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 244.0),
+            (CompKey::OtherSNFS, 33.0),
+            (CompKey::TotalSolids, 94.0),
+            (CompKey::TotalSNF, 94.0),
+            (CompKey::TotalSNFS, 33.0),
+            (CompKey::Water, 6.0),
+            (CompKey::TotalCarbohydrates, 61.0),
+            (CompKey::TotalFiber, 0.0),
+            (CompKey::TotalSugars, 61.0),
+            (CompKey::Glucose, 61.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 33.0),
+            (CompKey::Cyclamate, 33.0),
+            (CompKey::TotalSweeteners, 94.0),
+            (CompKey::POD, 1050.0),
+            (CompKey::NetPAC, 172.0),
+            (CompKey::TotalPAC, 172.0),
+            (CompKey::PACsgr, 172.0),
+        ]);
     }
 
     #[test]
@@ -1964,19 +2095,26 @@ pub(crate) mod tests {
             .to_composition()
             .unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 356.0);
-
-        assert_eq!(comp.get(CompKey::Glucose), 89.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 89.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 3.4);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 92.4);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 89.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 3.4);
-        assert_eq!(comp.get(CompKey::TotalSolids), 92.4);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 840.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 169.1);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 356.0),
+            (CompKey::OtherSNFS, 3.4),
+            (CompKey::TotalSolids, 92.4),
+            (CompKey::TotalSNF, 92.4),
+            (CompKey::TotalSNFS, 3.4),
+            (CompKey::Water, 7.6),
+            (CompKey::TotalCarbohydrates, 89.0),
+            (CompKey::TotalFiber, 0.0),
+            (CompKey::TotalSugars, 89.0),
+            (CompKey::Glucose, 89.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 3.4),
+            (CompKey::Steviosides, 3.4),
+            (CompKey::TotalSweeteners, 92.4),
+            (CompKey::POD, 840.0),
+            (CompKey::NetPAC, 169.1),
+            (CompKey::TotalPAC, 169.1),
+            (CompKey::PACsgr, 169.1),
+        ]);
     }
 
     #[test]
@@ -2052,18 +2190,25 @@ pub(crate) mod tests {
             .to_composition()
             .unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 366.2);
-
-        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);
-        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
-        assert_eq!(comp.get(CompKey::TotalArtificial), 3.45);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 3.45);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 91.55);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 95.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 775.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 18.05);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 366.2),
+            (CompKey::OtherSNFS, 95.0),
+            (CompKey::TotalSolids, 95.0),
+            (CompKey::TotalSNF, 95.0),
+            (CompKey::TotalSNFS, 95.0),
+            (CompKey::Water, 5.0),
+            (CompKey::TotalCarbohydrates, 91.55),
+            (CompKey::TotalFiber, 0.0),
+            (CompKey::TotalSugars, 0.0),
+            (CompKey::TotalPolyols, 0.0),
+            (CompKey::TotalArtificial, 3.45),
+            (CompKey::Steviosides, 3.45),
+            (CompKey::TotalSweeteners, 3.45),
+            (CompKey::POD, 775.0),
+            (CompKey::NetPAC, 18.05),
+            (CompKey::TotalPAC, 18.05),
+            (CompKey::PACsgr, 18.05),
+        ]);
     }
 
     #[test]
