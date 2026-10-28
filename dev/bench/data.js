@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793166013745,
+  "lastUpdate": 1793222044053,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -665973,6 +665973,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.81,
             "range": "0.27",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "72b401e98685504257614032aa5cb5c039dfa0f4",
+          "message": "Add key-table assertions for composition tests\n\nSpec tests assert a composition one comp.get(CompKey::X) per line,\nsplit between exact and approximate comparisons, and leave every\nunlisted key unchecked.\n\nA test-only AssertKeys trait, in tests::util and imported by name,\nchecks a composition against a (key, value) table in CompKey\ndeclaration order. assert_all_keys checks each listed key within\nKEYS_EPSILON, 1e-6, and every other key for exactly zero; assert_keys\nchecks the listed keys only. A failure lists every mismatch at once,\neach as a corrected row ready to paste into the table. Unit tests\ncover the tolerance, unlisted keys, the order check, and the rows'\nformatting.\n\nThree pilot tests use it: dairy's 0% milk and Gold Standard casein,\nand sweetener's dextrose. Their tables add the keys the old\nassertions skipped, and write rounded values to six decimals.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T12:23:39-04:00",
+          "tree_id": "3a2dda96e3e89168ceb6cb5885305b98b0eed2e8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/72b401e98685504257614032aa5cb5c039dfa0f4"
+        },
+        "date": 1793222002671,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 41.74,
+            "range": "6.80",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 10.06,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 10.04,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 111.5,
+            "range": "7.86",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.31,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 111.5,
+            "range": "7.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 39.6,
+            "range": "6.13",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.65,
+            "range": "0.24",
             "unit": "ms"
           }
         ]
