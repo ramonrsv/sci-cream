@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793161834944,
+  "lastUpdate": 1793161850491,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -590212,6 +590212,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.73%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8f0e445c21a13937a36c35c548a8611c23ec87a0",
+          "message": "Require a key for useRetainedStateSetter\n\nThe setter accepted an undefined key and silently did nothing with it,\nonly because recipeIdxKey always returned string | undefined, even\nfor a defined root. recipeIdxKey now has overloads, so a defined root\ngives a string, and the setter takes key: string: a possibly missing\nkey is a type error rather than a no-op. That drops the setter's\nundefined branch and its test, and the non-null assertions on\nrecipeIdxKey in the tests.\n\nThe recipe search's target-slot retention test no longer also checks\nlocalStorage; that check is its own \"is held in memory only\" test, as\nin the other slot-retention suites.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-27T00:50:05-04:00",
+          "tree_id": "56d442e996287b495295b6e3597300bcd6995858",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8f0e445c21a13937a36c35c548a8611c23ec87a0"
+        },
+        "date": 1793161793764,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 67515,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 557450,
+            "range": "±0.38%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 51734,
+            "range": "±1.28%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 401227,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
