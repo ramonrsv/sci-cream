@@ -116,6 +116,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::util::AssertKeys;
 
     use super::*;
     use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
@@ -145,11 +146,17 @@ pub(crate) mod tests {
     fn to_composition_stabilizer_locust_bean_gum() {
         let comp = ING_SPEC_STABILIZER_LOCUST_BEAN_GUM.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
-        assert_eq!(comp.get(CompKey::TotalFiber), 100.0);
-        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::TotalStabilizers), 100.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 0.0),
+            (CompKey::OtherSNFS, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 100.0),
+            (CompKey::TotalCarbohydrates, 100.0),
+            (CompKey::TotalFiber, 100.0),
+            (CompKey::TotalStabilizers, 100.0),
+            (CompKey::LocustBeanGum, 100.0),
+        ]);
 
         assert_eq!(comp.micro.stabilizers, Stabilizers::new().locust_bean_gum(100.0));
         assert_eq!(comp.texture.stabilization, 100.0);

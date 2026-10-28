@@ -31,13 +31,13 @@ impl ToComposition for MicroSpec {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::unwrap_used, clippy::float_cmp)]
+#[allow(clippy::unwrap_used)]
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
-    use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::util::AssertKeys;
 
     use super::*;
     use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
@@ -58,13 +58,18 @@ pub(crate) mod tests {
     fn to_composition_micro_spec_salt() {
         let comp = MicroSpec::Salt.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
-
-        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::TotalMinerals), 100.0);
-        assert_eq!(comp.get(CompKey::Salt), 100.0);
-        assert_eq!(comp.get(CompKey::PACslt), 585.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 0.0),
+            (CompKey::OtherSNFS, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 100.0),
+            (CompKey::TotalMinerals, 100.0),
+            (CompKey::Salt, 100.0),
+            (CompKey::NetPAC, 585.0),
+            (CompKey::TotalPAC, 585.0),
+            (CompKey::PACslt, 585.0),
+        ]);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_MICRO: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

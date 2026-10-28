@@ -142,12 +142,13 @@ impl ToComposition for FruitSpec {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::unwrap_used, clippy::float_cmp)]
+#[allow(clippy::unwrap_used)]
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
-    use crate::tests::asserts::shadow_asserts::assert_eq;
+    #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::util::AssertKeys;
 
     use super::*;
     use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
@@ -191,21 +192,28 @@ pub(crate) mod tests {
     fn to_composition_fruit_spec_strawberry() {
         let comp = ING_SPEC_FRUIT_STRAWBERRY.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 32.0);
-
-        assert_eq!(comp.get(CompKey::TotalFats), 0.3);
-        assert_eq!(comp.get(CompKey::TotalProteins), 0.67);
-        assert_eq!(comp.get(CompKey::TotalFiber), 2.0);
-        assert_eq!(comp.get(CompKey::Glucose), 1.99);
-        assert_eq!(comp.get(CompKey::Fructose), 2.44);
-        assert_eq!(comp.get(CompKey::Sucrose), 0.47);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 4.9);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 7.68);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 4.90);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 3.8);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 9.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 6.2832);
-        assert_eq!(comp.get(CompKey::PACsgr), 8.887);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 32.0),
+            (CompKey::OtherFats, 0.3),
+            (CompKey::OtherSNFS, 3.8),
+            (CompKey::TotalSolids, 9.0),
+            (CompKey::TotalFats, 0.3),
+            (CompKey::TotalSNF, 8.7),
+            (CompKey::TotalSNFS, 3.8),
+            (CompKey::TotalProteins, 0.67),
+            (CompKey::Water, 91.0),
+            (CompKey::TotalCarbohydrates, 7.68),
+            (CompKey::TotalFiber, 2.0),
+            (CompKey::TotalSugars, 4.9),
+            (CompKey::Glucose, 1.99),
+            (CompKey::Fructose, 2.44),
+            (CompKey::Sucrose, 0.47),
+            (CompKey::TotalSweeteners, 4.90),
+            (CompKey::POD, 6.2832),
+            (CompKey::NetPAC, 8.887),
+            (CompKey::TotalPAC, 8.887),
+            (CompKey::PACsgr, 8.887),
+        ]);
     }
 
     pub(crate) const ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY_STR: &str = r#"{
@@ -244,21 +252,28 @@ pub(crate) mod tests {
     fn to_composition_fruit_spec_navel_orange_auto_energy() {
         let comp = ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 39.27);
-
-        assert_eq!(comp.get(CompKey::TotalFats), 0.15);
-        assert_eq!(comp.get(CompKey::TotalProteins), 0.91);
-        assert_eq!(comp.get(CompKey::TotalFiber), 2.0);
-        assert_eq!(comp.get(CompKey::Glucose), 2.02);
-        assert_eq!(comp.get(CompKey::Fructose), 2.36);
-        assert_eq!(comp.get(CompKey::Sucrose), 4.19);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 8.57);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 10.57);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 8.57);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 4.58);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 13.3);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 9.8888);
-        assert_eq!(comp.get(CompKey::PACsgr), 12.512);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 39.27),
+            (CompKey::OtherFats, 0.15),
+            (CompKey::OtherSNFS, 4.58),
+            (CompKey::TotalSolids, 13.3),
+            (CompKey::TotalFats, 0.15),
+            (CompKey::TotalSNF, 13.15),
+            (CompKey::TotalSNFS, 4.58),
+            (CompKey::TotalProteins, 0.91),
+            (CompKey::Water, 86.7),
+            (CompKey::TotalCarbohydrates, 10.57),
+            (CompKey::TotalFiber, 2.0),
+            (CompKey::TotalSugars, 8.57),
+            (CompKey::Glucose, 2.02),
+            (CompKey::Fructose, 2.36),
+            (CompKey::Sucrose, 4.19),
+            (CompKey::TotalSweeteners, 8.57),
+            (CompKey::POD, 9.8888),
+            (CompKey::NetPAC, 12.512),
+            (CompKey::TotalPAC, 12.512),
+            (CompKey::PACsgr, 12.512),
+        ]);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_FRUIT: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

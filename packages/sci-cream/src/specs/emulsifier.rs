@@ -115,6 +115,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::util::AssertKeys;
 
     use super::*;
     use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
@@ -144,11 +145,15 @@ pub(crate) mod tests {
     fn to_composition_emulsifier_soy_lecithin_powder() {
         let comp = ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 900.0);
-        assert_eq!(comp.get(CompKey::TotalFats), 100.0);
-        assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 95.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 900.0),
+            (CompKey::OtherFats, 100.0),
+            (CompKey::OtherSNFS, 0.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 100.0),
+            (CompKey::TotalEmulsifiers, 95.0),
+            (CompKey::Lecithin, 95.0),
+        ]);
 
         assert_eq!(comp.micro.emulsifiers, Emulsifiers::new().lecithin(95.0));
         assert_eq!(comp.texture.emulsification, 95.0);
@@ -177,14 +182,19 @@ pub(crate) mod tests {
     fn to_composition_emulsifier_gum_arabic() {
         let comp = ING_SPEC_EMULSIFIER_GUM_ARABIC.spec.to_composition().unwrap();
 
-        // Fiber `other` carries no sourced caloric value, so gum arabic contributes no energy.
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
-        assert_eq!(comp.get(CompKey::TotalFats), 0.0);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
-        assert_eq!(comp.get(CompKey::TotalFiber), 100.0);
-        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 100.0);
+        comp.assert_all_keys(&[
+            // Fiber `other` carries no sourced caloric value, so gum arabic contributes no energy.
+            (CompKey::Energy, 0.0),
+            (CompKey::OtherSNFS, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 0.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 100.0),
+            (CompKey::TotalCarbohydrates, 100.0),
+            (CompKey::TotalFiber, 100.0),
+            (CompKey::TotalEmulsifiers, 100.0),
+            (CompKey::GumArabic, 100.0),
+        ]);
 
         assert_eq!(comp.micro.emulsifiers, Emulsifiers::new().gum_arabic(100.0));
         assert_eq!(comp.texture.emulsification, 217.0);
@@ -213,13 +223,18 @@ pub(crate) mod tests {
     fn to_composition_emulsifier_polysorbate_80() {
         let comp = ING_SPEC_EMULSIFIER_POLYSORBATE_80.spec.to_composition().unwrap();
 
-        // Its composition is deliberately untracked, and unclassified solids claim no energy.
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
-        assert_eq!(comp.get(CompKey::TotalFats), 0.0);
-        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::Water), 0.0);
-        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 100.0);
+        comp.assert_all_keys(&[
+            // Its composition is deliberately untracked, and unclassified solids claim no energy.
+            (CompKey::Energy, 0.0),
+            (CompKey::OtherSNFS, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 0.0),
+            (CompKey::TotalSNF, 100.0),
+            (CompKey::TotalSNFS, 100.0),
+            (CompKey::Water, 0.0),
+            (CompKey::TotalEmulsifiers, 100.0),
+            (CompKey::Polysorbate80, 100.0),
+        ]);
 
         assert_eq!(comp.micro.emulsifiers, Emulsifiers::new().polysorbate_80(100.0));
         assert_eq!(comp.texture.emulsification, 1000.0);

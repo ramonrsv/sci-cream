@@ -149,12 +149,12 @@ impl ToComposition for EggSpec {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::unwrap_used, clippy::float_cmp)]
+#[allow(clippy::unwrap_used)]
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
-    use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+    use crate::tests::util::AssertKeys;
 
     use super::*;
     use crate::{
@@ -207,19 +207,25 @@ pub(crate) mod tests {
         let comp = ING_SPEC_EGG_YOLK.spec.to_composition().unwrap();
         assert_eq_flt_test!(comp, *COMP_EGG_YOLK);
 
-        assert_eq!(comp.get(CompKey::Energy), 334.0);
-        assert_eq!(comp.get(CompKey::EggFat), 30.0);
-        assert_eq!(comp.get(CompKey::EggSNF), 19.0);
-        assert_eq!(comp.get(CompKey::EggProteins), 16.0);
-        assert_eq!(comp.get(CompKey::WhiteProteins), 0.0);
-        assert_eq!(comp.get(CompKey::YolkProteins), 16.0);
-        assert_eq!(comp.get(CompKey::TotalProteins), 16.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 19.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 49.0);
-        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 9.31);
-        assert_eq!(comp.get(CompKey::Lecithin), 9.31);
-        assert_eq!(comp.get(CompKey::SaturatedFat), 8.4);
-        assert_eq!(comp.get(CompKey::TransFat), 0.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 334.0),
+            (CompKey::EggSolids, 49.0),
+            (CompKey::EggFat, 30.0),
+            (CompKey::EggSNF, 19.0),
+            (CompKey::EggProteins, 16.0),
+            (CompKey::WhiteProteins, 0.0),
+            (CompKey::YolkProteins, 16.0),
+            (CompKey::TotalSolids, 49.0),
+            (CompKey::TotalFats, 30.0),
+            (CompKey::TotalSNF, 19.0),
+            (CompKey::TotalSNFS, 19.0),
+            (CompKey::TotalProteins, 16.0),
+            (CompKey::Water, 51.0),
+            (CompKey::TotalEmulsifiers, 9.31),
+            (CompKey::Lecithin, 9.31),
+            (CompKey::SaturatedFat, 8.4),
+            (CompKey::TransFat, 0.0),
+        ]);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_EGG: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

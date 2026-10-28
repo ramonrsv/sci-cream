@@ -87,13 +87,13 @@ impl ToComposition for FullSpec {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::unwrap_used, clippy::float_cmp)]
+#[allow(clippy::unwrap_used)]
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
-    use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::util::AssertKeys;
 
     use super::*;
     use crate::{
@@ -126,18 +126,20 @@ pub(crate) mod tests {
     fn to_composition_full_spec_water() {
         let comp = ING_SPEC_FULL_WATER.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
-        assert_eq!(comp.get(CompKey::Water), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
-        assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Lecithin), 0.0);
-        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
-        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
-        assert_eq!(comp.get(CompKey::POD), 0.0);
-        assert_eq!(comp.get(CompKey::TotalPAC), 0.0);
-        assert_eq!(comp.get(CompKey::HF), 0.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 0.0),
+            (CompKey::TotalSolids, 0.0),
+            (CompKey::Water, 100.0),
+            (CompKey::TotalSweeteners, 0.0),
+            (CompKey::Salt, 0.0),
+            (CompKey::TotalStabilizers, 0.0),
+            (CompKey::TotalEmulsifiers, 0.0),
+            (CompKey::Lecithin, 0.0),
+            (CompKey::Alcohol, 0.0),
+            (CompKey::POD, 0.0),
+            (CompKey::TotalPAC, 0.0),
+            (CompKey::HF, 0.0),
+        ]);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_FULL: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

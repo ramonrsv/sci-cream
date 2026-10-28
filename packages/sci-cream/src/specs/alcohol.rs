@@ -148,7 +148,9 @@ pub(crate) mod tests {
     use std::sync::LazyLock;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
+    #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::util::AssertKeys;
 
     use super::*;
     use crate::{
@@ -182,17 +184,18 @@ pub(crate) mod tests {
     fn to_composition_alcohol_spec_40_abv_spirit() {
         let comp = ING_SPEC_ALCOHOL_40_ABV_SPIRIT.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 230.7978);
-
-        assert_eq_flt_test!(comp.get(CompKey::ABV), 40.0);
-        assert_eq_flt_test!(comp.get(CompKey::Alcohol), 33.3042);
-        assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 66.6959);
-
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
-        assert_eq!(comp.get(CompKey::POD), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACalc), 247.4498);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 247.4498);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 230.797_765),
+            (CompKey::TotalSolids, 0.0),
+            (CompKey::Water, 66.695_849),
+            (CompKey::TotalSweeteners, 0.0),
+            (CompKey::Alcohol, 33.304_151),
+            (CompKey::ABV, 40.0),
+            (CompKey::POD, 0.0),
+            (CompKey::NetPAC, 247.44984),
+            (CompKey::TotalPAC, 247.44984),
+            (CompKey::PACalc, 247.44984),
+        ]);
 
         assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
         assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));
@@ -226,17 +229,25 @@ pub(crate) mod tests {
     fn to_composition_alcohol_spec_baileys_irish_cream() {
         let comp = ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 289.605);
-
-        assert_eq_flt_test!(comp.get(CompKey::Alcohol), 13.7381);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 31.6);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 54.6619);
-
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 18.0);
-        assert_eq!(comp.get(CompKey::POD), 18.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACalc), 102.074);
-        assert_eq!(comp.get(CompKey::PACsgr), 18.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 120.074);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 289.604_981),
+            (CompKey::OtherFats, 13.6),
+            (CompKey::TotalSolids, 31.6),
+            (CompKey::TotalFats, 13.6),
+            (CompKey::TotalSNF, 18.0),
+            (CompKey::Water, 54.661_907),
+            (CompKey::TotalCarbohydrates, 18.0),
+            (CompKey::TotalSugars, 18.0),
+            (CompKey::Sucrose, 18.0),
+            (CompKey::TotalSweeteners, 18.0),
+            (CompKey::Alcohol, 13.738_093),
+            (CompKey::ABV, 17.0),
+            (CompKey::POD, 18.0),
+            (CompKey::NetPAC, 120.074_027),
+            (CompKey::TotalPAC, 120.074_027),
+            (CompKey::PACsgr, 18.0),
+            (CompKey::PACalc, 102.074_027),
+        ]);
 
         assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
         assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));
@@ -268,17 +279,19 @@ pub(crate) mod tests {
     fn to_composition_alcohol_spec_almond_extract() {
         let comp = ING_SPEC_ALCOHOL_ALMOND_EXTRACT.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 638.6936);
-
-        assert_eq_flt_test!(comp.get(CompKey::ABV), 90.0);
-        assert_eq_flt_test!(comp.get(CompKey::Alcohol), 85.67);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 5.0);
-        assert_eq!(comp.get(CompKey::TotalFats), 5.0);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 9.33);
-
-        assert_eq!(comp.get(CompKey::POD), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACalc), 636.5286);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 636.5286);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 638.693_604),
+            (CompKey::OtherFats, 5.0),
+            (CompKey::TotalSolids, 5.0),
+            (CompKey::TotalFats, 5.0),
+            (CompKey::Water, 9.329_927),
+            (CompKey::Alcohol, 85.670_073),
+            (CompKey::ABV, 90.0),
+            (CompKey::POD, 0.0),
+            (CompKey::NetPAC, 636.528_641),
+            (CompKey::TotalPAC, 636.528_641),
+            (CompKey::PACalc, 636.528_641),
+        ]);
 
         assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
         assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));

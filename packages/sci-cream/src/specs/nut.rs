@@ -141,12 +141,13 @@ impl ToComposition for NutSpec {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::unwrap_used, clippy::float_cmp)]
+#[allow(clippy::unwrap_used)]
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
-    use crate::tests::asserts::shadow_asserts::assert_eq;
+    #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::util::AssertKeys;
 
     use super::*;
     use crate::{
@@ -211,21 +212,30 @@ pub(crate) mod tests {
     fn to_composition_nut_spec_almond() {
         let comp = ING_SPEC_NUT_ALMOND.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 570.3);
-        assert_eq!(comp.get(CompKey::TotalProteins), 21.2);
-        assert_eq!(comp.get(CompKey::TotalFiber), 12.5);
-
-        assert_eq!(comp.get(CompKey::NutFat), 49.9);
-        assert_eq_flt_test!(comp.get(CompKey::NutSNF), 45.69);
-        assert_eq_flt_test!(comp.get(CompKey::NutSolids), 95.59);
-
-        assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 4.41);
-        assert_eq!(comp.get(CompKey::POD), 4.35);
-        assert_eq!(comp.get(CompKey::HF), 69.86);
-
-        assert_eq!(comp.get(CompKey::SaturatedFat), 3.8);
-        assert_eq!(comp.get(CompKey::TransFat), 0.0);
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 570.3),
+            (CompKey::NutSolids, 95.59),
+            (CompKey::NutFat, 49.9),
+            (CompKey::NutSNF, 45.69),
+            (CompKey::TotalSolids, 95.59),
+            (CompKey::TotalFats, 49.9),
+            (CompKey::TotalSNF, 45.69),
+            (CompKey::TotalSNFS, 41.34),
+            (CompKey::TotalProteins, 21.2),
+            (CompKey::Water, 4.41),
+            (CompKey::TotalCarbohydrates, 21.6),
+            (CompKey::TotalFiber, 12.5),
+            (CompKey::TotalSugars, 4.35),
+            (CompKey::Sucrose, 4.35),
+            (CompKey::TotalSweeteners, 4.35),
+            (CompKey::POD, 4.35),
+            (CompKey::NetPAC, -65.51),
+            (CompKey::TotalPAC, 4.35),
+            (CompKey::PACsgr, 4.35),
+            (CompKey::HF, 69.86),
+            (CompKey::SaturatedFat, 3.8),
+            (CompKey::TransFat, 0.0),
+        ]);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_NUT: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
