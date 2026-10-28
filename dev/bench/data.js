@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793164638710,
+  "lastUpdate": 1793165170824,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -685562,6 +685562,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/ae6512870dc2f1cc5151fa7ee83fba25f36ba9fe"
         },
         "date": 1793163870554,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1177.12,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1892.35,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.88,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2100.66,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b711c9b5d808013989771c391bd7ee5ec5ab39f9",
+          "message": "Keep the selected list item in view\n\nA selection restored on returning to Recipes, Ingredients, or Make came\nback with the list column scrolled to the top, so its item could be out\nof view: Sucrose sits near the end of hundreds of ingredients.\n\nListDetailShell now reveals the list item marked aria-current=\"true\"\nwhenever that element changes, centring it in the column when any of it\nis out of view. It checks after every render rather than on mount, as\nMake's persisted selection and saved batches can arrive later. Comparing\nelements means a click never makes the list jump, and a re-render never\nundoes the user's scrolling. It scrolls the column only, where\nscrollIntoView would also move the page.\n\nBatchList already marked its selected row current; EntitySearch's\nselected item now does too, which screen readers announce.\n\nUnit tests stub the layout jsdom lacks to cover revealing on mount and\non a later render, a visible item staying put, and the user's scroll\nsurviving a re-render. The search selection spec checks the returned\ningredient is in view.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T01:17:01-04:00",
+          "tree_id": "5abe2fbfc57c2b9705959bdcdd8284c99861b6be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b711c9b5d808013989771c391bd7ee5ec5ab39f9"
+        },
+        "date": 1793165114361,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
