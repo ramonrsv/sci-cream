@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793164331512,
+  "lastUpdate": 1793164638710,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -549559,6 +549559,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 757.63,
             "range": "17.12",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ae6512870dc2f1cc5151fa7ee83fba25f36ba9fe",
+          "message": "Retain search selections across navigation\n\nThe Recipes and Ingredients searches lost their selected entry when the\npage unmounted, such as on a trip to the calculator and back.\nEntitySearch now retains it in memory under ${id}:entry, so it survives\nclient-side navigation but not a reload. The entry is still looked up\non every render, so one deleted or filtered out shows the empty detail.\n\nThe recipe detail panel retains its selected version too.\nuseResetOnChange gains an optional retainKey, holding the value with\nits reset key, so a remount restores it only while that key matches: a\nnewly saved version or another recipe still resets to the latest.\n\nThe Make saved-batch selection needs nothing new: it is part of the\nworking batch, which already persists in localStorage.\n\nSTORAGE_KEYS lists the new keys, the search roots' header keeping only\nwhat both searches share. renderWithRetainedState's leaveAndReturn can\nreturn to a different element, for data that changed meanwhile.\n\nTests cover the retained entry, the retainKey, each search, and a\nversion saved while away. A Playwright spec selects on both routes,\nvisits the calculator and back, then reloads. CLAUDE.md lists\nselections among retained state.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T00:23:49-04:00",
+          "tree_id": "db3a2ccb5abd9c8b084d1e3126773e89be1ba81d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ae6512870dc2f1cc5151fa7ee83fba25f36ba9fe"
+        },
+        "date": 1793164580827,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 40.25,
+            "range": "4.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 45.13,
+            "range": "3.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57.88,
+            "range": "4.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2121.38,
+            "range": "23.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 310.25,
+            "range": "1.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 316.5,
+            "range": "2.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 331.25,
+            "range": "4.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15912.75,
+            "range": "99.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 16.31,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 810.88,
+            "range": "40.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 42.75,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 45,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 33.63,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 34.25,
+            "range": "1.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 112.13,
+            "range": "1.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 67.63,
+            "range": "4.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 46.84,
+            "range": "0.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 35.24,
+            "range": "0.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 553.75,
+            "range": "9.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 606.38,
+            "range": "8.67",
             "unit": "ms"
           }
         ]
