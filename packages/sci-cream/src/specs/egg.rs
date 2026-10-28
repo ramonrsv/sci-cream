@@ -222,6 +222,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
+    pub(crate) static INGREDIENT_ASSETS_TABLE_EGG: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
+        LazyLock::new(|| vec![(ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), Some(*COMP_EGG_YOLK))]);
+
     #[test]
     fn to_composition_egg_spec_whole_egg_splits_protein() {
         let comp = EggSpec {
@@ -255,9 +258,6 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::YolkProteins), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::EggProteins), 10.0);
     }
-
-    pub(crate) static INGREDIENT_ASSETS_TABLE_EGG: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
-        LazyLock::new(|| vec![(ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), Some(*COMP_EGG_YOLK))]);
 
     #[test]
     fn to_composition_err_on_negative_field() {

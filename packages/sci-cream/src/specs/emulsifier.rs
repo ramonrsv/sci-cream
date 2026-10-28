@@ -225,6 +225,15 @@ pub(crate) mod tests {
         assert_eq!(comp.texture.emulsification, 1000.0);
     }
 
+    pub(crate) static INGREDIENT_ASSETS_TABLE_EMULSIFIERS: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
+        LazyLock::new(|| {
+            vec![
+                (ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER_STR, ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER.clone(), None),
+                (ING_SPEC_EMULSIFIER_GUM_ARABIC_STR, ING_SPEC_EMULSIFIER_GUM_ARABIC.clone(), None),
+                (ING_SPEC_EMULSIFIER_POLYSORBATE_80_STR, ING_SPEC_EMULSIFIER_POLYSORBATE_80.clone(), None),
+            ]
+        });
+
     #[test]
     fn to_composition_emulsifier_glycerides() {
         let cases = [
@@ -250,15 +259,6 @@ pub(crate) mod tests {
             assert_eq!(comp.texture.emulsification, strength);
         }
     }
-
-    pub(crate) static INGREDIENT_ASSETS_TABLE_EMULSIFIERS: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
-        LazyLock::new(|| {
-            vec![
-                (ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER_STR, ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER.clone(), None),
-                (ING_SPEC_EMULSIFIER_GUM_ARABIC_STR, ING_SPEC_EMULSIFIER_GUM_ARABIC.clone(), None),
-                (ING_SPEC_EMULSIFIER_POLYSORBATE_80_STR, ING_SPEC_EMULSIFIER_POLYSORBATE_80.clone(), None),
-            ]
-        });
 
     #[test]
     fn to_composition_err_on_negative_strength() {

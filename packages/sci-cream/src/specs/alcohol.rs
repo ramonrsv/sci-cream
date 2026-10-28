@@ -285,6 +285,15 @@ pub(crate) mod tests {
         assert_eq!(comp.alcohol.to_pac(), comp.get(CompKey::PACalc));
     }
 
+    pub(crate) static INGREDIENT_ASSETS_TABLE_ALCOHOL: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
+        LazyLock::new(|| {
+            vec![
+                (ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR, ING_SPEC_ALCOHOL_40_ABV_SPIRIT.clone(), None),
+                (ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM_STR, ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.clone(), None),
+                (ING_SPEC_ALCOHOL_ALMOND_EXTRACT_STR, ING_SPEC_ALCOHOL_ALMOND_EXTRACT.clone(), None),
+            ]
+        });
+
     #[test]
     fn zero_abv_alcohol_spec_is_equivalent_to_fruit_spec() {
         let alcohol_spec = AlcoholSpec {
@@ -345,15 +354,6 @@ pub(crate) mod tests {
         assert_eq!(spec_missing.spec, expected_spec);
         assert_eq!(spec_null.spec, expected_spec);
     }
-
-    pub(crate) static INGREDIENT_ASSETS_TABLE_ALCOHOL: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
-        LazyLock::new(|| {
-            vec![
-                (ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR, ING_SPEC_ALCOHOL_40_ABV_SPIRIT.clone(), None),
-                (ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM_STR, ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.clone(), None),
-                (ING_SPEC_ALCOHOL_ALMOND_EXTRACT_STR, ING_SPEC_ALCOHOL_ALMOND_EXTRACT.clone(), None),
-            ]
-        });
 
     #[test]
     fn to_composition_err_on_negative_field() {

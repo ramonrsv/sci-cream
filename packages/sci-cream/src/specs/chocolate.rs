@@ -877,26 +877,6 @@ pub(crate) mod tests {
         assert_eq_flt_test!(&comp, &*COMP_VALRHONA_COCOA_POWDER);
     }
 
-    /// An explicit water content is honoured in place of [`cacao::STD_WATER_IN_COCOA_POWDER`]
-    #[test]
-    fn to_composition_cocoa_powder_spec_uses_explicit_water() {
-        // The EU ceiling and a fully dried powder, both far from the 3% default
-        for (water, exp_cacao_solids) in [(9.0, 91.0), (0.0, 100.0)] {
-            let comp = CocoaPowderSpec {
-                cocoa_butter: 10.0,
-                water: Some(water),
-                ..empty_cocoa_powder_spec()
-            }
-            .to_composition()
-            .unwrap();
-
-            assert_eq_flt_test!(comp.get(CompKey::Water), water);
-            assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), exp_cacao_solids);
-            assert_eq_flt_test!(comp.get(CompKey::TotalSolids), exp_cacao_solids);
-            assert_eq_flt_test!(comp.get(CompKey::CocoaSolids), exp_cacao_solids - 10.0);
-        }
-    }
-
     pub(crate) const ING_SPEC_CHOCOLATE_70_DARK_CHOCOLATE_STR: &str = r#"{
       "name": "70% Dark Chocolate",
       "category": "Chocolate",
@@ -1286,6 +1266,26 @@ pub(crate) mod tests {
         }
         .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
+    }
+
+    /// An explicit water content is honoured in place of [`cacao::STD_WATER_IN_COCOA_POWDER`]
+    #[test]
+    fn to_composition_cocoa_powder_spec_uses_explicit_water() {
+        // The EU ceiling and a fully dried powder, both far from the 3% default
+        for (water, exp_cacao_solids) in [(9.0, 91.0), (0.0, 100.0)] {
+            let comp = CocoaPowderSpec {
+                cocoa_butter: 10.0,
+                water: Some(water),
+                ..empty_cocoa_powder_spec()
+            }
+            .to_composition()
+            .unwrap();
+
+            assert_eq_flt_test!(comp.get(CompKey::Water), water);
+            assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), exp_cacao_solids);
+            assert_eq_flt_test!(comp.get(CompKey::TotalSolids), exp_cacao_solids);
+            assert_eq_flt_test!(comp.get(CompKey::CocoaSolids), exp_cacao_solids - 10.0);
+        }
     }
 
     #[test]
