@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793165170824,
+  "lastUpdate": 1793165220750,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -591930,6 +591930,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.31%",
             "unit": "ops/sec",
             "extra": "87 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b711c9b5d808013989771c391bd7ee5ec5ab39f9",
+          "message": "Keep the selected list item in view\n\nA selection restored on returning to Recipes, Ingredients, or Make came\nback with the list column scrolled to the top, so its item could be out\nof view: Sucrose sits near the end of hundreds of ingredients.\n\nListDetailShell now reveals the list item marked aria-current=\"true\"\nwhenever that element changes, centring it in the column when any of it\nis out of view. It checks after every render rather than on mount, as\nMake's persisted selection and saved batches can arrive later. Comparing\nelements means a click never makes the list jump, and a re-render never\nundoes the user's scrolling. It scrolls the column only, where\nscrollIntoView would also move the page.\n\nBatchList already marked its selected row current; EntitySearch's\nselected item now does too, which screen readers announce.\n\nUnit tests stub the layout jsdom lacks to cover revealing on mount and\non a later render, a visible item staying put, and the user's scroll\nsurviving a re-render. The search selection spec checks the returned\ningredient is in view.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T01:17:01-04:00",
+          "tree_id": "5abe2fbfc57c2b9705959bdcdd8284c99861b6be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b711c9b5d808013989771c391bd7ee5ec5ab39f9"
+        },
+        "date": 1793165148065,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 48289,
+            "range": "±1.35%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 426872,
+            "range": "±0.85%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31748,
+            "range": "±1.12%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 322717,
+            "range": "±1.21%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
