@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793222044053,
+  "lastUpdate": 1793222051099,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -686776,6 +686776,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/b711c9b5d808013989771c391bd7ee5ec5ab39f9"
         },
         "date": 1793165114361,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1177.12,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1892.35,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.88,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2100.66,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "72b401e98685504257614032aa5cb5c039dfa0f4",
+          "message": "Add key-table assertions for composition tests\n\nSpec tests assert a composition one comp.get(CompKey::X) per line,\nsplit between exact and approximate comparisons, and leave every\nunlisted key unchecked.\n\nA test-only AssertKeys trait, in tests::util and imported by name,\nchecks a composition against a (key, value) table in CompKey\ndeclaration order. assert_all_keys checks each listed key within\nKEYS_EPSILON, 1e-6, and every other key for exactly zero; assert_keys\nchecks the listed keys only. A failure lists every mismatch at once,\neach as a corrected row ready to paste into the table. Unit tests\ncover the tolerance, unlisted keys, the order check, and the rows'\nformatting.\n\nThree pilot tests use it: dairy's 0% milk and Gold Standard casein,\nand sweetener's dextrose. Their tables add the keys the old\nassertions skipped, and write rounded values to six decimals.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T12:23:39-04:00",
+          "tree_id": "3a2dda96e3e89168ceb6cb5885305b98b0eed2e8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/72b401e98685504257614032aa5cb5c039dfa0f4"
+        },
+        "date": 1793221971552,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
