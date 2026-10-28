@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793164001312,
+  "lastUpdate": 1793164005583,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -672771,6 +672771,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/8f0e445c21a13937a36c35c548a8611c23ec87a0"
         },
         "date": 1793161871871,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ae6512870dc2f1cc5151fa7ee83fba25f36ba9fe",
+          "message": "Retain search selections across navigation\n\nThe Recipes and Ingredients searches lost their selected entry when the\npage unmounted, such as on a trip to the calculator and back.\nEntitySearch now retains it in memory under ${id}:entry, so it survives\nclient-side navigation but not a reload. The entry is still looked up\non every render, so one deleted or filtered out shows the empty detail.\n\nThe recipe detail panel retains its selected version too.\nuseResetOnChange gains an optional retainKey, holding the value with\nits reset key, so a remount restores it only while that key matches: a\nnewly saved version or another recipe still resets to the latest.\n\nThe Make saved-batch selection needs nothing new: it is part of the\nworking batch, which already persists in localStorage.\n\nSTORAGE_KEYS lists the new keys, the search roots' header keeping only\nwhat both searches share. renderWithRetainedState's leaveAndReturn can\nreturn to a different element, for data that changed meanwhile.\n\nTests cover the retained entry, the retainKey, each search, and a\nversion saved while away. A Playwright spec selects on both routes,\nvisits the calculator and back, then reloads. CLAUDE.md lists\nselections among retained state.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T00:23:49-04:00",
+          "tree_id": "db3a2ccb5abd9c8b084d1e3126773e89be1ba81d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ae6512870dc2f1cc5151fa7ee83fba25f36ba9fe"
+        },
+        "date": 1793164004547,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
