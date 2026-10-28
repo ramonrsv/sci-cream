@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793161872624,
+  "lastUpdate": 1793161887096,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -663008,6 +663008,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.83,
             "range": "0.29",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8f0e445c21a13937a36c35c548a8611c23ec87a0",
+          "message": "Require a key for useRetainedStateSetter\n\nThe setter accepted an undefined key and silently did nothing with it,\nonly because recipeIdxKey always returned string | undefined, even\nfor a defined root. recipeIdxKey now has overloads, so a defined root\ngives a string, and the setter takes key: string: a possibly missing\nkey is a type error rather than a no-op. That drops the setter's\nundefined branch and its test, and the non-null assertions on\nrecipeIdxKey in the tests.\n\nThe recipe search's target-slot retention test no longer also checks\nlocalStorage; that check is its own \"is held in memory only\" test, as\nin the other slot-retention suites.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-27T00:50:05-04:00",
+          "tree_id": "56d442e996287b495295b6e3597300bcd6995858",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8f0e445c21a13937a36c35c548a8611c23ec87a0"
+        },
+        "date": 1793161843242,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 47.45,
+            "range": "7.41",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.24,
+            "range": "0.70",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.2,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 129.5,
+            "range": "9.15",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.36,
+            "range": "0.11",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 129.5,
+            "range": "9.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 43.13,
+            "range": "6.01",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.1,
+            "range": "0.52",
             "unit": "ms"
           }
         ]
