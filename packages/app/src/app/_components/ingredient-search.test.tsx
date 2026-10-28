@@ -387,6 +387,15 @@ describe("IngredientSearch", () => {
       expect(screen.getByText("Sucrose")).toBeInTheDocument();
       expect(screen.queryByText("1% Milk")).not.toBeInTheDocument();
     });
+
+    it("keeps the selected ingredient after leaving and returning", () => {
+      const { leaveAndReturn } = renderWithRetainedState(<IngredientSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /Sucrose/ }));
+
+      leaveAndReturn();
+
+      expect(screen.getByRole("heading", { name: "Sucrose" })).toBeInTheDocument();
+    });
   });
 
   describe("Select persistence", () => {

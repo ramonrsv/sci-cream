@@ -36,8 +36,8 @@ export const STORAGE_KEYS = {
   recipeSearchComments: "recipe-search-comments",
   makeRecipeNotes: "make-recipe-notes",
 
-  // ---- Search roots: ${root}:source | :favourites | :rating; retained :query | :slot ------------
-  recipeSearch: "recipe-search",
+  // ---- Search roots: ${root}:source; retained :query | :entry -----------------------------------
+  recipeSearch: "recipe-search", // Also :favourites | :rating; retained :slot | :version
   ingredientSearch: "ingredient-search",
 
   // ---- Make-recipe ------------------------------------------------------------------------------

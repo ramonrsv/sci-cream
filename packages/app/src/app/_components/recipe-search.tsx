@@ -27,7 +27,7 @@ import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
 import { DETAIL_PANEL_ACTION_ICON_SIZE, LIST_ITEM_MARKER_ICON_SIZE } from "@/lib/styles/sizes";
-import { STORAGE_KEYS } from "@/lib/storage-keys";
+import { leafKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm";
 import { STATE_VAL } from "@/lib/util";
 import {
@@ -215,7 +215,8 @@ function makeRecipeFromRows(
 /**
  * Stateful detail panel for a grouped recipe. On entry change the selection resets to the latest
  * version via {@link useResetOnChange} rather than by remounting, so the persisted selects and rows
- * in {@link PropertiesView} keep their restored values instead of flashing defaults.
+ * in {@link PropertiesView} keep their restored values instead of flashing defaults. The selected
+ * version is retained across navigation, until a new version or another entry resets it.
  */
 function RecipeDetailPanel({
   entry,
@@ -235,6 +236,7 @@ function RecipeDetailPanel({
   const [selectedVersionIdx, setSelectedVersionIdx] = useResetOnChange(
     getTaggedEntryKey(entry, (e) => `${e.id}-${latestIdx}`),
     latestIdx,
+    leafKey(STORAGE_KEYS.recipeSearch, "version"),
   );
   const selectedVersion = entry.versions[selectedVersionIdx] ?? entry.versions[latestIdx];
 

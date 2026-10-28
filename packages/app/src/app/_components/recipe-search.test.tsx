@@ -401,8 +401,6 @@ describe("RecipeSearch", () => {
       await selectOptionByLabel("Target slot", "Ref A");
 
       leaveAndReturn();
-      // The selected entry isn't retained, so select it again to bring the picker back
-      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
 
       expect(getSelectedOptionLabelByLabel("Target slot")).toContain("Ref A");
     });
@@ -590,6 +588,40 @@ describe("RecipeSearch", () => {
 
       const selectedLabel = getSelectedOptionLabelByLabel("Recipe version");
       expect(selectedLabel).toContain("v2");
+      expect(selectedLabel).toContain("latest");
+    });
+
+    it("keeps the selected recipe and version after leaving and returning", async () => {
+      const { leaveAndReturn } = renderWithRetainedState(
+        <RecipeSearch savedRecipes={[multiVersionEntry]} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
+      await selectOptionByLabel("Recipe version", /^v1\b/);
+
+      leaveAndReturn();
+
+      expect(screen.getByRole("heading", { name: "Iterated Recipe" })).toBeInTheDocument();
+      expect(getSelectedOptionLabelByLabel("Recipe version")).toContain("v1");
+    });
+
+    it("returns to the latest version when one was added since leaving", async () => {
+      const { leaveAndReturn } = renderWithRetainedState(
+        <RecipeSearch savedRecipes={[multiVersionEntry]} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
+      await selectOptionByLabel("Recipe version", /^v1\b/);
+
+      const withNewVersion: SavedRecipeJson = {
+        ...multiVersionEntry,
+        versions: [
+          ...multiVersionEntry.versions,
+          { version: 3, recipe: [["Whole Milk", 120]], createdAt: "2026-05-20T00:00:00.000Z" },
+        ],
+      };
+      leaveAndReturn(<RecipeSearch savedRecipes={[withNewVersion]} />);
+
+      const selectedLabel = getSelectedOptionLabelByLabel("Recipe version");
+      expect(selectedLabel).toContain("v3");
       expect(selectedLabel).toContain("latest");
     });
 

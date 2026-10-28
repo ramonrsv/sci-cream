@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useMemo } from "react";
 
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { leafKey } from "@/lib/storage-keys";
@@ -84,8 +84,8 @@ export interface EntitySearchProps<E> {
   renderDetailPanel: (e: Tagged<E>) => ReactNode;
   /**
    * Optional identifier for this search: the root of the keys that persist its source filter
-   * (`localStorage`) and retain its query across navigation (in memory), so without one neither is
-   * kept. Also the `id` of the outermost wrapper, for tests/CSS targeting.
+   * (`localStorage`) and retain its query and selected entry across navigation (in memory), so
+   * without one none is kept. Also the `id` of the outermost wrapper, for tests/CSS targeting.
    */
   id?: string;
 }
@@ -118,7 +118,10 @@ export function EntitySearch<E>({
     EntitySource.All,
     { isValid: (v) => Object.values(EntitySource).includes(v) },
   );
-  const [selectedEntryKey, setSelectedEntryKey] = useState<string | null>(null);
+  const [selectedEntryKey, setSelectedEntryKey] = useRetainedState<string | null>(
+    leafKey(id, "entry"),
+    null,
+  );
 
   const filtered = useMemo(
     () =>

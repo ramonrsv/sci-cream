@@ -1,7 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { renderHook, act } from "@testing-library/react";
+import { createElement, type ReactNode } from "react";
 
 import { useResetOnChange } from "./use-reset-on-change";
+import { RetainedStateContext } from "./use-retained-state";
 
 describe("useResetOnChange", () => {
   it("starts at the reset value", () => {
@@ -60,5 +62,66 @@ describe("useResetOnChange", () => {
     // A new object with equal contents is a different reference, so it triggers a reset.
     rerender({ key: { id: 1 } });
     expect(result.current[0]).toBe(0);
+  });
+
+  describe("with a retainKey", () => {
+    const RETAIN_KEY = "test-key";
+
+    /** Wrapper supplying a fresh store as the retained state, as `RetainedStateProvider` does. */
+    function withStore() {
+      const store = new Map<string, unknown>();
+      return function Wrapper({ children }: { children: ReactNode }) {
+        return createElement(RetainedStateContext, { value: store }, children);
+      };
+    }
+
+    /** Set the value to 5 under `resetKey` and `retainKey`, then unmount, like leaving the view. */
+    function setAndLeave(
+      wrapper: ReturnType<typeof withStore>,
+      resetKey: string,
+      retainKey: string,
+    ) {
+      const first = renderHook(() => useResetOnChange(resetKey, 0, retainKey), { wrapper });
+      act(() => first.result.current[1](5));
+      first.unmount();
+    }
+
+    it("restores the value on remount while the reset key is unchanged", () => {
+      const wrapper = withStore();
+      setAndLeave(wrapper, "a", RETAIN_KEY);
+
+      const { result } = renderHook(() => useResetOnChange("a", 0, RETAIN_KEY), { wrapper });
+
+      expect(result.current[0]).toBe(5);
+    });
+
+    it("resets on remount when the reset key has changed since", () => {
+      const wrapper = withStore();
+      setAndLeave(wrapper, "a", RETAIN_KEY);
+
+      const { result } = renderHook(() => useResetOnChange("b", 99, RETAIN_KEY), { wrapper });
+
+      expect(result.current[0]).toBe(99);
+    });
+
+    it("keeps a separate value per retainKey", () => {
+      const wrapper = withStore();
+      setAndLeave(wrapper, "a", "key-1");
+
+      const { result } = renderHook(() => useResetOnChange("a", 0, "key-2"), { wrapper });
+
+      expect(result.current[0]).toBe(0);
+    });
+
+    it("retains nothing without a retainKey, even under a provider", () => {
+      const wrapper = withStore();
+      const first = renderHook(() => useResetOnChange("a", 0), { wrapper });
+      act(() => first.result.current[1](5));
+      first.unmount();
+
+      const { result } = renderHook(() => useResetOnChange("a", 0), { wrapper });
+
+      expect(result.current[0]).toBe(0);
+    });
   });
 });

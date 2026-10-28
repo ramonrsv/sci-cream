@@ -274,6 +274,71 @@ describe("EntitySearch", () => {
     });
   });
 
+  describe("retained selection", () => {
+    const select = (name: RegExp) => fireEvent.click(screen.getByRole("button", { name }));
+
+    it("restores the selected entry, and its panel, after leaving and returning", () => {
+      const { leaveAndReturn } = renderWithRetainedState(shell({ id: "test-search" }));
+      select(/Gamma/);
+
+      leaveAndReturn();
+
+      expect(screen.getByTestId("panel")).toHaveTextContent("panel for Gamma");
+      expect(screen.getByRole("button", { name: /Gamma/ })).toHaveClass("search-list-item-active");
+    });
+
+    it("keeps a separate selection per id", () => {
+      const { leaveAndReturn } = renderWithRetainedState(
+        <>
+          {shell({ id: "search-a" })}
+          {shell({ id: "search-b" })}
+        </>,
+      );
+      fireEvent.click(screen.getAllByRole("button", { name: /Gamma/ })[0]);
+
+      leaveAndReturn();
+
+      expect(screen.getByTestId("panel")).toHaveTextContent("panel for Gamma");
+      expect(screen.getAllByText("Select an entry to see details")).toHaveLength(1);
+    });
+
+    it("does not retain the selection without an id", () => {
+      const { leaveAndReturn } = renderWithRetainedState(shell());
+      select(/Gamma/);
+
+      leaveAndReturn();
+
+      expect(screen.queryByTestId("panel")).not.toBeInTheDocument();
+    });
+
+    it("does not retain the selection without a provider", () => {
+      const { unmount } = renderShell({ id: "test-search" });
+      select(/Gamma/);
+      unmount();
+
+      renderShell({ id: "test-search" });
+
+      expect(screen.queryByTestId("panel")).not.toBeInTheDocument();
+    });
+
+    it("starts with nothing selected under a new provider, as after a reload", () => {
+      const first = renderWithRetainedState(shell({ id: "test-search" }));
+      select(/Gamma/);
+      first.unmount();
+
+      renderWithRetainedState(shell({ id: "test-search" }));
+
+      expect(screen.queryByTestId("panel")).not.toBeInTheDocument();
+    });
+
+    it("is held in memory only, never in localStorage", () => {
+      renderWithRetainedState(shell({ id: "test-search" }));
+      select(/Gamma/);
+
+      expect(Object.keys(localStorage).some((key) => key.endsWith(":entry"))).toBe(false);
+    });
+  });
+
   describe("stale selection", () => {
     it("clears the selection once the selected entry drops out of the data (e.g. deleted)", () => {
       const { rerender } = renderShell();
