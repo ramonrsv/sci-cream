@@ -174,6 +174,14 @@ describe("EntitySearch", () => {
       expect(screen.getByTestId("panel")).toHaveTextContent("panel for Alpha");
     });
 
+    it("marks only the selected entry's list item as current", () => {
+      renderShell();
+      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
+
+      expect(screen.getByRole("button", { name: /Gamma/ })).toHaveAttribute("aria-current", "true");
+      expect(document.querySelectorAll("[aria-current]")).toHaveLength(1);
+    });
+
     it("passes the source tag to renderDetailPanel via the entry's _source", () => {
       renderShell({ renderDetailPanel: (e) => <div data-testid="panel">{e._source}</div> });
       fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));

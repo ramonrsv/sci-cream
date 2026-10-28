@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useLayoutEffect, useRef } from "react";
 import { Search } from "lucide-react";
 
 /** Props for {@link ListDetailShell} */
@@ -13,7 +13,10 @@ export interface ListDetailShellProps {
   searchPlaceholder?: string;
   /** Content rendered to the right of the search input (e.g. source-filter tabs, a New button). */
   toolbarRight?: ReactNode;
-  /** Left-column content: the list items and its own empty state. */
+  /**
+   * Left-column content: the list items and its own empty state.
+   * Mark the current item with `aria-current="true"` to keep it in view.
+   */
   list: ReactNode;
   /** Right-column content: the detail panel, or a consumer-supplied empty state. */
   detail: ReactNode;
@@ -25,7 +28,8 @@ export interface ListDetailShellProps {
  * Presentational two-column list/detail layout: a search input with an optional toolbar above a
  * scrollable left list and a right detail column. Purely structural — it owns no query, selection,
  * or filtering state; the consumer passes {@link ListDetailShellProps.list} and `detail` as content
- * and controls the search input via `query`/`onQueryChange`.
+ * and controls the search input via `query`/`onQueryChange`. It reads the current item from
+ * `aria-current` only to keep it in view.
  *
  * Shared by {@link EntitySearch} (browse of embedded + saved entries) and the make-recipe page.
  */
@@ -38,6 +42,19 @@ export function ListDetailShell({
   detail,
   id,
 }: ListDetailShellProps) {
+  const listRef = useRef<HTMLDivElement>(null);
+  const revealedRef = useRef<Element | null>(null);
+
+  // Keep the current item in view when it changes, e.g. one restored on returning to the page.
+  // Comparing elements leaves the list alone on re-renders, after the user has scrolled away.
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    const current = list?.querySelector('[aria-current="true"]') ?? null;
+    if (current === revealedRef.current) return;
+    revealedRef.current = current;
+    if (list && current) revealInList(list, current);
+  });
+
   return (
     <div id={id} className="flex flex-col gap-3">
       {/* Search bar + optional toolbar; the toolbar wraps below rather than squeezing the input */}
@@ -66,7 +83,10 @@ export function ListDetailShell({
       {/* Two-column layout */}
       <div className="flex flex-col gap-4 md:h-[75vh] md:flex-row">
         {/* Left: list */}
-        <div className="flex h-[20vh] shrink-0 scrollbar-gutter-stable flex-col gap-1.5 overflow-y-auto pr-1 md:h-auto md:w-60">
+        <div
+          ref={listRef}
+          className="flex h-[20vh] shrink-0 scrollbar-gutter-stable flex-col gap-1.5 overflow-y-auto pr-1 md:h-auto md:w-60"
+        >
           {list}
         </div>
         {/* Right: detail panel */}
@@ -74,4 +94,12 @@ export function ListDetailShell({
       </div>
     </div>
   );
+}
+
+/** Scroll `list` to centre `item` when any of it is out of view; a visible one stays put. */
+function revealInList(list: HTMLElement, item: Element) {
+  const view = list.getBoundingClientRect();
+  const box = item.getBoundingClientRect();
+  if (box.top >= view.top && box.bottom <= view.bottom) return;
+  list.scrollTop += box.top - view.top - (list.clientHeight - box.height) / 2;
 }

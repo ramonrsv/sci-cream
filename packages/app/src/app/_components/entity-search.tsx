@@ -180,6 +180,7 @@ export function EntitySearch<E>({
         <button
           key={getEntryKey(entry)}
           onClick={() => setSelectedEntryKey(getEntryKey(entry))}
+          aria-current={isSelected(entry) ? "true" : undefined}
           className={`search-list-item ${isSelected(entry) ? "search-list-item-active" : ""}`}
         >
           <span className="text-primary block truncate text-sm font-medium">

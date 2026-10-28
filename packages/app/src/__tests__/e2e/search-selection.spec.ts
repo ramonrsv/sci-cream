@@ -32,6 +32,11 @@ function detailHeading(page: Page, name: string) {
   return page.locator(".search-detail-panel").getByRole("heading", { name, exact: true });
 }
 
+/** The list item marked current, the selected entry's. */
+function currentListItem(page: Page) {
+  return page.locator('.search-list-item[aria-current="true"]');
+}
+
 /** The recipe detail panel's version dropdown. */
 function versionSelect(page: Page) {
   return page.getByLabel("Recipe version");
@@ -61,6 +66,8 @@ test.describe("Search selection retention", () => {
 
     await visitCalculatorAndReturn(page, "/ingredients");
     await expect(detailHeading(page, INGREDIENT)).toBeVisible();
+    // Sweeteners list last, so this is in view only if the list scrolled back to it
+    await expect(currentListItem(page)).toBeInViewport();
 
     await expectNoSelectionAfterReload(page);
   });
