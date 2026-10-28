@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793165238120,
+  "lastUpdate": 1793165264590,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -665082,6 +665082,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.57,
             "range": "0.57",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b711c9b5d808013989771c391bd7ee5ec5ab39f9",
+          "message": "Keep the selected list item in view\n\nA selection restored on returning to Recipes, Ingredients, or Make came\nback with the list column scrolled to the top, so its item could be out\nof view: Sucrose sits near the end of hundreds of ingredients.\n\nListDetailShell now reveals the list item marked aria-current=\"true\"\nwhenever that element changes, centring it in the column when any of it\nis out of view. It checks after every render rather than on mount, as\nMake's persisted selection and saved batches can arrive later. Comparing\nelements means a click never makes the list jump, and a re-render never\nundoes the user's scrolling. It scrolls the column only, where\nscrollIntoView would also move the page.\n\nBatchList already marked its selected row current; EntitySearch's\nselected item now does too, which screen readers announce.\n\nUnit tests stub the layout jsdom lacks to cover revealing on mount and\non a later render, a visible item staying put, and the user's scroll\nsurviving a re-render. The search selection spec checks the returned\ningredient is in view.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T01:17:01-04:00",
+          "tree_id": "5abe2fbfc57c2b9705959bdcdd8284c99861b6be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b711c9b5d808013989771c391bd7ee5ec5ab39f9"
+        },
+        "date": 1793165220446,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 47.9,
+            "range": "8.10",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.39,
+            "range": "0.72",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.35,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 121,
+            "range": "8.19",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.39,
+            "range": "0.08",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 121,
+            "range": "8.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 43.91,
+            "range": "7.15",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.81,
+            "range": "0.27",
             "unit": "ms"
           }
         ]
