@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793079959319,
+  "lastUpdate": 1793161834944,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -683302,6 +683302,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/20fac21875dd6242f9f050fcaabcc6535194f0a5"
         },
         "date": 1793079035557,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1177.12,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1892.35,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.88,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2100.66,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8f0e445c21a13937a36c35c548a8611c23ec87a0",
+          "message": "Require a key for useRetainedStateSetter\n\nThe setter accepted an undefined key and silently did nothing with it,\nonly because recipeIdxKey always returned string | undefined, even\nfor a defined root. recipeIdxKey now has overloads, so a defined root\ngives a string, and the setter takes key: string: a possibly missing\nkey is a type error rather than a no-op. That drops the setter's\nundefined branch and its test, and the non-null assertions on\nrecipeIdxKey in the tests.\n\nThe recipe search's target-slot retention test no longer also checks\nlocalStorage; that check is its own \"is held in memory only\" test, as\nin the other slot-retention suites.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-27T00:50:05-04:00",
+          "tree_id": "56d442e996287b495295b6e3597300bcd6995858",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8f0e445c21a13937a36c35c548a8611c23ec87a0"
+        },
+        "date": 1793161778896,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
