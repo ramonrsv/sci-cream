@@ -1,5 +1,7 @@
 //! Miscellaneous utility functions used in tests across the codebase.
 
+use std::{any::type_name, fmt::Debug};
+
 use approx::AbsDiffEq;
 use struct_iterable::Iterable;
 use strum::IntoEnumIterator;
@@ -74,6 +76,106 @@ pub(crate) fn assert_f64_fields_ne_zero<T: Iterable>(iterable: &T) {
     for field in iter_fields_as::<f64, _>(iterable) {
         assert_ne!(field, &0.0);
     }
+}
+
+/// [`AssertKeys`] tolerance: one unit in the sixth decimal, the finest its tables are written to
+pub(crate) const KEYS_EPSILON: f64 = 1e-6;
+
+/// Asserts keyed values against a table of `(key, value)` rows, reporting every mismatch at once.
+///
+/// Rows follow the keys' declaration order, so every table reads the same way. A mismatch prints
+/// as a corrected row, ready to paste into the table.
+pub(crate) trait AssertKeys {
+    /// The key the values are read by
+    type Key: IntoEnumIterator + PartialEq + Copy + Debug;
+
+    /// The value under `key`
+    fn key_value(&self, key: Self::Key) -> f64;
+
+    /// Asserts each listed key within [`KEYS_EPSILON`], and every unlisted key exactly zero
+    #[track_caller]
+    fn assert_all_keys(&self, expected: &[(Self::Key, f64)]) {
+        assert_declaration_order(expected);
+        let mismatches: Vec<String> = Self::Key::iter()
+            .filter_map(|key| {
+                let actual = self.key_value(key);
+                match expected.iter().find(|(listed, _)| *listed == key) {
+                    Some(&(_, value)) => listed_mismatch(key, value, actual),
+                    None => (actual != 0.0).then(|| format!("{}, // unlisted", row(key, actual))),
+                }
+            })
+            .collect();
+        assert_no_mismatches(&mismatches, Self::Key::iter().count(), "keys");
+    }
+
+    /// Asserts each listed key within [`KEYS_EPSILON`], leaving unlisted keys unchecked
+    #[track_caller]
+    fn assert_keys(&self, expected: &[(Self::Key, f64)]) {
+        assert_declaration_order(expected);
+        let mismatches: Vec<String> = expected
+            .iter()
+            .filter_map(|&(key, value)| listed_mismatch(key, value, self.key_value(key)))
+            .collect();
+        assert_no_mismatches(&mismatches, expected.len(), "listed keys");
+    }
+}
+
+impl AssertKeys for Composition {
+    type Key = CompKey;
+
+    fn key_value(&self, key: CompKey) -> f64 {
+        self.get(key)
+    }
+}
+
+/// Panics unless `rows` follow the keys' declaration order, which also rules out repeats
+#[track_caller]
+fn assert_declaration_order<K: IntoEnumIterator + PartialEq + Copy + Debug>(rows: &[(K, f64)]) {
+    let position = |key: K| K::iter().position(|variant| variant == key);
+    for ((before, _), (after, _)) in rows.iter().zip(rows.iter().skip(1)) {
+        assert!(before != after, "{after:?} is listed twice");
+        assert!(position(*before) < position(*after), "{after:?} must come before {before:?}, in declaration order");
+    }
+}
+
+/// The corrected row for `key`, if `actual` misses the listed `value`
+fn listed_mismatch<K: Debug>(key: K, value: f64, actual: f64) -> Option<String> {
+    (!actual.abs_diff_eq(&value, KEYS_EPSILON)).then(|| format!("{}, // expected {value:?}", row(key, actual)))
+}
+
+/// `key` and `value` as a table row, e.g. `(CompKey::Casein, 67.178_732)`
+fn row<K: Debug>(key: K, value: f64) -> String {
+    let path = type_name::<K>();
+    let key_type = path.rsplit_once("::").map_or(path, |(_, name)| name);
+    format!("({key_type}::{key:?}, {})", literal(value))
+}
+
+/// `value` as a float literal for a table row: at most six decimals, separated the way
+/// `clippy::unreadable_literal` asks, and in exponent form when too small for six decimals
+fn literal(value: f64) -> String {
+    if value != 0.0 && value.abs() < 5e-7 {
+        return format!("{value:e}");
+    }
+    let fixed = format!("{value:.6}");
+    let Some((int, frac)) = fixed.split_once('.') else {
+        return fixed; // NaN or infinite
+    };
+    match frac.trim_end_matches('0') {
+        "" => format!("{int}.0"),
+        frac if frac.len() > 5 => format!("{int}.{}_{}", &frac[..3], &frac[3..]),
+        frac => format!("{int}.{frac}"),
+    }
+}
+
+/// Panics listing `mismatches`, out of `checked` keys of the kind `what` names
+#[track_caller]
+fn assert_no_mismatches(mismatches: &[String], checked: usize, what: &str) {
+    assert!(
+        mismatches.is_empty(),
+        "Table mismatch in {} of {checked} {what}:\n    {}\n",
+        mismatches.len(),
+        mismatches.join("\n    ")
+    );
 }
 
 /// Symmetric relative difference between two values, as a percentage.
@@ -267,11 +369,12 @@ mod tests {
     use struct_iterable::Iterable;
 
     use super::{
-        KeyCeiling, assert_comp_eq_percent, assert_compositions_consistent, assert_f64_fields_eq_zero,
-        assert_f64_fields_ne_zero, compare_compositions, relative_diff_percent, root_mean_square,
-        solids_fraction_diff_pp,
+        AssertKeys, KEYS_EPSILON, KeyCeiling, assert_comp_eq_percent, assert_compositions_consistent,
+        assert_f64_fields_eq_zero, assert_f64_fields_ne_zero, compare_compositions, literal, relative_diff_percent,
+        root_mean_square, solids_fraction_diff_pp,
     };
     use crate::composition::{CompKey, Composition, MilkProteins, Solids, SolidsBreakdown};
+    use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::{assert_eq_flt_test, assert_true};
 
     #[derive(Iterable)]
@@ -285,6 +388,11 @@ mod tests {
     /// itself, so the metric reduces to a direct percentage-point diff.
     fn comp_ts(ts: f64) -> Composition {
         Composition::new().solids(Solids::new().milk(SolidsBreakdown::new().proteins(MilkProteins::new().casein(ts))))
+    }
+
+    /// Energy alone over an empty, all-water composition, so only `Energy` and `Water` are nonzero
+    fn comp() -> Composition {
+        Composition::new().energy(50.0)
     }
 
     // --- relative_diff_percent ---
@@ -438,6 +546,69 @@ mod tests {
     #[should_panic(expected = "assertion failed")]
     fn assert_f64_fields_ne_zero_panics_on_zero_field() {
         assert_f64_fields_ne_zero(&TwoFields { a: 1.0, b: 0.0 });
+    }
+
+    // --- AssertKeys ---
+
+    #[test]
+    fn literal_rounds_to_six_decimals() {
+        assert_eq!(literal(352.0), "352.0");
+        assert_eq!(literal(4.3), "4.3");
+        assert_eq!(literal(2.61225), "2.61225");
+        assert_eq!(literal(5.821_267_626_8), "5.821_268");
+        assert_eq!(literal(1e-9), "1e-9");
+        assert_eq!(literal(f64::NAN), "NaN");
+    }
+
+    #[test]
+    fn assert_all_keys_passes_a_complete_table() {
+        comp().assert_all_keys(&[(CompKey::Energy, 50.0), (CompKey::Water, 100.0)]);
+    }
+
+    #[test]
+    fn assert_all_keys_tolerates_keys_epsilon() {
+        comp().assert_all_keys(&[(CompKey::Energy, 50.0 + 0.9 * KEYS_EPSILON), (CompKey::Water, 100.0)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "(CompKey::Energy, 50.0), // expected 50.000002")]
+    fn assert_all_keys_rejects_a_value_past_keys_epsilon() {
+        comp().assert_all_keys(&[(CompKey::Energy, 50.000_002), (CompKey::Water, 100.0)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "(CompKey::Energy, 50.0), // unlisted")]
+    fn assert_all_keys_rejects_an_unlisted_nonzero_key() {
+        comp().assert_all_keys(&[(CompKey::Water, 100.0)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "Table mismatch in 2 of")]
+    fn assert_all_keys_reports_every_mismatch() {
+        comp().assert_all_keys(&[(CompKey::Energy, 60.0)]);
+    }
+
+    #[test]
+    fn assert_keys_leaves_unlisted_keys_unchecked() {
+        comp().assert_keys(&[(CompKey::Energy, 50.0)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "Table mismatch in 1 of 1 listed keys")]
+    fn assert_keys_rejects_a_listed_mismatch() {
+        comp().assert_keys(&[(CompKey::Water, 90.0)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "Energy must come before Water, in declaration order")]
+    fn rows_follow_declaration_order() {
+        comp().assert_keys(&[(CompKey::Water, 100.0), (CompKey::Energy, 50.0)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "Water is listed twice")]
+    fn rows_do_not_repeat() {
+        comp().assert_keys(&[(CompKey::Water, 100.0), (CompKey::Water, 100.0)]);
     }
 
     // --- assert_compositions_consistent ---
