@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793222532319,
+  "lastUpdate": 1793222910583,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -638774,6 +638774,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1095.08,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7a11ce0cc041e42da78b34f451b2515835ccab76",
+          "message": "Convert dairy spec tests to key tables\n\nEach to_composition_* test in specs::dairy now checks its composition\nagainst one assert_all_keys table, so every key is checked. Rounded\nvalues are written to six decimals, and the tables add roll-ups the\nold assertions skipped, such as TotalSNF, TotalMinerals, and NetPAC.\n\nA zero row stays where it says something about the spec: the fats of\nthe fat-free milks, Lactose in the lactose-free ones, Casein in the\nwhey products, and Whey in sodium caseinate. Goff-Hartel skim milk and\nMedallion skim milk powder gain a TotalFats zero, and the 0% milk\npilot its SaturatedFat and TransFat ones. The Salt, TotalStabilizers,\nTotalEmulsifiers, Alcohol, and PACslt zeros each old test asserted are\ndropped, as unlisted keys are already checked for exactly zero.\n\nProperty tests, with computed expectations, keep their plain asserts.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T16:55:38-04:00",
+          "tree_id": "97cec236dfc211da903329cebe433f4b4589b292",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7a11ce0cc041e42da78b34f451b2515835ccab76"
+        },
+        "date": 1793222866304,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 933.95,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 702.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 881.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 686.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.09,
             "unit": "KB"
           },
           {
