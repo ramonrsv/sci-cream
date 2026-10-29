@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793252883337,
+  "lastUpdate": 1793253011326,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -675595,6 +675595,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.83,
             "range": "0.23",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f6c2cebfb410ff42d44154f4ba77a96477f58ea0",
+          "message": "Convert fpd fixture tests to key tables\n\nvalidate_reference_compositions and\nvalidate_corvitto_reference_compositions check each of their seven\nfixture compositions with assert_all_keys instead of a few literal\nkeys. The serving-temperature comparisons with Corvitto's book and\nthe TotalPAC - HF relation stay as plain asserts. The Corvitto test\nallows clippy::too_many_lines, as composition_get_all_keys does.\n\nChecked against the book, the HF fixtures modeled their milk sugar\nas 3.4 and 4.1 g of sucrose, the milk ingredients' PAC points rather\nthan their lactose. They now hold lactose at 54.5% of their 8% MSNF,\n4.36 g, as the fixtures without HF do. The first HF fixture's\ncomments also gave POD 24.5, where the book and fixture have 24.9.\n\nAlso, full's water test lists only Water, since every unlisted key\nmust be exactly zero, and sweetener's tests keep the asserts glob\nunder #[expect(unused_imports)], as tests::asserts asks.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T01:41:22-04:00",
+          "tree_id": "86ee52323452e4eb66334ce0fd6aa0ce649c92db",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f6c2cebfb410ff42d44154f4ba77a96477f58ea0"
+        },
+        "date": 1793252937713,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 73.9,
+            "range": "13.18",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 16.05,
+            "range": "1.35",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 16,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 204,
+            "range": "20.20",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.49,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 204,
+            "range": "20.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 68.66,
+            "range": "12.96",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.45,
+            "range": "0.36",
             "unit": "ms"
           }
         ]
