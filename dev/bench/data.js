@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793253272975,
+  "lastUpdate": 1793253567993,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -558757,6 +558757,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 729.13,
             "range": "13.75",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f6c2cebfb410ff42d44154f4ba77a96477f58ea0",
+          "message": "Convert fpd fixture tests to key tables\n\nvalidate_reference_compositions and\nvalidate_corvitto_reference_compositions check each of their seven\nfixture compositions with assert_all_keys instead of a few literal\nkeys. The serving-temperature comparisons with Corvitto's book and\nthe TotalPAC - HF relation stay as plain asserts. The Corvitto test\nallows clippy::too_many_lines, as composition_get_all_keys does.\n\nChecked against the book, the HF fixtures modeled their milk sugar\nas 3.4 and 4.1 g of sucrose, the milk ingredients' PAC points rather\nthan their lactose. They now hold lactose at 54.5% of their 8% MSNF,\n4.36 g, as the fixtures without HF do. The first HF fixture's\ncomments also gave POD 24.5, where the book and fixture have 24.9.\n\nAlso, full's water test lists only Water, since every unlisted key\nmust be exactly zero, and sweetener's tests keep the asserts glob\nunder #[expect(unused_imports)], as tests::asserts asks.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T01:41:22-04:00",
+          "tree_id": "86ee52323452e4eb66334ce0fd6aa0ce649c92db",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f6c2cebfb410ff42d44154f4ba77a96477f58ea0"
+        },
+        "date": 1793253507630,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 42.88,
+            "range": "3.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 46.25,
+            "range": "2.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 51.5,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2119.25,
+            "range": "21.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 302.75,
+            "range": "2.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 318.75,
+            "range": "5.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 329.88,
+            "range": "3.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16216.88,
+            "range": "185.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 812.5,
+            "range": "29.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 41.5,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 43.63,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 31.75,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 33,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 107.63,
+            "range": "3.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 64.13,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 44.64,
+            "range": "0.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 33.5,
+            "range": "0.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 531.88,
+            "range": "8.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 584,
+            "range": "7.16",
             "unit": "ms"
           }
         ]
