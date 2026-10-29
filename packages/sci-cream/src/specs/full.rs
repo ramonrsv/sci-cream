@@ -93,6 +93,7 @@ pub(crate) mod tests {
 
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::assets::asset_composition;
     use crate::tests::util::AssertKeys;
 
     use super::*;
@@ -124,7 +125,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_full_spec_water() {
-        let comp = ING_SPEC_FULL_WATER.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_FULL_WATER);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 0.0),

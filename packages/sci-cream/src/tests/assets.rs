@@ -1,12 +1,16 @@
 use std::sync::LazyLock;
 
+use crate::tests::asserts::shadow_asserts::assert_eq;
+use crate::tests::asserts::*;
+
 use crate::{
-    composition::{CompKey, Composition, RatioKey},
+    composition::{CompKey, Composition, RatioKey, ToComposition},
     database::IngredientDatabase,
     fpd::FpdKey,
     properties::PropKey,
     recipe::{ConstRecipe, OwnedLightRecipe},
     resolution::IngredientGetter,
+    specs::IngredientSpec,
 };
 
 pub(crate) use crate::specs::{
@@ -25,6 +29,30 @@ pub(crate) fn get_comp_by_name(name: &str) -> Composition {
         .get_ingredient_by_name(name)
         .unwrap_or_else(|e| panic!("missing ingredient '{name}': {e}"))
         .composition
+}
+
+/// Convert an asset's spec, checked against its [`INGREDIENT_ASSETS_TABLE`] row: the row's JSON
+/// must deserialize to the spec, and the composition match the row's, where it has one.
+#[track_caller]
+pub(crate) fn asset_composition(spec: &IngredientSpec) -> Composition {
+    let name = &spec.name;
+    let (spec_str, _, expected_comp) = INGREDIENT_ASSETS_TABLE
+        .iter()
+        .find(|(_, row_spec, _)| row_spec.name == *name)
+        .unwrap_or_else(|| panic!("missing asset '{name}' in INGREDIENT_ASSETS_TABLE"));
+
+    let deserialized = serde_json::from_str::<IngredientSpec>(spec_str)
+        .unwrap_or_else(|e| panic!("cannot deserialize asset '{name}': {e}"));
+    assert_eq!(deserialized, *spec);
+
+    let comp = spec
+        .spec
+        .to_composition()
+        .unwrap_or_else(|e| panic!("cannot convert asset '{name}': {e}"));
+    if let Some(expected_comp) = expected_comp {
+        assert_eq_flt_test!(&comp, expected_comp);
+    }
+    comp
 }
 
 /// Make a [`OwnedLightRecipe`] from a [`ConstRecipe`] (a `&[(&str, f64)]`).
@@ -245,6 +273,15 @@ mod tests {
 
     use super::*;
     use crate::{Recipe, docs::assert_eq_float};
+
+    #[test]
+    #[should_panic(expected = "missing asset 'Not An Asset' in INGREDIENT_ASSETS_TABLE")]
+    fn asset_composition_requires_a_table_row() {
+        let _ = asset_composition(&IngredientSpec {
+            name: "Not An Asset".to_string(),
+            ..ING_SPEC_MICRO_SALT.clone()
+        });
+    }
 
     #[test]
     fn main_recipe() {

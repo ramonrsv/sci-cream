@@ -148,6 +148,7 @@ pub(crate) mod tests {
 
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::assets::asset_composition;
     use crate::tests::util::AssertKeys;
 
     use super::*;
@@ -190,7 +191,7 @@ pub(crate) mod tests {
     // false positive, sees 6.2832 as f64::consts::TAU
     #[expect(clippy::approx_constant)]
     fn to_composition_fruit_spec_strawberry() {
-        let comp = ING_SPEC_FRUIT_STRAWBERRY.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_FRUIT_STRAWBERRY);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 32.0),
@@ -250,7 +251,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_fruit_spec_navel_orange_auto_energy() {
-        let comp = ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 39.27),

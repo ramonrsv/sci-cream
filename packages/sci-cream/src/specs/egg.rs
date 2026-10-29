@@ -154,6 +154,7 @@ pub(crate) mod tests {
     use std::sync::LazyLock;
 
     use crate::tests::asserts::*;
+    use crate::tests::assets::asset_composition;
     use crate::tests::util::AssertKeys;
 
     use super::*;
@@ -204,8 +205,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_egg_spec_egg_yolk() {
-        let comp = ING_SPEC_EGG_YOLK.spec.to_composition().unwrap();
-        assert_eq_flt_test!(comp, *COMP_EGG_YOLK);
+        let comp = asset_composition(&ING_SPEC_EGG_YOLK);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 334.0),

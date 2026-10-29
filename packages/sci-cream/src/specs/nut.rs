@@ -147,6 +147,7 @@ pub(crate) mod tests {
 
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::assets::asset_composition;
     use crate::tests::util::AssertKeys;
 
     use super::*;
@@ -210,7 +211,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_nut_spec_almond() {
-        let comp = ING_SPEC_NUT_ALMOND.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_NUT_ALMOND);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 570.3),

@@ -115,6 +115,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::assets::asset_composition;
     use crate::tests::util::AssertKeys;
 
     use super::*;
@@ -143,7 +144,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_emulsifier_soy_lecithin_powder() {
-        let comp = ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_EMULSIFIER_SOY_LECITHIN_POWDER);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 900.0),
@@ -180,7 +181,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_emulsifier_gum_arabic() {
-        let comp = ING_SPEC_EMULSIFIER_GUM_ARABIC.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_EMULSIFIER_GUM_ARABIC);
 
         comp.assert_all_keys(&[
             // Fiber `other` carries no sourced caloric value, so gum arabic contributes no energy.
@@ -221,7 +222,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_emulsifier_polysorbate_80() {
-        let comp = ING_SPEC_EMULSIFIER_POLYSORBATE_80.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_EMULSIFIER_POLYSORBATE_80);
 
         comp.assert_all_keys(&[
             // Its composition is deliberately untracked, and unclassified solids claim no energy.

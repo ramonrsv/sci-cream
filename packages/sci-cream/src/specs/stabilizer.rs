@@ -116,6 +116,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::assets::asset_composition;
     use crate::tests::util::AssertKeys;
 
     use super::*;
@@ -144,7 +145,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_stabilizer_locust_bean_gum() {
-        let comp = ING_SPEC_STABILIZER_LOCUST_BEAN_GUM.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_STABILIZER_LOCUST_BEAN_GUM);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 0.0),

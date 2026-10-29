@@ -420,6 +420,7 @@ pub(crate) mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+    use crate::tests::assets::asset_composition;
     use crate::tests::util::AssertKeys;
 
     use super::*;
@@ -500,10 +501,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_chocolate_spec_lindt_70_dark_chocolate() {
-        let comp = ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 545.52),
@@ -591,10 +589,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_chocolate_spec_lindt_95_dark_chocolate_other_solids() {
-        let comp = ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 611.4),
@@ -670,10 +665,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_chocolate_spec_lindt_100_dark_chocolate() {
-        let comp = ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 586.464),
@@ -743,10 +735,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_chocolate_spec_ghirardelli_100_cocoa_powder() {
-        let comp = ING_SPEC_COCOA_POWDER_GHIRARDELLI_100_COCOA_POWDER
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_COCOA_POWDER_GHIRARDELLI_100_COCOA_POWDER);
 
         comp.assert_all_keys(&[
             // Different similar products list the energy from 250 to 325
@@ -827,10 +816,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_chocolate_spec_valrhona_cocoa_powder() {
-        let comp = ING_SPEC_COCOA_POWDER_VALRHONA_COCOA_POWDER
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_COCOA_POWDER_VALRHONA_COCOA_POWDER);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 341.352),
@@ -926,7 +912,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_chocolate_spec_70_dark_chocolate() {
-        let comp = ING_SPEC_CHOCOLATE_70_DARK_CHOCOLATE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_70_DARK_CHOCOLATE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 544.8384),
@@ -1006,7 +992,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_chocolate_spec_95_dark_chocolate() {
-        let comp = ING_SPEC_CHOCOLATE_95_DARK_CHOCOLATE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_95_DARK_CHOCOLATE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 596.5664),
@@ -1081,7 +1067,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_chocolate_spec_100_dark_chocolate() {
-        let comp = ING_SPEC_CHOCOLATE_100_DARK_CHOCOLATE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_100_DARK_CHOCOLATE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 606.912),

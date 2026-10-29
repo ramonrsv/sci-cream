@@ -306,6 +306,7 @@ impl ToComposition for SweetenerSpec {
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
+    use crate::tests::assets::asset_composition;
     use crate::tests::util::{AssertKeys, assert_comp_eq_percent};
 
     use super::*;
@@ -367,7 +368,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_sucrose() {
-        let comp = ING_SPEC_SWEETENER_SUCROSE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_SUCROSE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 400.0),
@@ -430,7 +431,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_dextrose() {
-        let comp = ING_SPEC_SWEETENER_DEXTROSE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_DEXTROSE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 368.0),
@@ -493,7 +494,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_fructose() {
-        let comp = ING_SPEC_SWEETENER_FRUCTOSE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_FRUCTOSE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 400.0),
@@ -556,7 +557,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_lactose() {
-        let comp = ING_SPEC_SWEETENER_LACTOSE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_LACTOSE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 400.0),
@@ -619,7 +620,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_maltose() {
-        let comp = ING_SPEC_SWEETENER_MALTOSE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_MALTOSE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 400.0),
@@ -681,7 +682,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_trehalose() {
-        let comp = ING_SPEC_SWEETENER_TREHALOSE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_TREHALOSE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 400.0),
@@ -744,7 +745,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_erythritol() {
-        let comp = ING_SPEC_SWEETENER_ERYTHRITOL.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_ERYTHRITOL);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 20.0),
@@ -799,7 +800,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_invert_sugar() {
-        let comp = ING_SPEC_SWEETENER_INVERT_SUGAR.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_INVERT_SUGAR);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 320.0),
@@ -866,7 +867,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_honey() {
-        let comp = ING_SPEC_SWEETENER_HONEY.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_HONEY);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 328.0),
@@ -946,7 +947,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_maple_syrup() {
-        let comp = ING_SPEC_SWEETENER_MAPLE_SYRUP.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_MAPLE_SYRUP);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 270.0),
@@ -1024,7 +1025,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_fancy_molasses() {
-        let comp = ING_SPEC_SWEETENER_FANCY_MOLASSES.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_FANCY_MOLASSES);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 304.0),
@@ -1091,7 +1092,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_hfcs42() {
-        let comp = ING_SPEC_SWEETENER_HFCS42.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_HFCS42);
 
         comp.assert_all_keys(&[
             // @todo This is a bit higher than reference 281
@@ -1159,7 +1160,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_maltodextrin_10_de() {
-        let comp = ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 380.0),
@@ -1225,7 +1226,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_glucose_syrup_42_de() {
-        let comp = ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE);
 
         comp.assert_all_keys(&[
             // @todo This is significantly higher than reference 280
@@ -1292,7 +1293,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_glucose_powder_25_de() {
-        let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 380.0),
@@ -1359,7 +1360,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_glucose_powder_42_de() {
-        let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 380.0),
@@ -1436,7 +1437,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_inulin_powder() {
-        let comp = ING_SPEC_SWEETENER_INULIN_POWDER.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_INULIN_POWDER);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 169.05),
@@ -1501,7 +1502,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_hp_inulin_powder() {
-        let comp = ING_SPEC_SWEETENER_HP_INULIN_POWDER.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_HP_INULIN_POWDER);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 147.0),
@@ -1576,7 +1577,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_oligofructose_powder() {
-        let comp = ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 159.25),
@@ -1663,7 +1664,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_splenda_sucralose() {
-        let comp = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 374.72),
@@ -1755,7 +1756,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_splenda_stevia() {
-        let comp = ING_SPEC_SWEETENER_SPLENDA_STEVIA.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_SPLENDA_STEVIA);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 19.98),
@@ -1833,7 +1834,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_splenda_monk_fruit() {
-        let comp = ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 19.98),
@@ -1918,7 +1919,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_sweetleaf_stevia() {
-        let comp = ING_SPEC_SWEETENER_SWEETLEAF_STEVIA.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_SWEETLEAF_STEVIA);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 154.35),
@@ -1999,7 +2000,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_sugar_twin() {
-        let comp = ING_SPEC_SWEETENER_SUGAR_TWIN.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_SUGAR_TWIN);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 244.0),
@@ -2090,10 +2091,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_stevia_in_the_raw_packets() {
-        let comp = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 356.0),
@@ -2185,10 +2183,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_stevia_in_the_raw_bakers_bag() {
-        let comp = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 366.2),

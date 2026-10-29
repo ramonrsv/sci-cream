@@ -150,6 +150,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::assets::asset_composition;
     use crate::tests::util::AssertKeys;
 
     use super::*;
@@ -182,7 +183,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_alcohol_spec_40_abv_spirit() {
-        let comp = ING_SPEC_ALCOHOL_40_ABV_SPIRIT.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_ALCOHOL_40_ABV_SPIRIT);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 230.797_765),
@@ -227,7 +228,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_alcohol_spec_baileys_irish_cream() {
-        let comp = ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 289.604_981),
@@ -277,7 +278,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_alcohol_spec_almond_extract() {
-        let comp = ING_SPEC_ALCOHOL_ALMOND_EXTRACT.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_ALCOHOL_ALMOND_EXTRACT);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 638.693_604),

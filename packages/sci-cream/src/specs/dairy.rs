@@ -696,6 +696,7 @@ pub(crate) mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+    use crate::tests::assets::asset_composition;
     use crate::tests::util::AssertKeys;
 
     use super::*;
@@ -753,7 +754,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_simple_spec_0_milk() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_0_MILK.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SIMPLE_0_MILK);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 33.12),
@@ -827,7 +828,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_simple_spec_2_milk() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_2_MILK.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SIMPLE_2_MILK);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 50.4576),
@@ -901,7 +902,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_simple_spec_3_25_milk() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_3_25_MILK.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SIMPLE_3_25_MILK);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 61.2936),
@@ -975,7 +976,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_simple_spec_40_cream() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_40_CREAM.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SIMPLE_40_CREAM);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 379.872),
@@ -1051,7 +1052,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_simple_spec_2_milk_lactose_free() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_2_MILK_LACTOSE_FREE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SIMPLE_2_MILK_LACTOSE_FREE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 50.4576),
@@ -1128,7 +1129,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_simple_spec_skimmed_powder() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 362.28),
@@ -1203,7 +1204,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_simple_spec_whole_powder() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 498.96),
@@ -1280,10 +1281,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_simple_spec_skim_milk_goff_hartel() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_SKIM_MILK_GOFF_HARTEL
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SIMPLE_SKIM_MILK_GOFF_HARTEL);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 31.646_507),
@@ -1371,7 +1369,7 @@ pub(crate) mod tests {
     #[test]
     fn to_composition_dairy_sheet_spec_whole_milk_usda() {
         // Its proximates sum to 100.18 g, so the water gives way to the listed solids, to 87.92 g
-        let comp = ING_SPEC_DAIRY_SHEET_WHOLE_MILK_USDA.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SHEET_WHOLE_MILK_USDA);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 61.0),
@@ -1458,7 +1456,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_3_25_milk_sealtest() {
-        let comp = ING_SPEC_DAIRY_LABEL_3_25_MILK_SEALTEST.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_3_25_MILK_SEALTEST);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 61.985_883),
@@ -1545,10 +1543,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_simple_spec_whole_ultra_filtered_lactose_free() {
-        let comp = ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 60.531_476),
@@ -1641,10 +1636,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_2_ultrafiltered_milk_lactantia() {
-        let comp = ING_SPEC_DAIRY_LABEL_2_ULTRAFILTERED_MILK_LACTANTIA
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_2_ULTRAFILTERED_MILK_LACTANTIA);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 64.897_474),
@@ -1732,10 +1724,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_sheet_spec_2_evaporated_milk_usda() {
-        let comp = ING_SPEC_DAIRY_SHEET_2_EVAPORATED_MILK_USDA
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SHEET_2_EVAPORATED_MILK_USDA);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 92.0),
@@ -1824,10 +1813,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_2_evaporated_milk_carnation() {
-        let comp = ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_CARNATION
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_CARNATION);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 94.961_897),
@@ -1920,10 +1906,7 @@ pub(crate) mod tests {
     #[test]
     fn to_composition_dairy_sheet_spec_sweetened_condensed_milk_usda() {
         // Its proximates sum to 100.04 g, so the water gives way to the listed solids, to 27.16 g
-        let comp = ING_SPEC_DAIRY_SHEET_SWEETENED_CONDENSED_MILK_USDA
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SHEET_SWEETENED_CONDENSED_MILK_USDA);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 321.0),
@@ -2016,10 +1999,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_sweetened_condensed_milk_eagle_brand() {
-        let comp = ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_EAGLE_BRAND
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_EAGLE_BRAND);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 360.736_205),
@@ -2108,10 +2088,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_skim_milk_powder_medallion() {
-        let comp = ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_MEDALLION
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_MEDALLION);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 360.0),
@@ -2198,10 +2175,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_whole_milk_powder_medallion() {
-        let comp = ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_MEDALLION
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_MEDALLION);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 500.0),
@@ -2285,10 +2259,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_skim_milk_powder_theland() {
-        let comp = ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_THELAND
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_THELAND);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 368.0),
@@ -2372,10 +2343,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_whole_milk_powder_theland() {
-        let comp = ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_THELAND
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_THELAND);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 524.0),
@@ -2461,7 +2429,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_sheet_spec_wpc_80_usdec() {
-        let comp = ING_SPEC_DAIRY_SHEET_WPC_80_USDEC.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SHEET_WPC_80_USDEC);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 412.0),
@@ -2547,7 +2515,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_sheet_spec_wpi_hilmar() {
-        let comp = ING_SPEC_DAIRY_SHEET_WPI_HILMAR.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SHEET_WPI_HILMAR);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 372.0),
@@ -2634,7 +2602,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_whey_isolate() {
-        let comp = ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 384.615_385),
@@ -2725,10 +2693,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_gold_standard_whey_optimum_nutrition() {
-        let comp = ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_WHEY_OPTIMUM_NUTRITION
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_WHEY_OPTIMUM_NUTRITION);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 374.0),
@@ -2819,10 +2784,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_label_spec_gold_standard_casein_optimum_nutrition() {
-        let comp = ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_CASEIN_OPTIMUM_NUTRITION
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_CASEIN_OPTIMUM_NUTRITION);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 352.0),
@@ -2910,7 +2872,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_sheet_spec_mcc_80_kommineni() {
-        let comp = ING_SPEC_DAIRY_SHEET_MCC_80_KOMMINENI.spec.to_composition().unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SHEET_MCC_80_KOMMINENI);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 364.34),
@@ -2996,10 +2958,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_dairy_sheet_spec_sodium_caseinate_southward() {
-        let comp = ING_SPEC_DAIRY_SHEET_SODIUM_CASEINATE_SOUTHWARD
-            .spec
-            .to_composition()
-            .unwrap();
+        let comp = asset_composition(&ING_SPEC_DAIRY_SHEET_SODIUM_CASEINATE_SOUTHWARD);
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 375.9),
