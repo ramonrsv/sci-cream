@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793250257126,
+  "lastUpdate": 1793250261498,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -681766,6 +681766,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/851bbc47be06b522ef8915ccbf42eeb20628b645"
         },
         "date": 1793249579533,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8444787d8d145122316e6371e51427ac2af44424",
+          "message": "Add asset_composition helper for asset tests\n\nEach spec's own to_composition_* test opened by converting its\nING_SPEC_X, a chain rustfmt often breaks over four lines, and left the\nasset's JSON and expected composition to the loops over\nINGREDIENT_ASSETS_TABLE in specs::ingredient. Those loops stop at the\nfirst failing asset, and the composition loop doesn't name it.\n\nasset_composition(&ING_SPEC_X), in tests::assets, finds the asset's\ntable row, checks that the row's JSON deserializes to the spec,\nconverts it, and compares the result with the row's COMP_*, where it\nhas one. A failure lands in that asset's own test, and an asset with\nno row panics, which a new test pins.\n\nThe 74 asset tests now open with it, micro salt's included, and egg\nyolk's separate COMP_EGG_YOLK comparison goes. Composite's asset\nresolves through a database, so its test keeps its own setup. The\ncentral loops stay.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T00:39:46-04:00",
+          "tree_id": "7cde29f8d98210ab5bbb0d29882072e79f864ca9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8444787d8d145122316e6371e51427ac2af44424"
+        },
+        "date": 1793250260554,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
