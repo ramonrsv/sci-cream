@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793249284116,
+  "lastUpdate": 1793249299629,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -642154,6 +642154,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/calculator route-only JS (gzip)",
             "value": 765.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 933.94,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 702.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 881.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 686.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.08,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fd4e30eec83e4b38f3924177ccef3c887926d8f6",
+          "message": "Move asset-free spec tests after asset tables\n\nA spec file's test module holds one block per embedded asset, then\nits INGREDIENT_ASSETS_TABLE_*, then the tests of general behavior. A\nfew tests that use no asset sat among the asset blocks: they build\ntheir own spec or check serde. Move them after the table, next to\ntheir closest relatives:\n\n- chocolate: cocoa powder's explicit-water test, beside its\n  negative-water error test;\n- egg: the whole-egg and egg-white protein splits;\n- alcohol: the zero-ABV and JSON null-field tests;\n- emulsifier: the glycerides test.\n\nTests tied to one asset stay in its block, such as chocolate's\nderives_cacao_solids_from_other_solids, checked against Valrhona's\ncomposition. Only the order changes.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:42:00-04:00",
+          "tree_id": "827756c0732aa39d4304945b506c95ec215013fe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fd4e30eec83e4b38f3924177ccef3c887926d8f6"
+        },
+        "date": 1793249225770,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.49,
             "unit": "KB"
           },
           {
