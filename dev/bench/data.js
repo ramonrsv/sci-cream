@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793251416245,
+  "lastUpdate": 1793252869250,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -696912,6 +696912,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/700be07413d0833c69100a90fb178a85f3bf81b6"
         },
         "date": 1793250429409,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1177.12,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1892.35,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.88,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2100.66,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f6c2cebfb410ff42d44154f4ba77a96477f58ea0",
+          "message": "Convert fpd fixture tests to key tables\n\nvalidate_reference_compositions and\nvalidate_corvitto_reference_compositions check each of their seven\nfixture compositions with assert_all_keys instead of a few literal\nkeys. The serving-temperature comparisons with Corvitto's book and\nthe TotalPAC - HF relation stay as plain asserts. The Corvitto test\nallows clippy::too_many_lines, as composition_get_all_keys does.\n\nChecked against the book, the HF fixtures modeled their milk sugar\nas 3.4 and 4.1 g of sucrose, the milk ingredients' PAC points rather\nthan their lactose. They now hold lactose at 54.5% of their 8% MSNF,\n4.36 g, as the fixtures without HF do. The first HF fixture's\ncomments also gave POD 24.5, where the book and fixture have 24.9.\n\nAlso, full's water test lists only Water, since every unlisted key\nmust be exactly zero, and sweetener's tests keep the asserts glob\nunder #[expect(unused_imports)], as tests::asserts asks.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T01:41:22-04:00",
+          "tree_id": "86ee52323452e4eb66334ce0fd6aa0ce649c92db",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f6c2cebfb410ff42d44154f4ba77a96477f58ea0"
+        },
+        "date": 1793252823899,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
