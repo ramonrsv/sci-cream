@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793248397932,
+  "lastUpdate": 1793248424492,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -640442,6 +640442,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1095.09,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "dc76a9a0d7918293a330f2a94bb3ba26c99206ea",
+          "message": "Convert sweetener spec tests to key tables\n\nEach to_composition_* test in specs::sweetener now checks its\ncomposition against one assert_all_keys table, so every key is\nchecked. The tables add what the old assertions skipped: roll-ups such\nas TotalSNF, TotalPAC, and NetPAC, and ingredient amounts like\nSteviosides and Inulin.\n\nEvery asserted zero stays a row. Each says something about the spec,\nsuch as a sugar having no polyols or artificial sweeteners, or HP\ninulin having no sweetening power. The two to-do comments on computed\nenergy move into the tables, above their Energy rows.\n\nWith no exact float comparison left, the test module drops\nclippy::float_cmp and its now-unused assertion imports. The error-path\nand manual_vs_calculated tests keep their own assertions.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:27:31-04:00",
+          "tree_id": "11b9f9eabbc5d4094fce3b0bd01d1bf45aa8e7fe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/dc76a9a0d7918293a330f2a94bb3ba26c99206ea"
+        },
+        "date": 1793248350867,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 933.94,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 702.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 881.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 686.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.08,
             "unit": "KB"
           },
           {
