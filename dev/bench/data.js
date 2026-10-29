@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793248942282,
+  "lastUpdate": 1793248946288,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -678568,6 +678568,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/dc76a9a0d7918293a330f2a94bb3ba26c99206ea"
         },
         "date": 1793248427661,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "052138a185e67cd7fca1fe4298273b2f7f3d9152",
+          "message": "Convert chocolate spec tests to key tables\n\nEach chocolate and cocoa powder spec test in specs::chocolate now\nchecks its composition against one assert_all_keys table, so every\nkey is checked. The tables add roll-ups the old assertions skipped,\nsuch as TotalSNF, TotalMinerals, and NetPAC. NetPAC is negative for\nevery chocolate, as cocoa's hardness factor exceeds its PAC.\n\nEvery asserted zero stays a row, such as the unsweetened products'\nTotalSweeteners and POD, and each comment on a value moves with its\nrow. The checks on fields with no CompKey (cocoa minerals and other\nsolids) and Lindt 70%'s relation between keys stay as plain asserts\nafter the table.\n\nThe two property tests, which build their own spec and compare\nagainst computed values, keep their own assertions.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:36:04-04:00",
+          "tree_id": "1738c7483214a775ec94bd9829d3c37bc1814d6b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/052138a185e67cd7fca1fe4298273b2f7f3d9152"
+        },
+        "date": 1793248945444,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
