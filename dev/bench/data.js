@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793248910165,
+  "lastUpdate": 1793248942282,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -641149,6 +641149,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/calculator route-only JS (gzip)",
             "value": 765.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 933.94,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 702.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 881.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 686.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.08,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "052138a185e67cd7fca1fe4298273b2f7f3d9152",
+          "message": "Convert chocolate spec tests to key tables\n\nEach chocolate and cocoa powder spec test in specs::chocolate now\nchecks its composition against one assert_all_keys table, so every\nkey is checked. The tables add roll-ups the old assertions skipped,\nsuch as TotalSNF, TotalMinerals, and NetPAC. NetPAC is negative for\nevery chocolate, as cocoa's hardness factor exceeds its PAC.\n\nEvery asserted zero stays a row, such as the unsweetened products'\nTotalSweeteners and POD, and each comment on a value moves with its\nrow. The checks on fields with no CompKey (cocoa minerals and other\nsolids) and Lindt 70%'s relation between keys stay as plain asserts\nafter the table.\n\nThe two property tests, which build their own spec and compare\nagainst computed values, keep their own assertions.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:36:04-04:00",
+          "tree_id": "1738c7483214a775ec94bd9829d3c37bc1814d6b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/052138a185e67cd7fca1fe4298273b2f7f3d9152"
+        },
+        "date": 1793248896358,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.5,
             "unit": "KB"
           },
           {
