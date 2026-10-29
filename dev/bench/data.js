@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793250393042,
+  "lastUpdate": 1793250399175,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -598656,6 +598656,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 336703,
             "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "052138a185e67cd7fca1fe4298273b2f7f3d9152",
+          "message": "Convert chocolate spec tests to key tables\n\nEach chocolate and cocoa powder spec test in specs::chocolate now\nchecks its composition against one assert_all_keys table, so every\nkey is checked. The tables add roll-ups the old assertions skipped,\nsuch as TotalSNF, TotalMinerals, and NetPAC. NetPAC is negative for\nevery chocolate, as cocoa's hardness factor exceeds its PAC.\n\nEvery asserted zero stays a row, such as the unsweetened products'\nTotalSweeteners and POD, and each comment on a value moves with its\nrow. The checks on fields with no CompKey (cocoa minerals and other\nsolids) and Lindt 70%'s relation between keys stay as plain asserts\nafter the table.\n\nThe two property tests, which build their own spec and compare\nagainst computed values, keep their own assertions.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:36:04-04:00",
+          "tree_id": "1738c7483214a775ec94bd9829d3c37bc1814d6b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/052138a185e67cd7fca1fe4298273b2f7f3d9152"
+        },
+        "date": 1793250325844,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47935,
+            "range": "±1.53%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 444102,
+            "range": "±0.46%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32173,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 338265,
+            "range": "±1.05%",
             "unit": "ops/sec",
             "extra": "91 samples"
           }
