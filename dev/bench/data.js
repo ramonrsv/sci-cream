@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793250611175,
+  "lastUpdate": 1793250644523,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -599836,6 +599836,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 338265,
             "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "700be07413d0833c69100a90fb178a85f3bf81b6",
+          "message": "Implement AssertKeys for MixProperties\n\nThe main and reference recipes in tests::assets checked about 30\nproperties each to 0.001, leaving the rest unchecked. They now use\nassert_all_keys, which needs AssertKeys for MixProperties.\n\nPropKey wraps the composition, ratio, and FPD keys, so it can't\nderive EnumIter, and AssertKeys no longer asks its key to: each\nimplementor supplies keys() in declaration order, and key_literal()\nto write a key the way its tables do. Composition keeps CompKey's\norder and rows; MixProperties runs CompKey, RatioKey, then FpdKey,\nand writes rows as (Energy.into(), ...), as the tables already do.\nTwo new tests cover those rows and the order across key types.\n\nThe three tables are now in PropKey order at six decimals: 59, 58,\nand 65 rows, up from 30 each. Each old value was within 0.001, and\nreference A's and B's zero rows stay.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T00:57:45-04:00",
+          "tree_id": "b0e3eee69c84c7472279f3a9c033e0f34cf14d7d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/700be07413d0833c69100a90fb178a85f3bf81b6"
+        },
+        "date": 1793250568916,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 46963,
+            "range": "±1.18%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 429302,
+            "range": "±2.40%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 30309,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 329665,
+            "range": "±1.11%",
             "unit": "ops/sec",
             "extra": "91 samples"
           }
