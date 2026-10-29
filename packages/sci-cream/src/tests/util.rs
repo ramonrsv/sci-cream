@@ -7,9 +7,11 @@ use struct_iterable::Iterable;
 use strum::IntoEnumIterator;
 
 use crate::{
-    composition::{CompKey, Composition},
+    composition::{CompKey, Composition, RatioKey},
     data::get_spec_entry_by_name,
     error::Result,
+    fpd::FpdKey,
+    properties::{MixProperties, PropKey},
     specs::{AliasSpec, SpecEntry},
     util::iter_fields_as,
     validate::{verify_are_equal, verify_is_subset},
@@ -87,34 +89,44 @@ pub(crate) const KEYS_EPSILON: f64 = 1e-6;
 /// as a corrected row, ready to paste into the table.
 pub(crate) trait AssertKeys {
     /// The key the values are read by
-    type Key: IntoEnumIterator + PartialEq + Copy + Debug;
+    type Key: PartialEq + Copy + Debug;
+
+    /// Every key, in declaration order
+    fn keys() -> impl Iterator<Item = Self::Key>;
 
     /// The value under `key`
     fn key_value(&self, key: Self::Key) -> f64;
 
+    /// `key` as a table row writes it, e.g. `CompKey::Casein`
+    fn key_literal(key: Self::Key) -> String {
+        let path = type_name::<Self::Key>();
+        let key_type = path.rsplit_once("::").map_or(path, |(_, name)| name);
+        format!("{key_type}::{key:?}")
+    }
+
     /// Asserts each listed key within [`KEYS_EPSILON`], and every unlisted key exactly zero
     #[track_caller]
     fn assert_all_keys(&self, expected: &[(Self::Key, f64)]) {
-        assert_declaration_order(expected);
-        let mismatches: Vec<String> = Self::Key::iter()
+        assert_declaration_order::<Self>(expected);
+        let mismatches: Vec<String> = Self::keys()
             .filter_map(|key| {
                 let actual = self.key_value(key);
                 match expected.iter().find(|(listed, _)| *listed == key) {
-                    Some(&(_, value)) => listed_mismatch(key, value, actual),
-                    None => (actual != 0.0).then(|| format!("{}, // unlisted", row(key, actual))),
+                    Some(&(_, value)) => listed_mismatch::<Self>(key, value, actual),
+                    None => (actual != 0.0).then(|| format!("{}, // unlisted", row::<Self>(key, actual))),
                 }
             })
             .collect();
-        assert_no_mismatches(&mismatches, Self::Key::iter().count(), "keys");
+        assert_no_mismatches(&mismatches, Self::keys().count(), "keys");
     }
 
     /// Asserts each listed key within [`KEYS_EPSILON`], leaving unlisted keys unchecked
     #[track_caller]
     fn assert_keys(&self, expected: &[(Self::Key, f64)]) {
-        assert_declaration_order(expected);
+        assert_declaration_order::<Self>(expected);
         let mismatches: Vec<String> = expected
             .iter()
-            .filter_map(|&(key, value)| listed_mismatch(key, value, self.key_value(key)))
+            .filter_map(|&(key, value)| listed_mismatch::<Self>(key, value, self.key_value(key)))
             .collect();
         assert_no_mismatches(&mismatches, expected.len(), "listed keys");
     }
@@ -123,15 +135,44 @@ pub(crate) trait AssertKeys {
 impl AssertKeys for Composition {
     type Key = CompKey;
 
+    fn keys() -> impl Iterator<Item = CompKey> {
+        CompKey::iter()
+    }
+
     fn key_value(&self, key: CompKey) -> f64 {
         self.get(key)
     }
 }
 
+impl AssertKeys for MixProperties {
+    type Key = PropKey;
+
+    /// [`PropKey`]'s variants in order, each through its inner key's declaration order
+    fn keys() -> impl Iterator<Item = PropKey> {
+        CompKey::iter()
+            .map(PropKey::Comp)
+            .chain(RatioKey::iter().map(PropKey::Ratio))
+            .chain(FpdKey::iter().map(PropKey::Fpd))
+    }
+
+    fn key_value(&self, key: PropKey) -> f64 {
+        self.get(key)
+    }
+
+    /// The inner key's `.into()`, as property tables write it under glob imports of the key types
+    fn key_literal(key: PropKey) -> String {
+        match key {
+            PropKey::Comp(key) => format!("{key:?}.into()"),
+            PropKey::Ratio(key) => format!("{key:?}.into()"),
+            PropKey::Fpd(key) => format!("{key:?}.into()"),
+        }
+    }
+}
+
 /// Panics unless `rows` follow the keys' declaration order, which also rules out repeats
 #[track_caller]
-fn assert_declaration_order<K: IntoEnumIterator + PartialEq + Copy + Debug>(rows: &[(K, f64)]) {
-    let position = |key: K| K::iter().position(|variant| variant == key);
+fn assert_declaration_order<A: AssertKeys + ?Sized>(rows: &[(A::Key, f64)]) {
+    let position = |key: A::Key| A::keys().position(|variant| variant == key);
     for ((before, _), (after, _)) in rows.iter().zip(rows.iter().skip(1)) {
         assert!(before != after, "{after:?} is listed twice");
         assert!(position(*before) < position(*after), "{after:?} must come before {before:?}, in declaration order");
@@ -139,15 +180,13 @@ fn assert_declaration_order<K: IntoEnumIterator + PartialEq + Copy + Debug>(rows
 }
 
 /// The corrected row for `key`, if `actual` misses the listed `value`
-fn listed_mismatch<K: Debug>(key: K, value: f64, actual: f64) -> Option<String> {
-    (!actual.abs_diff_eq(&value, KEYS_EPSILON)).then(|| format!("{}, // expected {value:?}", row(key, actual)))
+fn listed_mismatch<A: AssertKeys + ?Sized>(key: A::Key, value: f64, actual: f64) -> Option<String> {
+    (!actual.abs_diff_eq(&value, KEYS_EPSILON)).then(|| format!("{}, // expected {value:?}", row::<A>(key, actual)))
 }
 
 /// `key` and `value` as a table row, e.g. `(CompKey::Casein, 67.178_732)`
-fn row<K: Debug>(key: K, value: f64) -> String {
-    let path = type_name::<K>();
-    let key_type = path.rsplit_once("::").map_or(path, |(_, name)| name);
-    format!("({key_type}::{key:?}, {})", literal(value))
+fn row<A: AssertKeys + ?Sized>(key: A::Key, value: f64) -> String {
+    format!("({}, {})", A::key_literal(key), literal(value))
 }
 
 /// `value` as a float literal for a table row: at most six decimals, separated the way
@@ -373,7 +412,8 @@ mod tests {
         assert_f64_fields_eq_zero, assert_f64_fields_ne_zero, compare_compositions, literal, relative_diff_percent,
         root_mean_square, solids_fraction_diff_pp,
     };
-    use crate::composition::{CompKey, Composition, MilkProteins, Solids, SolidsBreakdown};
+    use crate::composition::{CompKey, Composition, MilkProteins, RatioKey, Solids, SolidsBreakdown};
+    use crate::properties::MixProperties;
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::{assert_eq_flt_test, assert_true};
 
@@ -609,6 +649,18 @@ mod tests {
     #[should_panic(expected = "Water is listed twice")]
     fn rows_do_not_repeat() {
         comp().assert_keys(&[(CompKey::Water, 100.0), (CompKey::Water, 100.0)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "(Energy.into(), 0.0), // expected 50.0")]
+    fn mix_properties_rows_print_as_into() {
+        MixProperties::empty().assert_keys(&[(CompKey::Energy.into(), 50.0)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "Comp(Water) must come before Ratio(AbsPAC), in declaration order")]
+    fn mix_properties_rows_put_comp_keys_before_ratios() {
+        MixProperties::empty().assert_keys(&[(RatioKey::AbsPAC.into(), 0.0), (CompKey::Water.into(), 0.0)]);
     }
 
     // --- assert_compositions_consistent ---
