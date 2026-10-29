@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793248424492,
+  "lastUpdate": 1793248428637,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -677698,6 +677698,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/7a11ce0cc041e42da78b34f451b2515835ccab76"
         },
         "date": 1793222914196,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "dc76a9a0d7918293a330f2a94bb3ba26c99206ea",
+          "message": "Convert sweetener spec tests to key tables\n\nEach to_composition_* test in specs::sweetener now checks its\ncomposition against one assert_all_keys table, so every key is\nchecked. The tables add what the old assertions skipped: roll-ups such\nas TotalSNF, TotalPAC, and NetPAC, and ingredient amounts like\nSteviosides and Inulin.\n\nEvery asserted zero stays a row. Each says something about the spec,\nsuch as a sugar having no polyols or artificial sweeteners, or HP\ninulin having no sweetening power. The two to-do comments on computed\nenergy move into the tables, above their Energy rows.\n\nWith no exact float comparison left, the test module drops\nclippy::float_cmp and its now-unused assertion imports. The error-path\nand manual_vs_calculated tests keep their own assertions.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:27:31-04:00",
+          "tree_id": "11b9f9eabbc5d4094fce3b0bd01d1bf45aa8e7fe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/dc76a9a0d7918293a330f2a94bb3ba26c99206ea"
+        },
+        "date": 1793248427661,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
