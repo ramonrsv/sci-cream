@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793251065957,
+  "lastUpdate": 1793251416245,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -557950,6 +557950,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 725.88,
             "range": "18.11",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "700be07413d0833c69100a90fb178a85f3bf81b6",
+          "message": "Implement AssertKeys for MixProperties\n\nThe main and reference recipes in tests::assets checked about 30\nproperties each to 0.001, leaving the rest unchecked. They now use\nassert_all_keys, which needs AssertKeys for MixProperties.\n\nPropKey wraps the composition, ratio, and FPD keys, so it can't\nderive EnumIter, and AssertKeys no longer asks its key to: each\nimplementor supplies keys() in declaration order, and key_literal()\nto write a key the way its tables do. Composition keeps CompKey's\norder and rows; MixProperties runs CompKey, RatioKey, then FpdKey,\nand writes rows as (Energy.into(), ...), as the tables already do.\nTwo new tests cover those rows and the order across key types.\n\nThe three tables are now in PropKey order at six decimals: 59, 58,\nand 65 rows, up from 30 each. Each old value was within 0.001, and\nreference A's and B's zero rows stay.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T00:57:45-04:00",
+          "tree_id": "b0e3eee69c84c7472279f3a9c033e0f34cf14d7d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/700be07413d0833c69100a90fb178a85f3bf81b6"
+        },
+        "date": 1793251343213,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 44.38,
+            "range": "2.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 58,
+            "range": "3.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 66.63,
+            "range": "8.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2479.75,
+            "range": "36.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 374.88,
+            "range": "4.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 390.75,
+            "range": "6.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 405.13,
+            "range": "6.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19556,
+            "range": "267.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 959.63,
+            "range": "9.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 57.38,
+            "range": "3.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.88,
+            "range": "2.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 43.75,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46.25,
+            "range": "2.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 134.13,
+            "range": "3.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 90.25,
+            "range": "5.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.02,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.79,
+            "range": "0.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 659.13,
+            "range": "10.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 729.13,
+            "range": "13.75",
             "unit": "ms"
           }
         ]
