@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793249539937,
+  "lastUpdate": 1793249576033,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -642350,6 +642350,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1095.08,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "851bbc47be06b522ef8915ccbf42eeb20628b645",
+          "message": "Convert remaining spec tests to key tables\n\nEach spec's own to_composition_* test in alcohol, fruit, egg, nut,\nemulsifier, full, stabilizer, and micro now checks its composition\nagainst one assert_all_keys table, so every key is checked. The\ntables add the roll-ups the old assertions skipped, and alcohol's\nrounded values are written to six decimals.\n\nEvery asserted zero stays a row. Checks beyond the key values stay as\nplain asserts beside the table: egg yolk's comparison with\nCOMP_EGG_YOLK before it, and alcohol's round-trips and the micro and\ntexture checks after it. Egg's two protein-split property tests keep\ntheir own assertions.\n\nImports follow tests/asserts.rs: an asserts glob that nothing uses\nstays under #[expect(unused_imports)], and an unused shadowing\nassert_eq goes. Modules with no exact float comparison left drop\nclippy::float_cmp.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:58:58-04:00",
+          "tree_id": "7956509869790b61a7ee6b20c2bba6029c9a8f1d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/851bbc47be06b522ef8915ccbf42eeb20628b645"
+        },
+        "date": 1793249502000,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 933.94,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 702.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 881.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 686.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.07,
             "unit": "KB"
           },
           {
