@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793249576033,
+  "lastUpdate": 1793249580364,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -679945,6 +679945,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/fd4e30eec83e4b38f3924177ccef3c887926d8f6"
         },
         "date": 1793249302987,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "851bbc47be06b522ef8915ccbf42eeb20628b645",
+          "message": "Convert remaining spec tests to key tables\n\nEach spec's own to_composition_* test in alcohol, fruit, egg, nut,\nemulsifier, full, stabilizer, and micro now checks its composition\nagainst one assert_all_keys table, so every key is checked. The\ntables add the roll-ups the old assertions skipped, and alcohol's\nrounded values are written to six decimals.\n\nEvery asserted zero stays a row. Checks beyond the key values stay as\nplain asserts beside the table: egg yolk's comparison with\nCOMP_EGG_YOLK before it, and alcohol's round-trips and the micro and\ntexture checks after it. Egg's two protein-split property tests keep\ntheir own assertions.\n\nImports follow tests/asserts.rs: an asserts glob that nothing uses\nstays under #[expect(unused_imports)], and an unused shadowing\nassert_eq goes. Modules with no exact float comparison left drop\nclippy::float_cmp.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:58:58-04:00",
+          "tree_id": "7956509869790b61a7ee6b20c2bba6029c9a8f1d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/851bbc47be06b522ef8915ccbf42eeb20628b645"
+        },
+        "date": 1793249579533,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
