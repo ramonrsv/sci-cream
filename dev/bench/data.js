@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793249304098,
+  "lastUpdate": 1793249308872,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -691906,6 +691906,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/052138a185e67cd7fca1fe4298273b2f7f3d9152"
         },
         "date": 1793248839111,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1177.12,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1892.35,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.88,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2100.66,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fd4e30eec83e4b38f3924177ccef3c887926d8f6",
+          "message": "Move asset-free spec tests after asset tables\n\nA spec file's test module holds one block per embedded asset, then\nits INGREDIENT_ASSETS_TABLE_*, then the tests of general behavior. A\nfew tests that use no asset sat among the asset blocks: they build\ntheir own spec or check serde. Move them after the table, next to\ntheir closest relatives:\n\n- chocolate: cocoa powder's explicit-water test, beside its\n  negative-water error test;\n- egg: the whole-egg and egg-white protein splits;\n- alcohol: the zero-ABV and JSON null-field tests;\n- emulsifier: the glycerides test.\n\nTests tied to one asset stay in its block, such as chocolate's\nderives_cacao_solids_from_other_solids, checked against Valrhona's\ncomposition. Only the order changes.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:42:00-04:00",
+          "tree_id": "827756c0732aa39d4304945b506c95ec215013fe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fd4e30eec83e4b38f3924177ccef3c887926d8f6"
+        },
+        "date": 1793249228546,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
