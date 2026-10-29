@@ -640,6 +640,7 @@ mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+    use crate::tests::util::AssertKeys;
 
     use super::*;
     use crate::{
@@ -1004,31 +1005,77 @@ mod tests {
     #[test]
     fn validate_reference_compositions() {
         let comp = *REF_COMP;
-        assert_eq!(comp.get(CompKey::MSNF), 12.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 40.0);
-        assert_eq!(comp.get(CompKey::Water), 60.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 22.18);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 4.4088);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 26.5888);
+        comp.assert_all_keys(&[
+            (CompKey::MilkSolids, 24.0),
+            (CompKey::MilkFat, 12.0),
+            (CompKey::MSNF, 12.0),
+            (CompKey::MilkSugars, 6.98),
+            (CompKey::MilkSNFS, 5.02),
+            (CompKey::TotalSolids, 40.0),
+            (CompKey::TotalFats, 12.0),
+            (CompKey::TotalSNF, 28.0),
+            (CompKey::TotalSNFS, 5.02),
+            (CompKey::Water, 60.0),
+            (CompKey::TotalCarbohydrates, 22.98),
+            (CompKey::TotalSugars, 22.98),
+            (CompKey::Sucrose, 16.0),
+            (CompKey::Lactose, 6.98),
+            (CompKey::TotalSweeteners, 22.98),
+            (CompKey::NetPAC, 26.588_849),
+            (CompKey::TotalPAC, 26.588_849),
+            (CompKey::PACsgr, 22.18),
+            (CompKey::PACmlk, 4.408_849),
+        ]);
 
         let comp = *REF_COMP_WITH_ALCOHOL;
-        assert_eq!(comp.get(CompKey::MSNF), 12.0);
-        assert_eq!(comp.get(CompKey::Alcohol), 2.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 40.0);
-        assert_eq!(comp.get(CompKey::Water), 58.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 22.18);
-        assert_eq!(comp.get(CompKey::PACalc), 14.8);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 4.4088);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 41.3888);
+        comp.assert_all_keys(&[
+            (CompKey::MilkSolids, 24.0),
+            (CompKey::MilkFat, 12.0),
+            (CompKey::MSNF, 12.0),
+            (CompKey::MilkSugars, 6.98),
+            (CompKey::MilkSNFS, 5.02),
+            (CompKey::TotalSolids, 40.0),
+            (CompKey::TotalFats, 12.0),
+            (CompKey::TotalSNF, 28.0),
+            (CompKey::TotalSNFS, 5.02),
+            (CompKey::Water, 58.0),
+            (CompKey::TotalCarbohydrates, 22.98),
+            (CompKey::TotalSugars, 22.98),
+            (CompKey::Sucrose, 16.0),
+            (CompKey::Lactose, 6.98),
+            (CompKey::TotalSweeteners, 22.98),
+            (CompKey::Alcohol, 2.0),
+            (CompKey::ABV, 2.519_903),
+            (CompKey::NetPAC, 41.388_849),
+            (CompKey::TotalPAC, 41.388_849),
+            (CompKey::PACsgr, 22.18),
+            (CompKey::PACmlk, 4.408_849),
+            (CompKey::PACalc, 14.8),
+        ]);
 
         let comp = *REF_COMP_WITH_HF;
-        assert_eq!(comp.get(CompKey::MSNF), 12.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 40.0);
-        assert_eq!(comp.get(CompKey::Water), 60.0);
-        assert_eq!(comp.get(CompKey::PACsgr), 22.18);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 4.4088);
-        assert_eq!(comp.get(CompKey::HF), 10.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 26.5888);
+        comp.assert_all_keys(&[
+            (CompKey::MilkSolids, 24.0),
+            (CompKey::MilkFat, 12.0),
+            (CompKey::MSNF, 12.0),
+            (CompKey::MilkSugars, 6.98),
+            (CompKey::MilkSNFS, 5.02),
+            (CompKey::TotalSolids, 40.0),
+            (CompKey::TotalFats, 12.0),
+            (CompKey::TotalSNF, 28.0),
+            (CompKey::TotalSNFS, 5.02),
+            (CompKey::Water, 60.0),
+            (CompKey::TotalCarbohydrates, 22.98),
+            (CompKey::TotalSugars, 22.98),
+            (CompKey::Sucrose, 16.0),
+            (CompKey::Lactose, 6.98),
+            (CompKey::TotalSweeteners, 22.98),
+            (CompKey::NetPAC, 16.588_849),
+            (CompKey::TotalPAC, 26.588_849),
+            (CompKey::PACsgr, 22.18),
+            (CompKey::PACmlk, 4.408_849),
+            (CompKey::HF, 10.0),
+        ]);
         assert_eq_flt_test!(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF), 16.5888);
     }
 
@@ -1316,13 +1363,13 @@ mod tests {
     });
 
     /// Reference composition for Corvitto FPD with HF tests (Corvitto, 2005, p. 251)[^3]
-    /// _Fat 8%, POD 24.5, MSNF 8%, Cocoa SNF: 4.7%, Total Solids 38.2%, PAC 37.3,
+    /// _Fat 8%, POD 24.9, MSNF 8%, Cocoa SNF: 4.7%, Total Solids 38.2%, PAC 37.3,
     /// Hardness Factor: 9.7, Serving Temperature -11°C_
     #[doc = include_str!("../docs/references/index/3.md")]
     static CORVITTO_REF_COMP_WITH_HF_11ST: LazyLock<Composition> = LazyLock::new(|| {
         let milk_solids = SolidsBreakdown::new()
             .fats(Fats::new().total(6.1))
-            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.4)))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.36)))
             .others_from_total(14.1)
             .unwrap();
 
@@ -1352,7 +1399,7 @@ mod tests {
     static CORVITTO_REF_COMP_WITH_HF_18ST: LazyLock<Composition> = LazyLock::new(|| {
         let milk_solids = SolidsBreakdown::new()
             .fats(Fats::new().total(6.1))
-            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(4.1)))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.36)))
             .others_from_total(14.1)
             .unwrap();
 
@@ -1375,17 +1422,32 @@ mod tests {
             .pac(PAC::new().sugars(50.9).hardness_factor(9.7))
     });
 
+    #[allow(clippy::too_many_lines)] // A full key table for each of the four fixtures
     #[test]
     fn validate_corvitto_reference_compositions() {
         // Fat 8%, POD 18, MSNF 10%, Total Solids 36.1%, PAC 26.7
         let comp = *CORVITTO_REF_COMP_11ST;
-        assert_eq!(comp.get(CompKey::MilkFat), 8.0);
-        assert_eq!(comp.get(CompKey::MSNF), 10.0);
-        assert_eq!(comp.get(CompKey::MilkSolids), 18.0);
-        assert_eq!(comp.get(CompKey::TotalFats), 8.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 36.1);
-        assert_eq!(comp.get(CompKey::PACsgr), 26.7);
-        assert_eq!(comp.get(CompKey::TotalPAC), 26.7);
+        comp.assert_all_keys(&[
+            (CompKey::MilkSolids, 18.0),
+            (CompKey::MilkFat, 8.0),
+            (CompKey::MSNF, 10.0),
+            (CompKey::MilkSugars, 5.45),
+            (CompKey::MilkSNFS, 4.55),
+            (CompKey::TotalSolids, 36.1),
+            (CompKey::TotalFats, 8.0),
+            (CompKey::TotalSNF, 28.1),
+            (CompKey::TotalSNFS, 4.55),
+            (CompKey::Water, 63.9),
+            (CompKey::TotalCarbohydrates, 23.55),
+            (CompKey::TotalSugars, 23.55),
+            (CompKey::Sucrose, 18.1),
+            (CompKey::Lactose, 5.45),
+            (CompKey::TotalSweeteners, 23.55),
+            (CompKey::POD, 18.0),
+            (CompKey::NetPAC, 26.7),
+            (CompKey::TotalPAC, 26.7),
+            (CompKey::PACsgr, 26.7),
+        ]);
         assert_abs_diff_eq!(
             super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC)).unwrap(),
             -11.0,
@@ -1394,55 +1456,99 @@ mod tests {
 
         // Fat 8%, POD 18, MSNF 10%, Total Solids 39.3%, PAC 40.9
         let comp = *CORVITTO_REF_COMP_18ST;
-        assert_eq!(comp.get(CompKey::MilkFat), 8.0);
-        assert_eq!(comp.get(CompKey::MSNF), 10.0);
-        assert_eq!(comp.get(CompKey::MilkSolids), 18.0);
-        assert_eq!(comp.get(CompKey::TotalFats), 8.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 39.3);
-        assert_eq!(comp.get(CompKey::PACsgr), 40.9);
-        assert_eq!(comp.get(CompKey::TotalPAC), 40.9);
+        comp.assert_all_keys(&[
+            (CompKey::MilkSolids, 18.0),
+            (CompKey::MilkFat, 8.0),
+            (CompKey::MSNF, 10.0),
+            (CompKey::MilkSugars, 5.45),
+            (CompKey::MilkSNFS, 4.55),
+            (CompKey::TotalSolids, 39.3),
+            (CompKey::TotalFats, 8.0),
+            (CompKey::TotalSNF, 31.3),
+            (CompKey::TotalSNFS, 4.55),
+            (CompKey::Water, 60.7),
+            (CompKey::TotalCarbohydrates, 26.75),
+            (CompKey::TotalSugars, 26.75),
+            (CompKey::Sucrose, 21.3),
+            (CompKey::Lactose, 5.45),
+            (CompKey::TotalSweeteners, 26.75),
+            (CompKey::POD, 18.0),
+            (CompKey::NetPAC, 40.9),
+            (CompKey::TotalPAC, 40.9),
+            (CompKey::PACsgr, 40.9),
+        ]);
         assert_abs_diff_eq!(
             super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC)).unwrap(),
             -18.0,
             epsilon = 0.25
         );
 
-        // Fat 8%, POD 24.5, MSNF 8%, Cocoa SNF: 4.7%, Total Solids 38.2%, PAC 37.3, Hardness Factor: 9.7
+        // Fat 8%, POD 24.9, MSNF 8%, Cocoa SNF 4.7%, Total Solids 38.2%, PAC 37.3, HF 9.7
         let comp = *CORVITTO_REF_COMP_WITH_HF_11ST;
-        assert_eq!(comp.get(CompKey::MilkFat), 6.1);
-        assert_eq!(comp.get(CompKey::MSNF), 8.0);
-        assert_eq!(comp.get(CompKey::MilkSolids), 14.1);
-        assert_eq!(comp.get(CompKey::EggFat), 0.6);
-        assert_eq_flt_test!(comp.get(CompKey::EggSNF), 0.5);
-        assert_eq!(comp.get(CompKey::CocoaButter), 1.3);
-        assert_eq!(comp.get(CompKey::CocoaSolids), 4.7);
-        assert_eq_flt_test!(comp.get(CompKey::TotalFats), 8.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 3.4 + 17.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 38.2);
-        assert_eq!(comp.get(CompKey::PACsgr), 37.3);
-        assert_eq!(comp.get(CompKey::TotalPAC), 37.3);
-        assert_eq!(comp.get(CompKey::HF), 9.7);
+        comp.assert_all_keys(&[
+            (CompKey::MilkSolids, 14.1),
+            (CompKey::MilkFat, 6.1),
+            (CompKey::MSNF, 8.0),
+            (CompKey::MilkSugars, 4.36),
+            (CompKey::MilkSNFS, 3.64),
+            (CompKey::CacaoSolids, 6.0),
+            (CompKey::CocoaButter, 1.3),
+            (CompKey::CocoaSolids, 4.7),
+            (CompKey::EggSolids, 1.1),
+            (CompKey::EggFat, 0.6),
+            (CompKey::EggSNF, 0.5),
+            (CompKey::TotalSolids, 38.2),
+            (CompKey::TotalFats, 8.0),
+            (CompKey::TotalSNF, 30.2),
+            (CompKey::TotalSNFS, 8.84),
+            (CompKey::Water, 61.8),
+            (CompKey::TotalCarbohydrates, 21.36),
+            (CompKey::TotalSugars, 21.36),
+            (CompKey::Sucrose, 17.0),
+            (CompKey::Lactose, 4.36),
+            (CompKey::TotalSweeteners, 4.36 + 17.0),
+            (CompKey::POD, 24.9),
+            (CompKey::NetPAC, 27.6),
+            (CompKey::TotalPAC, 37.3),
+            (CompKey::PACsgr, 37.3),
+            (CompKey::HF, 9.7),
+        ]);
         assert_abs_diff_eq!(
             super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF)).unwrap(),
             -11.0,
             epsilon = 0.3
         );
 
-        // Fat 8%, POD 33.6, MSNF 8%, Cocoa SNF: 4.7%, Total Solids 43.2%, PAC 50.9, Hardness Factor: 9.7
+        // Fat 8%, POD 33.6, MSNF 8%, Cocoa SNF 4.7%, Total Solids 43.2%, PAC 50.9, HF 9.7
         let comp = *CORVITTO_REF_COMP_WITH_HF_18ST;
-        assert_eq!(comp.get(CompKey::MilkFat), 6.1);
-        assert_eq!(comp.get(CompKey::MSNF), 8.0);
-        assert_eq!(comp.get(CompKey::MilkSolids), 14.1);
-        assert_eq!(comp.get(CompKey::EggFat), 0.6);
-        assert_eq_flt_test!(comp.get(CompKey::EggSNF), 0.5);
-        assert_eq!(comp.get(CompKey::CocoaButter), 1.3);
-        assert_eq!(comp.get(CompKey::CocoaSolids), 4.7);
-        assert_eq_flt_test!(comp.get(CompKey::TotalFats), 8.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 4.1 + 22.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 43.2);
-        assert_eq!(comp.get(CompKey::PACsgr), 50.9);
-        assert_eq!(comp.get(CompKey::TotalPAC), 50.9);
-        assert_eq!(comp.get(CompKey::HF), 9.7);
+        comp.assert_all_keys(&[
+            (CompKey::MilkSolids, 14.1),
+            (CompKey::MilkFat, 6.1),
+            (CompKey::MSNF, 8.0),
+            (CompKey::MilkSugars, 4.36),
+            (CompKey::MilkSNFS, 3.64),
+            (CompKey::CacaoSolids, 6.0),
+            (CompKey::CocoaButter, 1.3),
+            (CompKey::CocoaSolids, 4.7),
+            (CompKey::EggSolids, 1.1),
+            (CompKey::EggFat, 0.6),
+            (CompKey::EggSNF, 0.5),
+            (CompKey::TotalSolids, 43.2),
+            (CompKey::TotalFats, 8.0),
+            (CompKey::TotalSNF, 35.2),
+            (CompKey::TotalSNFS, 8.84),
+            (CompKey::Water, 56.8),
+            (CompKey::TotalCarbohydrates, 26.36),
+            (CompKey::TotalSugars, 26.36),
+            (CompKey::Sucrose, 22.0),
+            (CompKey::Lactose, 4.36),
+            (CompKey::TotalSweeteners, 4.36 + 22.0),
+            (CompKey::POD, 33.6),
+            (CompKey::NetPAC, 41.2),
+            (CompKey::TotalPAC, 50.9),
+            (CompKey::PACsgr, 50.9),
+            (CompKey::HF, 9.7),
+        ]);
         assert_abs_diff_eq!(
             super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF)).unwrap(),
             -18.0,

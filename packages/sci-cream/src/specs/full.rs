@@ -127,20 +127,7 @@ pub(crate) mod tests {
     fn to_composition_full_spec_water() {
         let comp = asset_composition(&ING_SPEC_FULL_WATER);
 
-        comp.assert_all_keys(&[
-            (CompKey::Energy, 0.0),
-            (CompKey::TotalSolids, 0.0),
-            (CompKey::Water, 100.0),
-            (CompKey::TotalSweeteners, 0.0),
-            (CompKey::Salt, 0.0),
-            (CompKey::TotalStabilizers, 0.0),
-            (CompKey::TotalEmulsifiers, 0.0),
-            (CompKey::Lecithin, 0.0),
-            (CompKey::Alcohol, 0.0),
-            (CompKey::POD, 0.0),
-            (CompKey::TotalPAC, 0.0),
-            (CompKey::HF, 0.0),
-        ]);
+        comp.assert_all_keys(&[(CompKey::Water, 100.0)]);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_FULL: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

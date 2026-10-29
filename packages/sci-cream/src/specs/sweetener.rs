@@ -306,6 +306,8 @@ impl ToComposition for SweetenerSpec {
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
+    #[expect(unused_imports)]
+    use crate::tests::asserts::*;
     use crate::tests::assets::asset_composition;
     use crate::tests::util::{AssertKeys, assert_comp_eq_percent};
 
