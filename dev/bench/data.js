@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793250477587,
+  "lastUpdate": 1793250502597,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -694975,6 +694975,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/8444787d8d145122316e6371e51427ac2af44424"
         },
         "date": 1793250129175,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1177.12,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1892.35,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.88,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2100.66,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "700be07413d0833c69100a90fb178a85f3bf81b6",
+          "message": "Implement AssertKeys for MixProperties\n\nThe main and reference recipes in tests::assets checked about 30\nproperties each to 0.001, leaving the rest unchecked. They now use\nassert_all_keys, which needs AssertKeys for MixProperties.\n\nPropKey wraps the composition, ratio, and FPD keys, so it can't\nderive EnumIter, and AssertKeys no longer asks its key to: each\nimplementor supplies keys() in declaration order, and key_literal()\nto write a key the way its tables do. Composition keeps CompKey's\norder and rows; MixProperties runs CompKey, RatioKey, then FpdKey,\nand writes rows as (Energy.into(), ...), as the tables already do.\nTwo new tests cover those rows and the order across key types.\n\nThe three tables are now in PropKey order at six decimals: 59, 58,\nand 65 rows, up from 30 each. Each old value was within 0.001, and\nreference A's and B's zero rows stay.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T00:57:45-04:00",
+          "tree_id": "b0e3eee69c84c7472279f3a9c033e0f34cf14d7d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/700be07413d0833c69100a90fb178a85f3bf81b6"
+        },
+        "date": 1793250429409,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
