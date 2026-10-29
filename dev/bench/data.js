@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793250187525,
+  "lastUpdate": 1793250257126,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -644058,6 +644058,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1095.07,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8444787d8d145122316e6371e51427ac2af44424",
+          "message": "Add asset_composition helper for asset tests\n\nEach spec's own to_composition_* test opened by converting its\nING_SPEC_X, a chain rustfmt often breaks over four lines, and left the\nasset's JSON and expected composition to the loops over\nINGREDIENT_ASSETS_TABLE in specs::ingredient. Those loops stop at the\nfirst failing asset, and the composition loop doesn't name it.\n\nasset_composition(&ING_SPEC_X), in tests::assets, finds the asset's\ntable row, checks that the row's JSON deserializes to the spec,\nconverts it, and compares the result with the row's COMP_*, where it\nhas one. A failure lands in that asset's own test, and an asset with\nno row panics, which a new test pins.\n\nThe 74 asset tests now open with it, micro salt's included, and egg\nyolk's separate COMP_EGG_YOLK comparison goes. Composite's asset\nresolves through a database, so its test keeps its own setup. The\ncentral loops stay.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T00:39:46-04:00",
+          "tree_id": "7cde29f8d98210ab5bbb0d29882072e79f864ca9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8444787d8d145122316e6371e51427ac2af44424"
+        },
+        "date": 1793250181278,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 933.95,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 702.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.33,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 881.77,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 686.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.1,
             "unit": "KB"
           },
           {
