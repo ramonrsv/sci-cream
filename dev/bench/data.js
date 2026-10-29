@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793250948566,
+  "lastUpdate": 1793251065957,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -557806,6 +557806,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 685.75,
             "range": "13.86",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8444787d8d145122316e6371e51427ac2af44424",
+          "message": "Add asset_composition helper for asset tests\n\nEach spec's own to_composition_* test opened by converting its\nING_SPEC_X, a chain rustfmt often breaks over four lines, and left the\nasset's JSON and expected composition to the loops over\nINGREDIENT_ASSETS_TABLE in specs::ingredient. Those loops stop at the\nfirst failing asset, and the composition loop doesn't name it.\n\nasset_composition(&ING_SPEC_X), in tests::assets, finds the asset's\ntable row, checks that the row's JSON deserializes to the spec,\nconverts it, and compares the result with the row's COMP_*, where it\nhas one. A failure lands in that asset's own test, and an asset with\nno row panics, which a new test pins.\n\nThe 74 asset tests now open with it, micro salt's included, and egg\nyolk's separate COMP_EGG_YOLK comparison goes. Composite's asset\nresolves through a database, so its test keeps its own setup. The\ncentral loops stay.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T00:39:46-04:00",
+          "tree_id": "7cde29f8d98210ab5bbb0d29882072e79f864ca9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8444787d8d145122316e6371e51427ac2af44424"
+        },
+        "date": 1793250993655,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.5,
+            "range": "2.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 51.63,
+            "range": "3.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 59.38,
+            "range": "3.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2479.25,
+            "range": "97.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 376.13,
+            "range": "4.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 392.88,
+            "range": "6.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 418.5,
+            "range": "8.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19510.63,
+            "range": "59.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 16.31,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 945.75,
+            "range": "18.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 55.63,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.5,
+            "range": "2.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.88,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 131.88,
+            "range": "5.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 86.25,
+            "range": "4.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 56.06,
+            "range": "0.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.73,
+            "range": "0.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 649.63,
+            "range": "9.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 725.88,
+            "range": "18.11",
             "unit": "ms"
           }
         ]
