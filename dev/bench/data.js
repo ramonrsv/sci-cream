@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793224342332,
+  "lastUpdate": 1793248372550,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -595170,6 +595170,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.07%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "dc76a9a0d7918293a330f2a94bb3ba26c99206ea",
+          "message": "Convert sweetener spec tests to key tables\n\nEach to_composition_* test in specs::sweetener now checks its\ncomposition against one assert_all_keys table, so every key is\nchecked. The tables add what the old assertions skipped: roll-ups such\nas TotalSNF, TotalPAC, and NetPAC, and ingredient amounts like\nSteviosides and Inulin.\n\nEvery asserted zero stays a row. Each says something about the spec,\nsuch as a sugar having no polyols or artificial sweeteners, or HP\ninulin having no sweetening power. The two to-do comments on computed\nenergy move into the tables, above their Energy rows.\n\nWith no exact float comparison left, the test module drops\nclippy::float_cmp and its now-unused assertion imports. The error-path\nand manual_vs_calculated tests keep their own assertions.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:27:31-04:00",
+          "tree_id": "11b9f9eabbc5d4094fce3b0bd01d1bf45aa8e7fe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/dc76a9a0d7918293a330f2a94bb3ba26c99206ea"
+        },
+        "date": 1793248331897,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 104667,
+            "range": "±1.60%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 815172,
+            "range": "±1.25%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 69061,
+            "range": "±1.57%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 561338,
+            "range": "±0.61%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
           }
         ]
       }
