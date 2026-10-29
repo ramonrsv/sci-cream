@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793249658845,
+  "lastUpdate": 1793249673047,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -671214,6 +671214,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.11,
             "range": "0.41",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "851bbc47be06b522ef8915ccbf42eeb20628b645",
+          "message": "Convert remaining spec tests to key tables\n\nEach spec's own to_composition_* test in alcohol, fruit, egg, nut,\nemulsifier, full, stabilizer, and micro now checks its composition\nagainst one assert_all_keys table, so every key is checked. The\ntables add the roll-ups the old assertions skipped, and alcohol's\nrounded values are written to six decimals.\n\nEvery asserted zero stays a row. Checks beyond the key values stay as\nplain asserts beside the table: egg yolk's comparison with\nCOMP_EGG_YOLK before it, and alcohol's round-trips and the micro and\ntexture checks after it. Egg's two protein-split property tests keep\ntheir own assertions.\n\nImports follow tests/asserts.rs: an asserts glob that nothing uses\nstays under #[expect(unused_imports)], and an unused shadowing\nassert_eq goes. Modules with no exact float comparison left drop\nclippy::float_cmp.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T17:58:58-04:00",
+          "tree_id": "7956509869790b61a7ee6b20c2bba6029c9a8f1d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/851bbc47be06b522ef8915ccbf42eeb20628b645"
+        },
+        "date": 1793249598624,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 69.95,
+            "range": "12.22",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 16.55,
+            "range": "5.90",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 16.51,
+            "range": "5.92",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 187.5,
+            "range": "16.42",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.41,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 187.5,
+            "range": "16.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 64.01,
+            "range": "11.17",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.21,
+            "range": "0.39",
             "unit": "ms"
           }
         ]
