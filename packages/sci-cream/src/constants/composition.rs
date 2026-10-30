@@ -1153,7 +1153,7 @@ mod tests {
             (SolidsSource::MicellarCasein, dairy::milk::STD_PROTEIN_IN_MSNF, dairy::milk::STD_MINERALS_IN_MSNF),
             (SolidsSource::MicellarCasein, dairy::casein::STD_PROTEIN_IN_MCI, dairy::casein::STD_MINERALS_IN_MCI),
         ] {
-            assert_abs_diff_eq!(dairy::minerals_in_snf(protein_fraction, source), minerals_fraction);
+            assert_eq_flt!(dairy::minerals_in_snf(protein_fraction, source), minerals_fraction);
         }
 
         // Caseinate solids hold a fixed fraction, whatever their protein
@@ -1176,7 +1176,7 @@ mod tests {
             (SolidsSource::MicellarCasein, dairy::milk::STD_PROTEIN_IN_MSNF, dairy::milk::STD_LACTOSE_IN_MSNF),
             (SolidsSource::MicellarCasein, dairy::casein::STD_PROTEIN_IN_MCI, dairy::casein::STD_LACTOSE_IN_MCI),
         ] {
-            assert_abs_diff_eq!(dairy::lactose_in_snf(protein_fraction, source), lactose_fraction);
+            assert_eq_flt!(dairy::lactose_in_snf(protein_fraction, source), lactose_fraction);
         }
 
         // Caseinate solids hold a fixed fraction, whatever their protein
@@ -1196,7 +1196,7 @@ mod tests {
             (dairy::whey::STD_PROTEIN_IN_WS, dairy::whey::STD_LACTOSE_IN_WS, dairy::whey::STD_MINERALS_IN_WS),
             (dairy::whey::STD_PROTEIN_IN_WPI, dairy::whey::STD_LACTOSE_IN_WPI, dairy::whey::STD_MINERALS_IN_WPI),
         ] {
-            assert_abs_diff_eq!(
+            assert_eq_flt!(
                 dairy::unaccounted_in_snf(protein_fraction, SolidsSource::Whey),
                 1.0 - protein_fraction - lactose_fraction - minerals_fraction
             );
@@ -1217,10 +1217,7 @@ mod tests {
             (dairy::milk::STD_PROTEIN_IN_MSNF, dairy::milk::STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN),
             (dairy::casein::STD_PROTEIN_IN_MCI, dairy::casein::STD_CASEIN_PROTEIN_IN_MCI_PROTEIN),
         ] {
-            assert_abs_diff_eq!(
-                dairy::casein_in_protein(protein_fraction, SolidsSource::MicellarCasein),
-                casein_fraction
-            );
+            assert_eq_flt!(dairy::casein_in_protein(protein_fraction, SolidsSource::MicellarCasein), casein_fraction);
         }
 
         // Milk, whey, and caseinate solids hold fixed splits, whatever their protein
@@ -1249,7 +1246,7 @@ mod tests {
             let lactose_fraction = dairy::lactose_in_snf(protein_fraction, SolidsSource::Milk);
             let minerals_fraction = dairy::minerals_in_snf(protein_fraction, SolidsSource::Milk);
 
-            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction, 1.0);
+            assert_eq_flt!(protein_fraction + lactose_fraction + minerals_fraction, 1.0);
             assert_ge!(lactose_fraction, 0.0);
         }
     }
@@ -1269,7 +1266,7 @@ mod tests {
             let minerals_fraction = dairy::minerals_in_snf(protein_fraction, SolidsSource::Whey);
             let unaccounted_fraction = dairy::unaccounted_in_snf(protein_fraction, SolidsSource::Whey);
 
-            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction + unaccounted_fraction, 1.0);
+            assert_eq_flt!(protein_fraction + lactose_fraction + minerals_fraction + unaccounted_fraction, 1.0);
             assert_ge!(unaccounted_fraction, 0.0);
         }
     }
@@ -1286,7 +1283,7 @@ mod tests {
             let lactose_fraction = dairy::lactose_in_snf(protein_fraction, SolidsSource::MicellarCasein);
             let minerals_fraction = dairy::minerals_in_snf(protein_fraction, SolidsSource::MicellarCasein);
 
-            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction, 1.0);
+            assert_eq_flt!(protein_fraction + lactose_fraction + minerals_fraction, 1.0);
             assert_ge!(lactose_fraction, 0.0);
         }
     }

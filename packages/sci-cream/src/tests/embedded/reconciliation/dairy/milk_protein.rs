@@ -174,7 +174,7 @@ const HILL_FERRER: [Reported; 2] = [
 fn milk_protein_anchors_average_the_source_lines() {
     // The protein anchor is McSweeney et al.'s concentrate's, to the nearest 0.1 percentage point
     let [mcsweeney_protein, _, _] = MCSWEENEY_85.scaled();
-    assert_abs_diff_eq!(round_to(mcsweeney_protein, 0.001), STD_PROTEIN_IN_MPI);
+    assert_eq_flt!(round_to(mcsweeney_protein, 0.001), STD_PROTEIN_IN_MPI);
 
     // At that protein, the lines through each source average to the lactose and minerals anchors
     let lactose = mean(&AVERAGED.map(|source| {
@@ -185,8 +185,8 @@ fn milk_protein_anchors_average_the_source_lines() {
         let [protein, _, minerals] = source.scaled();
         extend_to_isolate(STD_PROTEIN_IN_MPI, STD_MINERALS_IN_MSNF, [protein, minerals])
     }));
-    assert_abs_diff_eq!(round_to(lactose, 0.001), STD_LACTOSE_IN_MPI);
-    assert_abs_diff_eq!(round_to(minerals, 0.001), STD_MINERALS_IN_MPI);
+    assert_eq_flt!(round_to(lactose, 0.001), STD_LACTOSE_IN_MPI);
+    assert_eq_flt!(round_to(minerals, 0.001), STD_MINERALS_IN_MPI);
 }
 
 #[test]
@@ -200,7 +200,7 @@ fn milk_protein_lines_fit_the_sources() {
         lines.push(row);
 
         assert_le!(lactose_miss.abs(), 0.003, "{}: lactose misses by {lactose_miss:.4}", source.name);
-        assert_abs_diff_eq!(minerals_miss, -lactose_miss);
+        assert_eq_flt!(minerals_miss, -lactose_miss);
     }
 
     insta::assert_snapshot!(lines.join("\n"));
@@ -218,7 +218,7 @@ fn milk_protein_minerals_line_runs_above_usdec_lower_grades() {
         lines.push(row);
 
         assert_lt!(minerals_miss, 0.0, "{}: minerals miss by {minerals_miss:.4}", source.name);
-        assert_abs_diff_eq!(minerals_miss, -lactose_miss);
+        assert_eq_flt!(minerals_miss, -lactose_miss);
     }
 
     insta::assert_snapshot!(lines.join("\n"));
@@ -235,7 +235,7 @@ fn milk_protein_lines_fit_liquid_ultrafiltered_milks() {
         lines.push(row);
 
         assert_le!(lactose_miss.abs(), 0.015, "{}: lactose misses by {lactose_miss:.4}", source.name);
-        assert_abs_diff_eq!(minerals_miss, -lactose_miss);
+        assert_eq_flt!(minerals_miss, -lactose_miss);
     }
 
     insta::assert_snapshot!(lines.join("\n"));
@@ -249,7 +249,7 @@ fn milk_protein_minerals_line_runs_above_burrington_uf_65() {
     let ([lactose_miss, minerals_miss], row) = misses(source.name, source.scaled(), SolidsSource::Milk);
 
     assert_lt!(minerals_miss, -0.03, "{}: minerals miss by {minerals_miss:.4}", source.name);
-    assert_abs_diff_eq!(minerals_miss, -lactose_miss);
+    assert_eq_flt!(minerals_miss, -lactose_miss);
 
     insta::assert_snapshot!([report_header(), row].join("\n"));
 }
