@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793336412935,
+  "lastUpdate": 1793336424142,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -700425,6 +700425,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/0463d48252fe68615061ef71ec314214671cde91"
         },
         "date": 1793334651817,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1177.12,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1892.35,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.49,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.94,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2100.72,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e824d8262e54c81e98208575f2a6ba2b239ca281",
+          "message": "Tighten stated-epsilon asserts from measurements\n\nEach assert_eq_flt! with a stated epsilon was measured over every test\nand doctest run. Where the bound was only loose, rather than agreement\nwith a source or fixture, it moves to the tightest form it passes,\nnever looser than before:\n\n- Nine checks that measure exact or within 1 ULP take the 4-ULP\n  default: the ratio-band pin and locked-sum balancing tests, the\n  evaporate-to-dry water, both hierarchy sums, the ABV/ABW round\n  trip, density via ABV versus ABW, the MSNF density fit, and\n  recipe_calculate_composition's MilkSNFS.\n- The two FPD combine tests, from 0.01, take assert_eq_6dp!. The\n  polynomial one computes 1.8 within 5 ULPs; the interpolation one\n  computes 0.746_667, written before as 0.745.\n- The balancing helper's default amount-sum bound moves from\n  EPSILON_4DP to EPSILON_6DP; its worst of 72 runs is 4.71e-7.\n\nThe other 44 keep their epsilon: agreement with Goff & Hartel,\nCorvitto, and external tables, fit quality, stored-literal precision,\nhand-balanced fixtures, approximate solvers, and struct comparisons,\nwhich the 4-ULP default doesn't take yet.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T00:05:45-04:00",
+          "tree_id": "416ad76530ec1408468512a4ae0b1f0897c02092",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e824d8262e54c81e98208575f2a6ba2b239ca281"
+        },
+        "date": 1793336349215,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
