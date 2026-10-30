@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793335513676,
+  "lastUpdate": 1793336408542,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -649484,6 +649484,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1095.09,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e824d8262e54c81e98208575f2a6ba2b239ca281",
+          "message": "Tighten stated-epsilon asserts from measurements\n\nEach assert_eq_flt! with a stated epsilon was measured over every test\nand doctest run. Where the bound was only loose, rather than agreement\nwith a source or fixture, it moves to the tightest form it passes,\nnever looser than before:\n\n- Nine checks that measure exact or within 1 ULP take the 4-ULP\n  default: the ratio-band pin and locked-sum balancing tests, the\n  evaporate-to-dry water, both hierarchy sums, the ABV/ABW round\n  trip, density via ABV versus ABW, the MSNF density fit, and\n  recipe_calculate_composition's MilkSNFS.\n- The two FPD combine tests, from 0.01, take assert_eq_6dp!. The\n  polynomial one computes 1.8 within 5 ULPs; the interpolation one\n  computes 0.746_667, written before as 0.745.\n- The balancing helper's default amount-sum bound moves from\n  EPSILON_4DP to EPSILON_6DP; its worst of 72 runs is 4.71e-7.\n\nThe other 44 keep their epsilon: agreement with Goff & Hartel,\nCorvitto, and external tables, fit quality, stored-literal precision,\nhand-balanced fixtures, approximate solvers, and struct comparisons,\nwhich the 4-ULP default doesn't take yet.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T00:05:45-04:00",
+          "tree_id": "416ad76530ec1408468512a4ae0b1f0897c02092",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e824d8262e54c81e98208575f2a6ba2b239ca281"
+        },
+        "date": 1793336348229,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 933.94,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 702.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 881.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 686.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.06,
             "unit": "KB"
           },
           {
