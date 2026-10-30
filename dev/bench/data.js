@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793397671069,
+  "lastUpdate": 1793398160326,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -563599,6 +563599,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 738.63,
             "range": "13.79",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "28dce0b8cb99c1f19fdc7f18074f93564122ca53",
+          "message": "Add assert_eq_8dp! and tighten EPSILON_4DP's uses\n\nMost of EPSILON_4DP's remaining uses measured far below six decimals,\nand nothing sat between the 4-ULP default and 6dp for computed values\nsuch as a solver's outputs. EPSILON_8DP (5e-9), with eq_8dp and\nassert_eq_8dp!, fills that gap: half a unit in the eighth decimal plus\nthe tie allowance, like the other decimal-places forms. 10dp would\nfail KeyCeiling::exact()'s measured 1.0e-10, and its 5e-11 would be\nsmaller than the 1e-10 tie allowance itself.\n\nMeasured over every test run, from EPSILON_4DP (5e-5):\n\n- The reconciliation ceilings for fields transcribed from a listing,\n  152 checks with a worst of 7.6e-14 %, take EXACT_MATCH, an 8dp\n  ceiling shared by both reconciliations.\n- KeyCeiling::exact(), 5,132 balancing checks with a worst of\n  1.0e-10 pp, and the balancing helper's negative-amount floor take\n  EPSILON_8DP.\n- The nnls test checks its amounts are >= 0.0, exactly; none of them\n  is negative.\n\nThe asset fixture comparisons keep 4dp: their COMP_* fixtures are\nwritten to four decimals, and every asset's own test checks each key\nat 6dp. EPSILON_4DP is now used only by assert_eq_4dp!. CLAUDE.md\nlists the new form.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T17:47:08-04:00",
+          "tree_id": "d19d6512b92596c328f9d1fe93ed4e5af012d2cf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/28dce0b8cb99c1f19fdc7f18074f93564122ca53"
+        },
+        "date": 1793398085184,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.38,
+            "range": "3.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 59.5,
+            "range": "5.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 68.75,
+            "range": "5.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2496.63,
+            "range": "23.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 375.63,
+            "range": "4.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 393.75,
+            "range": "7.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 413.75,
+            "range": "8.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19538.63,
+            "range": "64.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 948.63,
+            "range": "18.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.75,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.88,
+            "range": "2.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.63,
+            "range": "1.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46.13,
+            "range": "3.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 132.38,
+            "range": "2.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 91.63,
+            "range": "4.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 58.19,
+            "range": "0.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.9,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 668.88,
+            "range": "15.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 725.75,
+            "range": "13.93",
             "unit": "ms"
           }
         ]
