@@ -250,7 +250,7 @@ impl Epsilons {
 impl Default for Epsilons {
     fn default() -> Self {
         Self {
-            amount: Some(EPSILON_4DP),
+            amount: Some(EPSILON_6DP),
             neg: Some(EPSILON_4DP),
         }
     }
@@ -2907,7 +2907,7 @@ fn ratio_band_pins_a_single_source_ratio() {
     let comps = comps_from_names(DAIRY_COCOA_ING);
     let (min, max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
     assert_eq_flt!(min, max);
-    assert_eq_flt!(min, 16.67 / 80.33, epsilon = 1e-3);
+    assert_eq_flt!(min, 16.67 / 80.33);
 }
 
 #[test]
@@ -2954,7 +2954,7 @@ fn balance_holds_locked_composition_fixed() {
     // The locked composition keeps its exact fraction; amounts are non-negative and sum to 1.
     assert_eq_flt!(balanced[3].1, 0.006);
     let sum: f64 = balanced.iter().map(|(_, amount)| *amount).sum();
-    assert_eq_flt!(sum, 1.0, epsilon = EPSILON_4DP);
+    assert_eq_flt!(sum, 1.0);
     for (_, amount) in &balanced {
         assert_gt!(*amount, 0.0);
     }

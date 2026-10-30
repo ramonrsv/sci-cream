@@ -556,7 +556,7 @@ mod tests {
 
     use super::*;
     use crate::{
-        constants::{composition::dairy::milk::STD_MINERALS_IN_MSNF, tolerances::COMPOSITION_EPSILON},
+        constants::composition::dairy::milk::STD_MINERALS_IN_MSNF,
         util::{
             fast_interpolate_pairs, interpolate_pairs, table_supports_fast_interpolation, table_supports_interpolation,
         },
@@ -679,7 +679,7 @@ mod tests {
     #[test]
     fn abv_to_abw_inverts_abw_to_abv() {
         for abw in [3.0, 12.5, 17.3, 33.3, 40.7, 62.7, 88.9] {
-            assert_eq_flt!(super::abv_to_abw(super::abw_to_abv(abw)), abw, epsilon = 1e-9);
+            assert_eq_flt!(super::abv_to_abw(super::abw_to_abv(abw)), abw);
         }
     }
 
@@ -779,7 +779,6 @@ mod tests {
             assert_eq_flt!(
                 ethanol_solution_density_by_abv(abv),
                 ethanol_solution_density_by_abw(super::abv_to_abw(abv)),
-                epsilon = COMPOSITION_EPSILON
             );
         }
     }
@@ -883,7 +882,7 @@ mod tests {
         let rhs = DVector::from_column_slice(&y);
         let specific_volume = SVD::new(matrix, true, true).solve(&rhs, 1e-12).unwrap()[0];
 
-        assert_eq_flt!(1.0 / specific_volume, dairy::MSNF, epsilon = 1e-9);
+        assert_eq_flt!(1.0 / specific_volume, dairy::MSNF);
     }
 
     #[test]

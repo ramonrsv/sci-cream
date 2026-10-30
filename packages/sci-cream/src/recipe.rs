@@ -472,7 +472,7 @@ mod tests {
 
         assert_eq!(mix_comp.get(CompKey::MilkFat), 1.0);
         assert_eq!(mix_comp.get(CompKey::MSNF), 8.82 / 2.0);
-        assert_eq_flt!(mix_comp.get(CompKey::MilkSNFS), 4.0131 / 2.0, epsilon = COMPOSITION_EPSILON);
+        assert_eq_flt!(mix_comp.get(CompKey::MilkSNFS), 4.0131 / 2.0);
         assert_eq!(mix_comp.get(CompKey::MilkSolids), 10.82 / 2.0);
 
         assert_eq!(mix_comp.get(CompKey::TotalSolids) - mix_comp.get(CompKey::MilkSolids), 50.0);

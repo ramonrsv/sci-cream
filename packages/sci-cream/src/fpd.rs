@@ -740,7 +740,7 @@ mod tests {
         let whole_fpd = get_fpd_from_pac_inter(200.0).unwrap();
         let half_fpd = get_fpd_from_pac_inter(100.0).unwrap();
         let diff = (whole_fpd - half_fpd * 2.0).abs();
-        assert_eq_flt!(diff, 0.745, epsilon = 0.01);
+        assert_eq_6dp!(diff, 0.746_667);
     }
 
     #[test]
@@ -750,7 +750,7 @@ mod tests {
         let diff = (whole_fpd - half_fpd * 2.0).abs();
 
         // Significant divergence at higher PAC values, see docs for [`get_fpd_from_pac_polynomial`]
-        assert_eq_flt!(diff, 1.8, epsilon = 0.01);
+        assert_eq_6dp!(diff, 1.8);
     }
 
     /// [`get_fpd_from_pac_polynomial`] above verifies the sanity of [`get_fpd_from_pac_polynomial`]

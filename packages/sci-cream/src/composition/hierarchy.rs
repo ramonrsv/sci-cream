@@ -513,7 +513,6 @@ mod tests {
     use super::*;
     use crate::{
         composition::{CompKey::*, Composition, RatioKey},
-        constants::tolerances::COMPOSITION_EPSILON,
         data::get_all_recipe_entries,
         fpd::FpdKey,
         ingredient::Category,
@@ -619,12 +618,12 @@ mod tests {
 
         // MSNF splits exactly into its two siblings for every dairy ingredient.
         for milk in &*DAIRY_COMPS {
-            assert_eq_flt!(milk.get(MSNF), milk.get(MilkSugars) + milk.get(MilkSNFS), epsilon = COMPOSITION_EPSILON);
+            assert_eq_flt!(milk.get(MSNF), milk.get(MilkSugars) + milk.get(MilkSNFS));
         }
 
         // Milk protein splits exactly into casein and whey for every dairy ingredient.
         for milk in &*DAIRY_COMPS {
-            assert_eq_flt!(milk.get(MilkProteins), milk.get(Casein) + milk.get(Whey), epsilon = COMPOSITION_EPSILON);
+            assert_eq_flt!(milk.get(MilkProteins), milk.get(Casein) + milk.get(Whey));
         }
 
         // On an ordinary milk, the sugars are a proper subset of MSNF

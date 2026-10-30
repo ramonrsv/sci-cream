@@ -981,7 +981,7 @@ mod tests {
     fn evaporate_to_exactly_available_water_is_dry() {
         // Removing all 80g of water per 100g is allowed and yields a fully dry composition.
         let evaporated = evaporate_test_comp().evaporate(80.0).unwrap();
-        assert_eq_flt!(evaporated.get(CompKey::Water), 0.0, epsilon = COMPOSITION_EPSILON);
+        assert_eq_flt!(evaporated.get(CompKey::Water), 0.0);
     }
 
     #[test]
