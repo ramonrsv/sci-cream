@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793394318763,
+  "lastUpdate": 1793394335699,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -99407,6 +99407,204 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 637,
             "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "77f124da0d627e41e8b4d22a7083d7a7187ac4ad",
+          "message": "Check composition constants' relations in doctests\n\nEach constant in constants/composition.rs that is derived from other\nconstants, or sourced and corroborated by them, is now a literal, with\na doctest checking the relation right after the sentence stating it.\nRustdoc showed a computed constant as `= _; // 0.37499999999999994f64`,\nhiding both value and derivation; now the value and its check render\ntogether.\n\n- Partitions are exact assert_eq! sums, the derived term last: the\n  MSNF, caseinate, MPI, MCI, and both cocoa triples, the whole egg's\n  yolks and whites, and the egg splits. Whey and casein, neither\n  derived from the other, each carry their sum.\n- The yolk's shares of whole-egg solids and protein are rounded to\n  six places, checked with assert_eq_6dp!. Egg white's protein in\n  solids agrees with its ratio to 0.006, tightened from 0.01, and the\n  yolk's exactly.\n- The cocoa ash and carbohydrate orderings and the fiber bound move to\n  the constants they constrain; fiber and sugars must fit inside the\n  smaller carbohydrate fraction.\n\nFive unit tests move into these doctests, none dropping an assertion.\nSTD_PROTEIN_IN_MSNF's literal, 0.375, is one ULP off its old computed\nvalue, so the composition docs' energy example uses assert_eq_flt!,\nand the rounded egg splits move the whole-egg protein test to 5.607_84\nand 4.392_16. CLAUDE.md gains the convention as \"Derived constants\".\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T16:50:13-04:00",
+          "tree_id": "87cfbeaff68bbe45f83195e935d768b89e4ba019",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/77f124da0d627e41e8b4d22a7083d7a7187ac4ad"
+        },
+        "date": 1793394260101,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4229,
+            "range": "± 115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 156962,
+            "range": "± 599",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2540,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 155092,
+            "range": "± 835",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4484,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4278,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4361,
+            "range": "± 175",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4400,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4363,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4531,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 4539,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 4546,
+            "range": "± 209",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 103898,
+            "range": "± 2907",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 107629,
+            "range": "± 1519",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 217835059,
+            "range": "± 344856",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 624584,
+            "range": "± 2696",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6670,
+            "range": "± 152",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 57,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6051,
+            "range": "± 223",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 96354,
+            "range": "± 510",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 92315,
+            "range": "± 507",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 152085,
+            "range": "± 757",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 150032,
+            "range": "± 899",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 329749,
+            "range": "± 1380",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14430,
+            "range": "± 1157",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 636,
+            "range": "± 2",
             "unit": "ns/iter"
           },
           {
