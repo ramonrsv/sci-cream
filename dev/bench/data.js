@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793336489209,
+  "lastUpdate": 1793336523293,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -678758,6 +678758,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.85,
             "range": "0.22",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e824d8262e54c81e98208575f2a6ba2b239ca281",
+          "message": "Tighten stated-epsilon asserts from measurements\n\nEach assert_eq_flt! with a stated epsilon was measured over every test\nand doctest run. Where the bound was only loose, rather than agreement\nwith a source or fixture, it moves to the tightest form it passes,\nnever looser than before:\n\n- Nine checks that measure exact or within 1 ULP take the 4-ULP\n  default: the ratio-band pin and locked-sum balancing tests, the\n  evaporate-to-dry water, both hierarchy sums, the ABV/ABW round\n  trip, density via ABV versus ABW, the MSNF density fit, and\n  recipe_calculate_composition's MilkSNFS.\n- The two FPD combine tests, from 0.01, take assert_eq_6dp!. The\n  polynomial one computes 1.8 within 5 ULPs; the interpolation one\n  computes 0.746_667, written before as 0.745.\n- The balancing helper's default amount-sum bound moves from\n  EPSILON_4DP to EPSILON_6DP; its worst of 72 runs is 4.71e-7.\n\nThe other 44 keep their epsilon: agreement with Goff & Hartel,\nCorvitto, and external tables, fit quality, stored-literal precision,\nhand-balanced fixtures, approximate solvers, and struct comparisons,\nwhich the 4-ULP default doesn't take yet.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T00:05:45-04:00",
+          "tree_id": "416ad76530ec1408468512a4ae0b1f0897c02092",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e824d8262e54c81e98208575f2a6ba2b239ca281"
+        },
+        "date": 1793336461640,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 58.55,
+            "range": "9.96",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 12.79,
+            "range": "0.91",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 12.75,
+            "range": "0.89",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 160,
+            "range": "14.56",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 160,
+            "range": "14.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 52.65,
+            "range": "7.28",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.93,
+            "range": "0.29",
             "unit": "ms"
           }
         ]
