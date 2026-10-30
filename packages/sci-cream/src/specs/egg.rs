@@ -243,8 +243,8 @@ pub(crate) mod tests {
         .unwrap();
 
         // Whole-egg protein splits ~56% white / ~44% yolk
-        assert_eq_6dp!(comp.get(CompKey::WhiteProteins), 5.607_843);
-        assert_eq_6dp!(comp.get(CompKey::YolkProteins), 4.392_157);
+        assert_eq_6dp!(comp.get(CompKey::WhiteProteins), 5.607_84);
+        assert_eq_6dp!(comp.get(CompKey::YolkProteins), 4.392_16);
         assert_eq_flt!(comp.get(CompKey::EggProteins), 10.0);
         assert_eq_flt!(comp.get(CompKey::TotalProteins), 10.0);
     }

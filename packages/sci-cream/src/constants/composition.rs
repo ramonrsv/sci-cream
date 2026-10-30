@@ -122,16 +122,23 @@ pub mod dairy {
         /// Percentage of protein typical of milk solids non-fat (MSNF)
         ///
         /// Calculated as 37.5%, the remainder of 100% - [`STD_LACTOSE_IN_MSNF`] -
-        /// [`STD_MINERALS_IN_MSNF`]. This is in line with the ~37% average (~35-37.5% range) of the
-        /// milks, creams, and milk powders in Goff & Hartel's Table 3.2 (Goff & Hartel, 2025,
-        /// p. 48)[^20], the text's slightly lower range 34-36% (Goff & Hartel, 2025, p. 34)[^20],
-        /// the Guelph e-Book's 38% (Goff, n.d., "16. Ice Cream Mix General Composition")[^90], and
-        /// the 37.3% average of the [USDA listings](self).
+        /// [`STD_MINERALS_IN_MSNF`], so the three add up to 1:
+        ///
+        /// ```
+        /// # use sci_cream::constants::composition::dairy::milk::*;
+        /// assert_eq!(STD_LACTOSE_IN_MSNF + STD_MINERALS_IN_MSNF + STD_PROTEIN_IN_MSNF, 1.0);
+        /// ```
+        ///
+        /// This is in line with the ~37% average (~35-37.5% range) of the milks, creams, and milk
+        /// powders in Goff & Hartel's Table 3.2 (Goff & Hartel, 2025, p. 48)[^20], the text's
+        /// slightly lower range 34-36% (Goff & Hartel, 2025, p. 34)[^20], the Guelph e-Book's 38%
+        /// (Goff, n.d., "16. Ice Cream Mix General Composition")[^90], and the 37.3% average
+        /// of the [USDA listings](self).
         ///
         /// Calculated USDA values are (%): 37.6, 37.3, 37.6, 37.0, 36.9, 37.7, 37.1
         #[doc = include_str!("../../docs/references/index/20.md")]
         #[doc = include_str!("../../docs/references/index/90.md")]
-        pub const STD_PROTEIN_IN_MSNF: f64 = 1.0 - STD_LACTOSE_IN_MSNF - STD_MINERALS_IN_MSNF;
+        pub const STD_PROTEIN_IN_MSNF: f64 = 0.375;
 
         /// Percentage of minerals (ash) typical of milk solids non-fat (MSNF)
         ///
@@ -164,7 +171,13 @@ pub mod dairy {
         /// Percentage of protein typical of milk protein isolate (MPI) solids non-fat
         ///
         /// Taken as 91.1%, the protein of McSweeney et al.'s among the [compositions](self), where
-        /// the averaged lines give [`STD_LACTOSE_IN_MPI`] and [`STD_MINERALS_IN_MPI`].
+        /// the averaged lines give [`STD_LACTOSE_IN_MPI`] and [`STD_MINERALS_IN_MPI`],
+        /// the rest of the solids non-fat:
+        ///
+        /// ```
+        /// # use sci_cream::constants::composition::dairy::milk::*;
+        /// assert_eq!(STD_LACTOSE_IN_MPI + STD_MINERALS_IN_MPI + STD_PROTEIN_IN_MPI, 1.0);
+        /// ```
         ///
         /// At 5% moisture and 1% fat, this is 90.1% protein on a dry basis, above ADPI's 89.5%
         /// minimum for milk protein isolate (ADPI, 2023, p. 2)[^103] and in line with the 90-91%
@@ -201,6 +214,13 @@ pub mod dairy {
         /// Proportion of proteins in milk solids that is whey
         ///
         /// (Clarke, 2004, p. 40)[^4], (Goff & Hartel, 2025, p. 315)[^20].
+        ///
+        /// Consistent with [`STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`], the rest of the protein:
+        ///
+        /// ```
+        /// # use sci_cream::constants::composition::dairy::milk::*;
+        /// assert_eq!(STD_WHEY_PROTEIN_IN_MSNF_PROTEIN + STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, 1.0);
+        /// ```
         #[doc = include_str!("../../docs/references/index/4.md")]
         #[doc = include_str!("../../docs/references/index/20.md")]
         pub const STD_WHEY_PROTEIN_IN_MSNF_PROTEIN: f64 = 0.2;
@@ -208,6 +228,13 @@ pub mod dairy {
         /// Proportion of proteins in milk solids that is casein
         ///
         /// (Clarke, 2004, p. 40)[^4], (Goff & Hartel, 2025, p. 315)[^20].
+        ///
+        /// Consistent with [`STD_WHEY_PROTEIN_IN_MSNF_PROTEIN`], the rest of the protein:
+        ///
+        /// ```
+        /// # use sci_cream::constants::composition::dairy::milk::*;
+        /// assert_eq!(STD_WHEY_PROTEIN_IN_MSNF_PROTEIN + STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, 1.0);
+        /// ```
         #[doc = include_str!("../../docs/references/index/4.md")]
         #[doc = include_str!("../../docs/references/index/20.md")]
         pub const STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN: f64 = 0.8;
@@ -432,7 +459,13 @@ pub mod dairy {
         /// Percentage of protein typical of micellar casein isolate solids non-fat
         ///
         /// Taken as 90.6%, the protein of Ingredia's isolate among the [compositions](self), where
-        /// the averaged lines give [`STD_LACTOSE_IN_MCI`] and [`STD_MINERALS_IN_MCI`].
+        /// the averaged lines give [`STD_LACTOSE_IN_MCI`] and [`STD_MINERALS_IN_MCI`],
+        /// the rest of the solids non-fat:
+        ///
+        /// ```
+        /// # use sci_cream::constants::composition::dairy::casein::*;
+        /// assert_eq!(STD_LACTOSE_IN_MCI + STD_MINERALS_IN_MCI + STD_PROTEIN_IN_MCI, 1.0);
+        /// ```
         ///
         /// At 5% moisture and 1% fat, this is 89.6% protein on a dry basis, just above ADPI's 89.5%
         /// minimum for micellar casein isolate (ADPI, 2023, p. 2)[^103] and just below the 90%
@@ -482,14 +515,23 @@ pub mod dairy {
         /// Percentage of protein typical of caseinate solids non-fat
         ///
         /// Calculated as 95.8%, the remainder of 100% - [`STD_LACTOSE_IN_CASEINATE`] -
-        /// [`STD_MINERALS_IN_CASEINATE`], see the [module](self) documentation. This is in line
-        /// with Southward's 96.1%, whose composition sums to 100.0%, and above ADPI's minimum for
-        /// edible caseinates, 90.0% on a dry basis (ADPI, 2024, p. 1)[^102]. USDEC's and Ornua's
-        /// run higher, as their compositions sum to 101.0% and 102.9%.
+        /// [`STD_MINERALS_IN_CASEINATE`], so the three add up to 1, as the [module](self) explains:
+        ///
+        /// ```
+        /// # use sci_cream::constants::composition::dairy::casein::*;
+        /// assert_eq!(
+        ///     STD_LACTOSE_IN_CASEINATE + STD_MINERALS_IN_CASEINATE + STD_PROTEIN_IN_CASEINATE,
+        ///     1.0
+        /// );
+        /// ```
+        ///
+        /// This is in line with Southward's 96.1%, whose composition sums to 100.0%, and above
+        /// ADPI's minimum for edible caseinates, 90.0% on a dry basis (ADPI, 2024, p. 1)[^102].
+        /// USDEC's and Ornua's run higher, as their compositions sum to 101.0% and 102.9%.
         ///
         /// Calculated values are (%): 96.1, 97.6, 98.0, 95.2
         #[doc = include_str!("../../docs/references/index/102.md")]
-        pub const STD_PROTEIN_IN_CASEINATE: f64 = 1.0 - STD_LACTOSE_IN_CASEINATE - STD_MINERALS_IN_CASEINATE;
+        pub const STD_PROTEIN_IN_CASEINATE: f64 = 0.958;
 
         /// Percentage of minerals (ash) typical of caseinate solids non-fat
         ///
@@ -690,8 +732,16 @@ pub mod egg {
     pub const STD_EGG_YOLKS_IN_WHOLE_EGG: f64 = 0.35;
 
     /// Percentage of egg whites in a whole egg, by weight (Goff & Hartel, 2025, p. 84)[^20]
+    ///
+    /// Calculated as 65%, the remainder of 100% - [`STD_EGG_YOLKS_IN_WHOLE_EGG`],
+    /// so the two add up to 1:
+    ///
+    /// ```
+    /// # use sci_cream::constants::composition::egg::*;
+    /// assert_eq!(STD_EGG_YOLKS_IN_WHOLE_EGG + STD_EGG_WHITES_IN_WHOLE_EGG, 1.0);
+    /// ```
     #[doc = include_str!("../../docs/references/index/20.md")]
-    pub const STD_EGG_WHITES_IN_WHOLE_EGG: f64 = 1.0 - STD_EGG_YOLKS_IN_WHOLE_EGG;
+    pub const STD_EGG_WHITES_IN_WHOLE_EGG: f64 = 0.65;
 
     /// Percentage of protein typically found in egg yolk
     ///
@@ -734,7 +784,15 @@ pub mod egg {
     /// is a reasonable average of these values (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p.
     /// 48)[^20], (USDA, 2019, "Eggs, Grade A, Large, egg yolk")[^500].
     ///
-    /// Consistent with [`STD_PROTEIN_IN_EGG_YOLK`] / [`STD_SOLIDS_IN_EGG_YOLK`].
+    /// Consistent with [`STD_PROTEIN_IN_EGG_YOLK`] / [`STD_SOLIDS_IN_EGG_YOLK`]:
+    ///
+    /// ```
+    /// # use sci_cream::constants::composition::egg::*;
+    /// assert_eq!(
+    ///     STD_PROTEIN_IN_EGG_YOLK_SOLIDS,
+    ///     STD_PROTEIN_IN_EGG_YOLK / STD_SOLIDS_IN_EGG_YOLK
+    /// );
+    /// ```
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
     #[doc = include_str!("../../docs/references/index/20.md")]
@@ -745,42 +803,73 @@ pub mod egg {
     ///
     /// (USDA, 2019, "Eggs, Grade A, Large, egg white")[^518]
     ///
-    /// Consistent-ish with [`STD_PROTEIN_IN_EGG_WHITE`] / [`STD_SOLIDS_IN_EGG_WHITE`].
+    /// Consistent with [`STD_PROTEIN_IN_EGG_WHITE`] / [`STD_SOLIDS_IN_EGG_WHITE`] within 0.6 pp:
+    ///
+    /// ```
+    /// # use sci_cream::asserts::assert_eq_flt;
+    /// # use sci_cream::constants::composition::egg::*;
+    /// assert_eq_flt!(
+    ///     STD_PROTEIN_IN_EGG_WHITE_SOLIDS,
+    ///     STD_PROTEIN_IN_EGG_WHITE / STD_SOLIDS_IN_EGG_WHITE,
+    ///     epsilon = 0.006
+    /// );
+    /// ```
     #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/518.md")]
     pub const STD_PROTEIN_IN_EGG_WHITE_SOLIDS: f64 = 0.78;
 
     /// Percentage of whole-egg solids contributed by the yolk
     ///
-    /// Derived from [`STD_SOLIDS_IN_EGG_YOLK`], [`STD_SOLIDS_IN_EGG_WHITE`],
-    /// [`STD_EGG_YOLKS_IN_WHOLE_EGG`], and [`STD_EGG_WHITES_IN_WHOLE_EGG`].
-    pub const STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS: f64 = {
-        let yolk = STD_EGG_YOLKS_IN_WHOLE_EGG * STD_SOLIDS_IN_EGG_YOLK;
-        let white = STD_EGG_WHITES_IN_WHOLE_EGG * STD_SOLIDS_IN_EGG_WHITE;
-        yolk / (yolk + white)
-    };
+    /// Calculated as 65.7895%, rounded from the yolk's share of the solids of
+    /// [`STD_EGG_YOLKS_IN_WHOLE_EGG`] at [`STD_SOLIDS_IN_EGG_YOLK`]
+    /// and [`STD_EGG_WHITES_IN_WHOLE_EGG`] at [`STD_SOLIDS_IN_EGG_WHITE`]:
+    ///
+    /// ```
+    /// # use sci_cream::{asserts::assert_eq_6dp, constants::composition::egg::*};
+    /// let yolk = STD_EGG_YOLKS_IN_WHOLE_EGG * STD_SOLIDS_IN_EGG_YOLK;
+    /// let white = STD_EGG_WHITES_IN_WHOLE_EGG * STD_SOLIDS_IN_EGG_WHITE;
+    /// assert_eq_6dp!(STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS, yolk / (yolk + white));
+    /// ```
+    pub const STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS: f64 = 0.657_895;
 
     /// Percentage of whole-egg solids contributed by the white (albumen)
     ///
-    /// Derived from [`STD_SOLIDS_IN_EGG_YOLK`], [`STD_SOLIDS_IN_EGG_WHITE`],
-    /// [`STD_EGG_YOLKS_IN_WHOLE_EGG`], and [`STD_EGG_WHITES_IN_WHOLE_EGG`].
-    pub const STD_WHITE_SOLIDS_IN_WHOLE_EGG_SOLIDS: f64 = 1.0 - STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS;
+    /// Calculated as 34.2105%, the remainder of 100% - [`STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS`],
+    /// so the two add up to 1:
+    ///
+    /// ```
+    /// # use sci_cream::constants::composition::egg::*;
+    /// assert_eq!(STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS + STD_WHITE_SOLIDS_IN_WHOLE_EGG_SOLIDS, 1.0);
+    /// ```
+    pub const STD_WHITE_SOLIDS_IN_WHOLE_EGG_SOLIDS: f64 = 0.342_105;
 
     /// Proportion of whole-egg protein contributed by the yolk
     ///
-    /// Derived from [`STD_PROTEIN_IN_EGG_YOLK`], [`STD_PROTEIN_IN_EGG_WHITE`],
-    /// [`STD_EGG_YOLKS_IN_WHOLE_EGG`], and [`STD_EGG_WHITES_IN_WHOLE_EGG`].
-    pub const STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN: f64 = {
-        let yolk = STD_EGG_YOLKS_IN_WHOLE_EGG * STD_PROTEIN_IN_EGG_YOLK;
-        let white = STD_EGG_WHITES_IN_WHOLE_EGG * STD_PROTEIN_IN_EGG_WHITE;
-        yolk / (yolk + white)
-    };
+    /// Calculated as 43.9216%, rounded from the yolk's share of the protein of
+    /// [`STD_EGG_YOLKS_IN_WHOLE_EGG`] at [`STD_PROTEIN_IN_EGG_YOLK`]
+    /// and [`STD_EGG_WHITES_IN_WHOLE_EGG`] at [`STD_PROTEIN_IN_EGG_WHITE`]:
+    ///
+    /// ```
+    /// # use sci_cream::{asserts::assert_eq_6dp, constants::composition::egg::*};
+    /// let yolk = STD_EGG_YOLKS_IN_WHOLE_EGG * STD_PROTEIN_IN_EGG_YOLK;
+    /// let white = STD_EGG_WHITES_IN_WHOLE_EGG * STD_PROTEIN_IN_EGG_WHITE;
+    /// assert_eq_6dp!(STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN, yolk / (yolk + white));
+    /// ```
+    pub const STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN: f64 = 0.439_216;
 
     /// Proportion of whole-egg protein contributed by the white (albumen)
     ///
-    /// Derived from [`STD_PROTEIN_IN_EGG_YOLK`], [`STD_PROTEIN_IN_EGG_WHITE`],
-    /// [`STD_EGG_YOLKS_IN_WHOLE_EGG`], and [`STD_EGG_WHITES_IN_WHOLE_EGG`].
-    pub const STD_WHITE_PROTEIN_IN_WHOLE_EGG_PROTEIN: f64 = 1.0 - STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN;
+    /// Calculated as 56.0784%, the remainder of 100% - [`STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN`],
+    /// so the two add up to 1:
+    ///
+    /// ```
+    /// # use sci_cream::constants::composition::egg::*;
+    /// assert_eq!(
+    ///     STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN + STD_WHITE_PROTEIN_IN_WHOLE_EGG_PROTEIN,
+    ///     1.0
+    /// );
+    /// ```
+    pub const STD_WHITE_PROTEIN_IN_WHOLE_EGG_PROTEIN: f64 = 0.560_784;
 
     /// Percentage of saturated fats typical of egg fat (Board on Agriculture..., 1974, p. 203)[^12]
     #[doc = include_str!("../../docs/references/index/12.md")]
@@ -942,6 +1031,16 @@ pub mod cacao {
     ///
     /// These are the least consistent values among the cacao products, by a wide margin, spanning
     /// 33% to 46% across the listings, with no clear pattern between natural and alkalized cocoa.
+    ///
+    /// Fiber and the [intrinsic sugars](STD_SUGARS_IN_COCOA_SOLIDS) are both drawn from the
+    /// carbohydrates, so together they fit inside the smaller of the two carbohydrate fractions:
+    ///
+    /// ```
+    /// # use sci_cream::constants::composition::cacao::*;
+    /// let smaller = STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS
+    ///     .min(STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS);
+    /// assert!(STD_FIBER_IN_COCOA_SOLIDS + STD_SUGARS_IN_COCOA_SOLIDS < smaller);
+    /// ```
     pub const STD_FIBER_IN_COCOA_SOLIDS: f64 = 0.378;
 
     /// Percentage of ash (tracked as other SNFS) typically found in natural cocoa solids.
@@ -968,6 +1067,16 @@ pub mod cacao {
     /// This only averages the alkalized entries. Calculated values are (%): 9.3, 9.3
     ///
     /// See [`STD_ASH_IN_NATURAL_COCOA_SOLIDS`] for the ash content of natural cocoa solids.
+    ///
+    /// Alkalization only moves mass from carbohydrates into ash:
+    ///
+    /// ```
+    /// # use sci_cream::constants::composition::cacao::*;
+    /// assert!(STD_ASH_IN_DUTCHED_COCOA_SOLIDS > STD_ASH_IN_NATURAL_COCOA_SOLIDS);
+    /// assert!(
+    ///     STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS < STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS
+    /// );
+    /// ```
     #[doc = include_str!("../../docs/references/index/20.md")]
     #[doc = include_str!("../../docs/references/index/85.md")]
     #[doc = include_str!("../../docs/references/index/86.md")]
@@ -977,22 +1086,40 @@ pub mod cacao {
 
     /// Percentage of carbohydrates typically found in natural cocoa solids
     ///
-    /// The composition of cocoa solids is taken to be entirely proteins, carbohydrates, and ash,
-    /// i.e. `100% = proteins + carbohydrates + ash`, so the constants must add up to 1. This is
-    /// the residual of the other components, i.e. `carbohydrates = 100% - proteins - ash`, derived
-    /// _"by difference"_ the same way as the USDA listings.
+    /// Calculated as 68.9%, the remainder of 100% - [`STD_PROTEIN_IN_COCOA_SOLIDS`] -
+    /// [`STD_ASH_IN_NATURAL_COCOA_SOLIDS`], so the three add up to 1:
     ///
-    /// The residual of [`STD_PROTEIN_IN_COCOA_SOLIDS`] and [`STD_ASH_IN_NATURAL_COCOA_SOLIDS`].
+    /// ```
+    /// # use sci_cream::constants::composition::cacao::*;
+    /// assert_eq!(
+    ///     STD_PROTEIN_IN_COCOA_SOLIDS
+    ///         + STD_ASH_IN_NATURAL_COCOA_SOLIDS
+    ///         + STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS,
+    ///     1.0
+    /// );
+    /// ```
+    ///
+    /// The composition of cocoa solids is taken to be entirely proteins, carbohydrates, and ash,
+    /// the carbohydrates derived _"by difference"_ the same way as the USDA listings.
     pub const STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS: f64 = 0.689;
 
     /// Percentage of carbohydrates typically found in alkalized cocoa solids
     ///
-    /// The composition of cocoa solids is taken to be entirely proteins, carbohydrates, and ash,
-    /// i.e. `100% = proteins + carbohydrates + ash`, so the constants must add up to 1. This is
-    /// the residual of the other components, i.e. `carbohydrates = 100% - proteins - ash`, derived
-    /// _"by difference"_ the same way as the USDA listings.
+    /// Calculated as 67.2%, the remainder of 100% - [`STD_PROTEIN_IN_COCOA_SOLIDS`] -
+    /// [`STD_ASH_IN_DUTCHED_COCOA_SOLIDS`], so the three add up to 1:
     ///
-    /// The residual of [`STD_PROTEIN_IN_COCOA_SOLIDS`] and [`STD_ASH_IN_DUTCHED_COCOA_SOLIDS`].
+    /// ```
+    /// # use sci_cream::constants::composition::cacao::*;
+    /// assert_eq!(
+    ///     STD_PROTEIN_IN_COCOA_SOLIDS
+    ///         + STD_ASH_IN_DUTCHED_COCOA_SOLIDS
+    ///         + STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS,
+    ///     1.0
+    /// );
+    /// ```
+    ///
+    /// The composition of cocoa solids is taken to be entirely proteins, carbohydrates, and ash,
+    /// the carbohydrates derived _"by difference"_ the same way as the USDA listings.
     pub const STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS: f64 = 0.672;
 
     /// Percentage of saturated fats typically found in cocoa butter
@@ -1014,62 +1141,6 @@ mod tests {
 
     use super::*;
     use crate::specs::SolidsSource;
-
-    #[test]
-    fn cocoa_constants() {
-        // Both triples partition the cocoa solids, to within the rounding of their last digit
-        assert_abs_diff_eq!(
-            cacao::STD_PROTEIN_IN_COCOA_SOLIDS
-                + cacao::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS
-                + cacao::STD_ASH_IN_NATURAL_COCOA_SOLIDS,
-            1.0
-        );
-        assert_abs_diff_eq!(
-            cacao::STD_PROTEIN_IN_COCOA_SOLIDS
-                + cacao::STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS
-                + cacao::STD_ASH_IN_DUTCHED_COCOA_SOLIDS,
-            1.0
-        );
-
-        // Alkalization only moves mass from carbohydrates into ash
-        assert_gt!(cacao::STD_ASH_IN_DUTCHED_COCOA_SOLIDS, cacao::STD_ASH_IN_NATURAL_COCOA_SOLIDS);
-        assert_lt!(cacao::STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS, cacao::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS);
-
-        // Fiber and the intrinsic sugars are both drawn from the carbohydrates, so together they
-        // must fit inside the smaller of the two carbohydrate fractions
-        assert_lt!(
-            cacao::STD_FIBER_IN_COCOA_SOLIDS + cacao::STD_SUGARS_IN_COCOA_SOLIDS,
-            cacao::STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS
-        );
-    }
-
-    #[test]
-    fn egg_split_constants() {
-        // Whole-egg solids split: yolk 0.35×0.50, white 0.65×0.14.
-        assert_eq_6dp!(egg::STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS, 0.657_895);
-        assert_eq_6dp!(egg::STD_WHITE_SOLIDS_IN_WHOLE_EGG_SOLIDS, 0.342_105);
-
-        // Whole-egg protein split: yolk 0.35×0.16, white 0.65×0.11.
-        assert_eq_6dp!(egg::STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN, 0.439_216);
-        assert_eq_6dp!(egg::STD_WHITE_PROTEIN_IN_WHOLE_EGG_PROTEIN, 0.560_784);
-
-        // Each split partitions the whole.
-        assert_eq!(egg::STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS + egg::STD_WHITE_SOLIDS_IN_WHOLE_EGG_SOLIDS, 1.0);
-        assert_eq!(egg::STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN + egg::STD_WHITE_PROTEIN_IN_WHOLE_EGG_PROTEIN, 1.0);
-    }
-
-    #[test]
-    fn egg_protein_in_solids_consistency() {
-        // Yolk: protein-in-solids equals protein / solids exactly (0.16 / 0.50).
-        assert_eq!(egg::STD_PROTEIN_IN_EGG_YOLK_SOLIDS, egg::STD_PROTEIN_IN_EGG_YOLK / egg::STD_SOLIDS_IN_EGG_YOLK);
-
-        // White: within ~0.6 pp of protein / solids (0.78 vs 0.11 / 0.14 ≈ 0.7857).
-        assert_eq_flt!(
-            egg::STD_PROTEIN_IN_EGG_WHITE_SOLIDS,
-            egg::STD_PROTEIN_IN_EGG_WHITE / egg::STD_SOLIDS_IN_EGG_WHITE,
-            epsilon = 0.01
-        );
-    }
 
     #[test]
     fn dairy_minerals_in_snf() {
@@ -1164,21 +1235,6 @@ mod tests {
     }
 
     #[test]
-    fn dairy_milk_constants_partition_the_solids() {
-        // Both anchors' protein, lactose, and minerals make up all their solids, none unaccounted
-        for (protein_fraction, lactose_fraction, minerals_fraction) in [
-            (
-                dairy::milk::STD_PROTEIN_IN_MSNF,
-                dairy::milk::STD_LACTOSE_IN_MSNF,
-                dairy::milk::STD_MINERALS_IN_MSNF,
-            ),
-            (dairy::milk::STD_PROTEIN_IN_MPI, dairy::milk::STD_LACTOSE_IN_MPI, dairy::milk::STD_MINERALS_IN_MPI),
-        ] {
-            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction, 1.0);
-        }
-    }
-
-    #[test]
     fn dairy_milk_lines_partition_the_solids() {
         // From permeate-diluted solids through plain milk solids to isolates, protein, lactose, and
         // minerals fill the solids, lactose ≥ 0
@@ -1215,25 +1271,6 @@ mod tests {
 
             assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction + unaccounted_fraction, 1.0);
             assert_ge!(unaccounted_fraction, 0.0);
-        }
-    }
-
-    #[test]
-    fn dairy_casein_constants_partition_the_solids() {
-        // Both forms' protein, lactose, and minerals make up all of their solids, none unaccounted
-        for (protein_fraction, lactose_fraction, minerals_fraction) in [
-            (
-                dairy::casein::STD_PROTEIN_IN_MCI,
-                dairy::casein::STD_LACTOSE_IN_MCI,
-                dairy::casein::STD_MINERALS_IN_MCI,
-            ),
-            (
-                dairy::casein::STD_PROTEIN_IN_CASEINATE,
-                dairy::casein::STD_LACTOSE_IN_CASEINATE,
-                dairy::casein::STD_MINERALS_IN_CASEINATE,
-            ),
-        ] {
-            assert_abs_diff_eq!(protein_fraction + lactose_fraction + minerals_fraction, 1.0);
         }
     }
 

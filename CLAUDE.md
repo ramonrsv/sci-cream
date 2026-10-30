@@ -189,6 +189,19 @@ Edit the source `.md`, never a generated copy. Three render targets: rustdoc via
 resolved into `data/**/generated/full/*.json` (`pnpm gen:data`). Run `pnpm gen:all` after editing;
 the app's print stylesheet appends each `href`.
 
+#### Derived constants
+
+A constant in `constants/composition.rs` tied to others, derived from them or sourced and
+corroborated by them, is a literal, checked by a doctest that asserts the relation:
+
+- The check goes on the derived term, or the one the others are calculated from, like an isolate's
+  protein; independent ones, like whey and casein, each carry it. Its doctest follows the sentence
+  that states the relation, which a derived constant opens with: "Calculated as N%, …".
+- Exact relations use `assert_eq!`. Putting a partition's derived term last keeps its sum exact;
+  where floating-point noise still breaks one, `assert_eq_flt!(a, b)` allows it.
+- Otherwise the tolerance carries meaning: `assert_eq_6dp!` for a literal rounded to six decimals,
+  or the agreement bound when corroborating, `assert_eq_flt!(a, b, epsilon = E)`.
+
 #### Intra-doc links outside rustdoc
 
 `docs/*.md` and `data/**/*.md` cite crate items the way rustdoc resolves them — ``[`Fibers`]``,

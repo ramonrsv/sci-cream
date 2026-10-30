@@ -67,7 +67,7 @@
 //!     .pod(pod)
 //!     .pac(pac);
 //!
-//! assert_eq!(comp.get(CompKey::Energy), 50.4576);
+//! assert_eq_flt!(comp.get(CompKey::Energy), 50.4576);
 //!
 //! assert_eq!(comp.get(CompKey::MilkFat), 2.0);
 //! assert_eq_flt!(comp.get(CompKey::Lactose), 4.8069);
