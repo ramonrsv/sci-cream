@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793394997634,
+  "lastUpdate": 1793395149550,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -99616,6 +99616,204 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f608f1535145257edebae9f4fb28b85bae5b8b3f",
+          "message": "Use assert_eq_flt! for default-tolerance asserts\n\nThe 19 assert_abs_diff_eq! calls at approx's default tolerance outside\nthe AbsDiffEq-impl tests become assert_eq_flt!(a, b): the dairy\nline-function tests, and the milk protein and micellar casein\nreconciliations.\n\nassert_eq_flt! passes within f64::EPSILON or 4 ULPs, whichever is\nlarger, so it is never tighter than approx's absolute f64::EPSILON.\nMeasured over every run, every value here is at most 1, so the checks\nloosen only at 0.5 and above: by at most 4x f64::EPSILON (8.9e-16) at\nthe three partition sums, which equal 1, and 2x elsewhere. This is the\nbound their comments describe, such as \"to within float rounding\".\nSmall values that differ by many ULPs, up to 1,728 at 0.015, still\npass through the f64::EPSILON floor.\n\ncomposition_from_combination_single compares whole compositions,\nwhich the 4-ULP default can't take until the structs implement\nUlpsEq, so it stays on approx for now.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T17:07:53-04:00",
+          "tree_id": "955bc1971b4931495c90e63bd514a572202da26d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f608f1535145257edebae9f4fb28b85bae5b8b3f"
+        },
+        "date": 1793395103898,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 2256,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 86327,
+            "range": "± 1056",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1188,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 83093,
+            "range": "± 2874",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 2345,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 2278,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 2257,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 2311,
+            "range": "± 126",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 2267,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 2380,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 2488,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 2475,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 59666,
+            "range": "± 1810",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 60032,
+            "range": "± 436",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 144718015,
+            "range": "± 2627400",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 396697,
+            "range": "± 1715",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 3580,
+            "range": "± 154",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 26,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 3500,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 53016,
+            "range": "± 5529",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 50899,
+            "range": "± 942",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 85090,
+            "range": "± 1613",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 82953,
+            "range": "± 5896",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 192486,
+            "range": "± 12118",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 7953,
+            "range": "± 349",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 370,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 8,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 7,
             "range": "± 0",
             "unit": "ns/iter"
           }
