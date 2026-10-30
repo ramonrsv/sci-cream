@@ -11,8 +11,7 @@
 #![cfg_attr(coverage, coverage(off))]
 #![expect(clippy::doc_markdown)] // _FoodData_ false positive
 
-use super::util::{Proximates, reconcile_proximates};
-use crate::tests::asserts::EPSILON_4DP;
+use super::util::{EXACT_MATCH, Proximates, reconcile_proximates};
 
 #[cfg(doc)]
 use crate::constants::composition::cacao;
@@ -121,10 +120,10 @@ const FULL_MISS: f64 = 100.0;
 const CHOCOLATE_CEILING: Proximates = Proximates {
     water: FULL_MISS,
     protein: 4.5,
-    fat: EPSILON_4DP,
+    fat: EXACT_MATCH,
     carbohydrate: 3.0,
     fiber: 16.0,
-    sugars: EPSILON_4DP,
+    sugars: EXACT_MATCH,
     ash: 9.0,
 };
 
@@ -138,7 +137,7 @@ const CHOCOLATE_CEILING: Proximates = Proximates {
 const COCOA_CEILING: Proximates = Proximates {
     water: 10.5,
     protein: 8.5,
-    fat: EPSILON_4DP,
+    fat: EXACT_MATCH,
     carbohydrate: 3.5,
     fiber: 18.5,
     sugars: FULL_MISS,

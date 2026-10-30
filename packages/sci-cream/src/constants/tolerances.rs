@@ -6,7 +6,7 @@
 
 #[cfg(doc)]
 use crate::{
-    asserts::{assert_eq_4dp, assert_eq_6dp, assert_eq_flt},
+    asserts::{assert_eq_4dp, assert_eq_6dp, assert_eq_8dp, assert_eq_flt},
     constants::balancing::{LOCKED_TOTAL_TOLERANCE, RATIO_REWEIGHT_TOLERANCE, SVD_SOLVE_EPSILON},
 };
 
@@ -17,6 +17,10 @@ pub const COMPOSITION_EPSILON: f64 = 1e-13;
 /// floating-point noise; approx's default for `ulps_eq`
 pub const MAX_ULPS: u32 = 4;
 
+/// Half a unit in the eighth decimal, [`assert_eq_8dp!`]'s bound: the most a value correctly
+/// rounded to eight decimals is off by, the precision of solver outputs and exact-match ceilings
+pub const EPSILON_8DP: f64 = 5e-9;
+
 /// Half a unit in the sixth decimal, [`assert_eq_6dp!`]'s bound: the most a value correctly
 /// rounded to six decimals is off by, the precision of tests' expected values and key tables
 pub const EPSILON_6DP: f64 = 5e-7;
@@ -25,6 +29,6 @@ pub const EPSILON_6DP: f64 = 5e-7;
 /// rounded to four decimals is off by, the precision of doc examples
 pub const EPSILON_4DP: f64 = 5e-5;
 
-/// Allowance added to [`EPSILON_6DP`] and [`EPSILON_4DP`] for floating-point noise, at a value
-/// exactly halfway between two written ones: four units in the last place of values up to 100,000
+/// Allowance added to each decimal-places bound for floating-point noise, at a value exactly
+/// halfway between two written ones: four units in the last place of values up to 100,000
 pub const TIE_ALLOWANCE: f64 = 1e-10;

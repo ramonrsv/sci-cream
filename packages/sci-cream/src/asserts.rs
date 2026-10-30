@@ -3,30 +3,38 @@
 //! | Assertion                               | Passes within                                   |
 //! | --------------------------------------- | ----------------------------------------------- |
 //! | `assert_eq_flt!(a, b)`                  | [`MAX_ULPS`] units in the last place            |
+//! | `assert_eq_8dp!(a, b)`                  | [`EPSILON_8DP`], half a unit in the 8th decimal |
 //! | `assert_eq_6dp!(a, b)`                  | [`EPSILON_6DP`], half a unit in the 6th decimal |
 //! | `assert_eq_4dp!(a, b)`                  | [`EPSILON_4DP`], half a unit in the 4th decimal |
 //! | `assert_eq_flt!(a, b, epsilon = 0.006)` | 0.006                                           |
 //!
 //! `assert_eq_flt!` is for a value expected exactly, up to floating-point noise. `assert_eq_6dp!`
-//! is for a value correctly rounded to six decimals, the default for tests, and `assert_eq_4dp!`
-//! for one rounded to four, as in doc examples; both add [`TIE_ALLOWANCE`], so a value exactly
-//! halfway between two written ones passes either way. Any other bound, such as a stated agreement,
-//! is an explicit `epsilon`. The decimal-places forms and `epsilon` accept any [`AbsDiffEq`] type,
-//! such as a whole composition. The boolean forms, [`eq_flt`], [`eq_6dp`], [`eq_4dp`], and
+//! is for a value correctly rounded to six decimals, the default for tests, `assert_eq_8dp!` for
+//! one rounded to eight, such as a solver's output, and `assert_eq_4dp!` for one rounded to four,
+//! as in doc examples; all three add [`TIE_ALLOWANCE`], so a value exactly halfway between two
+//! written ones passes either way. Any other bound, such as a stated agreement, is an explicit
+//! `epsilon`. The decimal-places forms and `epsilon` accept any [`AbsDiffEq`] type, such as a whole
+//! composition. The boolean forms, [`eq_flt`], [`eq_8dp`], [`eq_6dp`], [`eq_4dp`], and
 //! [`eq_epsilon`], serve predicates.
 
 use std::fmt::Debug;
 
 use approx::{AbsDiffEq, UlpsEq};
 
-use crate::constants::tolerances::{EPSILON_4DP, EPSILON_6DP, MAX_ULPS, TIE_ALLOWANCE};
-pub use crate::{assert_eq_4dp, assert_eq_6dp, assert_eq_flt};
+use crate::constants::tolerances::{EPSILON_4DP, EPSILON_6DP, EPSILON_8DP, MAX_ULPS, TIE_ALLOWANCE};
+pub use crate::{assert_eq_4dp, assert_eq_6dp, assert_eq_8dp, assert_eq_flt};
 
 /// Whether `a` and `b` are the same value up to floating-point noise: within [`MAX_ULPS`] units
 /// in the last place, or within [`f64::EPSILON`] near zero, where those shrink without bound
 #[must_use]
 pub fn eq_flt(a: f64, b: f64) -> bool {
     a.ulps_eq(&b, f64::EPSILON, MAX_ULPS)
+}
+
+/// Whether `a` and `b` agree to eight decimals: within [`EPSILON_8DP`] plus [`TIE_ALLOWANCE`]
+#[must_use]
+pub fn eq_8dp<T: AbsDiffEq<Epsilon = f64> + ?Sized>(a: &T, b: &T) -> bool {
+    eq_epsilon(a, b, EPSILON_8DP + TIE_ALLOWANCE)
 }
 
 /// Whether `a` and `b` agree to six decimals: within [`EPSILON_6DP`] plus [`TIE_ALLOWANCE`]
@@ -115,6 +123,35 @@ macro_rules! assert_eq_flt {
                 ::core::stringify!($epsilon),
                 ")"
             ),
+            given,
+            expected,
+        );
+    }};
+}
+
+/// Asserts that a value, correctly rounded to eight decimals, is the expected one; see [`eq_8dp`]
+///
+/// The values may be of any [`AbsDiffEq`] type, such as whole compositions.
+///
+/// ```
+/// use sci_cream::asserts::assert_eq_8dp;
+///
+/// assert_eq_8dp!(2.0 / 3.0, 0.666_666_67);
+/// ```
+///
+/// A last digit rounded the wrong way fails:
+///
+/// ```should_panic
+/// # use sci_cream::asserts::assert_eq_8dp;
+/// assert_eq_8dp!(2.0 / 3.0, 0.666_666_66);
+/// ```
+#[macro_export]
+macro_rules! assert_eq_8dp {
+    ($given:expr, $expected:expr $(,)?) => {{
+        let (given, expected) = (&$given, &$expected);
+        $crate::asserts::check_debug(
+            $crate::asserts::eq_8dp(given, expected),
+            ::core::concat!("assert_eq_8dp!(", ::core::stringify!($given), ", ", ::core::stringify!($expected), ")"),
             given,
             expected,
         );
@@ -225,6 +262,28 @@ mod tests {
     #[should_panic(expected = "assert_eq_flt!(0.78, 0.11 / 0.14, epsilon = 0.005) failed")]
     fn assert_eq_flt_rejects_past_epsilon() {
         assert_eq_flt!(0.78, 0.11 / 0.14, epsilon = 0.005);
+    }
+
+    #[test]
+    fn assert_eq_8dp_passes_within_half_a_unit_in_the_eighth_decimal() {
+        assert_eq_8dp!(2.0 / 3.0, 0.666_666_67);
+        assert_eq_8dp!(1.000_000_004, 1.0);
+        assert_eq_8dp!(&Composition::new().energy(100.000_000_004), &Composition::new().energy(100.0));
+    }
+
+    #[test]
+    fn assert_eq_8dp_passes_a_tie_either_way() {
+        let tie: f64 = 123.456_789_125;
+        for given in [f64::from_bits(tie.to_bits() - 4), tie, ulps_up(tie, 4)] {
+            assert_eq_8dp!(given, 123.456_789_12);
+            assert_eq_8dp!(given, 123.456_789_13);
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "assert_eq_8dp!(1.000_000_006, 1.0) failed")]
+    fn assert_eq_8dp_rejects_past_half_a_unit_in_the_eighth_decimal() {
+        assert_eq_8dp!(1.000_000_006, 1.0);
     }
 
     #[test]

@@ -300,7 +300,7 @@ impl<K: PartialEq + Copy> KeyCeiling<K> {
 
     /// Creates a ceiling with a tight default and no overrides.
     pub(crate) const fn exact() -> Self {
-        Self::new(EPSILON_4DP)
+        Self::new(EPSILON_8DP)
     }
 
     /// Overrides the ceiling for a single key, e.g. for a value with known wide variance.

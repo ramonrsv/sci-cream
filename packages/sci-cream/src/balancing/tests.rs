@@ -70,8 +70,8 @@ const ABS_PAC_PRIORITY_RUNS: &[LabeledRun] = &[
 /// Denominator floor for relative-error reporting, so zero / near-zero targets stay finite.
 const BALANCE_REL_FLOOR: f64 = 0.1;
 
-/// Minimum relative-error change (pp) for a priority effect to count as real rather than
-/// [`EPSILON_4DP`] noise — actual shifts are far larger, so this catches a priority no-op.
+/// Minimum relative-error change (pp) for a priority effect to count as real rather than solver
+/// noise — actual shifts are far larger, so this catches a priority no-op.
 const MIN_PRIORITY_EFFECT_PP: f64 = 6.0;
 
 /// Helper function to extract compositions from a light recipe, via [`EMBEDDED_DB`] lookups
@@ -251,7 +251,7 @@ impl Default for Epsilons {
     fn default() -> Self {
         Self {
             amount: Some(EPSILON_6DP),
-            neg: Some(EPSILON_4DP),
+            neg: Some(EPSILON_8DP),
         }
     }
 }
@@ -1696,7 +1696,7 @@ fn nalgebra_allows_negative_amounts_while_nnls_does_not() {
     let nnls = balance_compositions_nnls(&comps, &BOOZY_DISPARATE_TARGETS, None, &[]).unwrap();
 
     assert_true!(nalgebra.iter().any(|(_, amount)| *amount < 0.0));
-    assert_true!(nnls.iter().all(|(_, amount)| *amount >= -EPSILON_4DP),);
+    assert_true!(nnls.iter().all(|(_, amount)| *amount >= 0.0));
 }
 
 /// An under-determined system (more ingredients than targets) has many exact solutions; both

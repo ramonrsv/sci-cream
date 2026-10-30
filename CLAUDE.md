@@ -159,6 +159,7 @@ are for testing `AbsDiffEq` impls themselves.
 - `assert_eq_flt!(a, b)` for a value expected exactly, up to floating-point noise (4 ULPs).
 - `assert_eq_6dp!(a, b)`, the default for tests, for a value correctly rounded to six decimals:
   within half a unit, plus noise at a tie. A value that misses gets more digits, not a looser check.
+- `assert_eq_8dp!(a, b)` for a computed value far more precise than six decimals, like a solver's.
 - `assert_eq_4dp!(a, b)` for doc examples, with values correctly rounded to four decimals.
 - Any other bound is stated, `assert_eq_flt!(a, b, epsilon = E)`, for a bound with a meaning of
   its own, such as agreement with a source. Never take a tolerance from how a literal is written.

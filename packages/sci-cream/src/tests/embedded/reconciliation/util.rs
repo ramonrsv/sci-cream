@@ -8,8 +8,11 @@ use crate::{
     composition::{CompKey, Composition},
     constants::density::{MixDensityParams, OTHER_DISSOLVED_SOLIDS, mixture_density, sugars::SUCROSE},
     error::Result,
-    tests::{embedded::variants::get_comp_by_name, util::relative_diff_percent},
+    tests::{asserts::EPSILON_8DP, embedded::variants::get_comp_by_name, util::relative_diff_percent},
 };
+
+/// Encodes an exact match, for a field transcribed from the listing rather than predicted
+pub(super) const EXACT_MATCH: f64 = EPSILON_8DP;
 
 /// Proximate analysis of an ingredient, per 100 g.
 ///

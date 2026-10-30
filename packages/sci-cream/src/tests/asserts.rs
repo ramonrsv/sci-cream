@@ -26,4 +26,4 @@ pub(crate) use approx::assert_abs_diff_eq;
 pub(crate) use approx::assert_abs_diff_ne;
 
 pub(crate) use crate::asserts::{assert_eq_4dp, assert_eq_6dp, assert_eq_flt, eq_6dp, eq_flt};
-pub(crate) use crate::constants::tolerances::{EPSILON_4DP, EPSILON_6DP};
+pub(crate) use crate::constants::tolerances::{EPSILON_6DP, EPSILON_8DP};
