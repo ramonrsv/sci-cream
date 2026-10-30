@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793394831553,
+  "lastUpdate": 1793394895005,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -651442,6 +651442,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1093.47,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f608f1535145257edebae9f4fb28b85bae5b8b3f",
+          "message": "Use assert_eq_flt! for default-tolerance asserts\n\nThe 19 assert_abs_diff_eq! calls at approx's default tolerance outside\nthe AbsDiffEq-impl tests become assert_eq_flt!(a, b): the dairy\nline-function tests, and the milk protein and micellar casein\nreconciliations.\n\nassert_eq_flt! passes within f64::EPSILON or 4 ULPs, whichever is\nlarger, so it is never tighter than approx's absolute f64::EPSILON.\nMeasured over every run, every value here is at most 1, so the checks\nloosen only at 0.5 and above: by at most 4x f64::EPSILON (8.9e-16) at\nthe three partition sums, which equal 1, and 2x elsewhere. This is the\nbound their comments describe, such as \"to within float rounding\".\nSmall values that differ by many ULPs, up to 1,728 at 0.015, still\npass through the f64::EPSILON floor.\n\ncomposition_from_combination_single compares whole compositions,\nwhich the 4-ULP default can't take until the structs implement\nUlpsEq, so it stays on approx for now.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T17:07:53-04:00",
+          "tree_id": "955bc1971b4931495c90e63bd514a572202da26d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f608f1535145257edebae9f4fb28b85bae5b8b3f"
+        },
+        "date": 1793394819743,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 763.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 932.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 701.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 869.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 711.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 880.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 683.64,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 852.09,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 685.21,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 853.65,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1093.46,
             "unit": "KB"
           },
           {
