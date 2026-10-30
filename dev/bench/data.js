@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793334458721,
+  "lastUpdate": 1793334693534,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -602559,6 +602559,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.11%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0463d48252fe68615061ef71ec314214671cde91",
+          "message": "Use assert_eq_flt! for stated-epsilon asserts\n\nEach assert_abs_diff_eq! that states an epsilon becomes\nassert_eq_flt!(a, b, epsilon = E), with the same bound: 55 calls in\nthe crate, and the README's copies of the lib.rs balancing example.\nThe tests of Ingredient's AbsDiffEq impl keep approx, since that is\nwhat they test.\n\nThe lib.rs example imports the macro from sci_cream::asserts, and\ntests::assets drops its approx import. The calls without an epsilon\nstay on approx for now: its default, an absolute f64::EPSILON,\ndiffers from 4 ULPs in both directions, so they need measuring first.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T23:52:34-04:00",
+          "tree_id": "03190eb9bb5d495e13e5fd5609d7f2d811f0e798",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0463d48252fe68615061ef71ec314214671cde91"
+        },
+        "date": 1793334646212,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 89647,
+            "range": "±2.05%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 755368,
+            "range": "±0.68%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 59562,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 496428,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
