@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793397334630,
+  "lastUpdate": 1793397354676,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -703867,6 +703867,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/f608f1535145257edebae9f4fb28b85bae5b8b3f"
         },
         "date": 1793394771155,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1169.8,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 353.91,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1882.59,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 577.6,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 626.04,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2090.96,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "28dce0b8cb99c1f19fdc7f18074f93564122ca53",
+          "message": "Add assert_eq_8dp! and tighten EPSILON_4DP's uses\n\nMost of EPSILON_4DP's remaining uses measured far below six decimals,\nand nothing sat between the 4-ULP default and 6dp for computed values\nsuch as a solver's outputs. EPSILON_8DP (5e-9), with eq_8dp and\nassert_eq_8dp!, fills that gap: half a unit in the eighth decimal plus\nthe tie allowance, like the other decimal-places forms. 10dp would\nfail KeyCeiling::exact()'s measured 1.0e-10, and its 5e-11 would be\nsmaller than the 1e-10 tie allowance itself.\n\nMeasured over every test run, from EPSILON_4DP (5e-5):\n\n- The reconciliation ceilings for fields transcribed from a listing,\n  152 checks with a worst of 7.6e-14 %, take EXACT_MATCH, an 8dp\n  ceiling shared by both reconciliations.\n- KeyCeiling::exact(), 5,132 balancing checks with a worst of\n  1.0e-10 pp, and the balancing helper's negative-amount floor take\n  EPSILON_8DP.\n- The nnls test checks its amounts are >= 0.0, exactly; none of them\n  is negative.\n\nThe asset fixture comparisons keep 4dp: their COMP_* fixtures are\nwritten to four decimals, and every asset's own test checks each key\nat 6dp. EPSILON_4DP is now used only by assert_eq_4dp!. CLAUDE.md\nlists the new form.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T17:47:08-04:00",
+          "tree_id": "d19d6512b92596c328f9d1fe93ed4e5af012d2cf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/28dce0b8cb99c1f19fdc7f18074f93564122ca53"
+        },
+        "date": 1793397278486,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
