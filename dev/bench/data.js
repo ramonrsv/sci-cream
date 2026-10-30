@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793394899538,
+  "lastUpdate": 1793394904826,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -605188,6 +605188,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.22%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f608f1535145257edebae9f4fb28b85bae5b8b3f",
+          "message": "Use assert_eq_flt! for default-tolerance asserts\n\nThe 19 assert_abs_diff_eq! calls at approx's default tolerance outside\nthe AbsDiffEq-impl tests become assert_eq_flt!(a, b): the dairy\nline-function tests, and the milk protein and micellar casein\nreconciliations.\n\nassert_eq_flt! passes within f64::EPSILON or 4 ULPs, whichever is\nlarger, so it is never tighter than approx's absolute f64::EPSILON.\nMeasured over every run, every value here is at most 1, so the checks\nloosen only at 0.5 and above: by at most 4x f64::EPSILON (8.9e-16) at\nthe three partition sums, which equal 1, and 2x elsewhere. This is the\nbound their comments describe, such as \"to within float rounding\".\nSmall values that differ by many ULPs, up to 1,728 at 0.015, still\npass through the f64::EPSILON floor.\n\ncomposition_from_combination_single compares whole compositions,\nwhich the 4-ULP default can't take until the structs implement\nUlpsEq, so it stays on approx for now.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T17:07:53-04:00",
+          "tree_id": "955bc1971b4931495c90e63bd514a572202da26d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f608f1535145257edebae9f4fb28b85bae5b8b3f"
+        },
+        "date": 1793394821050,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 48218,
+            "range": "±1.24%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 426553,
+            "range": "±2.68%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32641,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 333518,
+            "range": "±1.37%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
