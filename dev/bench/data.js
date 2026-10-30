@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793333968565,
+  "lastUpdate": 1793333979957,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -98813,6 +98813,204 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 559,
             "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "314505b673bb59c6f0c22d6735e54a76591a2eea",
+          "message": "Unify float assertions in sci_cream::asserts\n\nThe crate compared floats with loose helpers: docs::assert_eq_float!\nat 0.001 for doc examples, and assert_eq_flt_test! and are_eq_flt_test\nat 1e-4 for tests. They give way to a public sci_cream::asserts module,\nwhose assertions each state a tolerance:\n\n- assert_eq_flt!(a, b), for an f64 expected exactly: within 4 ULPs.\n- assert_eq_6dp!(a, b), the default for tests, for a value correctly\n  rounded to six decimals: within half a unit (5e-7), plus\n  TIE_ALLOWANCE (1e-10) for noise at a tie.\n- assert_eq_4dp!(a, b), the same at four decimals, for doc examples.\n- assert_eq_flt!(a, b, epsilon = E), for any other bound.\n\nAll but the first take any AbsDiffEq type, such as a whole composition,\nand eq_flt, eq_6dp, eq_4dp, and eq_epsilon are their predicates.\nassert_eq_flt! is as long as its siblings, so stacked assertions align,\nand code using the old assert_eq_float! stops compiling rather than\nsilently checking 4 ULPs.\n\nThe tolerances live in the new constants::tolerances, as does\nCOMPOSITION_EPSILON. KEYS_EPSILON (1e-6) and TESTS_EPSILON (1e-4) merge\ninto EPSILON_6DP (5e-7) and EPSILON_4DP (5e-5).\n\nEach of the 329 call sites was sized from its measured worst case, and\nnone checks looser than before. Expected values gain the digits their\nassertion states, most tests' to six decimals and docs' to four. A few\nwere off in a digit the old tolerances hid, such as the Water in\nAlcoholSpec's example, 66.6958 rather than 66.6959, and Whey in a dairy\ntest, 1.526_999 rather than 1.527.\n\nThe README's examples follow lib.rs's crate docs again, with\nCompKey-qualified keys, Named composite sources, and the PAC docs\nlink. CLAUDE.md describes the assertions, and TODO.md's loose-epsilon\nitem moves to Completed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T23:38:39-04:00",
+          "tree_id": "423ad6e129f2a27b1a153e6865e5631b7709bd63",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/314505b673bb59c6f0c22d6735e54a76591a2eea"
+        },
+        "date": 1793333919522,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3750,
+            "range": "± 151",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 141632,
+            "range": "± 1070",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2224,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 137634,
+            "range": "± 1920",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4071,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 3971,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4062,
+            "range": "± 200",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4072,
+            "range": "± 205",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4131,
+            "range": "± 377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4190,
+            "range": "± 261",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 4185,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 4153,
+            "range": "± 152",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 94001,
+            "range": "± 1365",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 95479,
+            "range": "± 1422",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 185692891,
+            "range": "± 1816735",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 500847,
+            "range": "± 5051",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 5589,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 46,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 5316,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 84400,
+            "range": "± 3647",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 81670,
+            "range": "± 1578",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 133442,
+            "range": "± 1304",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 130804,
+            "range": "± 1814",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 299049,
+            "range": "± 1013",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 11516,
+            "range": "± 427",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 559,
+            "range": "± 4",
             "unit": "ns/iter"
           },
           {
