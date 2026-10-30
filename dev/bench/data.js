@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793397630381,
+  "lastUpdate": 1793397671069,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -99814,6 +99814,204 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 7,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "28dce0b8cb99c1f19fdc7f18074f93564122ca53",
+          "message": "Add assert_eq_8dp! and tighten EPSILON_4DP's uses\n\nMost of EPSILON_4DP's remaining uses measured far below six decimals,\nand nothing sat between the 4-ULP default and 6dp for computed values\nsuch as a solver's outputs. EPSILON_8DP (5e-9), with eq_8dp and\nassert_eq_8dp!, fills that gap: half a unit in the eighth decimal plus\nthe tie allowance, like the other decimal-places forms. 10dp would\nfail KeyCeiling::exact()'s measured 1.0e-10, and its 5e-11 would be\nsmaller than the 1e-10 tie allowance itself.\n\nMeasured over every test run, from EPSILON_4DP (5e-5):\n\n- The reconciliation ceilings for fields transcribed from a listing,\n  152 checks with a worst of 7.6e-14 %, take EXACT_MATCH, an 8dp\n  ceiling shared by both reconciliations.\n- KeyCeiling::exact(), 5,132 balancing checks with a worst of\n  1.0e-10 pp, and the balancing helper's negative-amount floor take\n  EPSILON_8DP.\n- The nnls test checks its amounts are >= 0.0, exactly; none of them\n  is negative.\n\nThe asset fixture comparisons keep 4dp: their COMP_* fixtures are\nwritten to four decimals, and every asset's own test checks each key\nat 6dp. EPSILON_4DP is now used only by assert_eq_4dp!. CLAUDE.md\nlists the new form.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T17:47:08-04:00",
+          "tree_id": "d19d6512b92596c328f9d1fe93ed4e5af012d2cf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/28dce0b8cb99c1f19fdc7f18074f93564122ca53"
+        },
+        "date": 1793397608065,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3661,
+            "range": "± 117",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 146766,
+            "range": "± 4316",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2203,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 140627,
+            "range": "± 2287",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4171,
+            "range": "± 115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 3983,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 3990,
+            "range": "± 107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4023,
+            "range": "± 99",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 3967,
+            "range": "± 147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4141,
+            "range": "± 89",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 4267,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 4254,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 92685,
+            "range": "± 2987",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 95517,
+            "range": "± 1030",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 189143248,
+            "range": "± 1901549",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 531283,
+            "range": "± 10197",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 5617,
+            "range": "± 91",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 46,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 5318,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 85875,
+            "range": "± 3098",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 82452,
+            "range": "± 1442",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 135567,
+            "range": "± 4639",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 133442,
+            "range": "± 934",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 299308,
+            "range": "± 627",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 11503,
+            "range": "± 146",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 560,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 11,
             "range": "± 0",
             "unit": "ns/iter"
           }
