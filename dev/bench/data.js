@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793394335699,
+  "lastUpdate": 1793394474633,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -561985,6 +561985,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 577.13,
             "range": "16.72",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "77f124da0d627e41e8b4d22a7083d7a7187ac4ad",
+          "message": "Check composition constants' relations in doctests\n\nEach constant in constants/composition.rs that is derived from other\nconstants, or sourced and corroborated by them, is now a literal, with\na doctest checking the relation right after the sentence stating it.\nRustdoc showed a computed constant as `= _; // 0.37499999999999994f64`,\nhiding both value and derivation; now the value and its check render\ntogether.\n\n- Partitions are exact assert_eq! sums, the derived term last: the\n  MSNF, caseinate, MPI, MCI, and both cocoa triples, the whole egg's\n  yolks and whites, and the egg splits. Whey and casein, neither\n  derived from the other, each carry their sum.\n- The yolk's shares of whole-egg solids and protein are rounded to\n  six places, checked with assert_eq_6dp!. Egg white's protein in\n  solids agrees with its ratio to 0.006, tightened from 0.01, and the\n  yolk's exactly.\n- The cocoa ash and carbohydrate orderings and the fiber bound move to\n  the constants they constrain; fiber and sugars must fit inside the\n  smaller carbohydrate fraction.\n\nFive unit tests move into these doctests, none dropping an assertion.\nSTD_PROTEIN_IN_MSNF's literal, 0.375, is one ULP off its old computed\nvalue, so the composition docs' energy example uses assert_eq_flt!,\nand the rounded egg splits move the whole-egg protein test to 5.607_84\nand 4.392_16. CLAUDE.md gains the convention as \"Derived constants\".\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T16:50:13-04:00",
+          "tree_id": "87cfbeaff68bbe45f83195e935d768b89e4ba019",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/77f124da0d627e41e8b4d22a7083d7a7187ac4ad"
+        },
+        "date": 1793394431854,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 29,
+            "range": "3.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 39.38,
+            "range": "8.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 37.88,
+            "range": "2.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1768,
+            "range": "63.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 229.5,
+            "range": "10.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 238.38,
+            "range": "3.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 244.75,
+            "range": "4.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 12717.38,
+            "range": "501.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 726,
+            "range": "37.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 33.25,
+            "range": "1.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 36.25,
+            "range": "1.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 26.38,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 26.5,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 97.25,
+            "range": "4.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 49.75,
+            "range": "2.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 37.63,
+            "range": "1.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.72,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 469.13,
+            "range": "7.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 502.13,
+            "range": "11.19",
             "unit": "ms"
           }
         ]
