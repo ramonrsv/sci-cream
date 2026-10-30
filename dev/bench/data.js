@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793395279542,
+  "lastUpdate": 1793395699443,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -562792,6 +562792,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 502.13,
             "range": "11.19",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f608f1535145257edebae9f4fb28b85bae5b8b3f",
+          "message": "Use assert_eq_flt! for default-tolerance asserts\n\nThe 19 assert_abs_diff_eq! calls at approx's default tolerance outside\nthe AbsDiffEq-impl tests become assert_eq_flt!(a, b): the dairy\nline-function tests, and the milk protein and micellar casein\nreconciliations.\n\nassert_eq_flt! passes within f64::EPSILON or 4 ULPs, whichever is\nlarger, so it is never tighter than approx's absolute f64::EPSILON.\nMeasured over every run, every value here is at most 1, so the checks\nloosen only at 0.5 and above: by at most 4x f64::EPSILON (8.9e-16) at\nthe three partition sums, which equal 1, and 2x elsewhere. This is the\nbound their comments describe, such as \"to within float rounding\".\nSmall values that differ by many ULPs, up to 1,728 at 0.015, still\npass through the f64::EPSILON floor.\n\ncomposition_from_combination_single compares whole compositions,\nwhich the 4-ULP default can't take until the structs implement\nUlpsEq, so it stays on approx for now.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T17:07:53-04:00",
+          "tree_id": "955bc1971b4931495c90e63bd514a572202da26d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f608f1535145257edebae9f4fb28b85bae5b8b3f"
+        },
+        "date": 1793395624811,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 48.63,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 59.75,
+            "range": "4.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 64.25,
+            "range": "2.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2541,
+            "range": "26.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 389.25,
+            "range": "3.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 392.88,
+            "range": "8.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 417.88,
+            "range": "3.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19490.88,
+            "range": "39.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 969.38,
+            "range": "11.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 57.25,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.88,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 43.38,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.38,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 134.63,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 95.75,
+            "range": "4.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.29,
+            "range": "0.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 44.11,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 676.75,
+            "range": "6.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 738.63,
+            "range": "13.79",
             "unit": "ms"
           }
         ]
