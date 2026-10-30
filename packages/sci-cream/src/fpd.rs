@@ -750,7 +750,7 @@ mod tests {
         let diff = (whole_fpd - half_fpd * 2.0).abs();
 
         // Significant divergence at higher PAC values, see docs for [`get_fpd_from_pac_polynomial`]
-        assert_eq_6dp!(diff, 1.8);
+        assert_eq_8dp!(diff, 1.8);
     }
 
     /// [`get_fpd_from_pac_polynomial`] above verifies the sanity of [`get_fpd_from_pac_polynomial`]
@@ -770,7 +770,7 @@ mod tests {
     #[test]
     fn get_pac_from_fpd_polynomial() {
         for (expected_pac, fpd) in PAC_TO_FPD_TABLE_POLY.as_slice() {
-            assert_eq_6dp!(super::get_pac_from_fpd_polynomial(*fpd, None).unwrap(), *expected_pac);
+            assert_eq_8dp!(super::get_pac_from_fpd_polynomial(*fpd, None).unwrap(), *expected_pac);
         }
     }
 
@@ -868,7 +868,7 @@ mod tests {
                             .unwrap();
 
                     assert_eq_flt!(pac_total, total);
-                    assert_eq_6dp!(pac_net, net);
+                    assert_eq_8dp!(pac_net, net);
                 }
             }
         }
@@ -913,7 +913,7 @@ mod tests {
         for hardness in 0..=98 {
             let pac = pac_from_curve_point_default(f64::from(hardness), TARGET_SERVING_TEMP_14C).unwrap();
             let comp = comp_with_sugars_pac(pac);
-            assert_eq_6dp!(
+            assert_eq_8dp!(
                 FPD::compute_from_composition(comp).unwrap().get(FpdKey::HardnessAt14C),
                 f64::from(hardness)
             );
@@ -1642,7 +1642,7 @@ mod tests {
 
         for (expected_x_axis, target_fpd) in &[(5.0, -2.9), (7.5, -2.98), (77.5, -14.885)] {
             let x_axis = super::get_x_axis_at_fpd(curve, *target_fpd).unwrap();
-            assert_eq_6dp!(x_axis, *expected_x_axis);
+            assert_eq_8dp!(x_axis, *expected_x_axis);
         }
     }
 

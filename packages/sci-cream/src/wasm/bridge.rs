@@ -683,7 +683,7 @@ pub(crate) mod tests {
 
         let comp = bridge.calculate_recipe_composition(&balanced, None).unwrap();
         for (key, target) in &targets {
-            assert_eq_6dp!(key.value(&comp), *target);
+            assert_eq_8dp!(key.value(&comp), *target);
         }
 
         // An explicit `total_amount` scales the balanced recipe to that mass
@@ -695,7 +695,7 @@ pub(crate) mod tests {
 
         let scaled_comp = bridge.calculate_recipe_composition(&scaled, None).unwrap();
         for (key, target) in &targets {
-            assert_eq_6dp!(key.value(&scaled_comp), *target);
+            assert_eq_8dp!(key.value(&scaled_comp), *target);
         }
     }
 
@@ -737,7 +737,7 @@ pub(crate) mod tests {
 
         let deevap_comp = bridge.calculate_recipe_composition(&deevaporated, None).unwrap();
         for key in CompKey::iter() {
-            assert_eq_6dp!(deevap_comp.get(key), post_evap.get(key));
+            assert_eq_8dp!(deevap_comp.get(key), post_evap.get(key));
         }
     }
 
@@ -768,7 +768,7 @@ pub(crate) mod tests {
         let balanced_post = bridge.calculate_recipe_composition(&balanced, Some(150.0)).unwrap();
 
         // The recipe already meets its own targets, so balancing hits each to solver precision.
-        assert_eq_6dp!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
+        assert_eq_8dp!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
         assert_eq_flt!(balanced_post.get(CompKey::TotalSolids), post.get(CompKey::TotalSolids));
         assert_eq_flt!(balanced_post.get_ratio(RatioKey::AbsPAC), post.get_ratio(RatioKey::AbsPAC));
     }
@@ -938,7 +938,7 @@ pub(crate) mod tests {
             .unwrap();
         let comp = bridge.calculate_recipe_composition(&balanced, None).unwrap();
         for (key, target) in &targets {
-            assert_eq_6dp!(key.value(&comp), *target);
+            assert_eq_8dp!(key.value(&comp), *target);
         }
     }
 

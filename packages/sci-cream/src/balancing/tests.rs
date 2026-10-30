@@ -840,21 +840,21 @@ fn balanced_mix(ingredients: &[&str], targets: &[(BalanceKey, f64)]) -> Composit
 fn balance_abv_target_round_trip() {
     // `ABV` translates to its exact-inverse `Alcohol` proxy.
     let mix = balanced_mix(BOOZY_ING, &[(CompKey::ABV.into(), 4.0), (CompKey::MilkFat.into(), 8.0)]);
-    assert_eq_6dp!(mix.get(CompKey::ABV), 4.0);
+    assert_eq_8dp!(mix.get(CompKey::ABV), 4.0);
 }
 
 #[test]
 fn balance_fpd_target_round_trip() {
     // `FPD` translates to `AbsPAC` via the exact table inverse.
     let mix = balanced_mix(SORBET_ING, &[(FpdKey::FPD.into(), -2.5)]);
-    assert_eq_6dp!(FPD::compute_from_composition(mix).unwrap().fpd, -2.5);
+    assert_eq_8dp!(FPD::compute_from_composition(mix).unwrap().fpd, -2.5);
 }
 
 #[test]
 fn balance_serving_temp_target_round_trip() {
     // `ServingTemp` translates to `AbsNetPAC` via the exact table inverse.
     let mix = balanced_mix(SORBET_ING, &[(FpdKey::ServingTemp.into(), -13.0)]);
-    assert_eq_6dp!(FPD::compute_from_composition(mix).unwrap().serving_temp, -13.0);
+    assert_eq_8dp!(FPD::compute_from_composition(mix).unwrap().serving_temp, -13.0);
 }
 
 #[test]
@@ -862,7 +862,7 @@ fn balance_hardness_target_round_trip() {
     // `HardnessAt14C` translates to `AbsNetPAC` via the exact table inverse. Integer targets
     // are recovered exactly; non-integer targets may have non-zero linearization residuals.
     let mix = balanced_mix(SORBET_ING, &[(FpdKey::HardnessAt14C.into(), 72.0)]);
-    assert_eq_6dp!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.0);
+    assert_eq_8dp!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.0);
 
     let mix = balanced_mix(SORBET_ING, &[(FpdKey::HardnessAt14C.into(), 72.5)]);
     assert_eq_flt!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.5, epsilon = 0.01);
@@ -1462,7 +1462,7 @@ fn balance_recovers_stabilizers_per_water_ratio() {
 
     let balanced =
         balance_compositions_nnls(&comps, &[(RatioKey::StabilizersPerWater.into(), target)], None, &[]).unwrap();
-    assert_eq_6dp!(achieved_value(&balanced, RatioKey::StabilizersPerWater), target);
+    assert_eq_8dp!(achieved_value(&balanced, RatioKey::StabilizersPerWater), target);
 }
 
 #[test]
@@ -1471,7 +1471,7 @@ fn balance_recovers_abs_pac_ratio() {
     let target = achieved_value(&equal_parts_reference(&comps), RatioKey::AbsPAC);
 
     let balanced = balance_compositions_nnls(&comps, &[(RatioKey::AbsPAC.into(), target)], None, &[]).unwrap();
-    assert_eq_6dp!(achieved_value(&balanced, RatioKey::AbsPAC), target);
+    assert_eq_8dp!(achieved_value(&balanced, RatioKey::AbsPAC), target);
 }
 
 /// A realistically-proportioned chocolate reference over [`DAIRY_COCOA_ING`]: enough cocoa to
@@ -1493,7 +1493,7 @@ fn balance_recovers_abs_net_pac_ratio() {
     assert_gt!(target, 0.0); // guard: the reference keeps NetPAC (and so the ratio) positive
 
     let balanced = balance_compositions_nnls(&comps, &[(RatioKey::AbsNetPAC.into(), target)], None, &[]).unwrap();
-    assert_eq_6dp!(achieved_value(&balanced, RatioKey::AbsNetPAC), target);
+    assert_eq_8dp!(achieved_value(&balanced, RatioKey::AbsNetPAC), target);
 }
 
 #[test]
@@ -1512,8 +1512,8 @@ fn balance_recovers_net_pac_distinct_from_total_pac() {
     let targets = [(CompKey::TotalPAC.into(), total_pac), (CompKey::NetPAC.into(), net_pac)];
     let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
 
-    assert_eq_6dp!(achieved_value(&balanced, CompKey::TotalPAC), total_pac);
-    assert_eq_6dp!(achieved_value(&balanced, CompKey::NetPAC), net_pac);
+    assert_eq_8dp!(achieved_value(&balanced, CompKey::TotalPAC), total_pac);
+    assert_eq_8dp!(achieved_value(&balanced, CompKey::NetPAC), net_pac);
 }
 
 #[test]
@@ -1536,7 +1536,7 @@ fn balance_recovers_emulsifiers_per_fat_ratio() {
 
     let balanced =
         balance_compositions_nnls(&comps, &[(RatioKey::EmulsifiersPerFat.into(), target)], None, &[]).unwrap();
-    assert_eq_6dp!(achieved_value(&balanced, RatioKey::EmulsifiersPerFat), target);
+    assert_eq_8dp!(achieved_value(&balanced, RatioKey::EmulsifiersPerFat), target);
 }
 
 #[test]
@@ -1552,7 +1552,7 @@ fn balance_recovers_stabilizers_per_water_with_extensive_target() {
 
     let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
 
-    assert_eq_6dp!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
+    assert_eq_8dp!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
     assert_eq_flt!(achieved_value(&balanced, RatioKey::StabilizersPerWater), ratio);
 }
 
@@ -1569,7 +1569,7 @@ fn balance_recovers_emulsifiers_per_fat_with_extensive_target() {
 
     let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
 
-    assert_eq_6dp!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
+    assert_eq_8dp!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
     assert_eq_flt!(achieved_value(&balanced, RatioKey::EmulsifiersPerFat), ratio);
 }
 
@@ -1650,7 +1650,7 @@ fn ratio_reweighting_recovers_despite_off_seed() {
         RATIO_REWEIGHT_TOLERANCE,
         "seed denominator should be materially off, so the reweighting pass is exercised"
     );
-    assert_eq_6dp!(achieved_value(&balanced, RatioKey::StabilizersPerWater), target);
+    assert_eq_8dp!(achieved_value(&balanced, RatioKey::StabilizersPerWater), target);
 }
 
 #[test]
@@ -2961,7 +2961,7 @@ fn balance_holds_locked_composition_fixed() {
 
     // Targets are met — the locked flavouring's contribution is counted toward them, not ignored.
     for (key, target) in &targets {
-        assert_eq_6dp!(achieved_value(&balanced, *key), *target);
+        assert_eq_8dp!(achieved_value(&balanced, *key), *target);
     }
 }
 

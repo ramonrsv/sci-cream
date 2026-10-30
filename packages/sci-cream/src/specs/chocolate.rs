@@ -860,7 +860,7 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq_6dp!(&comp, &*COMP_VALRHONA_COCOA_POWDER);
+        assert_eq_8dp!(&comp, &*COMP_VALRHONA_COCOA_POWDER);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_70_DARK_CHOCOLATE_STR: &str = r#"{
@@ -1356,7 +1356,7 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq_6dp!(&comp, &*COMP_LINDT_70_DARK_CHOCOLATE);
+        assert_eq_8dp!(&comp, &*COMP_LINDT_70_DARK_CHOCOLATE);
     }
 
     #[test]

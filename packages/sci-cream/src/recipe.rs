@@ -562,7 +562,7 @@ mod tests {
         }
 
         let comp = scaled_balanced.calculate_composition().unwrap();
-        assert_eq_6dp!(comp.get(CompKey::MilkFat), 16.0);
+        assert_eq_8dp!(comp.get(CompKey::MilkFat), 16.0);
         assert_eq_flt!(comp.get(CompKey::MSNF), 11.0);
 
         let scale = target_total / original_total;
@@ -720,9 +720,9 @@ mod tests {
             .calculate_composition()
             .unwrap();
 
-        assert_eq_6dp!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
-        assert_eq_6dp!(balanced_post.get(CompKey::Water), post.get(CompKey::Water));
-        assert_eq_6dp!(balanced_post.get_ratio(RatioKey::AbsPAC), post.get_ratio(RatioKey::AbsPAC));
+        assert_eq_8dp!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
+        assert_eq_8dp!(balanced_post.get(CompKey::Water), post.get(CompKey::Water));
+        assert_eq_8dp!(balanced_post.get_ratio(RatioKey::AbsPAC), post.get_ratio(RatioKey::AbsPAC));
     }
 
     #[test]
@@ -771,7 +771,7 @@ mod tests {
 
         let deevap_comp = deevaporated.calculate_composition().unwrap();
         for key in CompKey::iter() {
-            assert_eq_6dp!(deevap_comp.get(key), post.get(key));
+            assert_eq_8dp!(deevap_comp.get(key), post.get(key));
         }
     }
 

@@ -3179,7 +3179,7 @@ pub(crate) mod tests {
 
                 assert_eq_flt!(comp.get(CompKey::MSNF), 90.0);
                 assert_eq_flt!(comp.get(CompKey::OtherSNFS), 0.0);
-                assert_eq_6dp!(comp.get(CompKey::Water), 9.0);
+                assert_eq_8dp!(comp.get(CompKey::Water), 9.0);
             }
         }
     }
@@ -3196,8 +3196,8 @@ pub(crate) mod tests {
                 .unwrap();
 
             assert_eq_flt!(comp.get(CompKey::MSNF), 90.0);
-            assert_eq_6dp!(comp.get(CompKey::OtherSNFS), other_carbohydrates);
-            assert_eq_6dp!(comp.get(CompKey::Water), 9.0 - other_carbohydrates);
+            assert_eq_8dp!(comp.get(CompKey::OtherSNFS), other_carbohydrates);
+            assert_eq_8dp!(comp.get(CompKey::Water), 9.0 - other_carbohydrates);
         }
     }
 
@@ -3320,7 +3320,7 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq_6dp!(comp.get(CompKey::Lactose), 95.0 * STD_LACTOSE_IN_WPI);
+        assert_eq_8dp!(comp.get(CompKey::Lactose), 95.0 * STD_LACTOSE_IN_WPI);
         assert_eq_flt!(comp.get(CompKey::MilkProteins), 95.0 * STD_PROTEIN_IN_WPI);
     }
 
@@ -3400,7 +3400,7 @@ pub(crate) mod tests {
 
         assert_eq_flt!(comp.get(CompKey::Lactose), 0.1902);
         assert_eq_flt!(comp.get(CompKey::Casein), 91.4);
-        assert_eq_6dp!(comp.get(CompKey::MilkMinerals), 3.5098);
+        assert_eq_8dp!(comp.get(CompKey::MilkMinerals), 3.5098);
         assert_eq!(comp.solids.milk.others, 0.0);
     }
 
@@ -3420,7 +3420,7 @@ pub(crate) mod tests {
 
         assert_eq_flt!(comp.get(CompKey::Lactose), 0.19);
         assert_eq_flt!(comp.get(CompKey::MilkMinerals), 95.0 * STD_MINERALS_IN_CASEINATE);
-        assert_eq_6dp!(comp.solids.milk.others, 3.01);
+        assert_eq_8dp!(comp.solids.milk.others, 3.01);
     }
 
     #[test]
@@ -3810,7 +3810,7 @@ pub(crate) mod tests {
         assert_eq_flt!(comp.get(CompKey::MilkMinerals), 0.8);
         assert_eq_flt!(comp.get(CompKey::MSNF), 8.88);
         assert_eq_flt!(comp.get(CompKey::Water), 87.92);
-        assert_eq_6dp!(comp.solids.milk.others, 0.0);
+        assert_eq_8dp!(comp.solids.milk.others, 0.0);
     }
 
     #[test]
@@ -3824,7 +3824,7 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq_6dp!(comp.get(CompKey::MilkMinerals), 0.62);
+        assert_eq_8dp!(comp.get(CompKey::MilkMinerals), 0.62);
         assert_eq_flt!(comp.get(CompKey::MSNF), 8.7);
         assert_eq_flt!(comp.get(CompKey::Water), 88.1);
         assert_eq!(comp.solids.milk.others, 0.0);
