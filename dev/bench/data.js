@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793333594660,
+  "lastUpdate": 1793333627069,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -601700,6 +601700,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.73%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "314505b673bb59c6f0c22d6735e54a76591a2eea",
+          "message": "Unify float assertions in sci_cream::asserts\n\nThe crate compared floats with loose helpers: docs::assert_eq_float!\nat 0.001 for doc examples, and assert_eq_flt_test! and are_eq_flt_test\nat 1e-4 for tests. They give way to a public sci_cream::asserts module,\nwhose assertions each state a tolerance:\n\n- assert_eq_flt!(a, b), for an f64 expected exactly: within 4 ULPs.\n- assert_eq_6dp!(a, b), the default for tests, for a value correctly\n  rounded to six decimals: within half a unit (5e-7), plus\n  TIE_ALLOWANCE (1e-10) for noise at a tie.\n- assert_eq_4dp!(a, b), the same at four decimals, for doc examples.\n- assert_eq_flt!(a, b, epsilon = E), for any other bound.\n\nAll but the first take any AbsDiffEq type, such as a whole composition,\nand eq_flt, eq_6dp, eq_4dp, and eq_epsilon are their predicates.\nassert_eq_flt! is as long as its siblings, so stacked assertions align,\nand code using the old assert_eq_float! stops compiling rather than\nsilently checking 4 ULPs.\n\nThe tolerances live in the new constants::tolerances, as does\nCOMPOSITION_EPSILON. KEYS_EPSILON (1e-6) and TESTS_EPSILON (1e-4) merge\ninto EPSILON_6DP (5e-7) and EPSILON_4DP (5e-5).\n\nEach of the 329 call sites was sized from its measured worst case, and\nnone checks looser than before. Expected values gain the digits their\nassertion states, most tests' to six decimals and docs' to four. A few\nwere off in a digit the old tolerances hid, such as the Water in\nAlcoholSpec's example, 66.6958 rather than 66.6959, and Whey in a dairy\ntest, 1.526_999 rather than 1.527.\n\nThe README's examples follow lib.rs's crate docs again, with\nCompKey-qualified keys, Named composite sources, and the PAC docs\nlink. CLAUDE.md describes the assertions, and TODO.md's loose-epsilon\nitem moves to Completed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T23:38:39-04:00",
+          "tree_id": "423ad6e129f2a27b1a153e6865e5631b7709bd63",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/314505b673bb59c6f0c22d6735e54a76591a2eea"
+        },
+        "date": 1793333552275,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 46026,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 444032,
+            "range": "±0.45%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31211,
+            "range": "±1.14%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 335643,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
