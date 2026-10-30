@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793333627069,
+  "lastUpdate": 1793333631982,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -647630,6 +647630,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1095.09,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "314505b673bb59c6f0c22d6735e54a76591a2eea",
+          "message": "Unify float assertions in sci_cream::asserts\n\nThe crate compared floats with loose helpers: docs::assert_eq_float!\nat 0.001 for doc examples, and assert_eq_flt_test! and are_eq_flt_test\nat 1e-4 for tests. They give way to a public sci_cream::asserts module,\nwhose assertions each state a tolerance:\n\n- assert_eq_flt!(a, b), for an f64 expected exactly: within 4 ULPs.\n- assert_eq_6dp!(a, b), the default for tests, for a value correctly\n  rounded to six decimals: within half a unit (5e-7), plus\n  TIE_ALLOWANCE (1e-10) for noise at a tie.\n- assert_eq_4dp!(a, b), the same at four decimals, for doc examples.\n- assert_eq_flt!(a, b, epsilon = E), for any other bound.\n\nAll but the first take any AbsDiffEq type, such as a whole composition,\nand eq_flt, eq_6dp, eq_4dp, and eq_epsilon are their predicates.\nassert_eq_flt! is as long as its siblings, so stacked assertions align,\nand code using the old assert_eq_float! stops compiling rather than\nsilently checking 4 ULPs.\n\nThe tolerances live in the new constants::tolerances, as does\nCOMPOSITION_EPSILON. KEYS_EPSILON (1e-6) and TESTS_EPSILON (1e-4) merge\ninto EPSILON_6DP (5e-7) and EPSILON_4DP (5e-5).\n\nEach of the 329 call sites was sized from its measured worst case, and\nnone checks looser than before. Expected values gain the digits their\nassertion states, most tests' to six decimals and docs' to four. A few\nwere off in a digit the old tolerances hid, such as the Water in\nAlcoholSpec's example, 66.6958 rather than 66.6959, and Whey in a dairy\ntest, 1.526_999 rather than 1.527.\n\nThe README's examples follow lib.rs's crate docs again, with\nCompKey-qualified keys, Named composite sources, and the PAC docs\nlink. CLAUDE.md describes the assertions, and TODO.md's loose-epsilon\nitem moves to Completed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T23:38:39-04:00",
+          "tree_id": "423ad6e129f2a27b1a153e6865e5631b7709bd63",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/314505b673bb59c6f0c22d6735e54a76591a2eea"
+        },
+        "date": 1793333566091,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 933.94,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 702.86,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.31,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 881.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 686.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.26,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.07,
             "unit": "KB"
           },
           {
