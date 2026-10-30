@@ -575,9 +575,9 @@ mod tests {
         let ys: Vec<f64> = FRESH_DAIRY_DENSITIES.iter().map(|(_, d)| *d).collect();
 
         let coeffs = polyfit(&xs, &ys, 2).unwrap();
-        assert_abs_diff_eq!(coeffs[2], FRESH_DAIRY_DENSITY_COEFFS[0], epsilon = 1e-10);
-        assert_abs_diff_eq!(coeffs[1], FRESH_DAIRY_DENSITY_COEFFS[1], epsilon = 1e-10);
-        assert_abs_diff_eq!(coeffs[0], FRESH_DAIRY_DENSITY_COEFFS[2], epsilon = 1e-10);
+        assert_eq_flt!(coeffs[2], FRESH_DAIRY_DENSITY_COEFFS[0], epsilon = 1e-10);
+        assert_eq_flt!(coeffs[1], FRESH_DAIRY_DENSITY_COEFFS[1], epsilon = 1e-10);
+        assert_eq_flt!(coeffs[0], FRESH_DAIRY_DENSITY_COEFFS[2], epsilon = 1e-10);
     }
 
     #[test]
@@ -587,7 +587,7 @@ mod tests {
         // eprintln!("{:>8}  {:>8}  {:>8}  {:>8}", "fat%", "actual", "fit", "error");
         for (fat, actual) in &FRESH_DAIRY_DENSITIES {
             let fit = a * fat.powi(2) + b * fat + c;
-            assert_abs_diff_eq!(*actual, fit, epsilon = 0.0018);
+            assert_eq_flt!(*actual, fit, epsilon = 0.0018);
             // eprintln!("{fat:>8.1}  {actual:>8.4}  {fit:>8.4}  {:>+8.4}", actual - fit);
         }
     }
@@ -679,7 +679,7 @@ mod tests {
     #[test]
     fn abv_to_abw_inverts_abw_to_abv() {
         for abw in [3.0, 12.5, 17.3, 33.3, 40.7, 62.7, 88.9] {
-            assert_abs_diff_eq!(super::abv_to_abw(super::abw_to_abv(abw)), abw, epsilon = 1e-9);
+            assert_eq_flt!(super::abv_to_abw(super::abw_to_abv(abw)), abw, epsilon = 1e-9);
         }
     }
 
@@ -712,7 +712,7 @@ mod tests {
         ];
 
         for (abw, abv_external) in published {
-            assert_abs_diff_eq!(super::abw_to_abv(abw), abv_external, epsilon = 0.1);
+            assert_eq_flt!(super::abw_to_abv(abw), abv_external, epsilon = 0.1);
         }
     }
 
@@ -745,7 +745,7 @@ mod tests {
         ];
 
         for (abv, abw_external) in published {
-            assert_abs_diff_eq!(super::abv_to_abw(abv), abw_external, epsilon = 0.1);
+            assert_eq_flt!(super::abv_to_abw(abv), abw_external, epsilon = 0.1);
         }
     }
 
@@ -776,7 +776,7 @@ mod tests {
         // Both paths interpolate the same bracket, so converting to ABW and reading the density
         // there reproduces the direct ABV lookup, up to the round-off of rebuilding ABW.
         for abv in [0.0, 12.5, 33.0, 35.0, 40.0, 43.0, 45.0, 90.0, 100.0] {
-            assert_abs_diff_eq!(
+            assert_eq_flt!(
                 ethanol_solution_density_by_abv(abv),
                 ethanol_solution_density_by_abw(super::abv_to_abw(abv)),
                 epsilon = COMPOSITION_EPSILON
@@ -856,7 +856,7 @@ mod tests {
         let coeffs = SVD::new(matrix, true, true).solve(&rhs, 1e-12).unwrap();
 
         for (fit_coeff, expected) in coeffs.iter().zip(DAIRY_DENSITY_COEFFS) {
-            assert_abs_diff_eq!(*fit_coeff, expected, epsilon = 1e-9);
+            assert_eq_flt!(*fit_coeff, expected, epsilon = 1e-9);
         }
     }
 
@@ -883,7 +883,7 @@ mod tests {
         let rhs = DVector::from_column_slice(&y);
         let specific_volume = SVD::new(matrix, true, true).solve(&rhs, 1e-12).unwrap()[0];
 
-        assert_abs_diff_eq!(1.0 / specific_volume, dairy::MSNF, epsilon = 1e-9);
+        assert_eq_flt!(1.0 / specific_volume, dairy::MSNF, epsilon = 1e-9);
     }
 
     #[test]

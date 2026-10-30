@@ -189,5 +189,5 @@ fn micellar_casein_line_overestimates_usdec_lactose_by_its_shortfall() {
     let snf = USDEC.snf();
     let overestimate = lactose_in_snf(USDEC.protein / snf, SolidsSource::MicellarCasein) - USDEC.lactose / snf;
     let shortfall = 1.0 - (USDEC.protein + USDEC.lactose + USDEC.ash) / snf;
-    assert_abs_diff_eq!(overestimate, shortfall, epsilon = 0.0002);
+    assert_eq_flt!(overestimate, shortfall, epsilon = 0.0002);
 }

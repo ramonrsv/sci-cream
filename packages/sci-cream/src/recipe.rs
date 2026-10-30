@@ -472,7 +472,7 @@ mod tests {
 
         assert_eq!(mix_comp.get(CompKey::MilkFat), 1.0);
         assert_eq!(mix_comp.get(CompKey::MSNF), 8.82 / 2.0);
-        assert_abs_diff_eq!(mix_comp.get(CompKey::MilkSNFS), 4.0131 / 2.0, epsilon = COMPOSITION_EPSILON);
+        assert_eq_flt!(mix_comp.get(CompKey::MilkSNFS), 4.0131 / 2.0, epsilon = COMPOSITION_EPSILON);
         assert_eq!(mix_comp.get(CompKey::MilkSolids), 10.82 / 2.0);
 
         assert_eq!(mix_comp.get(CompKey::TotalSolids) - mix_comp.get(CompKey::MilkSolids), 50.0);
@@ -500,7 +500,7 @@ mod tests {
         let recipe = Recipe::from_const_recipe(None, &[("Fructose", 10.0), ("Salt", 0.54)], &EMBEDDED_DB).unwrap();
         let mix_properties = recipe.calculate_mix_properties().unwrap();
 
-        assert_abs_diff_eq!(mix_properties.get(CompKey::Water.into()), 0.0, epsilon = COMPOSITION_EPSILON);
+        assert_eq_flt!(mix_properties.get(CompKey::Water.into()), 0.0, epsilon = COMPOSITION_EPSILON);
         assert_true!(mix_properties.get(FpdKey::FPD.into()).is_nan());
         assert_true!(mix_properties.get(FpdKey::ServingTemp.into()).is_nan());
         assert_true!(mix_properties.get(FpdKey::HardnessAt14C.into()).is_nan());
@@ -674,7 +674,7 @@ mod tests {
             .evaporate(50.0 / total * 100.0)
             .unwrap();
 
-        assert_abs_diff_eq!(recipe.calculate_composition().unwrap(), manual, epsilon = COMPOSITION_EPSILON);
+        assert_eq_flt!(recipe.calculate_composition().unwrap(), manual, epsilon = COMPOSITION_EPSILON);
     }
 
     #[test]
@@ -691,7 +691,7 @@ mod tests {
         let base = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
         let with_zero = base.clone().with_evaporation(0.0);
 
-        assert_abs_diff_eq!(
+        assert_eq_flt!(
             with_zero.calculate_composition().unwrap(),
             base.calculate_composition().unwrap(),
             epsilon = COMPOSITION_EPSILON

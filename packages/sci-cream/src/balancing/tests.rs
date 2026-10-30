@@ -279,7 +279,7 @@ fn assert_balance_compositions<F, P>(
 
     let amount_sum: f64 = balanced.iter().map(|(_, amount)| *amount).sum();
     if let Some(epsilon) = epsilons.amount {
-        assert_abs_diff_eq!(amount_sum, 1.0, epsilon = epsilon);
+        assert_eq_flt!(amount_sum, 1.0, epsilon = epsilon);
     }
 
     for (idx, (_comp, amount)) in balanced.iter().enumerate() {
@@ -865,7 +865,7 @@ fn balance_hardness_target_round_trip() {
     assert_eq_6dp!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.0);
 
     let mix = balanced_mix(SORBET_ING, &[(FpdKey::HardnessAt14C.into(), 72.5)]);
-    assert_abs_diff_eq!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.5, epsilon = 0.01);
+    assert_eq_flt!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.5, epsilon = 0.01);
 }
 
 #[test]
@@ -2907,7 +2907,7 @@ fn ratio_band_pins_a_single_source_ratio() {
     let comps = comps_from_names(DAIRY_COCOA_ING);
     let (min, max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
     assert_eq_flt!(min, max);
-    assert_abs_diff_eq!(min, 16.67 / 80.33, epsilon = 1e-3);
+    assert_eq_flt!(min, 16.67 / 80.33, epsilon = 1e-3);
 }
 
 #[test]
@@ -2954,7 +2954,7 @@ fn balance_holds_locked_composition_fixed() {
     // The locked composition keeps its exact fraction; amounts are non-negative and sum to 1.
     assert_eq_flt!(balanced[3].1, 0.006);
     let sum: f64 = balanced.iter().map(|(_, amount)| *amount).sum();
-    assert_abs_diff_eq!(sum, 1.0, epsilon = EPSILON_4DP);
+    assert_eq_flt!(sum, 1.0, epsilon = EPSILON_4DP);
     for (_, amount) in &balanced {
         assert_gt!(*amount, 0.0);
     }

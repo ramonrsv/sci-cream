@@ -447,9 +447,7 @@ typically a tricky recipe to balance and requires careful tradeoffs to meet comm
 
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use approx::assert_abs_diff_eq;
-#
-# use sci_cream::{asserts::assert_eq_4dp, docs::recipe_for_balancing};
+# use sci_cream::{asserts::{assert_eq_4dp, assert_eq_flt}, docs::recipe_for_balancing};
 # use sci_cream::{
 #   CompKey::*, RatioKey::*, FpdKey::*,
 #   IngredientDatabase, Recipe, BalanceKey, Priority::{self, *}};
@@ -462,7 +460,7 @@ typically a tricky recipe to balance and requires careful tradeoffs to meet comm
 #     assert_eq!(recipe.lines.len(), expected.len());
 #     for (line, (name, amount)) in recipe.lines.iter().zip(expected.iter()) {
 #         assert_eq!(line.ingredient.name.as_str(), *name);
-#         assert_abs_diff_eq!(line.amount, *amount, epsilon = 0.5);
+#         assert_eq_flt!(line.amount, *amount, epsilon = 0.5);
 #     }
 # };
 #
@@ -500,11 +498,11 @@ assert_recipe_matches(
 );
 
 let balanced_properties = balanced.calculate_mix_properties()?;
-assert_abs_diff_eq!(balanced_properties.total_amount, 1000.0, epsilon = 0.1);
+assert_eq_flt!(balanced_properties.total_amount, 1000.0, epsilon = 0.1);
 assert_eq_4dp!(balanced_properties.get(ServingTemp.into()), -13.0991);
 
 for (key, value, _) in targets.iter().filter(|(key, _, _)| not_total_fats(key)) {
-    assert_abs_diff_eq!(balanced_properties.get((*key).into()), *value, epsilon = 0.7);
+    assert_eq_flt!(balanced_properties.get((*key).into()), *value, epsilon = 0.7);
 }
 
 // With disparate targets, some non-priority ones can drift to accommodate the priorities

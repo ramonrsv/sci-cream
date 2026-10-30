@@ -695,7 +695,7 @@ mod tests {
         ] {
             for (pac, expected_fpd) in ref_table {
                 let fpd = get_fpd_from_pac_inter(*pac).unwrap();
-                assert_abs_diff_eq!(fpd, expected_fpd, epsilon = 0.001);
+                assert_eq_flt!(fpd, expected_fpd, epsilon = 0.001);
             }
         }
     }
@@ -710,7 +710,7 @@ mod tests {
         ] {
             for (pac, expected_fpd) in ref_table {
                 let fpd = get_fpd_from_pac_poly(*pac).unwrap();
-                assert_abs_diff_eq!(fpd, expected_fpd, epsilon = 0.35);
+                assert_eq_flt!(fpd, expected_fpd, epsilon = 0.35);
             }
         }
     }
@@ -731,7 +731,7 @@ mod tests {
             let fpd_poly = get_fpd_from_pac_poly(pac).unwrap();
             let fpd_inter = get_fpd_from_pac_inter(pac).unwrap();
 
-            assert_abs_diff_eq!(fpd_poly, fpd_inter, epsilon = epsilon);
+            assert_eq_flt!(fpd_poly, fpd_inter, epsilon = epsilon);
         }
     }
 
@@ -740,7 +740,7 @@ mod tests {
         let whole_fpd = get_fpd_from_pac_inter(200.0).unwrap();
         let half_fpd = get_fpd_from_pac_inter(100.0).unwrap();
         let diff = (whole_fpd - half_fpd * 2.0).abs();
-        assert_abs_diff_eq!(diff, 0.745, epsilon = 0.01);
+        assert_eq_flt!(diff, 0.745, epsilon = 0.01);
     }
 
     #[test]
@@ -750,7 +750,7 @@ mod tests {
         let diff = (whole_fpd - half_fpd * 2.0).abs();
 
         // Significant divergence at higher PAC values, see docs for [`get_fpd_from_pac_polynomial`]
-        assert_abs_diff_eq!(diff, 1.8, epsilon = 0.01);
+        assert_eq_flt!(diff, 1.8, epsilon = 0.01);
     }
 
     /// [`get_fpd_from_pac_polynomial`] above verifies the sanity of [`get_fpd_from_pac_polynomial`]
@@ -897,7 +897,7 @@ mod tests {
     fn compute_pac_from_fpd_curve_point_inverts_hardness_reading() {
         for comp in [*REF_COMP, *REF_COMP_WITH_ALCOHOL, *REF_COMP_WITH_HF] {
             let hardness = FPD::compute_from_composition(comp).unwrap().get(FpdKey::HardnessAt14C);
-            assert_abs_diff_eq!(
+            assert_eq_flt!(
                 pac_from_curve_point_default(hardness, TARGET_SERVING_TEMP_14C).unwrap(),
                 pac_per_water(&comp).1,
                 epsilon = 0.012 // `get_x_axis_at_fpd` residual; measured max ≈0.0113 (with alcohol)
@@ -1135,7 +1135,7 @@ mod tests {
             let step =
                 compute_fpd_curve_step_goff_hartel(*REF_COMP, ref_step.frozen_water, &get_fpd_from_pac_inter).unwrap();
 
-            assert_abs_diff_eq!(step, ref_step, epsilon = 0.27);
+            assert_eq_flt!(step, ref_step, epsilon = 0.27);
         }
     }
 
@@ -1145,7 +1145,7 @@ mod tests {
             let step =
                 compute_fpd_curve_step_goff_hartel(*REF_COMP, ref_step.frozen_water, &get_fpd_from_pac_poly).unwrap();
 
-            assert_abs_diff_eq!(step, ref_step, epsilon = 0.31);
+            assert_eq_flt!(step, ref_step, epsilon = 0.31);
         }
     }
 
@@ -1159,7 +1159,7 @@ mod tests {
             )
             .unwrap();
 
-            assert_abs_diff_eq!(step, ref_step, epsilon = 0.005);
+            assert_eq_flt!(step, ref_step, epsilon = 0.005);
         }
     }
 
@@ -1230,7 +1230,7 @@ mod tests {
             .iter()
             .zip(REF_COMP_FREEZING_CURVE_MODIFIED_GOFF_HARTEL_CORVITTO.iter())
         {
-            assert_abs_diff_eq!(get_fpd_from_pac_poly(*pac_slt).unwrap(), ref_step.fpd_sa, epsilon = 0.05);
+            assert_eq_flt!(get_fpd_from_pac_poly(*pac_slt).unwrap(), ref_step.fpd_sa, epsilon = 0.05);
         }
     }
 
@@ -1248,7 +1248,7 @@ mod tests {
             // PAC before calculating FPD, as explained in the docs [`get_fpd_from_pac_polynomial`]
             let epsilon = if ref_step.pac_exc_hf <= 177.0 { 0.31 } else { 1.4 };
 
-            assert_abs_diff_eq!(&step, ref_step, epsilon = epsilon);
+            assert_eq_flt!(&step, ref_step, epsilon = epsilon);
         }
     }
 
@@ -1262,7 +1262,7 @@ mod tests {
             )
             .unwrap();
 
-            assert_abs_diff_eq!(&step, ref_step, epsilon = 0.3);
+            assert_eq_flt!(&step, ref_step, epsilon = 0.3);
         }
     }
 
@@ -1290,7 +1290,7 @@ mod tests {
             .unwrap();
 
             assert_eq_flt!(step_with_hf.hf, (10.0 / ref_step.water) * 100.0);
-            assert_abs_diff_eq!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
+            assert_eq_flt!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
             assert_eq_flt!(step_with_hf.fpd_inc_hf, step_pac_less_hf.fpd_exc_hf);
         }
     }
@@ -1316,7 +1316,7 @@ mod tests {
             .unwrap();
 
             assert_eq_flt!(step_with_hf.hf, (30.0 / ref_step.water) * 100.0);
-            assert_abs_diff_eq!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
+            assert_eq_flt!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
             assert_true!(step_with_hf.fpd_inc_hf.is_nan());
         }
     }
@@ -1445,7 +1445,7 @@ mod tests {
             (CompKey::TotalPAC, 26.7),
             (CompKey::PACsgr, 26.7),
         ]);
-        assert_abs_diff_eq!(
+        assert_eq_flt!(
             super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC)).unwrap(),
             -11.0,
             epsilon = 0.25
@@ -1474,7 +1474,7 @@ mod tests {
             (CompKey::TotalPAC, 40.9),
             (CompKey::PACsgr, 40.9),
         ]);
-        assert_abs_diff_eq!(
+        assert_eq_flt!(
             super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC)).unwrap(),
             -18.0,
             epsilon = 0.25
@@ -1510,7 +1510,7 @@ mod tests {
             (CompKey::PACsgr, 37.3),
             (CompKey::HF, 9.7),
         ]);
-        assert_abs_diff_eq!(
+        assert_eq_flt!(
             super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF)).unwrap(),
             -11.0,
             epsilon = 0.3
@@ -1546,7 +1546,7 @@ mod tests {
             (CompKey::PACsgr, 50.9),
             (CompKey::HF, 9.7),
         ]);
-        assert_abs_diff_eq!(
+        assert_eq_flt!(
             super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF)).unwrap(),
             -18.0,
             epsilon = 0.3
@@ -1567,11 +1567,11 @@ mod tests {
 
         let pac = CORVITTO_REF_COMP_11ST.pac.sugars;
         let computed_serving_temp = super::get_serving_temp_from_pac_corvitto(pac).unwrap();
-        assert_abs_diff_eq!(computed_serving_temp, -11.0, epsilon = 0.2);
+        assert_eq_flt!(computed_serving_temp, -11.0, epsilon = 0.2);
 
         let pac = CORVITTO_REF_COMP_18ST.pac.sugars;
         let computed_serving_temp = super::get_serving_temp_from_pac_corvitto(pac).unwrap();
-        assert_abs_diff_eq!(computed_serving_temp, -18.0, epsilon = 0.2);
+        assert_eq_flt!(computed_serving_temp, -18.0, epsilon = 0.2);
     }
 
     #[test]
@@ -1584,7 +1584,7 @@ mod tests {
 
             let fpd_curve_step_at_xx_fw =
                 compute_fpd_curve_step_goff_hartel(comp, 68.25, &get_fpd_from_pac_poly).unwrap();
-            assert_abs_diff_eq!(fpd_curve_step_at_xx_fw.fpd_total, expected_serving_temp, epsilon = 0.4);
+            assert_eq_flt!(fpd_curve_step_at_xx_fw.fpd_total, expected_serving_temp, epsilon = 0.4);
         }
     }
 
@@ -1598,7 +1598,7 @@ mod tests {
 
             let fpd_curve_step_at_xx_fw =
                 compute_fpd_curve_step_modified_goff_hartel_corvitto(comp, 70.0, &get_fpd_from_pac_poly).unwrap();
-            assert_abs_diff_eq!(fpd_curve_step_at_xx_fw.fpd_exc_hf, expected_serving_temp, epsilon = 0.4);
+            assert_eq_flt!(fpd_curve_step_at_xx_fw.fpd_exc_hf, expected_serving_temp, epsilon = 0.4);
         }
     }
 
@@ -1620,7 +1620,7 @@ mod tests {
             let is_hf_18st = ref_comp.get(CompKey::HF) > 0.0 && expected_serving_temp < -12.0;
             let epsilon = if is_hf_18st { 2.0 } else { 0.6 };
 
-            assert_abs_diff_eq!(fpd_curve_step_at_xx_fw.fpd_inc_hf, expected_serving_temp, epsilon = epsilon);
+            assert_eq_flt!(fpd_curve_step_at_xx_fw.fpd_inc_hf, expected_serving_temp, epsilon = epsilon);
         }
     }
 

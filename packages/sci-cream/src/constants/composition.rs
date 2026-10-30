@@ -1064,7 +1064,7 @@ mod tests {
         assert_eq!(egg::STD_PROTEIN_IN_EGG_YOLK_SOLIDS, egg::STD_PROTEIN_IN_EGG_YOLK / egg::STD_SOLIDS_IN_EGG_YOLK);
 
         // White: within ~0.6 pp of protein / solids (0.78 vs 0.11 / 0.14 ≈ 0.7857).
-        assert_abs_diff_eq!(
+        assert_eq_flt!(
             egg::STD_PROTEIN_IN_EGG_WHITE_SOLIDS,
             egg::STD_PROTEIN_IN_EGG_WHITE / egg::STD_SOLIDS_IN_EGG_WHITE,
             epsilon = 0.01

@@ -317,7 +317,7 @@ pub(crate) mod tests {
 
         for key in crate::composition::CompKey::iter() {
             let (evap, fix) = (evaporated.get(key), fixture.get(key));
-            assert_abs_diff_eq!(evap, fix, epsilon = 0.13);
+            assert_eq_flt!(evap, fix, epsilon = 0.13);
             assert!(relative_diff_percent(evap, fix) < 0.1);
         }
     }
@@ -336,7 +336,7 @@ pub(crate) mod tests {
         let fixture_comp = fixture.calculate_composition().unwrap();
         for key in crate::composition::CompKey::iter() {
             let (dc, fc) = (deevap_comp.get(key), fixture_comp.get(key));
-            assert_abs_diff_eq!(dc, fc, epsilon = 0.13);
+            assert_eq_flt!(dc, fc, epsilon = 0.13);
             assert!(relative_diff_percent(dc, fc) < 0.1);
         }
 
@@ -348,7 +348,7 @@ pub(crate) mod tests {
                 .map(|line| line.amount)
                 .unwrap()
         };
-        assert_abs_diff_eq!(amount_of("Skim Milk"), 153.55, epsilon = 0.5);
-        assert_abs_diff_eq!(amount_of("Skimmed Milk Powder"), 61.45, epsilon = 0.5);
+        assert_eq_flt!(amount_of("Skim Milk"), 153.55, epsilon = 0.5);
+        assert_eq_flt!(amount_of("Skimmed Milk Powder"), 61.45, epsilon = 0.5);
     }
 }

@@ -974,14 +974,14 @@ mod tests {
     #[test]
     fn evaporate_zero_is_identity() {
         let c = evaporate_test_comp();
-        assert_abs_diff_eq!(c.evaporate(0.0).unwrap(), c, epsilon = COMPOSITION_EPSILON);
+        assert_eq_flt!(c.evaporate(0.0).unwrap(), c, epsilon = COMPOSITION_EPSILON);
     }
 
     #[test]
     fn evaporate_to_exactly_available_water_is_dry() {
         // Removing all 80g of water per 100g is allowed and yields a fully dry composition.
         let evaporated = evaporate_test_comp().evaporate(80.0).unwrap();
-        assert_abs_diff_eq!(evaporated.get(CompKey::Water), 0.0, epsilon = COMPOSITION_EPSILON);
+        assert_eq_flt!(evaporated.get(CompKey::Water), 0.0, epsilon = COMPOSITION_EPSILON);
     }
 
     #[test]

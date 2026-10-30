@@ -354,7 +354,6 @@ pub(crate) static REF_B_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyL
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
-    use approx::assert_abs_diff_eq;
     use strum::IntoEnumIterator;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
@@ -434,7 +433,7 @@ mod tests {
         let rehydrated_comp = rehydrated.calculate_composition().unwrap();
         for key in CompKey::iter() {
             let (rehydrated_val, pre_val) = (rehydrated_comp.get(key), pre_comp.get(key));
-            assert_abs_diff_eq!(rehydrated_val, pre_val, epsilon = 0.11);
+            assert_eq_flt!(rehydrated_val, pre_val, epsilon = 0.11);
             assert!(relative_diff_percent(rehydrated_val, pre_val) < 0.1);
         }
     }

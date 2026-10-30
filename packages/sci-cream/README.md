@@ -459,11 +459,11 @@ assert_recipe_matches(
 );
 
 let balanced_properties = balanced.calculate_mix_properties()?;
-assert_abs_diff_eq!(balanced_properties.total_amount, 1000.0, epsilon = 0.1);
+assert_eq_flt!(balanced_properties.total_amount, 1000.0, epsilon = 0.1);
 assert_eq_4dp!(balanced_properties.get(ServingTemp.into()), -13.0991);
 
 for (key, value, _) in targets.iter().filter(|(key, _, _)| not_total_fats(key)) {
-    assert_abs_diff_eq!(balanced_properties.get((*key).into()), *value, epsilon = 0.7);
+    assert_eq_flt!(balanced_properties.get((*key).into()), *value, epsilon = 0.7);
 }
 
 // With disparate targets, some non-priority ones can drift to accommodate the priorities

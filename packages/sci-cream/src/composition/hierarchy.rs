@@ -619,20 +619,12 @@ mod tests {
 
         // MSNF splits exactly into its two siblings for every dairy ingredient.
         for milk in &*DAIRY_COMPS {
-            assert_abs_diff_eq!(
-                milk.get(MSNF),
-                milk.get(MilkSugars) + milk.get(MilkSNFS),
-                epsilon = COMPOSITION_EPSILON
-            );
+            assert_eq_flt!(milk.get(MSNF), milk.get(MilkSugars) + milk.get(MilkSNFS), epsilon = COMPOSITION_EPSILON);
         }
 
         // Milk protein splits exactly into casein and whey for every dairy ingredient.
         for milk in &*DAIRY_COMPS {
-            assert_abs_diff_eq!(
-                milk.get(MilkProteins),
-                milk.get(Casein) + milk.get(Whey),
-                epsilon = COMPOSITION_EPSILON
-            );
+            assert_eq_flt!(milk.get(MilkProteins), milk.get(Casein) + milk.get(Whey), epsilon = COMPOSITION_EPSILON);
         }
 
         // On an ordinary milk, the sugars are a proper subset of MSNF
