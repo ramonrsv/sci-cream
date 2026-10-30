@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793335147189,
+  "lastUpdate": 1793335513676,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -560371,6 +560371,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 754.13,
             "range": "20.67",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0463d48252fe68615061ef71ec314214671cde91",
+          "message": "Use assert_eq_flt! for stated-epsilon asserts\n\nEach assert_abs_diff_eq! that states an epsilon becomes\nassert_eq_flt!(a, b, epsilon = E), with the same bound: 55 calls in\nthe crate, and the README's copies of the lib.rs balancing example.\nThe tests of Ingredient's AbsDiffEq impl keep approx, since that is\nwhat they test.\n\nThe lib.rs example imports the macro from sci_cream::asserts, and\ntests::assets drops its approx import. The calls without an epsilon\nstay on approx for now: its default, an absolute f64::EPSILON,\ndiffers from 4 ULPs in both directions, so they need measuring first.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T23:52:34-04:00",
+          "tree_id": "03190eb9bb5d495e13e5fd5609d7f2d811f0e798",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0463d48252fe68615061ef71ec314214671cde91"
+        },
+        "date": 1793335440621,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 44.38,
+            "range": "2.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 53.63,
+            "range": "2.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 60,
+            "range": "5.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2405.88,
+            "range": "75.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 370.5,
+            "range": "2.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 391.13,
+            "range": "4.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 409.63,
+            "range": "10.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19848,
+            "range": "186.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 919.75,
+            "range": "28.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.13,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.13,
+            "range": "2.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.5,
+            "range": "1.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.75,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 130.5,
+            "range": "4.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 82.5,
+            "range": "3.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.18,
+            "range": "0.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.9,
+            "range": "0.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 638.63,
+            "range": "3.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 702.5,
+            "range": "18.91",
             "unit": "ms"
           }
         ]
