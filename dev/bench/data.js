@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793334743795,
+  "lastUpdate": 1793334750942,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -677669,6 +677669,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.32,
             "range": "0.51",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0463d48252fe68615061ef71ec314214671cde91",
+          "message": "Use assert_eq_flt! for stated-epsilon asserts\n\nEach assert_abs_diff_eq! that states an epsilon becomes\nassert_eq_flt!(a, b, epsilon = E), with the same bound: 55 calls in\nthe crate, and the README's copies of the lib.rs balancing example.\nThe tests of Ingredient's AbsDiffEq impl keep approx, since that is\nwhat they test.\n\nThe lib.rs example imports the macro from sci_cream::asserts, and\ntests::assets drops its approx import. The calls without an epsilon\nstay on approx for now: its default, an absolute f64::EPSILON,\ndiffers from 4 ULPs in both directions, so they need measuring first.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-29T23:52:34-04:00",
+          "tree_id": "03190eb9bb5d495e13e5fd5609d7f2d811f0e798",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0463d48252fe68615061ef71ec314214671cde91"
+        },
+        "date": 1793334705538,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 46.35,
+            "range": "6.11",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.16,
+            "range": "0.75",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.15,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 124.5,
+            "range": "5.45",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.35,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 124.5,
+            "range": "5.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 42.31,
+            "range": "4.34",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.85,
+            "range": "0.22",
             "unit": "ms"
           }
         ]
