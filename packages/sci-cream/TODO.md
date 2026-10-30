@@ -8,8 +8,6 @@
 - [ ] Review 'USDA Sweetened Condensed Milk' ingredient, the 45% sucrose estimate may be incorrect.
       Also review all of the dairy ingredients that derive their sucrose content from this estimate.
 - [ ] Add optional `total_amount` input to `Bridge::validate_balancing_targets`, same as `balance`.
-- [ ] `assert_eq_flt_test`, with epsilon `TESTS_EPSILON = 0.0001`, is too loose for many use cases.
-      Consider tightening to `COMPOSITION_EPSILON` and/or adding a tighter/loser assert variant.
 - [ ] Switch the hard-coded FPD calculation `PacToFpdMethod` from `Interpolation` to `Polynomial`.
 - [ ] Add a 'Corn Syrup' definition, most likely an alias to a specific glucose syrup entry.
 - [ ] Review the 'Egg Yolk Lecithin' ingredient; it's still 100% lecithin, but food-grade
@@ -155,6 +153,8 @@
 
 ## Completed
 
+- [x] `assert_eq_flt_test`, with epsilon `TESTS_EPSILON = 0.0001`, is too loose for many use cases.
+      Consider tightening to `COMPOSITION_EPSILON` and/or adding a tighter/loser assert variant.
 - [x] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [x] Add support for milk concentrates, e.g. ultrafiltered milk, with lactose and minerals along
       protein lines, as McSweeney et al.'s (2020) MPCs show, per the `@todo` on `DairySimpleSpec`.

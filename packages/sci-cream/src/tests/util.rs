@@ -80,9 +80,6 @@ pub(crate) fn assert_f64_fields_ne_zero<T: Iterable>(iterable: &T) {
     }
 }
 
-/// [`AssertKeys`] tolerance: one unit in the sixth decimal, the finest its tables are written to
-pub(crate) const KEYS_EPSILON: f64 = 1e-6;
-
 /// Asserts keyed values against a table of `(key, value)` rows, reporting every mismatch at once.
 ///
 /// Rows follow the keys' declaration order, so every table reads the same way. A mismatch prints
@@ -104,7 +101,7 @@ pub(crate) trait AssertKeys {
         format!("{key_type}::{key:?}")
     }
 
-    /// Asserts each listed key within [`KEYS_EPSILON`], and every unlisted key exactly zero
+    /// Asserts each listed key to six decimals, see [`eq_6dp`], and every unlisted key exactly zero
     #[track_caller]
     fn assert_all_keys(&self, expected: &[(Self::Key, f64)]) {
         assert_declaration_order::<Self>(expected);
@@ -120,7 +117,7 @@ pub(crate) trait AssertKeys {
         assert_no_mismatches(&mismatches, Self::keys().count(), "keys");
     }
 
-    /// Asserts each listed key within [`KEYS_EPSILON`], leaving unlisted keys unchecked
+    /// Asserts each listed key to six decimals, see [`eq_6dp`], leaving unlisted keys unchecked
     #[track_caller]
     fn assert_keys(&self, expected: &[(Self::Key, f64)]) {
         assert_declaration_order::<Self>(expected);
@@ -181,7 +178,7 @@ fn assert_declaration_order<A: AssertKeys + ?Sized>(rows: &[(A::Key, f64)]) {
 
 /// The corrected row for `key`, if `actual` misses the listed `value`
 fn listed_mismatch<A: AssertKeys + ?Sized>(key: A::Key, value: f64, actual: f64) -> Option<String> {
-    (!actual.abs_diff_eq(&value, KEYS_EPSILON)).then(|| format!("{}, // expected {value:?}", row::<A>(key, actual)))
+    (!eq_6dp(&actual, &value)).then(|| format!("{}, // expected {value:?}", row::<A>(key, actual)))
 }
 
 /// `key` and `value` as a table row, e.g. `(CompKey::Casein, 67.178_732)`
@@ -303,7 +300,7 @@ impl<K: PartialEq + Copy> KeyCeiling<K> {
 
     /// Creates a ceiling with a tight default and no overrides.
     pub(crate) const fn exact() -> Self {
-        Self::new(TESTS_EPSILON)
+        Self::new(EPSILON_4DP)
     }
 
     /// Overrides the ceiling for a single key, e.g. for a value with known wide variance.
@@ -407,15 +404,18 @@ pub(crate) fn is_alias_for(alias: &str, name: &str) -> bool {
 mod tests {
     use struct_iterable::Iterable;
 
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::{assert_eq_flt, assert_true};
+
     use super::{
-        AssertKeys, KEYS_EPSILON, KeyCeiling, assert_comp_eq_percent, assert_compositions_consistent,
+        AssertKeys, EPSILON_6DP, KeyCeiling, assert_comp_eq_percent, assert_compositions_consistent,
         assert_f64_fields_eq_zero, assert_f64_fields_ne_zero, compare_compositions, literal, relative_diff_percent,
         root_mean_square, solids_fraction_diff_pp,
     };
-    use crate::composition::{CompKey, Composition, MilkProteins, RatioKey, Solids, SolidsBreakdown};
-    use crate::properties::MixProperties;
-    use crate::tests::asserts::shadow_asserts::assert_eq;
-    use crate::tests::asserts::{assert_eq_flt_test, assert_true};
+    use crate::{
+        composition::{CompKey, Composition, MilkProteins, RatioKey, Solids, SolidsBreakdown},
+        properties::MixProperties,
+    };
 
     #[derive(Iterable)]
     struct TwoFields {
@@ -439,58 +439,58 @@ mod tests {
 
     #[test]
     fn relative_diff_percent_is_zero_for_equal_values() {
-        assert_eq_flt_test!(relative_diff_percent(50.0, 50.0), 0.0);
+        assert_eq_flt!(relative_diff_percent(50.0, 50.0), 0.0);
     }
 
     #[test]
     fn relative_diff_percent_treats_two_zeroes_as_zero() {
-        assert_eq_flt_test!(relative_diff_percent(0.0, 0.0), 0.0);
+        assert_eq_flt!(relative_diff_percent(0.0, 0.0), 0.0);
     }
 
     #[test]
     fn relative_diff_percent_uses_larger_magnitude_as_denominator() {
         // An absolute difference of 10 over a larger magnitude of 110.
-        assert_eq_flt_test!(relative_diff_percent(100.0, 110.0), 10.0 / 110.0 * 100.0);
+        assert_eq_flt!(relative_diff_percent(100.0, 110.0), 10.0 / 110.0 * 100.0);
     }
 
     #[test]
     fn relative_diff_percent_is_independent_of_argument_order() {
-        assert_eq_flt_test!(relative_diff_percent(100.0, 110.0), relative_diff_percent(110.0, 100.0));
+        assert_eq_flt!(relative_diff_percent(100.0, 110.0), relative_diff_percent(110.0, 100.0));
     }
 
     #[test]
     fn relative_diff_percent_is_100_when_one_side_is_zero() {
-        assert_eq_flt_test!(relative_diff_percent(0.0, 5.0), 100.0);
-        assert_eq_flt_test!(relative_diff_percent(5.0, 0.0), 100.0);
+        assert_eq_flt!(relative_diff_percent(0.0, 5.0), 100.0);
+        assert_eq_flt!(relative_diff_percent(5.0, 0.0), 100.0);
     }
 
     // --- root_mean_square ---
 
     #[test]
     fn root_mean_square_of_empty_is_zero() {
-        assert_eq_flt_test!(root_mean_square(&[]), 0.0);
+        assert_eq_flt!(root_mean_square(&[]), 0.0);
     }
 
     #[test]
     fn root_mean_square_of_single_value_is_its_magnitude() {
-        assert_eq_flt_test!(root_mean_square(&[7.0]), 7.0);
-        assert_eq_flt_test!(root_mean_square(&[-7.0]), 7.0);
+        assert_eq_flt!(root_mean_square(&[7.0]), 7.0);
+        assert_eq_flt!(root_mean_square(&[-7.0]), 7.0);
     }
 
     #[test]
     fn root_mean_square_of_equal_values_is_that_value() {
-        assert_eq_flt_test!(root_mean_square(&[5.0, 5.0, 5.0]), 5.0);
+        assert_eq_flt!(root_mean_square(&[5.0, 5.0, 5.0]), 5.0);
     }
 
     #[test]
     fn root_mean_square_combines_squares() {
         // sqrt((3² + 4²) / 2) = sqrt(12.5)
-        assert_eq_flt_test!(root_mean_square(&[3.0, 4.0]), 12.5_f64.sqrt());
+        assert_eq_flt!(root_mean_square(&[3.0, 4.0]), 12.5_f64.sqrt());
     }
 
     #[test]
     fn root_mean_square_ignores_sign() {
-        assert_eq_flt_test!(root_mean_square(&[-3.0, 4.0]), root_mean_square(&[3.0, 4.0]));
+        assert_eq_flt!(root_mean_square(&[-3.0, 4.0]), root_mean_square(&[3.0, 4.0]));
     }
 
     // --- solids_fraction_diff_pp ---
@@ -498,51 +498,51 @@ mod tests {
     #[test]
     fn solids_fraction_diff_pp_is_zero_for_equal_fractions() {
         // Same value at same TS → 0; same fraction at different absolute values also → 0.
-        assert_eq_flt_test!(solids_fraction_diff_pp(5.0, 10.0, 5.0, 10.0), 0.0);
-        assert_eq_flt_test!(solids_fraction_diff_pp(5.0, 10.0, 50.0, 100.0), 0.0);
+        assert_eq_flt!(solids_fraction_diff_pp(5.0, 10.0, 5.0, 10.0), 0.0);
+        assert_eq_flt!(solids_fraction_diff_pp(5.0, 10.0, 50.0, 100.0), 0.0);
     }
 
     #[test]
     fn solids_fraction_diff_pp_reports_fraction_gap_times_100() {
         // 0.5 / 10 - 0.4 / 10 = 0.01 fraction gap → 1.00 pp
-        assert_eq_flt_test!(solids_fraction_diff_pp(0.5, 10.0, 0.4, 10.0), 1.0);
+        assert_eq_flt!(solids_fraction_diff_pp(0.5, 10.0, 0.4, 10.0), 1.0);
     }
 
     #[test]
     fn solids_fraction_diff_pp_is_independent_of_argument_order() {
         let forward = solids_fraction_diff_pp(0.5, 10.0, 0.4, 10.0);
         let reverse = solids_fraction_diff_pp(0.4, 10.0, 0.5, 10.0);
-        assert_eq_flt_test!(forward, reverse);
+        assert_eq_flt!(forward, reverse);
     }
 
     #[test]
     fn solids_fraction_diff_pp_tames_near_zero_degeneracy() {
         // Old relative metric reports 100% for 0 vs 0.08; the solids-fraction view at TS=9
         // correctly says "0.89 pp of solids" — small, as it should be.
-        assert_eq_flt_test!(solids_fraction_diff_pp(0.0, 9.0, 0.08, 9.0), 0.08 / 9.0 * 100.0);
+        assert_eq_flt!(solids_fraction_diff_pp(0.0, 9.0, 0.08, 9.0), 0.08 / 9.0 * 100.0);
     }
 
     #[test]
     fn solids_fraction_diff_pp_treats_zero_ts_as_zero_fraction() {
         // Guards against div-by-zero; a source with zero TotalSolids contributes 0 to the
         // solids fraction, so the diff is the other side's fraction.
-        assert_eq_flt_test!(solids_fraction_diff_pp(0.0, 0.0, 5.0, 50.0), 10.0);
-        assert_eq_flt_test!(solids_fraction_diff_pp(5.0, 50.0, 0.0, 0.0), 10.0);
-        assert_eq_flt_test!(solids_fraction_diff_pp(0.0, 0.0, 0.0, 0.0), 0.0);
+        assert_eq_flt!(solids_fraction_diff_pp(0.0, 0.0, 5.0, 50.0), 10.0);
+        assert_eq_flt!(solids_fraction_diff_pp(5.0, 50.0, 0.0, 0.0), 10.0);
+        assert_eq_flt!(solids_fraction_diff_pp(0.0, 0.0, 0.0, 0.0), 0.0);
     }
 
     // --- KeyCeiling ---
 
     #[test]
     fn key_ceiling_returns_default_for_unoverridden_key() {
-        assert_eq_flt_test!(KeyCeiling::new(25.0).for_key(CompKey::Energy), 25.0);
+        assert_eq_flt!(KeyCeiling::new(25.0).for_key(CompKey::Energy), 25.0);
     }
 
     #[test]
     fn key_ceiling_override_applies_only_to_its_key() {
         let ceiling = KeyCeiling::new(25.0).with(CompKey::MilkProteins, 60.0);
-        assert_eq_flt_test!(ceiling.for_key(CompKey::MilkProteins), 60.0);
-        assert_eq_flt_test!(ceiling.for_key(CompKey::Energy), 25.0);
+        assert_eq_flt!(ceiling.for_key(CompKey::MilkProteins), 60.0);
+        assert_eq_flt!(ceiling.for_key(CompKey::Energy), 25.0);
     }
 
     // --- assert_comp_eq_percent ---
@@ -606,14 +606,14 @@ mod tests {
     }
 
     #[test]
-    fn assert_all_keys_tolerates_keys_epsilon() {
-        comp().assert_all_keys(&[(CompKey::Energy, 50.0 + 0.9 * KEYS_EPSILON), (CompKey::Water, 100.0)]);
+    fn assert_all_keys_tolerates_epsilon_6dp() {
+        comp().assert_all_keys(&[(CompKey::Energy, 50.0 + 0.9 * EPSILON_6DP), (CompKey::Water, 100.0)]);
     }
 
     #[test]
-    #[should_panic(expected = "(CompKey::Energy, 50.0), // expected 50.000002")]
-    fn assert_all_keys_rejects_a_value_past_keys_epsilon() {
-        comp().assert_all_keys(&[(CompKey::Energy, 50.000_002), (CompKey::Water, 100.0)]);
+    #[should_panic(expected = "(CompKey::Energy, 50.0), // expected 50.0000006")]
+    fn assert_all_keys_rejects_a_value_past_epsilon_6dp() {
+        comp().assert_all_keys(&[(CompKey::Energy, 50.000_000_6), (CompKey::Water, 100.0)]);
     }
 
     #[test]

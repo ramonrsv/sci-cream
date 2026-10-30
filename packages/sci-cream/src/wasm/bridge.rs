@@ -623,7 +623,7 @@ pub(crate) mod tests {
             .calculate_recipe_composition(&light_recipe_to_owned(LIGHT_RECIPE), None)
             .unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 13.6367);
+        assert_eq_6dp!(comp.get(CompKey::MilkFat), 13.636_698);
     }
 
     #[test]
@@ -642,7 +642,7 @@ pub(crate) mod tests {
             .calculate_recipe_mix_properties(&light_recipe_to_owned(LIGHT_RECIPE), None)
             .unwrap();
 
-        assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6367);
+        assert_eq_6dp!(mix_properties.get(CompKey::MilkFat.into()), 13.636_698);
     }
 
     #[test]
@@ -679,11 +679,11 @@ pub(crate) mod tests {
 
         // `None` keeps the current total constant.
         let balanced_total: f64 = balanced.iter().map(|(_, g)| *g).sum();
-        assert_eq_flt_test!(balanced_total, original_total);
+        assert_eq_flt!(balanced_total, original_total);
 
         let comp = bridge.calculate_recipe_composition(&balanced, None).unwrap();
         for (key, target) in &targets {
-            assert_eq_flt_test!(key.value(&comp), *target);
+            assert_eq_6dp!(key.value(&comp), *target);
         }
 
         // An explicit `total_amount` scales the balanced recipe to that mass
@@ -691,11 +691,11 @@ pub(crate) mod tests {
             .balance_recipe(&recipe, &unprioritized(&targets), Some(1000.0), &[], None)
             .unwrap();
         let scaled_total: f64 = scaled.iter().map(|(_, g)| *g).sum();
-        assert_eq_flt_test!(scaled_total, 1000.0);
+        assert_eq_flt!(scaled_total, 1000.0);
 
         let scaled_comp = bridge.calculate_recipe_composition(&scaled, None).unwrap();
         for (key, target) in &targets {
-            assert_eq_flt_test!(key.value(&scaled_comp), *target);
+            assert_eq_6dp!(key.value(&scaled_comp), *target);
         }
     }
 
@@ -719,7 +719,7 @@ pub(crate) mod tests {
 
         let props = bridge.calculate_recipe_mix_properties(&recipe, Some(150.0)).unwrap();
         // Line total 1089 g minus 150 g evaporated is the 939 g final yield.
-        assert_eq_flt_test!(props.total_amount, 939.0);
+        assert_eq_flt!(props.total_amount, 939.0);
     }
 
     #[test]
@@ -733,11 +733,11 @@ pub(crate) mod tests {
         let deevaporated = bridge.deevaporate_recipe(&recipe, 150.0).unwrap();
 
         let deevap_total: f64 = deevaporated.iter().map(|(_, g)| *g).sum();
-        assert_eq_flt_test!(deevap_total, 939.0);
+        assert_eq_flt!(deevap_total, 939.0);
 
         let deevap_comp = bridge.calculate_recipe_composition(&deevaporated, None).unwrap();
         for key in CompKey::iter() {
-            assert_eq_flt_test!(deevap_comp.get(key), post_evap.get(key));
+            assert_eq_6dp!(deevap_comp.get(key), post_evap.get(key));
         }
     }
 
@@ -768,9 +768,9 @@ pub(crate) mod tests {
         let balanced_post = bridge.calculate_recipe_composition(&balanced, Some(150.0)).unwrap();
 
         // The recipe already meets its own targets, so balancing hits each to solver precision.
-        assert_eq_flt_test!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
-        assert_eq_flt_test!(balanced_post.get(CompKey::TotalSolids), post.get(CompKey::TotalSolids));
-        assert_eq_flt_test!(balanced_post.get_ratio(RatioKey::AbsPAC), post.get_ratio(RatioKey::AbsPAC));
+        assert_eq_6dp!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
+        assert_eq_flt!(balanced_post.get(CompKey::TotalSolids), post.get(CompKey::TotalSolids));
+        assert_eq_flt!(balanced_post.get_ratio(RatioKey::AbsPAC), post.get_ratio(RatioKey::AbsPAC));
     }
 
     #[test]
@@ -836,7 +836,7 @@ pub(crate) mod tests {
             .unwrap();
 
         assert_eq!(balanced[vanilla_idx].0, recipe[vanilla_idx].0);
-        assert_eq_flt_test!(balanced[vanilla_idx].1, vanilla_amount);
+        assert_eq_flt!(balanced[vanilla_idx].1, vanilla_amount);
     }
 
     #[test]
@@ -938,7 +938,7 @@ pub(crate) mod tests {
             .unwrap();
         let comp = bridge.calculate_recipe_composition(&balanced, None).unwrap();
         for (key, target) in &targets {
-            assert_eq_flt_test!(key.value(&comp), *target);
+            assert_eq_6dp!(key.value(&comp), *target);
         }
     }
 

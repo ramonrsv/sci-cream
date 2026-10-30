@@ -38,7 +38,7 @@ use crate::{
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// # use sci_cream::docs::assert_eq_float;
+/// # use sci_cream::asserts::assert_eq_flt;
 /// use sci_cream::{
 ///     composition::{CompKey, Sugars, Sweeteners, ToComposition},
 ///     specs::FruitSpec
@@ -63,7 +63,7 @@ use crate::{
 /// assert_eq!(comp.get(CompKey::Fructose), 2.44);
 /// assert_eq!(comp.get(CompKey::Sucrose), 0.47);
 ///
-/// assert_eq_float!(comp.get(CompKey::POD), 6.28312);
+/// assert_eq_flt!(comp.get(CompKey::POD), 6.2832);
 /// assert_eq!(comp.get(CompKey::PACsgr), 8.887);
 /// # Ok(()) }
 /// ```

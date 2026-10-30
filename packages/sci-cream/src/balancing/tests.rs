@@ -71,7 +71,7 @@ const ABS_PAC_PRIORITY_RUNS: &[LabeledRun] = &[
 const BALANCE_REL_FLOOR: f64 = 0.1;
 
 /// Minimum relative-error change (pp) for a priority effect to count as real rather than
-/// [`TESTS_EPSILON`] noise — actual shifts are far larger, so this catches a priority no-op.
+/// [`EPSILON_4DP`] noise — actual shifts are far larger, so this catches a priority no-op.
 const MIN_PRIORITY_EFFECT_PP: f64 = 6.0;
 
 /// Helper function to extract compositions from a light recipe, via [`EMBEDDED_DB`] lookups
@@ -250,8 +250,8 @@ impl Epsilons {
 impl Default for Epsilons {
     fn default() -> Self {
         Self {
-            amount: Some(TESTS_EPSILON),
-            neg: Some(TESTS_EPSILON),
+            amount: Some(EPSILON_4DP),
+            neg: Some(EPSILON_4DP),
         }
     }
 }
@@ -840,21 +840,21 @@ fn balanced_mix(ingredients: &[&str], targets: &[(BalanceKey, f64)]) -> Composit
 fn balance_abv_target_round_trip() {
     // `ABV` translates to its exact-inverse `Alcohol` proxy.
     let mix = balanced_mix(BOOZY_ING, &[(CompKey::ABV.into(), 4.0), (CompKey::MilkFat.into(), 8.0)]);
-    assert_eq_flt_test!(mix.get(CompKey::ABV), 4.0);
+    assert_eq_6dp!(mix.get(CompKey::ABV), 4.0);
 }
 
 #[test]
 fn balance_fpd_target_round_trip() {
     // `FPD` translates to `AbsPAC` via the exact table inverse.
     let mix = balanced_mix(SORBET_ING, &[(FpdKey::FPD.into(), -2.5)]);
-    assert_eq_flt_test!(FPD::compute_from_composition(mix).unwrap().fpd, -2.5);
+    assert_eq_6dp!(FPD::compute_from_composition(mix).unwrap().fpd, -2.5);
 }
 
 #[test]
 fn balance_serving_temp_target_round_trip() {
     // `ServingTemp` translates to `AbsNetPAC` via the exact table inverse.
     let mix = balanced_mix(SORBET_ING, &[(FpdKey::ServingTemp.into(), -13.0)]);
-    assert_eq_flt_test!(FPD::compute_from_composition(mix).unwrap().serving_temp, -13.0);
+    assert_eq_6dp!(FPD::compute_from_composition(mix).unwrap().serving_temp, -13.0);
 }
 
 #[test]
@@ -862,7 +862,7 @@ fn balance_hardness_target_round_trip() {
     // `HardnessAt14C` translates to `AbsNetPAC` via the exact table inverse. Integer targets
     // are recovered exactly; non-integer targets may have non-zero linearization residuals.
     let mix = balanced_mix(SORBET_ING, &[(FpdKey::HardnessAt14C.into(), 72.0)]);
-    assert_eq_flt_test!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.0);
+    assert_eq_6dp!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.0);
 
     let mix = balanced_mix(SORBET_ING, &[(FpdKey::HardnessAt14C.into(), 72.5)]);
     assert_abs_diff_eq!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.5, epsilon = 0.01);
@@ -1428,9 +1428,9 @@ fn composition_balance_targets_reads_key_values() {
     let targets = composition_balance_targets(&comp, &keys);
 
     assert_eq!(targets.len(), keys.len());
-    assert_eq_flt_test!(targets[0].1, comp.get(CompKey::MilkFat));
-    assert_eq_flt_test!(targets[1].1, comp.get(CompKey::Water));
-    assert_eq_flt_test!(targets[2].1, comp.get_ratio(RatioKey::AbsPAC));
+    assert_eq_flt!(targets[0].1, comp.get(CompKey::MilkFat));
+    assert_eq_flt!(targets[1].1, comp.get(CompKey::Water));
+    assert_eq_flt!(targets[2].1, comp.get_ratio(RatioKey::AbsPAC));
 }
 
 #[test]
@@ -1462,7 +1462,7 @@ fn balance_recovers_stabilizers_per_water_ratio() {
 
     let balanced =
         balance_compositions_nnls(&comps, &[(RatioKey::StabilizersPerWater.into(), target)], None, &[]).unwrap();
-    assert_eq_flt_test!(achieved_value(&balanced, RatioKey::StabilizersPerWater), target);
+    assert_eq_6dp!(achieved_value(&balanced, RatioKey::StabilizersPerWater), target);
 }
 
 #[test]
@@ -1471,7 +1471,7 @@ fn balance_recovers_abs_pac_ratio() {
     let target = achieved_value(&equal_parts_reference(&comps), RatioKey::AbsPAC);
 
     let balanced = balance_compositions_nnls(&comps, &[(RatioKey::AbsPAC.into(), target)], None, &[]).unwrap();
-    assert_eq_flt_test!(achieved_value(&balanced, RatioKey::AbsPAC), target);
+    assert_eq_6dp!(achieved_value(&balanced, RatioKey::AbsPAC), target);
 }
 
 /// A realistically-proportioned chocolate reference over [`DAIRY_COCOA_ING`]: enough cocoa to
@@ -1493,7 +1493,7 @@ fn balance_recovers_abs_net_pac_ratio() {
     assert_gt!(target, 0.0); // guard: the reference keeps NetPAC (and so the ratio) positive
 
     let balanced = balance_compositions_nnls(&comps, &[(RatioKey::AbsNetPAC.into(), target)], None, &[]).unwrap();
-    assert_eq_flt_test!(achieved_value(&balanced, RatioKey::AbsNetPAC), target);
+    assert_eq_6dp!(achieved_value(&balanced, RatioKey::AbsNetPAC), target);
 }
 
 #[test]
@@ -1512,8 +1512,8 @@ fn balance_recovers_net_pac_distinct_from_total_pac() {
     let targets = [(CompKey::TotalPAC.into(), total_pac), (CompKey::NetPAC.into(), net_pac)];
     let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
 
-    assert_eq_flt_test!(achieved_value(&balanced, CompKey::TotalPAC), total_pac);
-    assert_eq_flt_test!(achieved_value(&balanced, CompKey::NetPAC), net_pac);
+    assert_eq_6dp!(achieved_value(&balanced, CompKey::TotalPAC), total_pac);
+    assert_eq_6dp!(achieved_value(&balanced, CompKey::NetPAC), net_pac);
 }
 
 #[test]
@@ -1536,7 +1536,7 @@ fn balance_recovers_emulsifiers_per_fat_ratio() {
 
     let balanced =
         balance_compositions_nnls(&comps, &[(RatioKey::EmulsifiersPerFat.into(), target)], None, &[]).unwrap();
-    assert_eq_flt_test!(achieved_value(&balanced, RatioKey::EmulsifiersPerFat), target);
+    assert_eq_6dp!(achieved_value(&balanced, RatioKey::EmulsifiersPerFat), target);
 }
 
 #[test]
@@ -1552,8 +1552,8 @@ fn balance_recovers_stabilizers_per_water_with_extensive_target() {
 
     let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
 
-    assert_eq_flt_test!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
-    assert_eq_flt_test!(achieved_value(&balanced, RatioKey::StabilizersPerWater), ratio);
+    assert_eq_6dp!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
+    assert_eq_flt!(achieved_value(&balanced, RatioKey::StabilizersPerWater), ratio);
 }
 
 #[test]
@@ -1569,8 +1569,8 @@ fn balance_recovers_emulsifiers_per_fat_with_extensive_target() {
 
     let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
 
-    assert_eq_flt_test!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
-    assert_eq_flt_test!(achieved_value(&balanced, RatioKey::EmulsifiersPerFat), ratio);
+    assert_eq_6dp!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
+    assert_eq_flt!(achieved_value(&balanced, RatioKey::EmulsifiersPerFat), ratio);
 }
 
 #[test]
@@ -1650,7 +1650,7 @@ fn ratio_reweighting_recovers_despite_off_seed() {
         RATIO_REWEIGHT_TOLERANCE,
         "seed denominator should be materially off, so the reweighting pass is exercised"
     );
-    assert_eq_flt_test!(achieved_value(&balanced, RatioKey::StabilizersPerWater), target);
+    assert_eq_6dp!(achieved_value(&balanced, RatioKey::StabilizersPerWater), target);
 }
 
 #[test]
@@ -1696,7 +1696,7 @@ fn nalgebra_allows_negative_amounts_while_nnls_does_not() {
     let nnls = balance_compositions_nnls(&comps, &BOOZY_DISPARATE_TARGETS, None, &[]).unwrap();
 
     assert_true!(nalgebra.iter().any(|(_, amount)| *amount < 0.0));
-    assert_true!(nnls.iter().all(|(_, amount)| *amount >= -TESTS_EPSILON),);
+    assert_true!(nnls.iter().all(|(_, amount)| *amount >= -EPSILON_4DP),);
 }
 
 /// An under-determined system (more ingredients than targets) has many exact solutions; both
@@ -1844,7 +1844,7 @@ fn priority_reduces_error_on_prioritized_key() {
 
     // Priority never scales the sum-constraint row, so mass balance is preserved.
     let amount_sum: f64 = prioritized.iter().map(|(_, amount)| *amount).sum();
-    assert_eq_flt_test!(amount_sum, 1.0);
+    assert_eq_4dp!(amount_sum, 1.0);
 }
 
 #[test]
@@ -1867,7 +1867,7 @@ fn priority_low_increases_error_on_low_priority_key() {
 
     // Mass balance is preserved regardless of the priority weight.
     let amount_sum: f64 = low_weighted.iter().map(|(_, amount)| *amount).sum();
-    assert_eq_flt_test!(amount_sum, 1.0);
+    assert_eq_flt!(amount_sum, 1.0);
 }
 
 #[test]
@@ -2135,7 +2135,7 @@ fn ratio_tolerance_suppresses_pinned_ratio_off_by_rounding() {
     // feasible target rounded to its shown precision drifts just off that single value.
     let comps = comps_from_names(DAIRY_COCOA_ING);
     let (pin, pin_max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
-    assert_eq_flt_test!(pin, pin_max); // pinned: the band is a single point
+    assert_eq_flt!(pin, pin_max); // pinned: the band is a single point
 
     // A feasible point, with CocoaButter rounded to 2 dp as shown.
     let cocoa_solids = 4.0;
@@ -2410,7 +2410,7 @@ fn validate_flags_ratio_infeasibility_for_pinned_cocoa_ratio() {
             target_ratio,
             ..
         } if numerator.as_slice() == [BalanceKey::Comp(CompKey::CocoaButter)]
-            && are_eq_flt_test(*target_ratio, 0.4)
+            && eq_flt(*target_ratio, 0.4)
     )));
 
     // It is an off-band ratio, not a dominance violation (CocoaButter <= CocoaSolids holds).
@@ -2439,7 +2439,7 @@ fn validate_flags_ratio_infeasibility_from_multiple_sources() {
             target_ratio,
             ..
         } if numerator.as_slice() == [BalanceKey::Comp(CompKey::MilkProteins)]
-            && are_eq_flt_test(*target_ratio, 0.3)
+            && eq_flt(*target_ratio, 0.3)
     )));
 }
 
@@ -2468,7 +2468,7 @@ fn validate_flags_multi_ratio_infeasibility_from_multiple_sources() {
             ..
         } if numerator.len() == 2
             && numerator.contains(&BalanceKey::Comp(CompKey::Lactose))
-            && are_eq_flt_test(*target_ratio, 1.5 / 4.7)
+            && eq_flt(*target_ratio, 1.5 / 4.7)
     )));
 }
 
@@ -2906,7 +2906,7 @@ fn ratio_band_pins_a_single_source_ratio() {
     // Only cocoa has CocoaSolids > 0, so CocoaButter : CocoaSolids is pinned to its 16.7 : 80.3
     let comps = comps_from_names(DAIRY_COCOA_ING);
     let (min, max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
-    assert_eq_flt_test!(min, max);
+    assert_eq_flt!(min, max);
     assert_abs_diff_eq!(min, 16.67 / 80.33, epsilon = 1e-3);
 }
 
@@ -2952,16 +2952,16 @@ fn balance_holds_locked_composition_fixed() {
             .unwrap();
 
     // The locked composition keeps its exact fraction; amounts are non-negative and sum to 1.
-    assert_eq_flt_test!(balanced[3].1, 0.006);
+    assert_eq_flt!(balanced[3].1, 0.006);
     let sum: f64 = balanced.iter().map(|(_, amount)| *amount).sum();
-    assert_abs_diff_eq!(sum, 1.0, epsilon = TESTS_EPSILON);
+    assert_abs_diff_eq!(sum, 1.0, epsilon = EPSILON_4DP);
     for (_, amount) in &balanced {
         assert_gt!(*amount, 0.0);
     }
 
     // Targets are met — the locked flavouring's contribution is counted toward them, not ignored.
     for (key, target) in &targets {
-        assert_eq_flt_test!(achieved_value(&balanced, *key), *target);
+        assert_eq_6dp!(achieved_value(&balanced, *key), *target);
     }
 }
 
@@ -2982,7 +2982,7 @@ fn balance_all_none_locks_matches_unlocked() {
 
     assert_eq!(baseline.len(), all_none.len());
     for ((_, baseline_amount), (_, none_amount)) in baseline.iter().zip(&all_none) {
-        assert_eq_flt_test!(*none_amount, *baseline_amount);
+        assert_eq_flt!(*none_amount, *baseline_amount);
     }
 }
 
@@ -3002,7 +3002,7 @@ fn balance_all_locked_returns_fixed_fractions() {
     .unwrap();
 
     for (index, (_, amount)) in balanced.iter().enumerate() {
-        assert_eq_flt_test!(*amount, fractions[index]);
+        assert_eq_flt!(*amount, fractions[index]);
     }
 }
 
@@ -3022,7 +3022,7 @@ fn balance_locked_ratio_target_met_with_lock_held() {
         crate::balancing::balance_compositions(&with_locks(&comps, &locked), &fuse_targets(&targets, &[]), None, None)
             .unwrap();
 
-    assert_eq_flt_test!(balanced[3].1, 0.006);
+    assert_eq_flt!(balanced[3].1, 0.006);
     for (key, target) in &targets {
         // Ratio reweighting is approximate; a tenth of a percentage point is a comfortable margin.
         assert_true!(balance_rel_error_pp(achieved_value(&balanced, *key), *target) < 0.1,);

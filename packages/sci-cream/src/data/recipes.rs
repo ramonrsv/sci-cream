@@ -330,7 +330,7 @@ pub(crate) mod tests {
         let fixture = crate::recipe::Recipe::from_const_recipe(None, CHOCOLATE_POST_EVAPORATION, &EMBEDDED_DB).unwrap();
 
         assert_eq!(deevaporated.evaporation, 0.0);
-        assert_eq_flt_test!(deevaporated.line_total(), 939.0);
+        assert_eq_flt!(deevaporated.line_total(), 939.0);
 
         let deevap_comp = deevaporated.calculate_composition().unwrap();
         let fixture_comp = fixture.calculate_composition().unwrap();

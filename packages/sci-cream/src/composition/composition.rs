@@ -9,7 +9,7 @@ use strum_macros::{EnumCount, EnumIter};
 use crate::{
     composition::field_update::field_update_methods,
     composition::{Alcohol, Micro, PAC, ProteinComponents, RatioKey, Solids, Texture},
-    constants::COMPOSITION_EPSILON,
+    constants::tolerances::COMPOSITION_EPSILON,
     error::{Error, Result},
     resolution::IngredientGetter,
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
@@ -952,12 +952,12 @@ mod tests {
         let k = 100.0 / 90.0;
         let evaporated = c.evaporate(10.0).unwrap();
 
-        assert_eq_flt_test!(evaporated.get(CompKey::TotalSolids), 20.0 * k);
-        assert_eq_flt_test!(evaporated.get(CompKey::Energy), 120.0 * k);
-        assert_eq_flt_test!(evaporated.get(CompKey::POD), 4.0 * k);
-        assert_eq_flt_test!(evaporated.get(CompKey::TotalPAC), 5.0 * k);
+        assert_eq_flt!(evaporated.get(CompKey::TotalSolids), 20.0 * k);
+        assert_eq_flt!(evaporated.get(CompKey::Energy), 120.0 * k);
+        assert_eq_flt!(evaporated.get(CompKey::POD), 4.0 * k);
+        assert_eq_flt!(evaporated.get(CompKey::TotalPAC), 5.0 * k);
         // Water is derived, not scaled: (W - water_removed) · k == (80 - 10) · 100/90.
-        assert_eq_flt_test!(evaporated.get(CompKey::Water), 70.0 * k);
+        assert_eq_flt!(evaporated.get(CompKey::Water), 70.0 * k);
     }
 
     #[test]
@@ -965,7 +965,7 @@ mod tests {
         let c = evaporate_test_comp();
         let evaporated = c.evaporate(10.0).unwrap();
         // AbsPAC = TotalPAC / Water · 100, both taken at the concentrated level.
-        assert_eq_flt_test!(
+        assert_eq_flt!(
             evaporated.get_ratio(RatioKey::AbsPAC),
             evaporated.get(CompKey::TotalPAC) / evaporated.get(CompKey::Water) * 100.0
         );
@@ -1033,8 +1033,8 @@ mod tests {
             (CompKey::TransFat, 0.07),
         ]);
 
-        CompKey::iter().for_each(|key| assert_eq_flt_test!(COMP_2_MILK.get(key), *expected.get(&key).unwrap_or(&0.0)));
-        assert_eq_flt_test!(COMP_2_MILK.get_ratio(RatioKey::AbsPAC), 9.02377);
+        CompKey::iter().for_each(|key| assert_eq_flt!(COMP_2_MILK.get(key), *expected.get(&key).unwrap_or(&0.0)));
+        assert_eq_6dp!(COMP_2_MILK.get_ratio(RatioKey::AbsPAC), 9.023_772);
     }
 
     #[allow(clippy::too_many_lines)]
@@ -1244,12 +1244,12 @@ mod tests {
         ]);
 
         // unwrap (not unwrap_or) so that any newly added CompKey not in the map panics the test
-        CompKey::iter().for_each(|key| assert_eq_flt_test!(c.get(key), *expected.get(&key).unwrap()));
+        CompKey::iter().for_each(|key| assert_eq_flt!(c.get(key), *expected.get(&key).unwrap()));
 
         // Ratio keys are read via `get_ratio`, not `get`; assert them separately.
-        assert_eq_flt_test!(c.get_ratio(RatioKey::EmulsifiersPerFat), 1.6 / 12.0 * 100.0);
-        assert_eq_flt_test!(c.get_ratio(RatioKey::StabilizersPerWater), 0.66 / 59.0 * 100.0);
-        assert_eq_flt_test!(c.get_ratio(RatioKey::AbsPAC), 9.5 / 59.0 * 100.0);
+        assert_eq_flt!(c.get_ratio(RatioKey::EmulsifiersPerFat), 1.6 / 12.0 * 100.0);
+        assert_eq_flt!(c.get_ratio(RatioKey::StabilizersPerWater), 0.66 / 59.0 * 100.0);
+        assert_eq_flt!(c.get_ratio(RatioKey::AbsPAC), 9.5 / 59.0 * 100.0);
     }
 
     #[test]

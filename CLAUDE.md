@@ -150,6 +150,19 @@ JSON files in `packages/sci-cream/data/ingredients/<category>.json` are the sour
 embedded data. After editing, rebuild WASM (`pnpm build:package`) and re-run `pnpm seed-db` in the
 app to refresh the database copy.
 
+#### Float assertions
+
+Tests and doc tests compare floats with `sci_cream::asserts`, which tests get through
+`tests::asserts::*`, and whose tolerances live in `constants::tolerances`. Raw `approx` asserts
+are for testing `AbsDiffEq` impls themselves.
+
+- `assert_eq_flt!(a, b)` for a value expected exactly, up to floating-point noise (4 ULPs).
+- `assert_eq_6dp!(a, b)`, the default for tests, for a value correctly rounded to six decimals:
+  within half a unit, plus noise at a tie. A value that misses gets more digits, not a looser check.
+- `assert_eq_4dp!(a, b)` for doc examples, with values correctly rounded to four decimals.
+- Any other bound is stated, `assert_eq_flt!(a, b, epsilon = E)`, for a bound with a meaning of
+  its own, such as agreement with a source. Never take a tolerance from how a literal is written.
+
 #### Reference bibliography style
 
 `docs/references/{literature,ingredients}.md` hold the shared `[^N]` footnote definitions cited by

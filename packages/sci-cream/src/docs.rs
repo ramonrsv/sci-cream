@@ -33,14 +33,6 @@ use crate::{
     },
 };
 
-/// Asserts for floating point comparisons in doc tests
-#[macro_export(local_inner_macros)]
-macro_rules! assert_eq_float {
-    ($given:expr, $expected:expr) => {
-        approx::assert_abs_diff_eq!($given, $expected, epsilon = 0.001)
-    };
-}
-
 /// Main recipe as `OwnedLightRecipe` for doc tests
 #[macro_export]
 macro_rules! main_recipe {
@@ -83,7 +75,6 @@ macro_rules! recipe_for_balancing {
 }
 
 // @todo See if it's possible to export only for doc tests
-pub use assert_eq_float;
 pub use main_recipe;
 pub use recipe_for_balancing;
 

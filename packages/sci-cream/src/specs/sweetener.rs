@@ -67,7 +67,7 @@ use crate::{
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// # use sci_cream::docs::assert_eq_float;
+/// # use sci_cream::asserts::assert_eq_flt;
 /// use sci_cream::{
 ///     composition::{CompKey, Sugars, Sweeteners, ToComposition},
 ///     specs::{CompositionBasis, SweetenerSpec},
@@ -89,7 +89,7 @@ use crate::{
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 92.0);
 /// assert_eq!(comp.get(CompKey::TotalCarbohydrates), 92.0);
 /// assert_eq!(comp.get(CompKey::TotalSolids), 92.0);
-/// assert_eq_float!(comp.get(CompKey::POD), 73.6);
+/// assert_eq_flt!(comp.get(CompKey::POD), 73.6);
 /// assert_eq!(comp.get(CompKey::PACsgr), 174.8);
 /// # Ok(()) }
 /// ```
@@ -105,7 +105,6 @@ use crate::{
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
 ///     composition::{CompKey, Sugars, Sweeteners, ToComposition},
 ///     specs::{CompositionBasis, SweetenerSpec},
@@ -149,7 +148,7 @@ use crate::{
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// # use sci_cream::docs::assert_eq_float;
+/// # use sci_cream::asserts::assert_eq_flt;
 /// use sci_cream::{
 ///     composition::{ArtificialSweeteners, CompKey, Sugars, Sweeteners, ToComposition},
 ///     specs::{CompositionBasis, Scaling, SweetenerSpec, Unit},
@@ -167,15 +166,15 @@ use crate::{
 ///     pac: Some(Scaling::OfWhole(Unit::Grams(112.6))),
 /// }.to_composition()?;
 ///
-/// assert_eq_float!(comp.get(CompKey::Energy), 374.72);
+/// assert_eq_flt!(comp.get(CompKey::Energy), 374.72);
 /// assert_eq!(comp.get(CompKey::Glucose), 55.0);
-/// assert_eq_float!(comp.get(CompKey::TotalSugars), 55.0);
+/// assert_eq_flt!(comp.get(CompKey::TotalSugars), 55.0);
 /// assert_eq!(comp.get(CompKey::TotalArtificial), 1.32);
-/// assert_eq_float!(comp.get(CompKey::TotalSweeteners), 56.32);
+/// assert_eq_flt!(comp.get(CompKey::TotalSweeteners), 56.32);
 /// assert_eq!(comp.get(CompKey::TotalCarbohydrates), 93.68);
 /// assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
-/// assert_eq_float!(comp.get(CompKey::POD), 840.0);
-/// assert_eq_float!(comp.get(CompKey::PACsgr), 112.6);
+/// assert_eq_flt!(comp.get(CompKey::POD), 840.0);
+/// assert_eq_flt!(comp.get(CompKey::PACsgr), 112.6);
 /// # Ok(()) }
 /// ```
 #[doc = include_str!("../../docs/references/index/15.md")]

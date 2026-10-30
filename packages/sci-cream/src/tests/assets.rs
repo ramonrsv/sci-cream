@@ -50,7 +50,7 @@ pub(crate) fn asset_composition(spec: &IngredientSpec) -> Composition {
         .to_composition()
         .unwrap_or_else(|e| panic!("cannot convert asset '{name}': {e}"));
     if let Some(expected_comp) = expected_comp {
-        assert_eq_flt_test!(&comp, expected_comp);
+        assert_eq_4dp!(&comp, expected_comp);
     }
     comp
 }
@@ -364,7 +364,7 @@ mod tests {
     use crate::tests::util::{AssertKeys, relative_diff_percent};
 
     use super::*;
-    use crate::{Recipe, docs::assert_eq_float};
+    use crate::{Recipe, asserts::assert_eq_flt};
 
     #[test]
     #[should_panic(expected = "missing asset 'Not An Asset' in INGREDIENT_ASSETS_TABLE")]
@@ -403,7 +403,7 @@ mod tests {
             Recipe::from_light_recipe(Some("Grand Marnier".into()), &REF_B_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
         let mix_props = recipe.calculate_mix_properties().unwrap();
 
-        assert_eq_float!(mix_props.total_amount, 602.2);
+        assert_eq_flt!(mix_props.total_amount, 602.2);
 
         mix_props.assert_all_keys(&REF_B_RECIPE_PROPERTIES);
     }

@@ -188,7 +188,7 @@ mod tests {
             CompKey::Energy,
             CompKey::TotalSugars,
         ] {
-            assert_eq_flt_test!(mix_props.get(key.into()), 0.0);
+            assert_eq_flt!(mix_props.get(key.into()), 0.0);
         }
     }
 
@@ -196,14 +196,14 @@ mod tests {
     fn mix_properties_empty_water_is_100() {
         // An empty composition represents pure water: 100 - TotalSolids - Alcohol = 100
         let mix_props = MixProperties::empty();
-        assert_eq_flt_test!(mix_props.get(CompKey::Water.into()), 100.0);
+        assert_eq_flt!(mix_props.get(CompKey::Water.into()), 100.0);
     }
 
     #[test]
     fn mix_properties_empty_fpd_is_zero() {
         let mix_props = MixProperties::empty();
-        assert_eq_flt_test!(mix_props.get(FpdKey::FPD.into()), 0.0);
-        assert_eq_flt_test!(mix_props.get(FpdKey::ServingTemp.into()), 0.0);
+        assert_eq_flt!(mix_props.get(FpdKey::FPD.into()), 0.0);
+        assert_eq_flt!(mix_props.get(FpdKey::ServingTemp.into()), 0.0);
     }
 
     #[test]
@@ -217,8 +217,8 @@ mod tests {
         let from_new = MixProperties::new();
         let from_empty = MixProperties::empty();
         assert_eq!(from_new.total_amount, from_empty.total_amount);
-        assert_eq_flt_test!(from_new.get(CompKey::MilkFat.into()), from_empty.get(CompKey::MilkFat.into()));
-        assert_eq_flt_test!(from_new.get(FpdKey::FPD.into()), from_empty.get(FpdKey::FPD.into()));
+        assert_eq_flt!(from_new.get(CompKey::MilkFat.into()), from_empty.get(CompKey::MilkFat.into()));
+        assert_eq_flt!(from_new.get(FpdKey::FPD.into()), from_empty.get(FpdKey::FPD.into()));
         assert_true!(from_new.get(FpdKey::HardnessAt14C.into()).is_nan());
 
         // Equality assertions fails because of FPD::hardness_at_14c being NaN
@@ -235,8 +235,8 @@ mod tests {
         let from_default = MixProperties::default();
         let from_empty = MixProperties::empty();
         assert_eq!(from_default.total_amount, from_empty.total_amount);
-        assert_eq_flt_test!(from_default.get(CompKey::MilkFat.into()), from_empty.get(CompKey::MilkFat.into()));
-        assert_eq_flt_test!(from_default.get(FpdKey::FPD.into()), from_empty.get(FpdKey::FPD.into()));
+        assert_eq_flt!(from_default.get(CompKey::MilkFat.into()), from_empty.get(CompKey::MilkFat.into()));
+        assert_eq_flt!(from_default.get(FpdKey::FPD.into()), from_empty.get(FpdKey::FPD.into()));
         assert_true!(from_default.get(FpdKey::HardnessAt14C.into()).is_nan());
 
         // Equality assertions fails because of FPD::hardness_at_14c being NaN

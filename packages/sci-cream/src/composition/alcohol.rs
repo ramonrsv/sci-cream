@@ -141,7 +141,7 @@ mod tests {
     fn alcohol_by_weight() {
         let alcohol = Alcohol::new().by_weight(5.0);
         assert_eq!(alcohol.by_weight, 5.0);
-        assert_eq_flt_test!(alcohol.to_abv(), 6.267_135);
+        assert_eq_6dp!(alcohol.to_abv(), 6.267_135);
         assert_eq!(alcohol.energy(), 34.65);
         assert_eq!(alcohol.to_pac(), 37.15);
     }
@@ -149,10 +149,10 @@ mod tests {
     #[test]
     fn alcohol_from_abv() {
         let alcohol = Alcohol::from_abv(5.0);
-        assert_eq_flt_test!(alcohol.by_weight, 3.982_330);
-        assert_eq_flt_test!(alcohol.to_abv(), 5.0);
-        assert_eq_flt_test!(alcohol.energy(), 27.597_549);
-        assert_eq_flt_test!(alcohol.to_pac(), 29.588_714);
+        assert_eq_6dp!(alcohol.by_weight, 3.982_330);
+        assert_eq_flt!(alcohol.to_abv(), 5.0);
+        assert_eq_6dp!(alcohol.energy(), 27.597_549);
+        assert_eq_6dp!(alcohol.to_pac(), 29.588_714);
     }
 
     #[test]

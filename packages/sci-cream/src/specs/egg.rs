@@ -243,10 +243,10 @@ pub(crate) mod tests {
         .unwrap();
 
         // Whole-egg protein splits ~56% white / ~44% yolk
-        assert_eq_flt_test!(comp.get(CompKey::WhiteProteins), 5.6078);
-        assert_eq_flt_test!(comp.get(CompKey::YolkProteins), 4.3922);
-        assert_eq_flt_test!(comp.get(CompKey::EggProteins), 10.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 10.0);
+        assert_eq_6dp!(comp.get(CompKey::WhiteProteins), 5.607_843);
+        assert_eq_6dp!(comp.get(CompKey::YolkProteins), 4.392_157);
+        assert_eq_flt!(comp.get(CompKey::EggProteins), 10.0);
+        assert_eq_flt!(comp.get(CompKey::TotalProteins), 10.0);
     }
 
     #[test]
@@ -260,9 +260,9 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::WhiteProteins), 10.0);
-        assert_eq_flt_test!(comp.get(CompKey::YolkProteins), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::EggProteins), 10.0);
+        assert_eq_flt!(comp.get(CompKey::WhiteProteins), 10.0);
+        assert_eq_flt!(comp.get(CompKey::YolkProteins), 0.0);
+        assert_eq_flt!(comp.get(CompKey::EggProteins), 10.0);
     }
 
     #[test]

@@ -32,7 +32,7 @@ calculate the composition and properties of the mix.
 
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::{assert_eq_float, main_recipe};
+# use sci_cream::docs::main_recipe;
 use sci_cream::{CompKey::*, FpdKey::*, IngredientDatabase, Recipe};
 
 let db = IngredientDatabase::new_seeded_from_embedded_data();
@@ -69,40 +69,40 @@ appropriate keys from either [`CompKey`] or [`FpdKey`].
 
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::{assert_eq_float, main_recipe};
+# use sci_cream::{asserts::assert_eq_4dp, docs::main_recipe};
 # use sci_cream::{CompKey::*, FpdKey::*, RatioKey::*, IngredientDatabase, Recipe};
 # let db = IngredientDatabase::new_seeded_from_embedded_data();
 # let recipe = Recipe::from_light_recipe(None, &main_recipe!(), &db)?;
 let mix_properties = recipe.calculate_mix_properties()?;
 
 for (key, value) in [
-    (Energy.into(), 230.043), // kcal per 100g
-    (MilkFat.into(), 13.637), // grams per 100g
-    (Lactose.into(), 4.817), // ...
-    (MSNF.into(), 8.839),
-    (MilkProteins.into(), 3.315),
-    (MilkSolids.into(), 22.475),
-    (CocoaButter.into(), 0.778),
-    (CocoaSolids.into(), 3.662),
-    (Glucose.into(), 6.767),
-    (Fructose.into(), 5.23),
-    (TotalSugars.into(), 16.815),
-    (ABV.into(), 0.358), // Alcohol-by-volume %
-    (Salt.into(), 0.082),
-    (TotalSolids.into(), 40.641),
-    (Water.into(), 59.075),
-    (POD.into(), 15.234),
+    (Energy.into(), 230.0426), // kcal per 100g
+    (MilkFat.into(), 13.6367), // grams per 100g
+    (Lactose.into(), 4.8171), // ...
+    (MSNF.into(), 8.8387),
+    (MilkProteins.into(), 3.3145),
+    (MilkSolids.into(), 22.4754),
+    (CocoaButter.into(), 0.7781),
+    (CocoaSolids.into(), 3.6616),
+    (Glucose.into(), 6.7675),
+    (Fructose.into(), 5.2309),
+    (TotalSugars.into(), 16.8155),
+    (ABV.into(), 0.3579), // Alcohol-by-volume %
+    (Salt.into(), 0.0817),
+    (TotalSolids.into(), 40.6413),
+    (Water.into(), 59.0751),
+    (POD.into(), 15.2342),
     (PACsgr.into(), 27.614),
-    (PACmlk.into(), 3.247),
-    (PACalc.into(), 2.107),
-    (TotalPAC.into(), 33.446),
-    (AbsPAC.into(), 56.616), // TotalPAC / Water
-    (HF.into(), 7.291),
-    (FPD.into(), -3.603), // °C
-    (ServingTemp.into(), -13.486), // °C
-    (HardnessAt14C.into(), 76.040), // [0, 100] scale
+    (PACmlk.into(), 3.2474),
+    (PACalc.into(), 2.1067),
+    (TotalPAC.into(), 33.4463),
+    (AbsPAC.into(), 56.6165), // TotalPAC / Water
+    (HF.into(), 7.2912),
+    (FPD.into(), -3.6032), // °C
+    (ServingTemp.into(), -13.4865), // °C
+    (HardnessAt14C.into(), 76.0404), // [0, 100] scale
 ] {
-    assert_eq_float!(mix_properties.get(key), value);
+    assert_eq_4dp!(mix_properties.get(key), value);
 }
 # Ok(()) }
 ```
@@ -117,7 +117,7 @@ curves](crate::docs#freezing-point-depression-curve) of the mix. This can be acc
 
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::{assert_eq_float, main_recipe};
+# use sci_cream::{asserts::assert_eq_flt, docs::main_recipe};
 # use sci_cream::{CompKey::*, FpdKey::*, IngredientDatabase, Recipe};
 # let db = IngredientDatabase::new_seeded_from_embedded_data();
 # let recipe = Recipe::from_light_recipe(None, &main_recipe!(), &db)?;
@@ -126,8 +126,8 @@ let curves = &mix_properties.fpd.curves;
 
 assert_eq!(curves.frozen_water.len(), 100);
 assert_eq!(curves.hardness.len(), 100);
-assert_eq_float!(curves.frozen_water[0].temp, mix_properties.get(FPD.into()));
-assert_eq_float!(curves.hardness[75].temp, mix_properties.get(ServingTemp.into()));
+assert_eq_flt!(curves.frozen_water[0].temp, mix_properties.get(FPD.into()));
+assert_eq_flt!(curves.hardness[75].temp, mix_properties.get(ServingTemp.into()));
 # Ok(()) }
 ```
 <br>
@@ -199,7 +199,7 @@ from the [`constants`] module, e.g. [`STD_MSNF_IN_MILK_SERUM`], [`STD_LACTOSE_IN
 
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::assert_eq_float;
+# use sci_cream::asserts::{assert_eq_4dp, assert_eq_flt};
 use sci_cream::{CompKey, composition::*, constants::{composition::dairy::{*, milk::*}, pac}};
 
 let msnf = (100.0 - 2.0) * STD_MSNF_IN_MILK_SERUM;
@@ -233,11 +233,11 @@ let comp = Composition::new()
     .pod(pod)
     .pac(pac);
 
-assert_eq_float!(comp.get(CompKey::Energy), 50.458);
-assert_eq_float!(comp.get(CompKey::MilkFat), 2.0);
-assert_eq_float!(comp.get(CompKey::Lactose), 4.807);
-assert_eq_float!(comp.get(CompKey::MSNF), 8.82);
-assert_eq_float!(comp.get(CompKey::MilkProteins), 3.308);
+assert_eq_4dp!(comp.get(CompKey::Energy), 50.4576);
+assert_eq_flt!(comp.get(CompKey::MilkFat), 2.0);
+assert_eq_4dp!(comp.get(CompKey::Lactose), 4.8069);
+assert_eq_flt!(comp.get(CompKey::MSNF), 8.82);
+assert_eq_4dp!(comp.get(CompKey::MilkProteins), 3.3075);
 // ...
 # Ok(()) }
 ```
@@ -266,7 +266,7 @@ composition is equivalent to the one constructed in the [previous example](#comp
 
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::assert_eq_float;
+# use sci_cream::asserts::{assert_eq_4dp, assert_eq_flt};
 use sci_cream::{CompKey::*, composition::ToComposition, specs::DairySimpleSpec};
 
 let dairy_spec = DairySimpleSpec {
@@ -280,11 +280,11 @@ let dairy_spec = DairySimpleSpec {
 
 let comp = dairy_spec.to_composition()?;
 
-assert_eq_float!(comp.get(Energy), 50.458);
-assert_eq_float!(comp.get(MilkFat), 2.0);
-assert_eq_float!(comp.get(Lactose), 4.807);
-assert_eq_float!(comp.get(MSNF), 8.82);
-assert_eq_float!(comp.get(MilkProteins), 3.308);
+assert_eq_4dp!(comp.get(Energy), 50.4576);
+assert_eq_flt!(comp.get(MilkFat), 2.0);
+assert_eq_4dp!(comp.get(Lactose), 4.8069);
+assert_eq_flt!(comp.get(MSNF), 8.82);
+assert_eq_4dp!(comp.get(MilkProteins), 3.3075);
 // ...
 # Ok(()) }
 ```
@@ -361,7 +361,7 @@ dependencies. [`IngredientDatabase`] implements this trait.
 
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::assert_eq_float;
+# use sci_cream::asserts::assert_eq_4dp;
 # use sci_cream::{
 #     composition::{CompKey::*, ResolveComposition},
 #     data::get_all_independent_ingredient_specs,
@@ -400,9 +400,9 @@ let comp = stabilizer_blend_spec.resolve_composition(&db)?;
 assert_eq!(comp.get(TotalStabilizers), 100.0);
 
 let stabs = comp.micro.stabilizers;
-assert_eq_float!(stabs.locust_bean_gum, 57.143);
-assert_eq_float!(stabs.guar_gum, 28.571);
-assert_eq_float!(stabs.carrageenans, 14.286);
+assert_eq_4dp!(stabs.locust_bean_gum, 57.1429);
+assert_eq_4dp!(stabs.guar_gum, 28.5714);
+assert_eq_4dp!(stabs.carrageenans, 14.2857);
 # Ok(()) }
 ```
 
@@ -449,7 +449,7 @@ typically a tricky recipe to balance and requires careful tradeoffs to meet comm
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
 # use approx::assert_abs_diff_eq;
 #
-# use sci_cream::docs::{assert_eq_float, recipe_for_balancing};
+# use sci_cream::{asserts::assert_eq_4dp, docs::recipe_for_balancing};
 # use sci_cream::{
 #   CompKey::*, RatioKey::*, FpdKey::*,
 #   IngredientDatabase, Recipe, BalanceKey, Priority::{self, *}};
@@ -501,14 +501,14 @@ assert_recipe_matches(
 
 let balanced_properties = balanced.calculate_mix_properties()?;
 assert_abs_diff_eq!(balanced_properties.total_amount, 1000.0, epsilon = 0.1);
-assert_eq_float!(balanced_properties.get(ServingTemp.into()), -13.0991);
+assert_eq_4dp!(balanced_properties.get(ServingTemp.into()), -13.0991);
 
 for (key, value, _) in targets.iter().filter(|(key, _, _)| not_total_fats(key)) {
     assert_abs_diff_eq!(balanced_properties.get((*key).into()), *value, epsilon = 0.7);
 }
 
 // With disparate targets, some non-priority ones can drift to accommodate the priorities
-assert_eq_float!(balanced_properties.get(TotalFats.into()), 12.4955);
+assert_eq_4dp!(balanced_properties.get(TotalFats.into()), 12.4955);
 # Ok(()) }
 ```
 
@@ -619,6 +619,7 @@ expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
 
 #![cfg_attr(coverage, feature(coverage_attribute))]
 
+pub mod asserts;
 pub mod balancing;
 pub mod composition;
 pub mod constants;

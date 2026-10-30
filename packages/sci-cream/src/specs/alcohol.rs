@@ -36,7 +36,7 @@ use crate::{composition::CompKey, constants};
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// # use sci_cream::docs::assert_eq_float;
+/// # use sci_cream::asserts::{assert_eq_4dp, assert_eq_flt};
 /// use sci_cream::{
 ///     composition::{CompKey, ToComposition},
 ///     specs::AlcoholSpec
@@ -49,13 +49,13 @@ use crate::{composition::CompKey, constants};
 ///    solids: None,
 /// }.to_composition()?;
 ///
-/// assert_eq_float!(comp.get(CompKey::Energy), 230.7978);
-/// assert_eq_float!(comp.get(CompKey::ABV), 40.0);
-/// assert_eq_float!(comp.get(CompKey::Alcohol), 33.3042);
+/// assert_eq_4dp!(comp.get(CompKey::Energy), 230.7978);
+/// assert_eq_flt!(comp.get(CompKey::ABV), 40.0);
+/// assert_eq_4dp!(comp.get(CompKey::Alcohol), 33.3042);
 /// assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
-/// assert_eq_float!(comp.get(CompKey::Water), 66.6959);
+/// assert_eq_4dp!(comp.get(CompKey::Water), 66.6958);
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
-/// assert_eq_float!(comp.get(CompKey::PACalc), 247.4498);
+/// assert_eq_4dp!(comp.get(CompKey::PACalc), 247.4498);
 /// # Ok(()) }
 /// ```
 ///
@@ -63,7 +63,7 @@ use crate::{composition::CompKey, constants};
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// # use sci_cream::docs::assert_eq_float;
+/// # use sci_cream::asserts::{assert_eq_4dp, assert_eq_flt};
 /// # use sci_cream::{
 /// #    composition::{CompKey, ToComposition},
 /// #    specs::AlcoholSpec
@@ -76,16 +76,16 @@ use crate::{composition::CompKey, constants};
 ///    solids: None,
 /// }.to_composition()?;
 ///
-/// assert_eq_float!(comp.get(CompKey::Energy), 289.605);
-/// assert_eq_float!(comp.get(CompKey::ABV), 17.0);
-/// assert_eq_float!(comp.get(CompKey::Alcohol), 13.7381);
-/// assert_eq_float!(comp.get(CompKey::TotalSolids), 31.6);
-/// assert_eq_float!(comp.get(CompKey::Water), 54.6619);
+/// assert_eq_4dp!(comp.get(CompKey::Energy), 289.605);
+/// assert_eq_flt!(comp.get(CompKey::ABV), 17.0);
+/// assert_eq_4dp!(comp.get(CompKey::Alcohol), 13.7381);
+/// assert_eq_flt!(comp.get(CompKey::TotalSolids), 31.6);
+/// assert_eq_4dp!(comp.get(CompKey::Water), 54.6619);
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 18.0);
 /// assert_eq!(comp.get(CompKey::POD), 18.0);
-/// assert_eq_float!(comp.get(CompKey::PACalc), 102.07403);
+/// assert_eq_4dp!(comp.get(CompKey::PACalc), 102.07403);
 /// assert_eq!(comp.get(CompKey::PACsgr), 18.0);
-/// assert_eq_float!(comp.get(CompKey::TotalPAC), 120.07403);
+/// assert_eq_4dp!(comp.get(CompKey::TotalPAC), 120.07403);
 /// # Ok(()) }
 /// ```
 #[doc = include_str!("../../docs/references/index/8.md")]

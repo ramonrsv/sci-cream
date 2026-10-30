@@ -14,7 +14,7 @@ use crate::{
 };
 
 #[cfg(doc)]
-use crate::{constants::COMPOSITION_EPSILON, error::Error};
+use crate::{constants::tolerances::COMPOSITION_EPSILON, error::Error};
 
 /// Struct representing the detailed carbohydrate composition of a mix, including sugars, fibers,
 /// polyols, and other carbohydrates.
@@ -268,7 +268,7 @@ mod tests {
     #[test]
     fn carbohydrates_others_from_total_within_epsilon() {
         // An excess within `COMPOSITION_EPSILON`, as float rounding leaves, sets `others` to zero
-        let inulin = 10.0 + constants::COMPOSITION_EPSILON / 2.0;
+        let inulin = 10.0 + constants::tolerances::COMPOSITION_EPSILON / 2.0;
         let carbohydrates = Carbohydrates::new().fiber(Fibers::new().inulin(inulin));
         assert_eq!(carbohydrates.others_from_total(10.0).unwrap().others, 0.0);
     }

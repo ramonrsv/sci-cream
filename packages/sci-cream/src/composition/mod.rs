@@ -31,9 +31,9 @@
 //! ```
 //! # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //! use sci_cream::{
+//!     asserts::{assert_eq_4dp, assert_eq_flt},
 //!     composition::*,
 //!     constants::{composition::dairy::{*, milk::*}, pac},
-//!     docs::assert_eq_float,
 //! };
 //!
 //! let msnf = (100.0 - 2.0) * STD_MSNF_IN_MILK_SERUM;
@@ -70,19 +70,19 @@
 //! assert_eq!(comp.get(CompKey::Energy), 50.4576);
 //!
 //! assert_eq!(comp.get(CompKey::MilkFat), 2.0);
-//! assert_eq_float!(comp.get(CompKey::Lactose), 4.8069);
+//! assert_eq_flt!(comp.get(CompKey::Lactose), 4.8069);
 //! assert_eq!(comp.get(CompKey::MSNF), 8.82);
 //! assert_eq!(comp.get(CompKey::MilkSNFS), 4.0131);
-//! assert_eq_float!(comp.get(CompKey::MilkProteins), 3.3075);
+//! assert_eq_flt!(comp.get(CompKey::MilkProteins), 3.3075);
 //! assert_eq!(comp.get(CompKey::MilkSolids), 10.82);
 //!
 //! assert_eq!(comp.get(CompKey::TotalSolids), 10.82);
 //! assert_eq!(comp.get(CompKey::Water), 89.18);
 //!
-//! assert_eq_float!(comp.get(CompKey::POD), 0.769_104);
-//! assert_eq_float!(comp.get(CompKey::PACsgr), 4.8069);
-//! assert_eq_float!(comp.get(CompKey::PACmlk), 3.2405);
-//! assert_eq_float!(comp.get(CompKey::TotalPAC), 8.0474);
+//! assert_eq_flt!(comp.get(CompKey::POD), 0.769_104);
+//! assert_eq_flt!(comp.get(CompKey::PACsgr), 4.8069);
+//! assert_eq_4dp!(comp.get(CompKey::PACmlk), 3.2405);
+//! assert_eq_4dp!(comp.get(CompKey::TotalPAC), 8.0474);
 //! # Ok(()) }
 //! ```
 

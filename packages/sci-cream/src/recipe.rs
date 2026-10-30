@@ -432,7 +432,7 @@ mod tests {
     use crate::{
         balancing::balance_compositions,
         composition::{CompKey, RatioKey},
-        constants::COMPOSITION_EPSILON,
+        constants::tolerances::COMPOSITION_EPSILON,
         error::Error,
         fpd::FpdKey,
     };
@@ -463,7 +463,7 @@ mod tests {
 
         let mix_comp = recipe.calculate_composition().unwrap();
 
-        assert_eq_flt_test!(mix_comp.get(CompKey::Lactose), 4.8069 / 2.0);
+        assert_eq_flt!(mix_comp.get(CompKey::Lactose), 4.8069 / 2.0);
         assert_eq!(mix_comp.get(CompKey::Sucrose), 50.0);
         assert_eq!(mix_comp.get(CompKey::TotalSugars), (4.8069 / 2.0) + 50.0);
 
@@ -485,14 +485,14 @@ mod tests {
         let mix_properties = recipe.calculate_mix_properties().unwrap();
 
         assert_eq!(mix_properties.total_amount, 611.75);
-        assert_eq_flt_test!(mix_properties.get(CompKey::HF.into()), 7.2912);
+        assert_eq_6dp!(mix_properties.get(CompKey::HF.into()), 7.291_214);
 
-        assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6367);
-        assert_eq_flt_test!(mix_properties.get(CompKey::TotalPAC.into()), 33.4463);
-        assert_eq_flt_test!(mix_properties.get(RatioKey::AbsPAC.into()), 56.6165);
-        assert_eq_flt_test!(mix_properties.get(FpdKey::FPD.into()), -3.6032);
-        assert_eq_flt_test!(mix_properties.get(FpdKey::ServingTemp.into()), -13.4865);
-        assert_eq_flt_test!(mix_properties.get(FpdKey::HardnessAt14C.into()), 76.0404);
+        assert_eq_6dp!(mix_properties.get(CompKey::MilkFat.into()), 13.636_698);
+        assert_eq_6dp!(mix_properties.get(CompKey::TotalPAC.into()), 33.446_262);
+        assert_eq_6dp!(mix_properties.get(RatioKey::AbsPAC.into()), 56.616_497);
+        assert_eq_6dp!(mix_properties.get(FpdKey::FPD.into()), -3.603_155);
+        assert_eq_6dp!(mix_properties.get(FpdKey::ServingTemp.into()), -13.486_459);
+        assert_eq_6dp!(mix_properties.get(FpdKey::HardnessAt14C.into()), 76.040_405);
     }
 
     #[test]
@@ -538,7 +538,7 @@ mod tests {
 
         for ((line, name), (_, fraction)) in balanced.lines.iter().zip(names.iter()).zip(expected.iter()) {
             assert_eq!(line.ingredient.name, *name);
-            assert_eq_flt_test!(line.amount, total_amount * *fraction);
+            assert_eq_flt!(line.amount, total_amount * *fraction);
         }
     }
 
@@ -555,20 +555,20 @@ mod tests {
         let scaled_balanced = recipe.balance(&targets, Some(target_total), &[]).unwrap();
 
         let scaled_total: f64 = scaled_balanced.line_total();
-        assert_eq_flt_test!(scaled_total, target_total);
+        assert_eq_flt!(scaled_total, target_total);
 
         for line in &scaled_balanced.lines {
             assert_true!(line.amount >= 0.0);
         }
 
         let comp = scaled_balanced.calculate_composition().unwrap();
-        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 16.0);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 11.0);
+        assert_eq_6dp!(comp.get(CompKey::MilkFat), 16.0);
+        assert_eq_flt!(comp.get(CompKey::MSNF), 11.0);
 
         let scale = target_total / original_total;
         for (scaled, default) in scaled_balanced.lines.iter().zip(default_balanced.lines.iter()) {
             assert_eq!(scaled.ingredient.name, default.ingredient.name);
-            assert_eq_flt_test!(scaled.amount, default.amount * scale);
+            assert_eq_flt!(scaled.amount, default.amount * scale);
         }
     }
 
@@ -601,9 +601,9 @@ mod tests {
         let balanced = recipe.balance(&targets, None, &locked).unwrap();
 
         // The locked line keeps its grams, and `None` keeps the overall total constant.
-        assert_eq_flt_test!(balanced.lines[vanilla_idx].amount, vanilla_amount);
+        assert_eq_flt!(balanced.lines[vanilla_idx].amount, vanilla_amount);
         let balanced_total: f64 = balanced.line_total();
-        assert_eq_flt_test!(balanced_total, total);
+        assert_eq_flt!(balanced_total, total);
     }
 
     #[test]
@@ -623,9 +623,9 @@ mod tests {
             .unwrap();
 
         // The pinned line stays at 0g, and the freed mass is absorbed by the rest (total constant).
-        assert_eq_flt_test!(balanced.lines[fructose_idx].amount, 0.0);
+        assert_eq_flt!(balanced.lines[fructose_idx].amount, 0.0);
         let balanced_total: f64 = balanced.line_total();
-        assert_eq_flt_test!(balanced_total, total);
+        assert_eq_flt!(balanced_total, total);
     }
 
     #[test]
@@ -659,7 +659,7 @@ mod tests {
         let balanced = recipe
             .balance(&targets, Some(2000.0), &[(vanilla_idx, Lock::Fraction(0.01))])
             .unwrap();
-        assert_eq_flt_test!(balanced.lines[vanilla_idx].amount, 20.0);
+        assert_eq_flt!(balanced.lines[vanilla_idx].amount, 20.0);
     }
 
     #[test]
@@ -683,7 +683,7 @@ mod tests {
         let total: f64 = base.line_total();
         let recipe = base.with_evaporation(50.0);
 
-        assert_eq_flt_test!(recipe.calculate_mix_properties().unwrap().total_amount, total - 50.0);
+        assert_eq_flt!(recipe.calculate_mix_properties().unwrap().total_amount, total - 50.0);
     }
 
     #[test]
@@ -720,9 +720,9 @@ mod tests {
             .calculate_composition()
             .unwrap();
 
-        assert_eq_flt_test!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
-        assert_eq_flt_test!(balanced_post.get(CompKey::Water), post.get(CompKey::Water));
-        assert_eq_flt_test!(balanced_post.get_ratio(RatioKey::AbsPAC), post.get_ratio(RatioKey::AbsPAC));
+        assert_eq_6dp!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
+        assert_eq_6dp!(balanced_post.get(CompKey::Water), post.get(CompKey::Water));
+        assert_eq_6dp!(balanced_post.get_ratio(RatioKey::AbsPAC), post.get_ratio(RatioKey::AbsPAC));
     }
 
     #[test]
@@ -745,9 +745,9 @@ mod tests {
 
         // A `Lock::Amount` holds the line's pre-evaporation grams, and the pre-evap line total
         // (`T`) is preserved, even though the solver worked in post-evaporation space.
-        assert_eq_flt_test!(balanced.lines[vanilla_idx].amount, vanilla_amount);
+        assert_eq_flt!(balanced.lines[vanilla_idx].amount, vanilla_amount);
         let balanced_total: f64 = balanced.line_total();
-        assert_eq_flt_test!(balanced_total, total);
+        assert_eq_flt!(balanced_total, total);
     }
 
     #[test]
@@ -765,13 +765,13 @@ mod tests {
         let post = recipe.calculate_composition().unwrap();
         let deevaporated = recipe.deevaporate().unwrap();
 
-        assert_eq_flt_test!(deevaporated.evaporation, 0.0);
+        assert_eq_flt!(deevaporated.evaporation, 0.0);
         let total: f64 = deevaporated.line_total();
-        assert_eq_flt_test!(total, 250.0);
+        assert_eq_flt!(total, 250.0);
 
         let deevap_comp = deevaporated.calculate_composition().unwrap();
         for key in CompKey::iter() {
-            assert_eq_flt_test!(deevap_comp.get(key), post.get(key));
+            assert_eq_6dp!(deevap_comp.get(key), post.get(key));
         }
     }
 

@@ -110,7 +110,7 @@ mod tests {
         for comp in [Composition::new(), *SAMPLE_COMP] {
             let fast = comp.to_fast();
             for key in CompKey::iter() {
-                assert_eq_flt_test!(fast.get(key), comp.get(key));
+                assert_eq_flt!(fast.get(key), comp.get(key));
             }
         }
     }
@@ -124,7 +124,7 @@ mod tests {
                 if comp_ratio.is_nan() {
                     assert_true!(fast_ratio.is_nan());
                 } else {
-                    assert_eq_flt_test!(fast_ratio, comp_ratio);
+                    assert_eq_flt!(fast_ratio, comp_ratio);
                 }
             }
         }

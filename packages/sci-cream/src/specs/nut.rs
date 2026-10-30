@@ -40,7 +40,7 @@ use crate::composition::CompKey;
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// # use sci_cream::docs::assert_eq_float;
+/// # use sci_cream::asserts::assert_eq_flt;
 /// use sci_cream::{
 ///     composition::{CompKey, ToComposition},
 ///     specs::NutSpec
@@ -60,8 +60,8 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::NutFat), 49.9);
 /// assert_eq!(comp.get(CompKey::TotalProteins), 21.2);
 /// assert_eq!(comp.get(CompKey::TotalFiber), 12.5);
-/// assert_eq_float!(comp.get(CompKey::NutSNF), 45.69);
-/// assert_eq_float!(comp.get(CompKey::NutSolids), 95.59);
+/// assert_eq_flt!(comp.get(CompKey::NutSNF), 45.69);
+/// assert_eq_flt!(comp.get(CompKey::NutSolids), 95.59);
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
 /// assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
 /// assert_eq!(comp.get(CompKey::POD), 4.35);

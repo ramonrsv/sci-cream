@@ -1046,12 +1046,12 @@ mod tests {
     #[test]
     fn egg_split_constants() {
         // Whole-egg solids split: yolk 0.35×0.50, white 0.65×0.14.
-        assert_eq_flt_test!(egg::STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS, 0.6579);
-        assert_eq_flt_test!(egg::STD_WHITE_SOLIDS_IN_WHOLE_EGG_SOLIDS, 0.3421);
+        assert_eq_6dp!(egg::STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS, 0.657_895);
+        assert_eq_6dp!(egg::STD_WHITE_SOLIDS_IN_WHOLE_EGG_SOLIDS, 0.342_105);
 
         // Whole-egg protein split: yolk 0.35×0.16, white 0.65×0.11.
-        assert_eq_flt_test!(egg::STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN, 0.4392);
-        assert_eq_flt_test!(egg::STD_WHITE_PROTEIN_IN_WHOLE_EGG_PROTEIN, 0.5608);
+        assert_eq_6dp!(egg::STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN, 0.439_216);
+        assert_eq_6dp!(egg::STD_WHITE_PROTEIN_IN_WHOLE_EGG_PROTEIN, 0.560_784);
 
         // Each split partitions the whole.
         assert_eq!(egg::STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS + egg::STD_WHITE_SOLIDS_IN_WHOLE_EGG_SOLIDS, 1.0);

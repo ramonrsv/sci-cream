@@ -513,7 +513,7 @@ mod tests {
     use super::*;
     use crate::{
         composition::{CompKey::*, Composition, RatioKey},
-        constants::COMPOSITION_EPSILON,
+        constants::tolerances::COMPOSITION_EPSILON,
         data::get_all_recipe_entries,
         fpd::FpdKey,
         ingredient::Category,

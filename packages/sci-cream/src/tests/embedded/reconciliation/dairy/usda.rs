@@ -28,7 +28,7 @@
 #![cfg_attr(coverage, coverage(off))]
 #![expect(clippy::doc_markdown)] // _FoodData_ false positive
 
-use crate::tests::asserts::TESTS_EPSILON;
+use crate::tests::asserts::EPSILON_4DP;
 use crate::tests::embedded::reconciliation::util::{Proximates, reconcile_proximates};
 
 #[cfg(doc)]
@@ -262,7 +262,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
 const MILK_SHEET_CEILING: Proximates = Proximates {
     water: 0.5,
     carbohydrate: 4.0,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — fluid milk labels.
@@ -270,14 +270,14 @@ const MILK_LABEL_CEILING: Proximates = Proximates {
     water: 0.5,
     carbohydrate: 4.0,
     ash: 12.5,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — cream sheets.
 const CREAM_SHEET_CEILING: Proximates = Proximates {
     water: 0.5,
     carbohydrate: 4.0,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — heavy cream sheet.
@@ -287,7 +287,7 @@ const CREAM_SHEET_CEILING: Proximates = Proximates {
 const HEAVY_CREAM_SHEET_CEILING: Proximates = Proximates {
     carbohydrate: 23.5,
     ash: 4.0,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — cream labels.
@@ -295,39 +295,39 @@ const CREAM_LABEL_CEILING: Proximates = Proximates {
     water: 0.5,
     carbohydrate: 4.0,
     ash: 19.5,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — evaporated milk sheets.
 const EVAPORATED_SHEET_CEILING: Proximates = Proximates {
     water: 0.5,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — evaporated milk labels.
 const EVAPORATED_LABEL_CEILING: Proximates = Proximates {
     water: 0.5,
     ash: 9.5,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — condensed milk sheet.
 const CONDENSED_SHEET_CEILING: Proximates = Proximates {
     water: 0.5,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — condensed milk label.
 const CONDENSED_LABEL_CEILING: Proximates = Proximates {
     water: 1.5,
     ash: 17.5,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — milk powder sheets.
 const POWDER_SHEET_CEILING: Proximates = Proximates {
     water: 2.0,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — milk powder labels.
@@ -336,30 +336,30 @@ const POWDER_SHEET_CEILING: Proximates = Proximates {
 const POWDER_LABEL_CEILING: Proximates = Proximates {
     water: 17.0,
     ash: 7.5,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — fluid whey sheet.
-const WHEY_SHEET_CEILING: Proximates = Proximates::splat(TESTS_EPSILON);
+const WHEY_SHEET_CEILING: Proximates = Proximates::splat(EPSILON_4DP);
 
 /// Per-field ceilings on relative error vs the measured value, in percent — fluid whey label.
 const WHEY_LABEL_CEILING: Proximates = Proximates {
     water: 0.5,
     ash: 7.5,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — whey powder sheet.
 const WHEY_POWDER_SHEET_CEILING: Proximates = Proximates {
     water: 0.5,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 /// Per-field ceilings on relative error vs the measured value, in percent — whey powder label.
 const WHEY_POWDER_LABEL_CEILING: Proximates = Proximates {
     water: 37.5,
     ash: 2.0,
-    ..Proximates::splat(TESTS_EPSILON)
+    ..Proximates::splat(EPSILON_4DP)
 };
 
 #[test]

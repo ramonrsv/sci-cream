@@ -284,7 +284,7 @@ pub(crate) mod tests {
             .for_each(|(_, spec, expected_comp_opt)| {
                 let comp = spec.spec.to_composition().unwrap();
                 if let Some(expected_comp) = expected_comp_opt {
-                    assert_eq_flt_test!(&comp, expected_comp);
+                    assert_eq_4dp!(&comp, expected_comp);
                 }
             });
     }
@@ -303,7 +303,7 @@ pub(crate) mod tests {
         INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, expected_comp_opt)| {
             let comp = spec.resolve_composition(&db).unwrap();
             if let Some(expected_comp) = expected_comp_opt {
-                assert_eq_flt_test!(&comp, expected_comp);
+                assert_eq_4dp!(&comp, expected_comp);
             }
         });
     }

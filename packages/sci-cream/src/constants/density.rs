@@ -556,7 +556,7 @@ mod tests {
 
     use super::*;
     use crate::{
-        constants::{COMPOSITION_EPSILON, composition::dairy::milk::STD_MINERALS_IN_MSNF},
+        constants::{composition::dairy::milk::STD_MINERALS_IN_MSNF, tolerances::COMPOSITION_EPSILON},
         util::{
             fast_interpolate_pairs, interpolate_pairs, table_supports_fast_interpolation, table_supports_interpolation,
         },
@@ -611,7 +611,7 @@ mod tests {
         for (fat_content, expected_density) in expected_conversions {
             let grams = dairy_ml_to_g(100.0, fat_content, 0.0, 0.0).unwrap();
             let expected_grams = 100.0 * expected_density;
-            assert_eq_flt_test!(grams, expected_grams);
+            assert_eq_4dp!(grams, expected_grams);
         }
     }
 
@@ -621,7 +621,7 @@ mod tests {
         // Brand's 15mL serving: 1.5g fat, 8.97g sucrose, MSNF from its 2.03g lactose + 1g protein.
         let scm_msnf = (2.03 + 1.0) / (1.0 - STD_MINERALS_IN_MSNF);
         let (grams, iters) = solve_dairy_serving_grams_iters(15.0, 8.97, scm_msnf, |_| 1.5);
-        assert_eq_flt_test!(grams, 19.4109);
+        assert_eq_6dp!(grams, 19.410_891);
         assert_lt!(iters, DAIRY_SERVING_SOLVER_ITERS);
         assert_le!(iters, 20);
 
@@ -629,7 +629,7 @@ mod tests {
         // serving size. A 250mL whole-milk serving: 3.25% fat, MSNF from 13g lactose + 9g protein.
         let milk_msnf = (13.0 + 9.0) / (1.0 - STD_MINERALS_IN_MSNF);
         let (grams, fresh_iters) = solve_dairy_serving_grams_iters(250.0, 0.0, milk_msnf, |size| size * 3.25 / 100.0);
-        assert_eq_flt_test!(grams, 258.1233);
+        assert_eq_6dp!(grams, 258.12329);
         assert_le!(fresh_iters, 3);
     }
 
@@ -656,7 +656,7 @@ mod tests {
         ];
 
         for (abw, expected_abv) in expected {
-            assert_eq_flt_test!(super::abw_to_abv(abw), expected_abv);
+            assert_eq_6dp!(super::abw_to_abv(abw), expected_abv);
         }
     }
 
@@ -672,7 +672,7 @@ mod tests {
         ];
 
         for (abv, expected_abw) in expected {
-            assert_eq_flt_test!(super::abv_to_abw(abv), expected_abw);
+            assert_eq_6dp!(super::abv_to_abw(abv), expected_abw);
         }
     }
 
@@ -763,12 +763,12 @@ mod tests {
     #[test]
     fn ethanol_solution_density() {
         // Probes are product strengths: 35% vanilla extract, 40% vodka/gin/rum, 43% whiskey.
-        assert_eq_flt_test!(ethanol_solution_density_by_abv(0.0), WATER);
-        assert_eq_flt_test!(ethanol_solution_density_by_abv(100.0), ETHANOL);
-        assert_eq_flt_test!(ethanol_solution_density_by_abv(33.0), 0.95839);
-        assert_eq_flt_test!(ethanol_solution_density_by_abv(35.0), 0.95563);
-        assert_eq_flt_test!(ethanol_solution_density_by_abv(40.0), 0.94805);
-        assert_eq_flt_test!(ethanol_solution_density_by_abv(43.0), 0.94308);
+        assert_eq_flt!(ethanol_solution_density_by_abv(0.0), WATER);
+        assert_eq_flt!(ethanol_solution_density_by_abv(100.0), ETHANOL);
+        assert_eq_6dp!(ethanol_solution_density_by_abv(33.0), 0.958_388);
+        assert_eq_6dp!(ethanol_solution_density_by_abv(35.0), 0.955_626);
+        assert_eq_6dp!(ethanol_solution_density_by_abv(40.0), 0.948_049);
+        assert_eq_6dp!(ethanol_solution_density_by_abv(43.0), 0.943_078);
     }
 
     #[test]
@@ -790,7 +790,7 @@ mod tests {
         let water = 100.0 - abw;
 
         // With no added solids the mixture is just the ethanol-water solution.
-        assert_eq_flt_test!(
+        assert_eq_flt!(
             super::mixture_density(MixDensityParams {
                 ethanol: abw,
                 water,

@@ -83,17 +83,17 @@ mod tests {
     #[test]
     fn new_returns_default_mix_properties() {
         let mix = MixProperties::new();
-        assert_eq_flt_test!(mix.total_amount, 0.0);
-        assert_eq_flt_test!(mix.composition.get(CompKey::Energy), 0.0);
-        assert_eq_flt_test!(mix.fpd.fpd, 0.0);
+        assert_eq_flt!(mix.total_amount, 0.0);
+        assert_eq_flt!(mix.composition.get(CompKey::Energy), 0.0);
+        assert_eq_flt!(mix.fpd.fpd, 0.0);
     }
 
     #[test]
     fn from_rust_mix_properties_preserves_fields() {
         let wasm_mix = MixProperties::from(RUST_MIX_PROPS.clone());
-        assert_eq_flt_test!(wasm_mix.total_amount, 500.0);
-        assert_eq_flt_test!(wasm_mix.composition.get(CompKey::Energy), 42.0);
-        assert_eq_flt_test!(wasm_mix.fpd.fpd, 0.0);
+        assert_eq_flt!(wasm_mix.total_amount, 500.0);
+        assert_eq_flt!(wasm_mix.composition.get(CompKey::Energy), 42.0);
+        assert_eq_flt!(wasm_mix.fpd.fpd, 0.0);
     }
 
     #[test]

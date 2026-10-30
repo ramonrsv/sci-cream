@@ -263,7 +263,7 @@ mod tests {
     fn recipe_line_new_sets_fields() {
         let line = RecipeLine::new(WHOLE_MILK_ING.clone(), 250.0);
         assert_eq!(line.ingredient, *WHOLE_MILK_ING);
-        assert_eq_flt_test!(line.amount, 250.0);
+        assert_eq_flt!(line.amount, 250.0);
     }
 
     #[test]
@@ -272,21 +272,21 @@ mod tests {
         assert_eq!(recipe.name, Some("Test Recipe".to_string()));
         assert_eq!(recipe.lines.len(), 1);
         assert_eq!(recipe.lines[0].ingredient, *WHOLE_MILK_ING);
-        assert_eq_flt_test!(recipe.lines[0].amount, 100.0);
+        assert_eq_flt!(recipe.lines[0].amount, 100.0);
     }
 
     #[test]
     fn calculate_composition_wasm_returns_composition() {
         let result = TEST_RECIPE.calculate_composition_wasm();
         assert_true!(result.is_ok());
-        assert_eq_flt_test!(result.unwrap().get(CompKey::Water), 100.0);
+        assert_eq_flt!(result.unwrap().get(CompKey::Water), 100.0);
     }
 
     #[test]
     fn calculate_mix_properties_wasm_returns_mix_properties() {
         let result = TEST_RECIPE.calculate_mix_properties_wasm();
         assert_true!(result.is_ok());
-        assert_eq_flt_test!(result.unwrap().total_amount, 100.0);
+        assert_eq_flt!(result.unwrap().total_amount, 100.0);
     }
 
     #[test]
@@ -296,7 +296,7 @@ mod tests {
         assert_eq!(wasm_recipe.name, TEST_RECIPE.name);
         assert_eq!(wasm_recipe.lines.len(), TEST_RECIPE.lines.len());
         assert_eq!(wasm_recipe.lines[0].ingredient, TEST_RECIPE.lines[0].ingredient);
-        assert_eq_flt_test!(wasm_recipe.lines[0].amount, TEST_RECIPE.lines[0].amount);
+        assert_eq_flt!(wasm_recipe.lines[0].amount, TEST_RECIPE.lines[0].amount);
     }
 
     #[test]

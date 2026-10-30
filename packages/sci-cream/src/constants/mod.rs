@@ -11,7 +11,5 @@ pub mod molar_mass;
 pub mod pac;
 pub mod pod;
 pub mod stabilization;
+pub mod tolerances;
 pub mod units;
-
-/// Epsilon value for floating point comparisons of compositions, e.g. water content
-pub const COMPOSITION_EPSILON: f64 = 1e-13;

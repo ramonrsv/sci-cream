@@ -23,7 +23,7 @@
 use approx::AbsDiffEq;
 
 use crate::{
-    constants::COMPOSITION_EPSILON,
+    constants::tolerances::COMPOSITION_EPSILON,
     error::{Error, Result},
 };
 

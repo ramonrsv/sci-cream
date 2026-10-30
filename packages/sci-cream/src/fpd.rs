@@ -21,12 +21,12 @@ use wasm_bindgen::prelude::*;
 use crate::{
     composition::{CompKey, Composition},
     constants::{
-        COMPOSITION_EPSILON,
         fpd::{
             CORVITTO_PAC_TO_SERVING_TEMP_TABLE, DEFAULT_FPD_CURVES_METHOD, DEFAULT_PAC_TO_FPD_METHOD,
             FPD_CONST_FOR_MSNF_WS_SALTS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE, SERVING_TEMP_X_AXIS,
             TARGET_SERVING_TEMP_14C,
         },
+        tolerances::COMPOSITION_EPSILON,
     },
     error::{Error, Result},
     util::{fast_interpolate_pairs, interpolate_pairs, iter_all_abs_diff_eq},
@@ -770,7 +770,7 @@ mod tests {
     #[test]
     fn get_pac_from_fpd_polynomial() {
         for (expected_pac, fpd) in PAC_TO_FPD_TABLE_POLY.as_slice() {
-            assert_eq_flt_test!(super::get_pac_from_fpd_polynomial(*fpd, None).unwrap(), *expected_pac);
+            assert_eq_6dp!(super::get_pac_from_fpd_polynomial(*fpd, None).unwrap(), *expected_pac);
         }
     }
 
@@ -785,7 +785,7 @@ mod tests {
         for pac_int in 0..=((200.0 / 0.25) as usize) {
             let expected_pac = pac_int as f64 * 0.25;
             let fpd = get_fpd_from_pac_inter(expected_pac).unwrap();
-            assert_eq_flt_test!(super::get_pac_from_fpd_interpolation(fpd).unwrap(), expected_pac);
+            assert_eq_flt!(super::get_pac_from_fpd_interpolation(fpd).unwrap(), expected_pac);
         }
     }
 
@@ -823,7 +823,7 @@ mod tests {
                 ))
                 .pac(PAC::new().sugars(pac_per_water * 70.0 / 100.0));
 
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC) / comp.get(CompKey::Water) * 100.0, pac_per_water);
+        assert_eq_flt!(comp.get(CompKey::TotalPAC) / comp.get(CompKey::Water) * 100.0, pac_per_water);
         comp
     }
 
@@ -838,11 +838,11 @@ mod tests {
                     let (fpd_fw, fpd_hardness) =
                         compute_fpd_curve_point(*REF_COMP_WITH_HF, frozen_water, pac_to_fpd, curves_method).unwrap();
 
-                    assert_eq_flt_test!(fpd_fw, curves.frozen_water[x].temp);
+                    assert_eq_flt!(fpd_fw, curves.frozen_water[x].temp);
                     if matches!(curves_method, FpdCurvesMethod::GoffHartel) {
                         assert_true!(fpd_hardness.is_nan()); // No hardness curve for this method
                     } else {
-                        assert_eq_flt_test!(fpd_hardness, curves.hardness[x].temp);
+                        assert_eq_flt!(fpd_hardness, curves.hardness[x].temp);
                     }
                 }
             }
@@ -867,8 +867,8 @@ mod tests {
                         compute_pac_from_fpd_curve_point(frozen_water, fpd_hardness, pac_to_fpd, curves_method)
                             .unwrap();
 
-                    assert_eq_flt_test!(pac_total, total);
-                    assert_eq_flt_test!(pac_net, net);
+                    assert_eq_flt!(pac_total, total);
+                    assert_eq_6dp!(pac_net, net);
                 }
             }
         }
@@ -878,7 +878,7 @@ mod tests {
     fn compute_pac_from_fpd_curve_point_inverts_fpd_reading() {
         for comp in [*REF_COMP, *REF_COMP_WITH_ALCOHOL, *REF_COMP_WITH_HF] {
             let fpd = FPD::compute_from_composition(comp).unwrap().get(FpdKey::FPD);
-            assert_eq_flt_test!(pac_from_curve_point_default(0.0, fpd).unwrap(), pac_per_water(&comp).0);
+            assert_eq_flt!(pac_from_curve_point_default(0.0, fpd).unwrap(), pac_per_water(&comp).0);
         }
     }
 
@@ -889,10 +889,7 @@ mod tests {
 
         for comp in [*REF_COMP, *REF_COMP_WITH_ALCOHOL, *REF_COMP_WITH_HF] {
             let serving_temp = FPD::compute_from_composition(comp).unwrap().get(FpdKey::ServingTemp);
-            assert_eq_flt_test!(
-                pac_from_curve_point_default(SERVING_TEMP_X, serving_temp).unwrap(),
-                pac_per_water(&comp).1
-            );
+            assert_eq_flt!(pac_from_curve_point_default(SERVING_TEMP_X, serving_temp).unwrap(), pac_per_water(&comp).1);
         }
     }
 
@@ -916,7 +913,7 @@ mod tests {
         for hardness in 0..=98 {
             let pac = pac_from_curve_point_default(f64::from(hardness), TARGET_SERVING_TEMP_14C).unwrap();
             let comp = comp_with_sugars_pac(pac);
-            assert_eq_flt_test!(
+            assert_eq_6dp!(
                 FPD::compute_from_composition(comp).unwrap().get(FpdKey::HardnessAt14C),
                 f64::from(hardness)
             );
@@ -953,7 +950,7 @@ mod tests {
 
     #[test]
     fn pac_msnf_ws_salts() {
-        assert_eq_flt_test!(
+        assert_eq_flt!(
             super::get_pac_from_fpd_polynomial(FPD_CONST_FOR_MSNF_WS_SALTS, None).unwrap(),
             pac::MSNF_WS_SALTS
         );
@@ -1076,7 +1073,7 @@ mod tests {
             (CompKey::PACmlk, 4.408_849),
             (CompKey::HF, 10.0),
         ]);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF), 16.5888);
+        assert_eq_6dp!(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF), 16.588_849);
     }
 
     /// Reference freezing curve for [`REF_COMP`] (Goff & Hartel, 2013, Table 6.2, p. 184)[^2]
@@ -1292,9 +1289,9 @@ mod tests {
             )
             .unwrap();
 
-            assert_eq_flt_test!(step_with_hf.hf, (10.0 / ref_step.water) * 100.0);
+            assert_eq_flt!(step_with_hf.hf, (10.0 / ref_step.water) * 100.0);
             assert_abs_diff_eq!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
-            assert_eq_flt_test!(step_with_hf.fpd_inc_hf, step_pac_less_hf.fpd_exc_hf);
+            assert_eq_flt!(step_with_hf.fpd_inc_hf, step_pac_less_hf.fpd_exc_hf);
         }
     }
 
@@ -1303,12 +1300,12 @@ mod tests {
         let mut comp = *REF_COMP;
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq!(comp.get(CompKey::HF), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF), 26.5888);
+        assert_eq_6dp!(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF), 26.588_849);
 
         comp.pac.hardness_factor = 30.0;
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq!(comp.get(CompKey::HF), 30.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF), -3.4112);
+        assert_eq_6dp!(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF), -3.411_151);
 
         for (ref_step, _) in REF_COMP_FREEZING_CURVE_MODIFIED_GOFF_HARTEL_CORVITTO.iter() {
             let step_with_hf = compute_fpd_curve_step_modified_goff_hartel_corvitto(
@@ -1318,7 +1315,7 @@ mod tests {
             )
             .unwrap();
 
-            assert_eq_flt_test!(step_with_hf.hf, (30.0 / ref_step.water) * 100.0);
+            assert_eq_flt!(step_with_hf.hf, (30.0 / ref_step.water) * 100.0);
             assert_abs_diff_eq!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
             assert_true!(step_with_hf.fpd_inc_hf.is_nan());
         }
@@ -1564,7 +1561,7 @@ mod tests {
         ] {
             for (pac, serving_temp) in table {
                 let computed_serving_temp = super::get_serving_temp_from_pac_corvitto(*pac).unwrap();
-                assert_eq_flt_test!(computed_serving_temp, *serving_temp);
+                assert_eq_flt!(computed_serving_temp, *serving_temp);
             }
         }
 
@@ -1636,7 +1633,7 @@ mod tests {
 
         for point in curve {
             let x_axis = super::get_x_axis_at_fpd(curve, point.temp).unwrap();
-            assert_eq_flt_test!(x_axis, point.x_axis);
+            assert_eq_flt!(x_axis, point.x_axis);
         }
 
         for fpd in [-1.0, 85.0] {
@@ -1645,7 +1642,7 @@ mod tests {
 
         for (expected_x_axis, target_fpd) in &[(5.0, -2.9), (7.5, -2.98), (77.5, -14.885)] {
             let x_axis = super::get_x_axis_at_fpd(curve, *target_fpd).unwrap();
-            assert_eq_flt_test!(x_axis, *expected_x_axis);
+            assert_eq_6dp!(x_axis, *expected_x_axis);
         }
     }
 

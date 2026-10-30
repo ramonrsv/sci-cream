@@ -15,7 +15,7 @@ use crate::{
 #[cfg(doc)]
 use crate::{
     composition::{EggProteins, MilkProteins, Solids},
-    constants::COMPOSITION_EPSILON,
+    constants::tolerances::COMPOSITION_EPSILON,
     error::Error,
 };
 
@@ -346,7 +346,7 @@ mod tests {
     #[test]
     fn solids_breakdown_others_from_total_within_epsilon() {
         // An excess within `COMPOSITION_EPSILON`, as float rounding leaves, sets `others` to zero
-        let s = Sb::new().fats(Fats::new().total(10.0 + constants::COMPOSITION_EPSILON / 2.0));
+        let s = Sb::new().fats(Fats::new().total(10.0 + constants::tolerances::COMPOSITION_EPSILON / 2.0));
         assert_eq!(s.others_from_total(10.0).unwrap().others, 0.0);
     }
 

@@ -80,7 +80,7 @@ fn dairy_label_variants_match_their_sheets() {
         assert_eq!(label.energy, sheet.energy);
         assert_eq!(label.total_fat, Unit::Grams(sheet.fat));
         assert_eq!(label.saturated_fat, sheet.saturated_fat);
-        assert_eq_flt_test!(label.sugars, sheet.sugars.total());
+        assert_eq_flt!(label.sugars, sheet.sugars.total());
         assert_eq!(label.sucrose.unwrap_or(0.0), sheet.sugars.sucrose);
         assert_eq!(label.protein, sheet.protein);
         assert_eq!(label.solids_source, sheet.solids_source);

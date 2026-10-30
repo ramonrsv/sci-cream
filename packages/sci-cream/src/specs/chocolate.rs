@@ -93,7 +93,7 @@ pub enum ChocolateFat {
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// # use sci_cream::docs::assert_eq_float;
+/// # use sci_cream::asserts::assert_eq_flt;
 /// use sci_cream::{
 ///     composition::{CompKey, ToComposition},
 ///     specs::{ChocolateFat, ChocolateSpec}
@@ -112,7 +112,7 @@ pub enum ChocolateFat {
 /// assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
 /// assert_eq!(comp.get(CompKey::CocoaSolids), 30.0);
 ///
-/// assert_eq_float!(comp.get(CompKey::Energy), 545.52);
+/// assert_eq_flt!(comp.get(CompKey::Energy), 545.52);
 /// assert_eq!(comp.get(CompKey::TotalFats), 40.0);
 /// assert_eq!(comp.get(CompKey::TotalProteins), 7.05);
 /// assert_eq!(comp.get(CompKey::TotalFiber), 11.34);
@@ -282,7 +282,7 @@ fn make_milk_solids(milk_solids: f64, milk_fat: f64, lactose: &Sugars) -> Result
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// # use sci_cream::docs::assert_eq_float;
+/// # use sci_cream::asserts::assert_eq_flt;
 /// # use sci_cream::{
 /// #     composition::{CompKey, ToComposition},
 /// #     specs::CocoaPowderSpec
@@ -297,15 +297,15 @@ fn make_milk_solids(milk_solids: f64, milk_fat: f64, lactose: &Sugars) -> Result
 /// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
-/// assert_eq_float!(comp.get(CompKey::Water), 3.0);
-/// assert_eq_float!(comp.get(CompKey::CacaoSolids), 97.0);
+/// assert_eq_flt!(comp.get(CompKey::Water), 3.0);
+/// assert_eq_flt!(comp.get(CompKey::CacaoSolids), 97.0);
 /// assert_eq!(comp.get(CompKey::CocoaButter), 16.67);
-/// assert_eq_float!(comp.get(CompKey::CocoaSolids), 80.33);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 80.33);
 ///
-/// assert_eq_float!(comp.get(CompKey::Energy), 325.47072);
+/// assert_eq_flt!(comp.get(CompKey::Energy), 325.47072);
 /// assert_eq!(comp.get(CompKey::TotalFats), 16.67);
-/// assert_eq_float!(comp.get(CompKey::TotalProteins), 18.87755);
-/// assert_eq_float!(comp.get(CompKey::TotalFiber), 30.36474);
+/// assert_eq_flt!(comp.get(CompKey::TotalProteins), 18.87755);
+/// assert_eq_flt!(comp.get(CompKey::TotalFiber), 30.36474);
 /// # Ok(()) }
 /// ```
 #[doc = include_str!("../../docs/references/index/511.md")]
@@ -617,7 +617,7 @@ pub(crate) mod tests {
             (CompKey::TransFat, 0.0),
         ]);
 
-        assert_eq_flt_test!(comp.solids.cocoa.minerals, 2.85);
+        assert_eq_flt!(comp.solids.cocoa.minerals, 2.85);
         assert_eq!(comp.solids.other.others, 2.0);
     }
 
@@ -690,7 +690,7 @@ pub(crate) mod tests {
             (CompKey::TransFat, 0.0),
         ]);
 
-        assert_eq_flt_test!(comp.solids.cocoa.minerals, 3.496);
+        assert_eq_flt!(comp.solids.cocoa.minerals, 3.496);
     }
 
     pub(crate) const ING_SPEC_COCOA_POWDER_GHIRARDELLI_100_COCOA_POWDER_STR: &str = r#"{
@@ -762,7 +762,7 @@ pub(crate) mod tests {
             (CompKey::TransFat, 0.0),
         ]);
 
-        assert_eq_flt_test!(comp.solids.cocoa.minerals, 6.10508);
+        assert_eq_flt!(comp.solids.cocoa.minerals, 6.10508);
     }
 
     pub(crate) const ING_SPEC_COCOA_POWDER_VALRHONA_COCOA_POWDER_STR: &str = r#"{
@@ -843,7 +843,7 @@ pub(crate) mod tests {
             (CompKey::TransFat, 0.0),
         ]);
 
-        assert_eq_flt_test!(comp.solids.cocoa.minerals, 6.696);
+        assert_eq_flt!(comp.solids.cocoa.minerals, 6.696);
         assert_eq!(comp.solids.other.others, 4.0);
     }
 
@@ -860,7 +860,7 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq_flt_test!(&comp, &*COMP_VALRHONA_COCOA_POWDER);
+        assert_eq_6dp!(&comp, &*COMP_VALRHONA_COCOA_POWDER);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_70_DARK_CHOCOLATE_STR: &str = r#"{
@@ -940,7 +940,7 @@ pub(crate) mod tests {
             (CompKey::TransFat, 0.0),
         ]);
 
-        assert_eq_flt_test!(comp.solids.cocoa.minerals, 2.2876);
+        assert_eq_flt!(comp.solids.cocoa.minerals, 2.2876);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_95_DARK_CHOCOLATE_STR: &str = r#"{
@@ -1020,7 +1020,7 @@ pub(crate) mod tests {
             (CompKey::TransFat, 0.0),
         ]);
 
-        assert_eq_flt_test!(comp.solids.cocoa.minerals, 3.1046);
+        assert_eq_flt!(comp.solids.cocoa.minerals, 3.1046);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_100_DARK_CHOCOLATE_STR: &str = r#"{
@@ -1092,7 +1092,7 @@ pub(crate) mod tests {
             (CompKey::TransFat, 0.0),
         ]);
 
-        assert_eq_flt_test!(comp.solids.cocoa.minerals, 3.268);
+        assert_eq_flt!(comp.solids.cocoa.minerals, 3.268);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_CHOCOLATE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
@@ -1267,10 +1267,10 @@ pub(crate) mod tests {
             .to_composition()
             .unwrap();
 
-            assert_eq_flt_test!(comp.get(CompKey::Water), water);
-            assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), exp_cacao_solids);
-            assert_eq_flt_test!(comp.get(CompKey::TotalSolids), exp_cacao_solids);
-            assert_eq_flt_test!(comp.get(CompKey::CocoaSolids), exp_cacao_solids - 10.0);
+            assert_eq_flt!(comp.get(CompKey::Water), water);
+            assert_eq_flt!(comp.get(CompKey::CacaoSolids), exp_cacao_solids);
+            assert_eq_flt!(comp.get(CompKey::TotalSolids), exp_cacao_solids);
+            assert_eq_flt!(comp.get(CompKey::CocoaSolids), exp_cacao_solids - 10.0);
         }
     }
 
@@ -1290,17 +1290,17 @@ pub(crate) mod tests {
         .unwrap();
 
         let msnf = 20.0 - 5.0;
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 20.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 5.0);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), msnf);
-        assert_eq_flt_test!(comp.get(CompKey::Lactose), msnf * STD_LACTOSE_IN_MSNF);
-        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), msnf * STD_PROTEIN_IN_MSNF);
-        assert_eq_flt_test!(comp.get(CompKey::MilkMinerals), msnf * STD_MINERALS_IN_MSNF);
+        assert_eq_flt!(comp.get(CompKey::MilkSolids), 20.0);
+        assert_eq_flt!(comp.get(CompKey::MilkFat), 5.0);
+        assert_eq_flt!(comp.get(CompKey::MSNF), msnf);
+        assert_eq_flt!(comp.get(CompKey::Lactose), msnf * STD_LACTOSE_IN_MSNF);
+        assert_eq_flt!(comp.get(CompKey::MilkProteins), msnf * STD_PROTEIN_IN_MSNF);
+        assert_eq_flt!(comp.get(CompKey::MilkMinerals), msnf * STD_MINERALS_IN_MSNF);
 
         // The declared split is taken as-is, and the cacao side is untouched by the milk
-        assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), 40.0);
-        assert_eq_flt_test!(comp.get(CompKey::CocoaButter), 22.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalFats), 27.0);
+        assert_eq_flt!(comp.get(CompKey::CacaoSolids), 40.0);
+        assert_eq_flt!(comp.get(CompKey::CocoaButter), 22.0);
+        assert_eq_flt!(comp.get(CompKey::TotalFats), 27.0);
     }
 
     #[test]
@@ -1319,7 +1319,7 @@ pub(crate) mod tests {
         .unwrap();
 
         let lactose = (20.0 - 5.0) * STD_LACTOSE_IN_MSNF;
-        assert_eq_flt_test!(milky.get(CompKey::TotalSugars), 40.0 + lactose);
+        assert_eq_flt!(milky.get(CompKey::TotalSugars), 40.0 + lactose);
 
         // Sucrose alone would carry the POD of the declared 40 g, and MSNF salts no PAC at all
         let sucrose_only = Sugars::new().sucrose(40.0).to_pod().unwrap();
@@ -1340,9 +1340,9 @@ pub(crate) mod tests {
         .unwrap();
 
         let milk_fat = 20.0 * STD_BUTTERFAT_IN_WHOLE_MILK_POWDER;
-        assert_eq_flt_test!(comp.get(CompKey::MilkFat), milk_fat);
-        assert_eq_flt_test!(comp.get(CompKey::CocoaButter), 27.0 - milk_fat);
-        assert_eq_flt_test!(comp.get(CompKey::TotalFats), 27.0);
+        assert_eq_flt!(comp.get(CompKey::MilkFat), milk_fat);
+        assert_eq_flt!(comp.get(CompKey::CocoaButter), 27.0 - milk_fat);
+        assert_eq_flt!(comp.get(CompKey::TotalFats), 27.0);
     }
 
     #[test]
@@ -1356,7 +1356,7 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq_flt_test!(&comp, &*COMP_LINDT_70_DARK_CHOCOLATE);
+        assert_eq_6dp!(&comp, &*COMP_LINDT_70_DARK_CHOCOLATE);
     }
 
     #[test]
@@ -1371,8 +1371,8 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::CocoaButter), 40.0 * STD_COCOA_BUTTER_IN_CACAO_SOLIDS);
-        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 20.0 * STD_BUTTERFAT_IN_WHOLE_MILK_POWDER);
+        assert_eq_flt!(comp.get(CompKey::CocoaButter), 40.0 * STD_COCOA_BUTTER_IN_CACAO_SOLIDS);
+        assert_eq_flt!(comp.get(CompKey::MilkFat), 20.0 * STD_BUTTERFAT_IN_WHOLE_MILK_POWDER);
     }
 
     #[test]

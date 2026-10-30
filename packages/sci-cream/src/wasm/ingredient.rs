@@ -134,7 +134,7 @@ pub(crate) mod tests {
         let ing = Ingredient::new("Whole Milk".to_string(), Category::Dairy, Composition::new());
         assert_eq!(ing.name, "Whole Milk");
         assert_eq!(ing.category, Category::Dairy);
-        assert_eq_flt_test!(ing.composition.get(CompKey::Energy), 0.0);
+        assert_eq_flt!(ing.composition.get(CompKey::Energy), 0.0);
     }
 
     #[test]
@@ -148,7 +148,7 @@ pub(crate) mod tests {
         let wasm_ing = Ingredient::from(SUCROSE_RUST_ING.clone());
         assert_eq!(wasm_ing.name, "Sucrose");
         assert_eq!(wasm_ing.category, Category::Sweetener);
-        assert_eq_flt_test!(wasm_ing.composition.get(CompKey::Energy), 10.0);
+        assert_eq_flt!(wasm_ing.composition.get(CompKey::Energy), 10.0);
         assert_eq!(wasm_ing, *SUCROSE_ING);
     }
 
