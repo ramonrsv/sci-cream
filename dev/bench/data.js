@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793393975073,
+  "lastUpdate": 1793393980708,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -604329,6 +604329,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.10%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "77f124da0d627e41e8b4d22a7083d7a7187ac4ad",
+          "message": "Check composition constants' relations in doctests\n\nEach constant in constants/composition.rs that is derived from other\nconstants, or sourced and corroborated by them, is now a literal, with\na doctest checking the relation right after the sentence stating it.\nRustdoc showed a computed constant as `= _; // 0.37499999999999994f64`,\nhiding both value and derivation; now the value and its check render\ntogether.\n\n- Partitions are exact assert_eq! sums, the derived term last: the\n  MSNF, caseinate, MPI, MCI, and both cocoa triples, the whole egg's\n  yolks and whites, and the egg splits. Whey and casein, neither\n  derived from the other, each carry their sum.\n- The yolk's shares of whole-egg solids and protein are rounded to\n  six places, checked with assert_eq_6dp!. Egg white's protein in\n  solids agrees with its ratio to 0.006, tightened from 0.01, and the\n  yolk's exactly.\n- The cocoa ash and carbohydrate orderings and the fiber bound move to\n  the constants they constrain; fiber and sugars must fit inside the\n  smaller carbohydrate fraction.\n\nFive unit tests move into these doctests, none dropping an assertion.\nSTD_PROTEIN_IN_MSNF's literal, 0.375, is one ULP off its old computed\nvalue, so the composition docs' energy example uses assert_eq_flt!,\nand the rounded egg splits move the whole-egg protein test to 5.607_84\nand 4.392_16. CLAUDE.md gains the convention as \"Derived constants\".\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T16:50:13-04:00",
+          "tree_id": "87cfbeaff68bbe45f83195e935d768b89e4ba019",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/77f124da0d627e41e8b4d22a7083d7a7187ac4ad"
+        },
+        "date": 1793393905117,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 55705,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 489205,
+            "range": "±0.50%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 39748,
+            "range": "±1.09%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 395519,
+            "range": "±1.22%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
