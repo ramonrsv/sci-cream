@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793420738333,
+  "lastUpdate": 1793427181167,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -683797,6 +683797,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.82,
             "range": "0.42",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6b841730f584f6ce41c6a10b5e51f10e7005d0bb",
+          "message": "Document and apply the crate's import convention\n\nImports go in blank-line-separated groups: std, third-party, then\ncrate, with test code adding the asserts pair and then other test-only\nimports ahead of crate. Within a group, each root is one nested import\nnaming each module once. CLAUDE.md § Imports states the convention,\nincluding #[cfg] imports, re-exports, and benches. It is kept by hand:\nrustfmt sorts only within a group and can't express the test groups.\n\nThe imports in 56 files that broke it now follow it:\n\n- Repeated modules nested once, as composition::{…} in the 16\n  composition files; std, approx, crate, and crate::tests imports\n  merged into one per group.\n- Asserts pairs in a group of their own, and test-only imports moved\n  out of the crate group and its nests, ahead of crate.\n- Each #[cfg(feature)] import in a group of its own after its kind's,\n  and benches ordered third-party, sci_cream, then crate.\n\nAlso drops an unused `use core::f64;` from specs/dairy.rs, and names\nunused_imports rather than the unused group on the five\nexpected-unused imports.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T02:06:40-04:00",
+          "tree_id": "93caac1446201216b79cbd966e0d2592fc3fdff2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6b841730f584f6ce41c6a10b5e51f10e7005d0bb"
+        },
+        "date": 1793427137968,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 43.15,
+            "range": "6.46",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 10.42,
+            "range": "0.72",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 10.41,
+            "range": "0.70",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 112.5,
+            "range": "7.05",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.38,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 112.5,
+            "range": "7.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 40.81,
+            "range": "6.12",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.71,
+            "range": "0.24",
             "unit": "ms"
           }
         ]
