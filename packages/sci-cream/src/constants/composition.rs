@@ -213,7 +213,8 @@ pub mod dairy {
 
         /// Proportion of proteins in milk solids that is whey
         ///
-        /// (Clarke, 2004, p. 40)[^4], (Goff & Hartel, 2025, p. 315)[^20].
+        /// (Clarke, 2004, p. 40)[^4], (Goff & Hartel, 2025, p. 315)[^20],
+        /// (USDEC, 2018, p. 68)[^113].
         ///
         /// Consistent with [`STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`], the rest of the protein:
         ///
@@ -223,11 +224,13 @@ pub mod dairy {
         /// ```
         #[doc = include_str!("../../docs/references/index/4.md")]
         #[doc = include_str!("../../docs/references/index/20.md")]
+        #[doc = include_str!("../../docs/references/index/113.md")]
         pub const STD_WHEY_PROTEIN_IN_MSNF_PROTEIN: f64 = 0.2;
 
         /// Proportion of proteins in milk solids that is casein
         ///
-        /// (Clarke, 2004, p. 40)[^4], (Goff & Hartel, 2025, p. 315)[^20].
+        /// (Clarke, 2004, p. 40)[^4], (Goff & Hartel, 2025, p. 315)[^20],
+        /// (USDEC, 2018, p. 68)[^113].
         ///
         /// Consistent with [`STD_WHEY_PROTEIN_IN_MSNF_PROTEIN`], the rest of the protein:
         ///
@@ -237,6 +240,7 @@ pub mod dairy {
         /// ```
         #[doc = include_str!("../../docs/references/index/4.md")]
         #[doc = include_str!("../../docs/references/index/20.md")]
+        #[doc = include_str!("../../docs/references/index/113.md")]
         pub const STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN: f64 = 0.8;
     }
 
@@ -695,20 +699,27 @@ pub mod dairy {
         [y0 - slope * x0, slope]
     }
 
-    /// Percentage of water typically found in milk powder
+    /// Minimum percentage of water typically found in milk powder
     ///
-    /// (Goff & Hartel, 2025, Table 3.2, p. 48)[^20]
-    ///
-    /// Skim milk and whole milk powder listed as having 97% and 98% total solids, respectively.
+    /// Skim milk and whole milk powder listed as having 97% and 98% total solids, respectively
+    /// (Goff & Hartel, 2025, Table 3.2, p. 48)[^20]. This is the low end of whole milk powder's
+    /// typical 2.0-3.0% moisture; skim's is 3.0-4.0% (USDEC, 2018, Tables 8, 11, pp. 32, 34)[^113].
     #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/113.md")]
     pub const STD_MIN_WATER_CONTENT_IN_MILK_POWDER: f64 = 0.02;
 
     /// Percentage of butterfat typically found in whole milk powder
     ///
     /// (Goff & Hartel, 2025, Table 3.2, p. 48)[^20], (Parmalat Whole Milk Powder 26%, 2026,
     /// PantryLot)[^520], (MMPA - Grade A Whole Milk Powder 26%, 2026, BulkMart)[^521]
+    ///
+    /// Whole milk powder typically has 26.0-28.5% milkfat (ADPI, 2023, p. 1)[^122], (USDEC, 2018,
+    /// Table 11, p. 34)[^113], with 26% the standard's minimum (ADPI, 2023, p. 1)[^121].
     #[expect(clippy::doc_markdown)] // _PantryLot_  and _BulkMart_ false positives
     #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/113.md")]
+    #[doc = include_str!("../../docs/references/index/121.md")]
+    #[doc = include_str!("../../docs/references/index/122.md")]
     #[doc = include_str!("../../docs/references/index/520.md")]
     #[doc = include_str!("../../docs/references/index/521.md")]
     pub const STD_BUTTERFAT_IN_WHOLE_MILK_POWDER: f64 = 0.26;

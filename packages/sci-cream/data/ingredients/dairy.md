@@ -257,7 +257,9 @@ Ice-Cream)_ (Corvitto, 2005, p. 149)[^3].
 
 Simplified version of 'Goff & Hartel Skim Milk Powder' (Goff & Hartel, 2025, Table 3.2, p. 48)[^20],
 also in agreement with bulk products, e.g. ['1% Skimmed Milk Powder Medium - 25
-kg'](https://www.pantrylot.com/products/1-skimmed-milk-powder-medium-25-kg).
+kg'](https://www.pantrylot.com/products/1-skimmed-milk-powder-medium-25-kg). Its fat, moisture, and
+protein are within ADPI's limits for skim milk powder (ADPI, 2023, p. 1)[^120] and USDEC's typical
+ranges (USDEC, 2018, Table 11, p. 34)[^113].
 
 ## Whole Milk Powder
 
@@ -268,7 +270,9 @@ kg'](https://www.pantrylot.com/products/1-skimmed-milk-powder-medium-25-kg).
 Simplified version of 'Goff & Hartel Whole Milk Powder' (Goff & Hartel, 2025, Table 3.2,
 p. 48)[^20], also in agreement with bulk products, e.g. ['MMPA - Grade A Whole Milk Powder 26% - 25
 Kg'](https://bulkmart.ca/products/mmpa-grade-a-whole-milk-powder-26-25-kg), ['Whole Milk Powder 26%
-25 kg'](https://www.pantrylot.com/products/whole-milk-powder-26-25-kg).
+25 kg'](https://www.pantrylot.com/products/whole-milk-powder-26-25-kg). Its fat, moisture, and
+protein are within ADPI's limits for whole milk powder (ADPI, 2023, p. 1)[^121] and USDEC's typical
+ranges (USDEC, 2018, Table 11, p. 34)[^113].
 
 ## Milk Protein Concentrate 42%
 

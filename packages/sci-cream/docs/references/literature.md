@@ -239,3 +239,9 @@
 [^118]: Burrington, K. J. (2018). [_The Halo Effect: Dairy Ingredient Selection for Formulating High Protein Ice Cream_](https://www.idfa.org/wordpress/wp-content/uploads/2020/03/kimberlee_burrington_-_the_halo_effect_-_dairy_ingredient_selection_for_formulating_high_protein_ice_cream.pdf). International Dairy Foods Association.
 
 [^119]: Hill, A., & Ferrer, M. A. (2021). [_Cheese Making Technology e-Book_](https://books.lib.uoguelph.ca/cheesemakingtechnologyebook/). University of Guelph.
+
+[^120]: American Dairy Products Institute. (2023). [_Skim Milk Powder Standard_](https://adpi.org/wp-content/uploads/2023/07/Skim-Milk-Powder-Standard-v3.0_2023.pdf).
+
+[^121]: American Dairy Products Institute. (2023). [_Whole Milk Powder Standard_](https://adpi.org/wp-content/uploads/2023/07/Whole-Milk-Powder-Standard-v3.0_2023.pdf).
+
+[^122]: American Dairy Products Institute. (2023). [_Dry Whole Milk Standard_](https://adpi.org/wp-content/uploads/2023/07/Dry-Whole-Milk-Standard-v3.0_2023.pdf).
