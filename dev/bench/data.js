@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793430284565,
+  "lastUpdate": 1793430394988,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -567148,6 +567148,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 527.13,
             "range": "8.78",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f89c8bf3d12244031417ba458cbe48545791ce07",
+          "message": "Source milk powder constants from ADPI and USDEC\n\nThe milk powder constants gain corroborating sources: the 2% water\nfloor is the low end of whole milk powder's typical 2.0-3.0% moisture\n(USDEC), and 26% butterfat is the standard's minimum within the\ntypical 26.0-28.5% (ADPI, USDEC). The casein and whey shares of milk\nprotein also cite USDEC.\n\nThe Simple skim and whole milk powders note that their fat, moisture,\nand protein are within ADPI's limits and USDEC's typical ranges, as\nWhey Powder does with ADPI's.\n\nAdds ADPI's skim milk powder, whole milk powder, and dry whole milk\nstandards to the bibliography.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T02:31:49-04:00",
+          "tree_id": "8efa5587114d612feeccdb5e7e31e9a70c7a178d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f89c8bf3d12244031417ba458cbe48545791ce07"
+        },
+        "date": 1793430319781,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 44,
+            "range": "2.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52.25,
+            "range": "3.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2390.38,
+            "range": "60.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 377.5,
+            "range": "13.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 389.5,
+            "range": "6.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 401.75,
+            "range": "4.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19470.25,
+            "range": "95.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 955.5,
+            "range": "14.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 58.25,
+            "range": "2.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 63.25,
+            "range": "3.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 43.88,
+            "range": "1.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 47.63,
+            "range": "2.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 130.13,
+            "range": "2.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 86.38,
+            "range": "3.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.37,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.55,
+            "range": "0.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 637.5,
+            "range": "10.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 697.13,
+            "range": "17.62",
             "unit": "ms"
           }
         ]
