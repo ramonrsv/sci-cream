@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793419940215,
+  "lastUpdate": 1793419944257,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -682854,6 +682854,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.25,
             "range": "0.32",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f226904f1d660bbdd881fe82d40864867a16fcde",
+          "message": "Check solver outputs and round trips at 8dp\n\nRe-measured over every test run, 44 of the 89 assert_eq_6dp! sites\nfall within 8dp. The 39 whose expected value is an exact target or a\ncomputed expression move to assert_eq_8dp!, the worst at 2.3e-11, at\nleast 220x inside its bound:\n\n- 17 solver outcomes, in the balancing tests, recipe.rs, and the WASM\n  bridge's balance tests.\n- 9 exact targets, such as the balancing round trips to 4.0, -2.5,\n  -13.0, and 72.0.\n- 9 round trips: the FPD inversions, de-evaporation in recipe.rs and\n  the bridge, and three dairy checks.\n- The FPD polynomial combine test, the two chocolate struct\n  comparisons, and a dairy check whose expected 3.5098 is exact.\n\nFive stay at 6dp: three 13.636_698 checks, a six-decimal value within\n8dp only by rounding luck, and the whole-egg protein split, which\nmeasures within 4 ULPs. tests::asserts re-exports assert_eq_8dp!.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T18:02:07-04:00",
+          "tree_id": "0ab2df523fa26ee12d19192aa9dc97a45a95cf44",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f226904f1d660bbdd881fe82d40864867a16fcde"
+        },
+        "date": 1793419896933,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 43.61,
+            "range": "7.53",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 10.44,
+            "range": "0.64",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 10.42,
+            "range": "0.65",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 117,
+            "range": "6.86",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.35,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 117,
+            "range": "6.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 39.77,
+            "range": "4.72",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.82,
+            "range": "0.42",
             "unit": "ms"
           }
         ]
