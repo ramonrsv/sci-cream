@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793430394988,
+  "lastUpdate": 1793430739167,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -567292,6 +567292,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 697.13,
             "range": "17.62",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "eab7e972f83eff5e005ce2f7cdadcdd1fd213ce4",
+          "message": "Add per-source ceilings to compare_specs\n\nWhen one source missed every other on a key, a per-key override\nloosened all of a suite's pairs. KeyCeiling::with_source overrides a\nkey's ceiling only in the pairs with that source: a pair takes the\nlarger of its two sources' overrides, or else the key's ceiling.\nassert_compositions_consistent fails on an override for a source it\nisn't given.\n\nThe dairy suite's overrides move to the sources behind them, mostly\nSealtest, Carnation, and the protein powder labels, so their other\npairs fall back to the 10 pp default. Half and half keeps a per-key\nEnergy ceiling of 14, and skim evaporated milk's Carnation Energy\nceiling tightens to 72. The largest-misses lists go, as each override\nnow names its source.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T02:50:28-04:00",
+          "tree_id": "ce31341b1c4df102bb9b4ba8bf7df8bd2700015c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/eab7e972f83eff5e005ce2f7cdadcdd1fd213ce4"
+        },
+        "date": 1793430665406,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.13,
+            "range": "3.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 57.75,
+            "range": "4.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 66.25,
+            "range": "3.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2543.25,
+            "range": "36.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 346.88,
+            "range": "3.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 357.5,
+            "range": "6.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 369.13,
+            "range": "7.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17761.5,
+            "range": "131.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 902.75,
+            "range": "27.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.88,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.13,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.13,
+            "range": "1.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41,
+            "range": "2.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 125.63,
+            "range": "2.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 82,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.59,
+            "range": "0.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.12,
+            "range": "0.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 631.88,
+            "range": "12.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 686.13,
+            "range": "14.63",
             "unit": "ms"
           }
         ]
