@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793429536993,
+  "lastUpdate": 1793429540954,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -694722,6 +694722,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/6b841730f584f6ce41c6a10b5e51f10e7005d0bb"
         },
         "date": 1793427213578,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.3,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f89c8bf3d12244031417ba458cbe48545791ce07",
+          "message": "Source milk powder constants from ADPI and USDEC\n\nThe milk powder constants gain corroborating sources: the 2% water\nfloor is the low end of whole milk powder's typical 2.0-3.0% moisture\n(USDEC), and 26% butterfat is the standard's minimum within the\ntypical 26.0-28.5% (ADPI, USDEC). The casein and whey shares of milk\nprotein also cite USDEC.\n\nThe Simple skim and whole milk powders note that their fat, moisture,\nand protein are within ADPI's limits and USDEC's typical ranges, as\nWhey Powder does with ADPI's.\n\nAdds ADPI's skim milk powder, whole milk powder, and dry whole milk\nstandards to the bibliography.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T02:31:49-04:00",
+          "tree_id": "8efa5587114d612feeccdb5e7e31e9a70c7a178d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f89c8bf3d12244031417ba458cbe48545791ce07"
+        },
+        "date": 1793429540092,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
