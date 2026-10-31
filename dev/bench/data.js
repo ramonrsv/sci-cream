@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793427546503,
+  "lastUpdate": 1793427723096,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -565213,6 +565213,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 734.88,
             "range": "21.09",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6b841730f584f6ce41c6a10b5e51f10e7005d0bb",
+          "message": "Document and apply the crate's import convention\n\nImports go in blank-line-separated groups: std, third-party, then\ncrate, with test code adding the asserts pair and then other test-only\nimports ahead of crate. Within a group, each root is one nested import\nnaming each module once. CLAUDE.md § Imports states the convention,\nincluding #[cfg] imports, re-exports, and benches. It is kept by hand:\nrustfmt sorts only within a group and can't express the test groups.\n\nThe imports in 56 files that broke it now follow it:\n\n- Repeated modules nested once, as composition::{…} in the 16\n  composition files; std, approx, crate, and crate::tests imports\n  merged into one per group.\n- Asserts pairs in a group of their own, and test-only imports moved\n  out of the crate group and its nests, ahead of crate.\n- Each #[cfg(feature)] import in a group of its own after its kind's,\n  and benches ordered third-party, sci_cream, then crate.\n\nAlso drops an unused `use core::f64;` from specs/dairy.rs, and names\nunused_imports rather than the unused group on the five\nexpected-unused imports.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T02:06:40-04:00",
+          "tree_id": "93caac1446201216b79cbd966e0d2592fc3fdff2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6b841730f584f6ce41c6a10b5e51f10e7005d0bb"
+        },
+        "date": 1793427677296,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 31.88,
+            "range": "4.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 33.88,
+            "range": "2.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 40.38,
+            "range": "3.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1680.75,
+            "range": "33.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 225.25,
+            "range": "4.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 235,
+            "range": "4.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 270.63,
+            "range": "35.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 12099,
+            "range": "246.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 767.13,
+            "range": "48.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 37.38,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 37.75,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 26.5,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 29.75,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 96.25,
+            "range": "6.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 50.13,
+            "range": "3.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 39.28,
+            "range": "0.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.1,
+            "range": "0.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 501.25,
+            "range": "6.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 527.13,
+            "range": "8.78",
             "unit": "ms"
           }
         ]
