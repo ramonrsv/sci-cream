@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793398160326,
+  "lastUpdate": 1793419886428,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -704874,6 +704874,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/28dce0b8cb99c1f19fdc7f18074f93564122ca53"
         },
         "date": 1793397278486,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1169.8,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 353.91,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1882.59,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 577.6,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 626.04,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2090.96,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f226904f1d660bbdd881fe82d40864867a16fcde",
+          "message": "Check solver outputs and round trips at 8dp\n\nRe-measured over every test run, 44 of the 89 assert_eq_6dp! sites\nfall within 8dp. The 39 whose expected value is an exact target or a\ncomputed expression move to assert_eq_8dp!, the worst at 2.3e-11, at\nleast 220x inside its bound:\n\n- 17 solver outcomes, in the balancing tests, recipe.rs, and the WASM\n  bridge's balance tests.\n- 9 exact targets, such as the balancing round trips to 4.0, -2.5,\n  -13.0, and 72.0.\n- 9 round trips: the FPD inversions, de-evaporation in recipe.rs and\n  the bridge, and three dairy checks.\n- The FPD polynomial combine test, the two chocolate struct\n  comparisons, and a dairy check whose expected 3.5098 is exact.\n\nFive stay at 6dp: three 13.636_698 checks, a six-decimal value within\n8dp only by rounding luck, and the whole-egg protein split, which\nmeasures within 4 ULPs. tests::asserts re-exports assert_eq_8dp!.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T18:02:07-04:00",
+          "tree_id": "0ab2df523fa26ee12d19192aa9dc97a45a95cf44",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f226904f1d660bbdd881fe82d40864867a16fcde"
+        },
+        "date": 1793419830044,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
