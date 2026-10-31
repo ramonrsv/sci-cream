@@ -58,7 +58,7 @@ fn compare_specs_skim_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 30.0);
+    let ceiling = KeyCeiling::new(10.0).with_source("Sealtest", CompKey::Energy, 30.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -74,7 +74,7 @@ fn compare_specs_2_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 20.0);
+    let ceiling = KeyCeiling::new(10.0).with_source("Sealtest", CompKey::Energy, 20.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -93,7 +93,7 @@ fn compare_specs_whole_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 18.0);
+    let ceiling = KeyCeiling::new(10.0).with_source("Sealtest", CompKey::Energy, 18.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -192,8 +192,7 @@ fn compare_specs_5_cream() {
 
     // Sealtest's small 15ml serving rounds energy coarsely, in addition to the usual issue with
     // energy's higher fractional precision vs mass components, pushing a high error, ~150 pp.
-    //    - Energy        148.50 pp  (Simple, Goff & Hartel vs Sealtest)
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 149.0);
+    let ceiling = KeyCeiling::new(10.0).with_source("Sealtest", CompKey::Energy, 149.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -212,15 +211,13 @@ fn compare_specs_half_and_half() {
     .map(source_str_to_comp);
 
     // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), pulling
-    // Lactose, PACsgr, and TotalPAC a few pp above the default ceiling. The largest misses are:
-    //    - Lactose        11.38 pp  (USDA, USDA Label vs Sealtest)
-    //    - PACsgr         11.38 pp  (USDA, USDA Label vs Sealtest)
-    //    - TotalPAC       14.72 pp  (Simple, USDA, USDA Label vs Sealtest)
+    // Lactose, PACsgr, and TotalPAC a few pp above the default ceiling.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 23.0)
-        .with(CompKey::Lactose, 12.0)
-        .with(CompKey::PACsgr, 12.0)
-        .with(CompKey::TotalPAC, 15.0);
+        .with(CompKey::Energy, 14.0)
+        .with_source("Sealtest", CompKey::Energy, 23.0)
+        .with_source("Sealtest", CompKey::Lactose, 12.0)
+        .with_source("Sealtest", CompKey::PACsgr, 12.0)
+        .with_source("Sealtest", CompKey::TotalPAC, 15.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -239,13 +236,11 @@ fn compare_specs_18_cream() {
     .map(source_str_to_comp);
 
     // Sealtest's 15ml serving rounds sugars and saturated fat coarsely, pushing TotalPAC
-    // and SaturatedFat above the default ceiling. The largest misses are:
-    //    - TotalPAC       12.62 pp  (Simple, USDA, USDA Label vs Sealtest)
-    //    - SaturatedFat   10.93 pp  (Simple vs Sealtest)
+    // and SaturatedFat above the default ceiling.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 42.0)
-        .with(CompKey::TotalPAC, 13.0)
-        .with(CompKey::SaturatedFat, 11.0);
+        .with_source("Sealtest", CompKey::Energy, 42.0)
+        .with_source("Sealtest", CompKey::TotalPAC, 13.0)
+        .with_source("Sealtest", CompKey::SaturatedFat, 11.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -269,18 +264,13 @@ fn compare_specs_whipping_cream() {
     // level, which cascades through MilkSolids and TotalPAC (missing lactose is exactly
     // missing solids). Its 3g saturated fat label is also only ~58% of its fat, against the
     // standard 65%. USDA's sheet counts the 0.88 g by which its listing's carbohydrate
-    // exceeds its sugars as MSNF, taking its MSNF gap with Sealtest just past the default
-    // ceiling. The largest misses are:
-    //    - MSNF           10.14 pp  (USDA vs Sealtest)
-    //    - MilkSolids     15.25 pp  (Simple, Goff & Hartel, USDA, USDA Label vs Sealtest)
-    //    - TotalPAC       11.26 pp  (Simple, Goff & Hartel, USDA vs Sealtest)
-    //    - SaturatedFat   10.17 pp  (Goff & Hartel vs Sealtest)
+    // exceeds its sugars as MSNF, taking its MSNF gap with Sealtest just past the default ceiling.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 64.0)
-        .with(CompKey::MSNF, 11.0)
-        .with(CompKey::MilkSolids, 16.0)
-        .with(CompKey::TotalPAC, 12.0)
-        .with(CompKey::SaturatedFat, 11.0);
+        .with_source("Sealtest", CompKey::Energy, 64.0)
+        .with_source("Sealtest", CompKey::MSNF, 11.0)
+        .with_source("Sealtest", CompKey::MilkSolids, 16.0)
+        .with_source("Sealtest", CompKey::TotalPAC, 12.0)
+        .with_source("Sealtest", CompKey::SaturatedFat, 11.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -328,7 +318,7 @@ fn compare_specs_skim_evaporated_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 73.0);
+    let ceiling = KeyCeiling::new(10.0).with_source("Carnation", CompKey::Energy, 72.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -347,24 +337,18 @@ fn compare_specs_2_evaporated_milk() {
     // between the 2g of total carbohydrates and 1g of sugars (i.e. 1.5g) causes a big
     // difference in Lactose content, which cascades into every lactose-derived field
     // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
-    // MilkSolids, PACmlk, and TotalPAC. The largest misses are:
-    //    - Lactose        22.00 pp  (USDA, USDA Label vs Carnation)
-    //    - MSNF           28.89 pp  (USDA, USDA Label vs Carnation)
-    //    - MilkSolids     28.68 pp  (USDA, USDA Label vs Carnation)
-    //    - PACsgr         22.00 pp  (USDA, USDA Label vs Carnation)
-    //    - PACmlk         10.61 pp  (USDA, USDA Label vs Carnation)
-    //    - TotalPAC       32.59 pp  (USDA, USDA Label vs Carnation)
+    // MilkSolids, PACmlk, and TotalPAC.
     //
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 15.0)
-        .with(CompKey::Lactose, 23.0)
-        .with(CompKey::MSNF, 29.0)
-        .with(CompKey::MilkSolids, 29.0)
-        .with(CompKey::PACsgr, 23.0)
-        .with(CompKey::PACmlk, 11.0)
-        .with(CompKey::TotalPAC, 33.0);
+        .with_source("Carnation", CompKey::Energy, 15.0)
+        .with_source("Carnation", CompKey::Lactose, 23.0)
+        .with_source("Carnation", CompKey::MSNF, 29.0)
+        .with_source("Carnation", CompKey::MilkSolids, 29.0)
+        .with_source("Carnation", CompKey::PACsgr, 23.0)
+        .with_source("Carnation", CompKey::PACmlk, 11.0)
+        .with_source("Carnation", CompKey::TotalPAC, 33.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -384,22 +368,17 @@ fn compare_specs_whole_evaporated_milk() {
     // between the 2g of total carbohydrates and 1g of sugars (i.e. 1.5g) causes a big
     // difference in Lactose content, which cascades into every lactose-derived field
     // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
-    // MilkSolids, PACmlk, and TotalPAC. The largest misses are:
-    //    - Lactose        16.16 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
-    //    - MSNF           21.28 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
-    //    - MilkSolids     23.98 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
-    //    - PACsgr         16.16 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
-    //    - TotalPAC       23.98 pp  (Goff & Hartel, USDA, USDA Label vs Carnation)
+    // MilkSolids, PACmlk, and TotalPAC.
     //
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 40.0)
-        .with(CompKey::Lactose, 17.0)
-        .with(CompKey::MSNF, 22.0)
-        .with(CompKey::MilkSolids, 24.0)
-        .with(CompKey::PACsgr, 17.0)
-        .with(CompKey::TotalPAC, 24.0);
+        .with_source("Carnation", CompKey::Energy, 40.0)
+        .with_source("Carnation", CompKey::Lactose, 17.0)
+        .with_source("Carnation", CompKey::MSNF, 22.0)
+        .with_source("Carnation", CompKey::MilkSolids, 24.0)
+        .with_source("Carnation", CompKey::PACsgr, 17.0)
+        .with_source("Carnation", CompKey::TotalPAC, 24.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -423,7 +402,9 @@ fn compare_specs_sweetened_condensed_milk() {
     // (Rodrigues, 2017)[^50] reports protein at 6.04g/100g, Eagle Brand at 5.13g/100g (1g per 19.5g
     // serving), USDA at 7.91g/100g, and Goff & Hartel at 8.5g/100g. Low-Fat Eagle Brand jumps to
     // 10.2g/100g (1g -> 2g per serving), consistent with Goff & Hartel's 11.1g/100g for Skim Milk.
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 68.0);
+    let ceiling = KeyCeiling::new(10.0)
+        .with_source("Eagle Brand", CompKey::Energy, 68.0)
+        .with_source("Carnation", CompKey::Energy, 24.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -459,7 +440,9 @@ fn compare_specs_whole_milk_powder() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 27.0);
+    let ceiling = KeyCeiling::new(10.0)
+        .with_source("Medallion", CompKey::Energy, 16.0)
+        .with_source("Theland", CompKey::Energy, 27.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -601,7 +584,7 @@ fn compare_specs_whey_protein() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 21.0);
+    let ceiling = KeyCeiling::new(10.0).with_source("Optimum Nutrition", CompKey::Energy, 21.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -628,14 +611,11 @@ fn compare_specs_whey_isolate() {
     // and Hilmar entries; ON Gold Standard 100% Isolate sits in the middle at ~83% protein with
     // low but non-zero fat and sugar. MyProtein Clear is a hydrolyzed/extra-filtered isolate
     // intended to mix into a clear juice-like drink rather than a shake — it lists only 80%
-    // protein and exactly 0g fat and 0g sugar, so whatever else its solids hold shows up as
-    // water. The largest misses are:
-    //    - TotalSolids    14.99 pp  (Simple, USDEC, Hilmar, Bulk Barn, Leanfit vs MyProtein)
-    //    - Water          14.99 pp  (Simple, USDEC, Hilmar, Bulk Barn, Leanfit vs MyProtein)
+    // protein and exactly 0g fat and 0g sugar, so whatever else its solids hold shows up as water.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 13.0)
-        .with(CompKey::TotalSolids, 15.0)
-        .with(CompKey::Water, 15.0);
+        .with_source("MyProtein", CompKey::Energy, 13.0)
+        .with_source("MyProtein", CompKey::TotalSolids, 15.0)
+        .with_source("MyProtein", CompKey::Water, 15.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -672,13 +652,13 @@ fn compare_specs_micellar_casein() {
 
     // MyProtein and Optimum Nutrition are flavored blends, ~73-77% protein with 6.7 g of other
     // carbohydrates per 100 g, while the Simple and USDEC entries are unflavored, ~83-86% protein.
-    // Between them, the largest misses are:
-    //    - MilkSNFS       12.01 pp  (Simple, USDEC vs MyProtein, Optimum Nutrition)
-    //    - MilkProteins   11.32 pp  (Simple vs MyProtein, Optimum Nutrition)
+    // USDEC's sheet lists no energy, and the 2.2 g its values leave unaccounted carry none.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 17.0)
-        .with(CompKey::MilkSNFS, 13.0)
-        .with(CompKey::MilkProteins, 12.0);
+        .with_source("USDEC", CompKey::Energy, 17.0)
+        .with_source("MyProtein", CompKey::MilkSNFS, 12.0)
+        .with_source("MyProtein", CompKey::MilkProteins, 12.0)
+        .with_source("Optimum Nutrition", CompKey::MilkSNFS, 13.0)
+        .with_source("Optimum Nutrition", CompKey::MilkProteins, 12.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));

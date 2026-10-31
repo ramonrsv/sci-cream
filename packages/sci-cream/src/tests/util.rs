@@ -279,7 +279,8 @@ fn solids_denominator_for(key: CompKey, comp: &Composition) -> f64 {
     }
 }
 
-/// A per-key tolerance table: a single default ceiling plus optional per-key overrides.
+/// A per-key tolerance table: a single default ceiling plus optional per-key overrides, and
+/// per-source ones for the pairs of sources that [`assert_compositions_consistent`] compares.
 ///
 /// The unit of the ceiling is defined by whatever metric the caller compares against it (e.g.
 /// percentage points of solids composition for [`assert_compositions_consistent`], or relative
@@ -287,6 +288,7 @@ fn solids_denominator_for(key: CompKey, comp: &Composition) -> f64 {
 pub(crate) struct KeyCeiling<K> {
     default_pp: f64,
     overrides: Vec<(K, f64)>,
+    source_overrides: Vec<(&'static str, K, f64)>,
 }
 
 impl<K: PartialEq + Copy> KeyCeiling<K> {
@@ -295,6 +297,7 @@ impl<K: PartialEq + Copy> KeyCeiling<K> {
         Self {
             default_pp,
             overrides: Vec::new(),
+            source_overrides: Vec::new(),
         }
     }
 
@@ -310,6 +313,14 @@ impl<K: PartialEq + Copy> KeyCeiling<K> {
         self
     }
 
+    /// Overrides the ceiling for a single key in the pairs that include `source`, e.g. for a label
+    /// that rounds the key's value coarsely, keeping the key's ceiling for the other pairs.
+    #[must_use]
+    pub(crate) fn with_source(mut self, source: &'static str, key: K, pp: f64) -> Self {
+        self.source_overrides.push((source, key, pp));
+        self
+    }
+
     /// Returns the ceiling that applies to `key`.
     pub(crate) fn for_key(&self, key: K) -> f64 {
         self.overrides
@@ -317,25 +328,43 @@ impl<K: PartialEq + Copy> KeyCeiling<K> {
             .find(|(overridden, _)| *overridden == key)
             .map_or(self.default_pp, |(_, pp)| *pp)
     }
+
+    /// Returns the ceiling that applies to `key` between sources `a` and `b`: the larger of their
+    /// overrides for it, or the key's ceiling if neither has one.
+    pub(crate) fn for_pair(&self, key: K, a: &str, b: &str) -> f64 {
+        self.source_overrides
+            .iter()
+            .filter(|(source, overridden, _)| *overridden == key && [a, b].contains(source))
+            .map(|(_, _, pp)| *pp)
+            .reduce(f64::max)
+            .unwrap_or_else(|| self.for_key(key))
+    }
 }
 
 /// Asserts that several compositions of the same conceptual ingredient agree within a ceiling.
 ///
-/// Every pair of `sources` (a `(label, composition)` slice) is compared across `keys`; a key
-/// whose [`solids_fraction_diff_pp`] (in percentage points of each source's solids composition)
-/// exceeds its [`KeyCeiling`] entry fails the assertion. This is a deliberately loose backstop
-/// against regressions — the precise per-key discrepancies are recorded separately by
-/// [`compare_compositions`] snapshots.
+/// Every pair of `sources` (a `(label, composition)` slice) is compared across `keys`; a key whose
+/// [`solids_fraction_diff_pp`] (in percentage points of each source's solids composition) exceeds
+/// the pair's [`KeyCeiling`] entry fails the assertion, as does a per-source override for a label
+/// not among `sources`. This is a deliberately loose backstop against regressions — the precise
+/// per-key discrepancies are recorded separately by [`compare_compositions`] snapshots.
 pub(crate) fn assert_compositions_consistent(
     sources: &[(&str, Composition)],
     keys: &[CompKey],
     ceiling: &KeyCeiling<CompKey>,
 ) {
-    for &key in keys {
-        let limit = ceiling.for_key(key);
+    for (source, ..) in &ceiling.source_overrides {
+        assert_true!(
+            sources.iter().any(|(label, _)| label == source),
+            "Ceiling override for {} matches none of the sources",
+            source
+        );
+    }
 
+    for &key in keys {
         for (index, (label_a, comp_a)) in sources.iter().enumerate() {
             for (label_b, comp_b) in &sources[index + 1..] {
+                let limit = ceiling.for_pair(key, label_a, label_b);
                 let diff = solids_fraction_diff_pp(
                     comp_a.get(key),
                     solids_denominator_for(key, comp_a),
@@ -545,6 +574,33 @@ mod tests {
         assert_eq_flt!(ceiling.for_key(CompKey::Energy), 25.0);
     }
 
+    #[test]
+    fn key_ceiling_source_override_applies_only_to_pairs_with_its_source() {
+        let ceiling = KeyCeiling::new(25.0).with_source("A", CompKey::Energy, 60.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "A", "B"), 60.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "B", "A"), 60.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "B", "C"), 25.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::MilkProteins, "A", "B"), 25.0);
+    }
+
+    #[test]
+    fn key_ceiling_source_override_replaces_the_key_override() {
+        let ceiling = KeyCeiling::new(25.0)
+            .with(CompKey::Energy, 40.0)
+            .with_source("A", CompKey::Energy, 30.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "A", "B"), 30.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "B", "C"), 40.0);
+    }
+
+    #[test]
+    fn key_ceiling_pair_takes_the_larger_of_its_source_overrides() {
+        let ceiling = KeyCeiling::new(25.0)
+            .with_source("A", CompKey::Energy, 60.0)
+            .with_source("B", CompKey::Energy, 40.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "A", "B"), 60.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "B", "C"), 40.0);
+    }
+
     // --- assert_comp_eq_percent ---
 
     #[test]
@@ -700,6 +756,31 @@ mod tests {
         // 50 pp difference would fail the 25 pp default, but the per-key override permits it.
         let sources = [("A", comp_ts(10.0)), ("B", comp_ts(60.0))];
         let ceiling = KeyCeiling::new(25.0).with(CompKey::TotalSolids, 60.0);
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &ceiling);
+    }
+
+    #[test]
+    fn assert_compositions_consistent_honors_per_source_override() {
+        // C misses A and B by 50 and 48 pp, which its override permits; A-B stay within 25 pp.
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(12.0)), ("C", comp_ts(60.0))];
+        let ceiling = KeyCeiling::new(25.0).with_source("C", CompKey::TotalSolids, 60.0);
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &ceiling);
+    }
+
+    #[test]
+    #[should_panic(expected = "differ by")]
+    fn assert_compositions_consistent_keeps_the_key_ceiling_for_other_pairs() {
+        // A-B (30 pp) exceed the 25 pp ceiling, which C's override doesn't loosen.
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(40.0)), ("C", comp_ts(20.0))];
+        let ceiling = KeyCeiling::new(25.0).with_source("C", CompKey::TotalSolids, 60.0);
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &ceiling);
+    }
+
+    #[test]
+    #[should_panic(expected = "matches none of the sources")]
+    fn assert_compositions_consistent_panics_on_override_for_unknown_source() {
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(12.0))];
+        let ceiling = KeyCeiling::new(25.0).with_source("C", CompKey::TotalSolids, 60.0);
         assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &ceiling);
     }
 
