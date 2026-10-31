@@ -5,8 +5,10 @@ use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::field_update::field_update_methods,
-    composition::{ArtificialSweeteners, Carbohydrates, Fats, ProteinComponents, ScaleComponents, SimpleProteins},
+    composition::{
+        ArtificialSweeteners, Carbohydrates, Fats, ProteinComponents, ScaleComponents, SimpleProteins,
+        field_update::field_update_methods,
+    },
     constants,
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},

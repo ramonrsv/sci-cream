@@ -6,8 +6,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
-    composition::field_update::field_update_methods,
-    composition::{ScaleComponents, Texture},
+    composition::{ScaleComponents, Texture, field_update::field_update_methods},
     constants::emulsification::{
         EMULSIFIER_STRENGTH_DISTILLED_MONOGLYCERIDES, EMULSIFIER_STRENGTH_GUM_ARABIC, EMULSIFIER_STRENGTH_LECITHIN,
         EMULSIFIER_STRENGTH_MONO_AND_DIGLYCERIDES, EMULSIFIER_STRENGTH_POLYSORBATE_80,
@@ -185,6 +184,7 @@ impl Default for Emulsifiers {
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+
     use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
 
     use super::*;

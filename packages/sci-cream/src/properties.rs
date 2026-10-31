@@ -124,10 +124,8 @@ mod tests {
     use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
     use crate::tests::asserts::*;
 
-    use crate::composition::*;
-    use crate::fpd::FpdKey;
-
     use super::*;
+    use crate::{composition::*, fpd::FpdKey};
 
     // --- PropKey conversions ---
 

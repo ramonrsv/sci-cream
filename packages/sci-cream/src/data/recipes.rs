@@ -3,8 +3,7 @@
 //! If feature `data` is enabled, this module embeds the recipes from
 //! `data/recipes/generated/min/*.json` at compile time and provides functions to retrieve them.
 
-use std::collections::HashMap;
-use std::sync::LazyLock;
+use std::{collections::HashMap, sync::LazyLock};
 
 use serde::{Deserialize, Serialize};
 
@@ -121,8 +120,10 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::tests::assets::{CHOCOLATE_POST_EVAPORATION, EMBEDDED_DB};
-    use crate::tests::util::relative_diff_percent;
+    use crate::tests::{
+        assets::{CHOCOLATE_POST_EVAPORATION, EMBEDDED_DB},
+        util::relative_diff_percent,
+    };
 
     use super::*;
 

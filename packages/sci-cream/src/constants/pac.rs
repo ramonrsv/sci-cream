@@ -46,9 +46,8 @@ pub const MSNF_WS_SALTS: f64 = 36.740_405_761_491_57;
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::float_cmp)]
 mod tests {
-
     use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[expect(unused)]
+    #[expect(unused_imports)]
     use crate::tests::asserts::*;
 
     use super::*;

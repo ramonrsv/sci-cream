@@ -4,11 +4,14 @@
 
 use struct_iterable::Iterable;
 
+use crate::tests::asserts::EPSILON_8DP;
+
+use crate::tests::{embedded::variants::get_comp_by_name, util::relative_diff_percent};
+
 use crate::{
     composition::{CompKey, Composition},
     constants::density::{MixDensityParams, OTHER_DISSOLVED_SOLIDS, mixture_density, sugars::SUCROSE},
     error::Result,
-    tests::{asserts::EPSILON_8DP, embedded::variants::get_comp_by_name, util::relative_diff_percent},
 };
 
 /// Encodes an exact match, for a field transcribed from the listing rather than predicted

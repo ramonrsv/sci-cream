@@ -3,8 +3,9 @@
 
 #![cfg_attr(coverage, coverage(off))]
 
-use crate::composition::CompKey;
 use crate::tests::util::{KeyCeiling, assert_compositions_consistent, compare_compositions, source_str_to_comp};
+
+use crate::composition::CompKey;
 
 /// Composition keys compared when cross-checking egg ingredient data sources.
 ///

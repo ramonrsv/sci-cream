@@ -154,8 +154,8 @@ pub(crate) mod tests {
     use std::sync::LazyLock;
 
     use crate::tests::asserts::*;
-    use crate::tests::assets::asset_composition;
-    use crate::tests::util::AssertKeys;
+
+    use crate::tests::{assets::asset_composition, util::AssertKeys};
 
     use super::*;
     use crate::{

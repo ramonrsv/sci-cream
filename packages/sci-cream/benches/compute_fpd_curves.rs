@@ -2,9 +2,9 @@ use std::hint::black_box;
 
 use criterion::{Criterion, criterion_group};
 
-use crate::assets::REF_RECIPE;
-
 use sci_cream::fpd::{FpdCurvesMethod, PacToFpdMethod, compute_fpd_curves};
+
+use crate::assets::REF_RECIPE;
 
 pub(crate) fn bench_recipe_calculate(c: &mut Criterion) {
     use FpdCurvesMethod::{GoffHartel, ModifiedGoffHartelCorvitto};

@@ -6,6 +6,11 @@ use approx::AbsDiffEq;
 use struct_iterable::Iterable;
 use strum::IntoEnumIterator;
 
+use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
+use crate::tests::asserts::*;
+
+use crate::tests::embedded::variants::get_comp_by_name;
+
 use crate::{
     composition::{CompKey, Composition, RatioKey},
     data::get_spec_entry_by_name,
@@ -16,11 +21,6 @@ use crate::{
     util::iter_fields_as,
     validate::{verify_are_equal, verify_is_subset},
 };
-
-use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
-use crate::tests::asserts::*;
-
-use crate::tests::embedded::variants::get_comp_by_name;
 
 /// Checks that `comp` satisfies the structural forest's additive invariants: every roll-up's parts
 /// sum to no more than the roll-up, and residual-free roll-ups equal their parts exactly.

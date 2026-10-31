@@ -6,8 +6,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
-    composition::ScaleComponents,
-    composition::field_update::field_update_methods,
+    composition::{ScaleComponents, field_update::field_update_methods},
     error::Result,
     util::{collect_fields_copied_as, iter_all_abs_diff_eq},
     validate::{Validate, verify_are_positive},
@@ -124,11 +123,14 @@ impl Default for PAC {
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
-    use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
+
+    use crate::tests::{
+        assets::*,
+        util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero},
+    };
 
     use super::*;
     use crate::error::Error;
-    use crate::tests::assets::*;
 
     const FIELD_MODIFIERS: [fn(&mut PAC, f64); 5] = [
         |s, v| s.sugars += v,

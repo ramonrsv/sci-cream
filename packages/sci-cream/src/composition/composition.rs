@@ -6,17 +6,18 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 use strum_macros::{EnumCount, EnumIter};
 
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
+
 use crate::{
-    composition::field_update::field_update_methods,
-    composition::{Alcohol, Micro, PAC, ProteinComponents, RatioKey, Solids, Texture},
+    composition::{
+        Alcohol, Micro, PAC, ProteinComponents, RatioKey, Solids, Texture, field_update::field_update_methods,
+    },
     constants::tolerances::COMPOSITION_EPSILON,
     error::{Error, Result},
     resolution::IngredientGetter,
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
-
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
 
 #[cfg(doc)]
 use crate::{
@@ -804,11 +805,10 @@ mod tests {
     use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
     use crate::tests::asserts::*;
 
-    use crate::error::Error;
     use crate::tests::assets::*;
 
     use super::*;
-    use crate::composition::*;
+    use crate::{composition::*, error::Error};
 
     const FIELD_MODIFIERS: [fn(&mut Composition, f64); 7] = [
         |c, v| c.energy += v,

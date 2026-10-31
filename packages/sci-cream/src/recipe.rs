@@ -2,9 +2,6 @@
 
 use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "database")]
-use crate::{database::IngredientDatabase, resolution::IngredientGetter};
-
 use crate::{
     balancing::{
         BalanceKey, Priority, balance_compositions, composition_balance_targets, get_all_native_balancing_keys,
@@ -15,6 +12,9 @@ use crate::{
     ingredient::Ingredient,
     properties::MixProperties,
 };
+
+#[cfg(feature = "database")]
+use crate::{database::IngredientDatabase, resolution::IngredientGetter};
 
 /// A simple `(String, f64)` tuple representing an ingredient name and its amount, in grams.
 ///

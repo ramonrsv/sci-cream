@@ -7,12 +7,10 @@
 
 #![cfg_attr(coverage, coverage(off))]
 
+use crate::tests::{assets::EMBEDDED_DB, util::verify_structural_consistency};
+
 use crate::{
-    composition::Composition,
-    data::get_all_spec_entries,
-    error::Result,
-    ingredient::ResolveIntoIngredient,
-    tests::{assets::EMBEDDED_DB, util::verify_structural_consistency},
+    composition::Composition, data::get_all_spec_entries, error::Result, ingredient::ResolveIntoIngredient,
     validate::Validate,
 };
 

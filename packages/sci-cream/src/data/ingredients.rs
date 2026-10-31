@@ -14,8 +14,7 @@
 //! specs, including both independent and dependent ones, and return them as [`SpecEntry`]s. See
 //! [`ResolveComposition`] and [`ResolveIntoIngredient`] traits for more on how dependent specs.
 
-use std::collections::HashMap;
-use std::sync::LazyLock;
+use std::{collections::HashMap, sync::LazyLock};
 
 use crate::{
     error::{Error, Result},

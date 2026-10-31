@@ -6,15 +6,15 @@
 
 #![cfg_attr(coverage, coverage(off))]
 
-#[expect(unused)]
+#[expect(unused_imports)]
 use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
 use crate::tests::asserts::*;
-
-use crate::composition::CompKey;
 
 use crate::tests::util::{
     KeyCeiling, assert_compositions_consistent, compare_compositions, is_alias_for, source_str_to_comp,
 };
+
+use crate::composition::CompKey;
 
 /// Composition keys compared when cross-checking dairy ingredient data sources.
 ///

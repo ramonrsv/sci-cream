@@ -5,16 +5,17 @@
 //! objects can be seeded from [`Ingredient`]s and ingredient specifications, including those
 //! embedded via the `data` feature; see [`crate::data`] for more information.
 
-use std::collections::HashMap;
-use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
+use std::{
+    collections::HashMap,
+    sync::{RwLock, RwLockReadGuard, RwLockWriteGuard},
+};
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
 use crate::{
     error::{Error, Result},
-    ingredient::ResolveIntoIngredient,
-    ingredient::{Category, Ingredient, IntoIngredient},
+    ingredient::{Category, Ingredient, IntoIngredient, ResolveIntoIngredient},
     resolution::IngredientGetter,
     specs::{SpecEntry, TaggedSpec},
 };
@@ -290,8 +291,10 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::composition::Composition;
-    use crate::data::{get_all_independent_ingredient_specs, get_all_spec_entries};
+    use crate::{
+        composition::Composition,
+        data::{get_all_independent_ingredient_specs, get_all_spec_entries},
+    };
 
     #[test]
     fn ingredient_database_empty() {
@@ -440,8 +443,7 @@ pub(crate) mod tests {
 
     #[test]
     fn ingredient_database_thread_safety() {
-        use std::sync::Arc;
-        use std::thread;
+        use std::{sync::Arc, thread};
 
         let db = Arc::new(IngredientDatabase::new_seeded_from_specs(&get_all_spec_entries()).unwrap());
 

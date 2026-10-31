@@ -6,8 +6,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
-    composition::field_update::field_update_methods,
-    composition::{Fibers, Polyols, ScaleComponents, Sugars},
+    composition::{Fibers, Polyols, ScaleComponents, Sugars, field_update::field_update_methods},
     constants,
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},

@@ -91,9 +91,9 @@ mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use super::*;
-
     use crate::tests::assets::COMP_3_25_MILK_SEALTEST as SAMPLE_COMP;
+
+    use super::*;
 
     /// `FastComposition` indexes by `key as usize`, sound only if discriminants are the dense range
     /// `0..COUNT` in iter order. Guards against corruption from a future reorder or explicit =val.

@@ -357,7 +357,7 @@ mod tests {
     use strum::IntoEnumIterator;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[expect(unused)]
+    #[expect(unused_imports)]
     use crate::tests::asserts::*;
 
     use crate::tests::util::{AssertKeys, relative_diff_percent};

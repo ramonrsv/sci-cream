@@ -144,7 +144,6 @@ mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-
     use crate::util::{
         fast_interpolate_pairs, interpolate_pairs, table_supports_fast_interpolation, table_supports_interpolation,
     };

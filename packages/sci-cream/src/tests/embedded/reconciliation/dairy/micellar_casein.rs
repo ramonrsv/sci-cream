@@ -7,9 +7,9 @@
 
 #![cfg_attr(coverage, coverage(off))]
 
-use super::util::{extend_to_isolate, mean, misses, percent, report_header, round_to, signed};
 use crate::tests::asserts::*;
 
+use super::util::{extend_to_isolate, mean, misses, percent, report_header, round_to, signed};
 use crate::{
     constants::composition::dairy::{
         casein::{STD_CASEIN_PROTEIN_IN_MCI_PROTEIN, STD_LACTOSE_IN_MCI, STD_MINERALS_IN_MCI, STD_PROTEIN_IN_MCI},

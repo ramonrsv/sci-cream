@@ -6,8 +6,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
-    composition::field_update::field_update_methods,
-    composition::{ScaleComponents, Texture},
+    composition::{ScaleComponents, Texture, field_update::field_update_methods},
     constants::stabilization::{
         STABILIZER_STRENGTH_CARBOXYMETHYL_CELLULOSE, STABILIZER_STRENGTH_CARRAGEENANS, STABILIZER_STRENGTH_CORNSTARCH,
         STABILIZER_STRENGTH_GELATIN, STABILIZER_STRENGTH_GUAR_GUM, STABILIZER_STRENGTH_LOCUST_BEAN_GUM,
@@ -238,6 +237,7 @@ impl Default for Stabilizers {
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+
     use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
 
     use super::*;

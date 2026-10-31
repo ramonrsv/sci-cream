@@ -5,8 +5,7 @@ use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::field_update::field_update_methods,
-    composition::{ArtificialSweeteners, Polyols, ScaleComponents, Sugars},
+    composition::{ArtificialSweeteners, Polyols, ScaleComponents, Sugars, field_update::field_update_methods},
     error::Result,
     validate::{Validate, verify_is_within_100_percent},
 };
@@ -143,8 +142,7 @@ mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::composition::*;
-    use crate::error::Error;
+    use crate::{composition::*, error::Error};
 
     const FIELD_MODIFIERS: [fn(&mut Sweeteners, f64); 3] = [
         |s, ec| s.sugars.sucrose += ec,

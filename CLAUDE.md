@@ -133,6 +133,56 @@ A `mod.rs` holds only its module doc, submodule declarations, and re-exports, wi
 `#[cfg(doc)]` imports its doc links need. Code goes in a sibling file, such as a `util.rs` for the
 helpers its submodules share.
 
+#### Imports
+
+`use` statements form blank-line-separated groups: `std`, then third-party, then `crate`. rustfmt
+sorts within a group but never across a blank line, so the blank lines carry the order. Within a
+group, each root gets one nested import, naming each module once:
+`crate::{composition::{CompKey, Fats}, fpd::FPD}`, not a `use crate::` per module, nor
+`composition::CompKey, composition::Fats`.
+
+- Spelling decides the group: `super::`, `self::`, and a root-less `use {child::…}` join `crate`.
+- Each `#[cfg(…)]` import is a group of its own, after the group of its kind; `#[cfg(doc)]` imports
+  come last.
+- A `pub use` re-export is a group of its own after the imports; re-export modules (`mod.rs`,
+  `tests/asserts.rs`) are exempt.
+- Function-local imports follow the same rules.
+- Benches order third-party, then `sci_cream`, then `crate`.
+
+```rust
+use std::collections::HashMap;
+
+use serde::{Deserialize, Serialize};
+
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
+
+use crate::{composition::CompKey, error::Result};
+
+#[cfg(feature = "database")]
+use crate::database::IngredientDatabase;
+
+#[cfg(doc)]
+use crate::recipe::Recipe;
+```
+
+Test code — `mod tests` and all of `src/tests/` — adds two groups before `crate`: the asserts pair,
+then other test-only imports, from `crate::tests` or any module's `tests`.
+
+```rust
+use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
+use crate::tests::asserts::*;
+
+use crate::tests::{assets::EMBEDDED_DB, util::AssertKeys};
+
+use super::*;
+use crate::{composition::CompKey, error::Error};
+```
+
+Two statements share a root by design: the asserts pair, so an `#[expect(unused_imports)]` covers
+only its half, and a doctest's hidden `# use sci_cream::asserts::…` beside its visible import.
+rustfmt's `group_imports` can't express the test groups, so this is kept by hand.
+
 #### Crate features
 
 - `data` (default) — embeds the JSON files in `data/ingredients/*.json` at compile time via

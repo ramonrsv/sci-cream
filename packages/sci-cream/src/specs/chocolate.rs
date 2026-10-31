@@ -8,15 +8,17 @@ use crate::{
         Solids, Sugars, ToComposition,
     },
     constants::{
-        composition::cacao::{
-            STD_ASH_IN_DUTCHED_COCOA_SOLIDS, STD_ASH_IN_NATURAL_COCOA_SOLIDS,
-            STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS, STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS,
-            STD_COCOA_BUTTER_IN_CACAO_SOLIDS, STD_FIBER_IN_COCOA_SOLIDS, STD_PROTEIN_IN_COCOA_SOLIDS,
-            STD_SATURATED_FAT_IN_COCOA_BUTTER, STD_WATER_IN_COCOA_POWDER,
-        },
-        composition::dairy::{
-            STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
-            milk::{STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MSNF},
+        composition::{
+            cacao::{
+                STD_ASH_IN_DUTCHED_COCOA_SOLIDS, STD_ASH_IN_NATURAL_COCOA_SOLIDS,
+                STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS, STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS,
+                STD_COCOA_BUTTER_IN_CACAO_SOLIDS, STD_FIBER_IN_COCOA_SOLIDS, STD_PROTEIN_IN_COCOA_SOLIDS,
+                STD_SATURATED_FAT_IN_COCOA_BUTTER, STD_WATER_IN_COCOA_POWDER,
+            },
+            dairy::{
+                STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
+                milk::{STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MSNF},
+            },
         },
         hf, pac,
     },
@@ -30,7 +32,10 @@ use crate::{
     composition::CompKey,
     constants::{
         self,
-        composition::{cacao, dairy, dairy::milk},
+        composition::{
+            cacao,
+            dairy::{self, milk},
+        },
     },
 };
 
@@ -420,8 +425,8 @@ pub(crate) mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
-    use crate::tests::assets::asset_composition;
-    use crate::tests::util::AssertKeys;
+
+    use crate::tests::{assets::asset_composition, util::AssertKeys};
 
     use super::*;
     use crate::{

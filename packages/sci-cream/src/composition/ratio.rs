@@ -12,10 +12,10 @@
 use serde::{Deserialize, Serialize};
 use strum_macros::EnumIter;
 
-use crate::composition::CompKey;
-
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
+
+use crate::composition::CompKey;
 
 #[cfg(doc)]
 use crate::{balancing::BalanceKey, composition::Composition, fpd::FpdKey, properties::PropKey};

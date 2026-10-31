@@ -2,9 +2,9 @@ use std::hint::black_box;
 
 use criterion::{BatchSize, Criterion, criterion_group};
 
-use crate::assets::REF_LIGHT_RECIPE;
-
 use sci_cream::{database::IngredientDatabase, wasm::Bridge};
+
+use crate::assets::REF_LIGHT_RECIPE;
 
 pub(crate) fn bench_bridge_calculate_recipe(c: &mut Criterion) {
     let bridge = Bridge::new(IngredientDatabase::new_seeded_from_embedded_data());

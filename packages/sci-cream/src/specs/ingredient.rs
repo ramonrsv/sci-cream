@@ -10,8 +10,6 @@ use enum_as_inner::EnumAsInner;
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "diesel")]
-use crate::diesel::ingredients;
-#[cfg(feature = "diesel")]
 use diesel::{Queryable, Selectable};
 
 use crate::{
@@ -24,6 +22,9 @@ use crate::{
         EggSpec, EmulsifierSpec, FruitSpec, FullSpec, MicroSpec, NutSpec, StabilizerSpec, SweetenerSpec,
     },
 };
+
+#[cfg(feature = "diesel")]
+use crate::diesel::ingredients;
 
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(EnumAsInner, PartialEq, Serialize, Deserialize, Clone, Debug)]
@@ -229,6 +230,7 @@ pub(crate) mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+
     use crate::tests::assets::*;
 
     use super::*;

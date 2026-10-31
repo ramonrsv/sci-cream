@@ -9,8 +9,7 @@
 #![doc = include_str!("../docs/references/index/2.md")]
 #![doc = include_str!("../docs/references/index/3.md")]
 
-use approx::AbsDiffEq;
-use approx::abs_diff_eq;
+use approx::{AbsDiffEq, abs_diff_eq};
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 use strum_macros::EnumIter;
@@ -640,6 +639,7 @@ mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+
     use crate::tests::util::AssertKeys;
 
     use super::*;

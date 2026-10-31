@@ -2,7 +2,6 @@
 
 use serde::ser::Serialize;
 use serde_wasm_bindgen::Serializer;
-
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -88,7 +87,7 @@ pub fn get_all_recipe_entries_wasm() -> Vec<JsValue> {
 #[allow(clippy::unwrap_used)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[expect(unused)]
+    #[expect(unused_imports)]
     use crate::tests::asserts::*;
 
     use super::*;

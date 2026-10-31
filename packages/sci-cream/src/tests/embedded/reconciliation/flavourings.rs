@@ -10,8 +10,9 @@
 #![cfg_attr(coverage, coverage(off))]
 #![allow(clippy::unwrap_used, clippy::float_cmp)]
 
-use super::util::*;
 use crate::tests::assets::get_comp_by_name;
+
+use super::util::*;
 use crate::{composition::CompKey, constants::density::oils};
 
 #[test]

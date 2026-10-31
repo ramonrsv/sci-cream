@@ -17,9 +17,7 @@
 //! Each forest is built once behind a [`LazyLock`], sharing subtree builders so a part list (the
 //! seven sugars, the eleven stabilizers, …) is written exactly once.
 
-use std::collections::HashMap;
-use std::hash::Hash;
-use std::sync::LazyLock;
+use std::{collections::HashMap, hash::Hash, sync::LazyLock};
 
 use serde::Serialize;
 
@@ -108,11 +106,10 @@ where
 // -------------------------------------------------------------------------------------------------
 
 pub(crate) mod subtrees {
+    use super::{HierarchyNode as N, leaves};
     // Glob imports used inside `subtrees` module to simplify the builder code
     #[allow(clippy::enum_glob_use)]
     use crate::composition::CompKey::{self, *};
-
-    use super::{HierarchyNode as N, leaves};
 
     // === Ingredient sources ===================
 
@@ -265,6 +262,7 @@ pub(crate) mod subtrees {
 // -------------------------------------------------------------------------------------------------
 
 mod forests {
+    use super::{HierarchyNode as N, prefix_extras, suffix_extras};
     // Glob imports used inside `forests` module to simplify the builder code
     #[allow(clippy::enum_glob_use, clippy::wildcard_imports)]
     use crate::{
@@ -276,8 +274,6 @@ mod forests {
         fpd::FpdKey::*,
         properties::PropKey::{self, *},
     };
-
-    use super::{HierarchyNode as N, prefix_extras, suffix_extras};
 
     /// The structural composition hierarchy: a forest of strictly **additive** part/whole
     /// identities over [`CompKey`], used by correctness checks. See the [module docs](self).
@@ -500,15 +496,17 @@ pub fn display_hierarchy_roots() -> &'static [PropKey] {
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used)]
 mod tests {
-    use std::collections::{HashMap, HashSet};
-    use std::sync::LazyLock;
+    use std::{
+        collections::{HashMap, HashSet},
+        sync::LazyLock,
+    };
 
     use strum::IntoEnumIterator;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::tests::assets::EMBEDDED_DB;
+    use crate::tests::{assets::EMBEDDED_DB, util::verify_structural_consistency};
 
     use super::*;
     use crate::{
@@ -518,7 +516,6 @@ mod tests {
         ingredient::Category,
         properties::PropKey::{self, *},
         recipe::Recipe,
-        tests::util::verify_structural_consistency,
     };
 
     // Compositions of all embedded ingredients

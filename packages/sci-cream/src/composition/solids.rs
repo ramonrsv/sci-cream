@@ -6,8 +6,9 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
-    composition::field_update::field_update_methods,
-    composition::{EggProteins, MilkProteins, ScaleComponents, SimpleProteins, SolidsBreakdown},
+    composition::{
+        EggProteins, MilkProteins, ScaleComponents, SimpleProteins, SolidsBreakdown, field_update::field_update_methods,
+    },
     error::Result,
     validate::{Validate, verify_is_within_100_percent},
 };
@@ -177,8 +178,7 @@ mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::composition::*;
-    use crate::error::Error;
+    use crate::{composition::*, error::Error};
 
     const FIELD_MODIFIERS: [fn(&mut Solids, f64); 5] = [
         |s, v| s.milk.fats.total += v,

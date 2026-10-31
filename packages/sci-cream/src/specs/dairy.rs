@@ -1,8 +1,6 @@
 //! [`DairySimpleSpec`], [`DairyLabelSpec`], [`DairySheetSpec`], and associated implementations,
 //! for dairy ingredients such as milk, cream, milk powders, protein powders, etc.
 
-use core::f64;
-
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -696,8 +694,8 @@ pub(crate) mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
-    use crate::tests::assets::asset_composition;
-    use crate::tests::util::AssertKeys;
+
+    use crate::tests::{assets::asset_composition, util::AssertKeys};
 
     use super::*;
     use crate::{

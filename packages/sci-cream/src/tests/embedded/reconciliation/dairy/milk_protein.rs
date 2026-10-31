@@ -10,9 +10,9 @@
 // _McSweeney_, _McCarthy_, and _VanWees_ false positives
 #![expect(clippy::doc_markdown)]
 
-use super::util::{extend_to_isolate, mean, misses, report_header, round_to};
 use crate::tests::asserts::*;
 
+use super::util::{extend_to_isolate, mean, misses, report_header, round_to};
 use crate::{
     constants::composition::dairy::milk::{
         STD_LACTOSE_IN_MPI, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MPI, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MPI,

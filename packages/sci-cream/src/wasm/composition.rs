@@ -69,7 +69,6 @@ mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-
     use crate::composition::{Emulsifiers, Fats, Micro, PAC, Solids, SolidsBreakdown, Stabilizers};
 
     #[test]

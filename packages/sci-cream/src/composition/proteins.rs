@@ -11,8 +11,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
-    composition::ScaleComponents,
-    composition::field_update::field_update_methods,
+    composition::{ScaleComponents, field_update::field_update_methods},
     error::Result,
     util::{collect_fields_copied_as, iter_all_abs_diff_eq},
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},

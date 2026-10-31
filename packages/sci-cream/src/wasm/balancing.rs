@@ -2,7 +2,6 @@
 
 use serde::Serialize;
 use serde_wasm_bindgen::Serializer;
-
 use wasm_bindgen::prelude::*;
 
 use crate::balancing::{

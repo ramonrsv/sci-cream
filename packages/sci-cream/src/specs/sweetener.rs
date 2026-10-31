@@ -307,8 +307,11 @@ pub(crate) mod tests {
 
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
-    use crate::tests::assets::asset_composition;
-    use crate::tests::util::{AssertKeys, assert_comp_eq_percent};
+
+    use crate::tests::{
+        assets::asset_composition,
+        util::{AssertKeys, assert_comp_eq_percent},
+    };
 
     use super::*;
     use crate::{

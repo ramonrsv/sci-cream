@@ -22,6 +22,7 @@ use std::fmt::Debug;
 use approx::{AbsDiffEq, UlpsEq};
 
 use crate::constants::tolerances::{EPSILON_4DP, EPSILON_6DP, EPSILON_8DP, MAX_ULPS, TIE_ALLOWANCE};
+
 pub use crate::{assert_eq_4dp, assert_eq_6dp, assert_eq_8dp, assert_eq_flt};
 
 /// Whether `a` and `b` are the same value up to floating-point noise: within [`MAX_ULPS`] units
