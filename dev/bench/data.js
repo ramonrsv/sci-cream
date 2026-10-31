@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793430083983,
+  "lastUpdate": 1793430161190,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -686338,6 +686338,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.3,
             "range": "0.42",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "eab7e972f83eff5e005ce2f7cdadcdd1fd213ce4",
+          "message": "Add per-source ceilings to compare_specs\n\nWhen one source missed every other on a key, a per-key override\nloosened all of a suite's pairs. KeyCeiling::with_source overrides a\nkey's ceiling only in the pairs with that source: a pair takes the\nlarger of its two sources' overrides, or else the key's ceiling.\nassert_compositions_consistent fails on an override for a source it\nisn't given.\n\nThe dairy suite's overrides move to the sources behind them, mostly\nSealtest, Carnation, and the protein powder labels, so their other\npairs fall back to the 10 pp default. Half and half keeps a per-key\nEnergy ceiling of 14, and skim evaporated milk's Carnation Energy\nceiling tightens to 72. The largest-misses lists go, as each override\nnow names its source.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T02:50:28-04:00",
+          "tree_id": "ce31341b1c4df102bb9b4ba8bf7df8bd2700015c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/eab7e972f83eff5e005ce2f7cdadcdd1fd213ce4"
+        },
+        "date": 1793430099721,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 57.7,
+            "range": "10.04",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 12,
+            "range": "0.74",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.96,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 153.5,
+            "range": "13.11",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.35,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 153.5,
+            "range": "13.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 53.92,
+            "range": "9.91",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.9,
+            "range": "0.32",
             "unit": "ms"
           }
         ]
