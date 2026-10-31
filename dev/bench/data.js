@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793420283851,
+  "lastUpdate": 1793420738333,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -564406,6 +564406,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 725.75,
             "range": "13.93",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f226904f1d660bbdd881fe82d40864867a16fcde",
+          "message": "Check solver outputs and round trips at 8dp\n\nRe-measured over every test run, 44 of the 89 assert_eq_6dp! sites\nfall within 8dp. The 39 whose expected value is an exact target or a\ncomputed expression move to assert_eq_8dp!, the worst at 2.3e-11, at\nleast 220x inside its bound:\n\n- 17 solver outcomes, in the balancing tests, recipe.rs, and the WASM\n  bridge's balance tests.\n- 9 exact targets, such as the balancing round trips to 4.0, -2.5,\n  -13.0, and 72.0.\n- 9 round trips: the FPD inversions, de-evaporation in recipe.rs and\n  the bridge, and three dairy checks.\n- The FPD polynomial combine test, the two chocolate struct\n  comparisons, and a dairy check whose expected 3.5098 is exact.\n\nFive stay at 6dp: three 13.636_698 checks, a six-decimal value within\n8dp only by rounding luck, and the whole-egg protein split, which\nmeasures within 4 ULPs. tests::asserts re-exports assert_eq_8dp!.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-30T18:02:07-04:00",
+          "tree_id": "0ab2df523fa26ee12d19192aa9dc97a45a95cf44",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f226904f1d660bbdd881fe82d40864867a16fcde"
+        },
+        "date": 1793420663189,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 50.38,
+            "range": "5.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 56,
+            "range": "3.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57.63,
+            "range": "3.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2564.38,
+            "range": "69.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 375.5,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 399.38,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 411.75,
+            "range": "5.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19521.5,
+            "range": "83.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 952.88,
+            "range": "16.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 57.75,
+            "range": "2.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59.13,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.38,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.63,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 136.75,
+            "range": "3.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 97,
+            "range": "4.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 60.06,
+            "range": "1.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 44.34,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 664.75,
+            "range": "14.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 734.88,
+            "range": "21.09",
             "unit": "ms"
           }
         ]
