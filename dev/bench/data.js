@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793505638436,
+  "lastUpdate": 1793505686411,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -687519,6 +687519,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.9,
             "range": "0.32",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4318bf76339816db943ddb47d1f267415606a22a",
+          "message": "Add Neilson UF milks and protein beverages\n\nAdds Neilson's 0%, 2%, and 3.25% ultrafiltered milks and its 1%, 2%,\nand 3.25% 18g protein beverages as label entries, with fat in grams.\nThe milks list no lactase, so unlike the other ultrafiltered entries\nthey aren't lactose-free, and their sugars stay lactose. They join the\nultrafiltered protein-to-sugars check, at a ratio of 2.00.\n\nThe beverages list skim milk, water, milk protein concentrate, and\ncream, with lactase. compare_specs_protein_beverages_formulation\nbalances water and lactose-free defaults of the rest, MPC 85 standing\nin for the unlisted grade, to each label's fat, protein, and sugars.\nThe blend then matches the label's minerals, POD, and PAC too, as the\ndefaults lie on the milk solids lines, and its weights fall in the\nlisted order.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T23:49:33-04:00",
+          "tree_id": "9e507d60f583731b1cb329b8e3f5ad436197460a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4318bf76339816db943ddb47d1f267415606a22a"
+        },
+        "date": 1793505610014,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 79.03,
+            "range": "24.32",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 26.27,
+            "range": "25.58",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 26.16,
+            "range": "25.58",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 195,
+            "range": "22.43",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 195,
+            "range": "22.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 73.24,
+            "range": "24.76",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.74,
+            "range": "0.61",
             "unit": "ms"
           }
         ]
