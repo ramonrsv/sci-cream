@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793509906543,
+  "lastUpdate": 1793510333992,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -569836,6 +569836,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 756.38,
             "range": "14.47",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b558808ae457a069df53f8378e10bc9ee2de5e34",
+          "message": "Add Lactantia milk and cream label ladders\n\nAdds Lactantia's PurFiltre skim, 1%, 2%, and 3.25% milks and its 10%,\n18%, and 35% creams as label entries, with fat in grams, and their\nlactose-free counterparts, all but the 18%. Each lactose-free table is\nthe same as its regular one, which its entry's note names. Lactantia's\npage for the lactose-free 2% gave the 3.25% milk's table, so that entry\ncites Maxi's listing.\n\nThe regular labels join the milk and cream compare_specs suites, with a\nnew 1% suite that also covers Sealtest's 1% milk. Six lactose-free\nsuites set the Simple lactose-free entries against Lactantia's,\ncomparing MilkSugars in place of lactose; all new overrides are\nLactantia's. A further test holds each lactose-free label equal to its\nregular one on every key but the sugars' POD and PAC.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-01T00:54:58-04:00",
+          "tree_id": "0a43c03f002fb928cd3897579a08f100ec5ef680",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b558808ae457a069df53f8378e10bc9ee2de5e34"
+        },
+        "date": 1793510258012,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 52,
+            "range": "4.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 61.63,
+            "range": "4.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 73.25,
+            "range": "6.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2619.13,
+            "range": "72.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 380.13,
+            "range": "4.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 403.13,
+            "range": "10.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 416,
+            "range": "4.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19630.63,
+            "range": "74.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 982.63,
+            "range": "15.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 57.75,
+            "range": "2.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 63.88,
+            "range": "1.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 44.25,
+            "range": "2.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46.13,
+            "range": "2.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 138.5,
+            "range": "2.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 96.38,
+            "range": "3.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 61.09,
+            "range": "0.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 45.65,
+            "range": "0.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 687.5,
+            "range": "12.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 757.88,
+            "range": "15.93",
             "unit": "ms"
           }
         ]
