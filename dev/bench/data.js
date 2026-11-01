@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793505686411,
+  "lastUpdate": 1793505690586,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -610859,6 +610859,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.28%",
             "unit": "ops/sec",
             "extra": "87 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "eab7e972f83eff5e005ce2f7cdadcdd1fd213ce4",
+          "message": "Add per-source ceilings to compare_specs\n\nWhen one source missed every other on a key, a per-key override\nloosened all of a suite's pairs. KeyCeiling::with_source overrides a\nkey's ceiling only in the pairs with that source: a pair takes the\nlarger of its two sources' overrides, or else the key's ceiling.\nassert_compositions_consistent fails on an override for a source it\nisn't given.\n\nThe dairy suite's overrides move to the sources behind them, mostly\nSealtest, Carnation, and the protein powder labels, so their other\npairs fall back to the 10 pp default. Half and half keeps a per-key\nEnergy ceiling of 14, and skim evaporated milk's Carnation Energy\nceiling tightens to 72. The largest-misses lists go, as each override\nnow names its source.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T02:50:28-04:00",
+          "tree_id": "ce31341b1c4df102bb9b4ba8bf7df8bd2700015c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/eab7e972f83eff5e005ce2f7cdadcdd1fd213ce4"
+        },
+        "date": 1793505630381,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 72568,
+            "range": "±1.16%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 598628,
+            "range": "±0.57%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 53794,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 533477,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
