@@ -1,20 +1,27 @@
-//! Cross-source consistency checks for dairy ingredients — milk, ultrafiltered milk, cream,
-//! evaporated and condensed milk, milk powders, milk protein concentrates, whey, casein, and
-//! protein powders — comparing each Simple/default entry against USDA, USDEC, Sealtest, Carnation,
-//! Goff & Hartel, Southward, and brand references. Each USDA listing is compared both as its
-//! embedded sheet and as its test-only `… (Label)` variant.
+//! Cross-source consistency checks for dairy ingredients — milk, ultrafiltered milk, protein
+//! beverages, cream, evaporated and condensed milk, milk powders, milk protein concentrates, whey,
+//! casein, and protein powders — comparing each Simple/default entry against USDA, USDEC, Sealtest,
+//! Carnation, Goff & Hartel, Southward, and brand references. Each USDA listing is compared both as
+//! its embedded sheet and as its test-only `… (Label)` variant.
 
 #![cfg_attr(coverage, coverage(off))]
+#![allow(clippy::unwrap_used)]
 
 #[expect(unused_imports)]
 use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
 use crate::tests::asserts::*;
 
-use crate::tests::util::{
-    KeyCeiling, assert_compositions_consistent, compare_compositions, is_alias_for, source_str_to_comp,
+use crate::tests::{
+    assets::get_comp_by_name,
+    util::{KeyCeiling, assert_compositions_consistent, compare_compositions, is_alias_for, source_str_to_comp},
 };
 
-use crate::composition::CompKey;
+use crate::{
+    balancing::{BalanceKey, balance_compositions, composition_balance_targets},
+    composition::{CompKey, Composition, ToComposition},
+    data::get_independent_ingredient_spec_by_name,
+    specs::{DairySimpleSpec, IngredientSpec, TaggedSpec},
+};
 
 /// Composition keys compared when cross-checking dairy ingredient data sources.
 ///
@@ -157,6 +164,9 @@ fn compare_specs_ultrafiltered_milks_protein_to_sugars() {
         ("UltraPur 0%", "Lactantia UltraPur 0% Ultrafiltered Lactose-Free Milk"),
         ("UltraPur 2%", "Lactantia UltraPur 2% Ultrafiltered Lactose-Free Milk"),
         ("UltraPur 3.25%", "Lactantia UltraPur 3.25% Ultrafiltered Lactose-Free Milk"),
+        ("Neilson 0%", "Neilson 0% Ultrafiltered Skim Milk"),
+        ("Neilson 2%", "Neilson 2% Ultrafiltered Partly Skimmed Milk"),
+        ("Neilson 3.25%", "Neilson 3.25% Ultrafiltered Homogenized Milk"),
     ]
     .map(source_str_to_comp);
 
@@ -177,6 +187,82 @@ fn compare_specs_ultrafiltered_milks_protein_to_sugars() {
     let min = ratios.iter().copied().fold(f64::INFINITY, f64::min);
     let max = ratios.iter().copied().fold(f64::NEG_INFINITY, f64::max);
     assert_le!(max / min, 1.2, "protein to sugars ratios spread {:.3} times", max / min);
+
+    insta::assert_snapshot!(lines.join("\n"));
+}
+
+#[test]
+fn compare_specs_protein_beverages_formulation() {
+    // Each beverage lists skim milk, water, milk protein concentrate, and cream, the 3.25%'s cream
+    // ahead of its concentrate, with lactase. Water and lactose-free defaults of the rest, MPC 85
+    // standing in for the unlisted grade, balance to its label in the listed order.
+    let Ok(IngredientSpec {
+        spec: TaggedSpec::DairySimpleSpec(mpc_85),
+        ..
+    }) = get_independent_ingredient_spec_by_name("Milk Protein Concentrate 85%")
+    else {
+        panic!("Milk Protein Concentrate 85% is not an embedded DairySimpleSpec");
+    };
+    let lactose_free_mpc_85 = DairySimpleSpec {
+        lactose_free: Some(true),
+        ..mpc_85
+    };
+
+    let components = [
+        ("skim milk", get_comp_by_name("Lactose-Free 0% Milk")),
+        ("water", get_comp_by_name("Water")),
+        ("MPC 85", lactose_free_mpc_85.to_composition().unwrap()),
+        ("cream", get_comp_by_name("Lactose-Free 35% Cream")),
+    ];
+    let comps = components.map(|(_, comp)| (comp, None));
+    let keys = [CompKey::MilkFat, CompKey::MilkProteins, CompKey::MilkSugars].map(BalanceKey::from);
+
+    let mut lines = vec![format!(
+        "{:<14} {:>9} {:>7} {:>7} {:>7}",
+        "% by weight", "skim milk", "water", "MPC 85", "cream"
+    )];
+
+    let mpc_then_cream = ["skim milk", "water", "MPC 85", "cream"];
+    let cream_then_mpc = ["skim milk", "water", "cream", "MPC 85"];
+
+    for (label, name, listed) in [
+        ("Neilson 1%", "Neilson 1% 18g Protein Beverage, Lactose-Free", mpc_then_cream),
+        ("Neilson 2%", "Neilson 2% 18g Protein Beverage, Lactose-Free", mpc_then_cream),
+        ("Neilson 3.25%", "Neilson 3.25% 18g Protein Beverage, Lactose-Free", cream_then_mpc),
+    ] {
+        let beverage = get_comp_by_name(name);
+        let targets: Vec<_> = composition_balance_targets(&beverage, &keys)
+            .into_iter()
+            .map(|(key, value)| (key, value, None))
+            .collect();
+
+        let balanced = balance_compositions(&comps, &targets, None, None).unwrap();
+        let blend = Composition::from_combination(&balanced).unwrap();
+
+        // Fit to the label's fat, protein, and sugars, the blend matches its minerals, POD, and
+        // PAC too, as the defaults all lie on the milk solids lines
+        for key in [
+            CompKey::MilkFat,
+            CompKey::MilkProteins,
+            CompKey::MilkSugars,
+            CompKey::MilkMinerals,
+            CompKey::POD,
+            CompKey::TotalPAC,
+        ] {
+            assert_eq_8dp!(blend.get(key), beverage.get(key));
+        }
+
+        let percents: Vec<_> = balanced.iter().map(|(_, fraction)| fraction * 100.0).collect();
+        let percent = |component| percents[components.iter().position(|(c, _)| *c == component).unwrap()];
+        for pair in listed.windows(2) {
+            assert_gt!(percent(pair[0]), percent(pair[1]), "{label} lists {} ahead of {}", pair[0], pair[1]);
+        }
+
+        lines.push(format!(
+            "{label:<14} {:>9.2} {:>7.2} {:>7.2} {:>7.2}",
+            percents[0], percents[1], percents[2], percents[3]
+        ));
+    }
 
     insta::assert_snapshot!(lines.join("\n"));
 }

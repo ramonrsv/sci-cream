@@ -1150,6 +1150,140 @@ From [nutrition facts table](https://www.lactantia.ca/food_product/lactantia-ult
 
 From [nutrition facts table](https://www.lactantia.ca/food_product/lactantia-ultrapur-3-25-20g-protein-1-5l/)
 
+## Neilson 0% Ultrafiltered Skim Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 110,
+    "total_fat": { "grams": 0 },
+    "sugars": 9,
+    "protein": 18
+  }
+}
+```
+
+From [nutrition facts table](https://www.neilsondairy.com/en/products/protein/0-ultrafiltered-milk).
+Not lactose-free, as no lactase is listed among its ingredients.
+
+## Neilson 2% Ultrafiltered Partly Skimmed Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 150,
+    "total_fat": { "grams": 5 },
+    "saturated_fat": 3.5,
+    "trans_fat": 0.2,
+    "sugars": 9,
+    "protein": 18
+  }
+}
+```
+
+From [nutrition facts table](https://www.neilsondairy.com/en/products/protein/2-ultrafiltered-milk).
+Not lactose-free, as no lactase is listed among its ingredients.
+
+## Neilson 3.25% Ultrafiltered Homogenized Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 180,
+    "total_fat": { "grams": 8 },
+    "saturated_fat": 5,
+    "trans_fat": 0.3,
+    "sugars": 9,
+    "protein": 18
+  }
+}
+```
+
+From [nutrition facts
+table](https://www.neilsondairy.com/en/products/protein/3-25-ultrafiltered-milk). Not lactose-free,
+as no lactase is listed among its ingredients.
+
+## Neilson 1% 18g Protein Beverage, Lactose-Free
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 130,
+    "total_fat": { "grams": 2.5 },
+    "saturated_fat": 1.5,
+    "trans_fat": 0.1,
+    "carbohydrates": 9,
+    "sugars": 8,
+    "protein": 18,
+    "lactose_free": true
+  }
+}
+```
+
+From [ingredients list and nutrition facts
+table](https://www.neilsondairy.com/en/products/protein/1-protein).
+
+Ingredients: _"Skim milk, Water, Milk protein concentrate, Cream, Lactase, Dipotassium phosphate,
+Corn starch, Carrageenan, Vitamin A palmitate, Vitamin D3."_
+
+## Neilson 2% 18g Protein Beverage, Lactose-Free
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 150,
+    "total_fat": { "grams": 5 },
+    "saturated_fat": 3.5,
+    "trans_fat": 0.2,
+    "carbohydrates": 9,
+    "sugars": 8,
+    "protein": 18,
+    "lactose_free": true
+  }
+}
+```
+
+From [ingredients list and nutrition facts
+table](https://www.neilsondairy.com/en/products/protein/2-protein).
+
+Ingredients: _"Skim milk, Water, Milk protein concentrate, Cream, Lactase, Dipotassium phosphate,
+Corn starch, Carrageenan, Vitamin A palmitate, Vitamin D3."_
+
+## Neilson 3.25% 18g Protein Beverage, Lactose-Free
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 180,
+    "total_fat": { "grams": 8 },
+    "saturated_fat": 5,
+    "trans_fat": 0.3,
+    "carbohydrates": 9,
+    "sugars": 8,
+    "protein": 18,
+    "lactose_free": true
+  }
+}
+```
+
+From [ingredients list and nutrition facts
+table](https://www.neilsondairy.com/en/products/protein/325-protein).
+
+Ingredients: _"Skim milk, Water, Cream, Milk protein concentrate, Lactase, Dipotassium phosphate,
+Corn starch, Carrageenan, Vitamin D3."_
+
 ## USDA Fat-Free Evaporated Milk
 
 ```json

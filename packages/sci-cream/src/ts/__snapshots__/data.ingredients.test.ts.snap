@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 400  (non-alias: 336, independent: 322)
+"total: 406  (non-alias: 342, independent: 328)
 
             0% Milk
             1% Milk
@@ -257,6 +257,12 @@ exports[`Embedded spec entries 1`] = `
             MyProtein Impact Whey Protein
             MyProtein Slow-Release Casein
             Navel Orange
+            Neilson 0% Ultrafiltered Skim Milk
+            Neilson 1% 18g Protein Beverage, Lactose-Free
+            Neilson 2% 18g Protein Beverage, Lactose-Free
+            Neilson 2% Ultrafiltered Partly Skimmed Milk
+            Neilson 3.25% 18g Protein Beverage, Lactose-Free
+            Neilson 3.25% Ultrafiltered Homogenized Milk
             Nielsen-Massey Pure Almond Extract
             Nielsen-Massey Pure Chocolate Extract
             Nielsen-Massey Pure Coffee Extract

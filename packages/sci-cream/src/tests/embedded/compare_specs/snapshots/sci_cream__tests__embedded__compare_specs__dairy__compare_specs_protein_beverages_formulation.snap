@@ -1,0 +1,8 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
+expression: "lines.join(\"\\n\")"
+---
+% by weight    skim milk   water  MPC 85   cream
+Neilson 1%         57.60   33.98    5.83    2.59
+Neilson 2%         55.87   32.94    5.83    5.36
+Neilson 3.25%      53.79   31.68    5.84    8.69
