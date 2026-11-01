@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793509484524,
+  "lastUpdate": 1793509522271,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -712063,6 +712063,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2097.23,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b558808ae457a069df53f8378e10bc9ee2de5e34",
+          "message": "Add Lactantia milk and cream label ladders\n\nAdds Lactantia's PurFiltre skim, 1%, 2%, and 3.25% milks and its 10%,\n18%, and 35% creams as label entries, with fat in grams, and their\nlactose-free counterparts, all but the 18%. Each lactose-free table is\nthe same as its regular one, which its entry's note names. Lactantia's\npage for the lactose-free 2% gave the 3.25% milk's table, so that entry\ncites Maxi's listing.\n\nThe regular labels join the milk and cream compare_specs suites, with a\nnew 1% suite that also covers Sealtest's 1% milk. Six lactose-free\nsuites set the Simple lactose-free entries against Lactantia's,\ncomparing MilkSugars in place of lactose; all new overrides are\nLactantia's. A further test holds each lactose-free label equal to its\nregular one on every key but the sugars' POD and PAC.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-01T00:54:58-04:00",
+          "tree_id": "0a43c03f002fb928cd3897579a08f100ec5ef680",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b558808ae457a069df53f8378e10bc9ee2de5e34"
+        },
+        "date": 1793509445400,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1173.78,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 354.14,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1897.61,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 579.22,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.84,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2106.88,
             "unit": "KB"
           }
         ]
