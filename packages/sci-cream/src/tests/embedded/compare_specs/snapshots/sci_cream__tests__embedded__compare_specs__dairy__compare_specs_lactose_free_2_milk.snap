@@ -1,0 +1,22 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
+expression: "compare_compositions(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS)"
+---
+sources: Simple, Lactantia
+
+Energy               0.97 pp  (Simple vs Lactantia)
+MilkFat              0.51 pp  (Simple vs Lactantia)
+MilkSugars           1.29 pp  (Simple vs Lactantia)
+MSNF                 0.51 pp  (Simple vs Lactantia)
+MilkSNFS             1.80 pp  (Simple vs Lactantia)
+MilkProteins         1.78 pp  (Simple vs Lactantia)
+MilkMinerals         0.02 pp  (Simple vs Lactantia)
+MilkSolids           0.00 pp  (Simple vs Lactantia)
+TotalSolids          0.06 pp  (Simple vs Lactantia)
+Water                0.06 pp  (Simple vs Lactantia)
+POD                  0.94 pp  (Simple vs Lactantia)
+PACsgr               2.45 pp  (Simple vs Lactantia)
+PACmlk               0.19 pp  (Simple vs Lactantia)
+TotalPAC             2.26 pp  (Simple vs Lactantia)
+SaturatedFat         0.57 pp  (Simple vs Lactantia)
+TransFat             0.07 pp  (Simple vs Lactantia)

@@ -28,7 +28,6 @@
 - [ ] Consider adding support for `Composition` to also return `Unit` instead of just `f64`.
 - [ ] Add support for `data` to resolve `AliasSpec` and `CompositeSpec` on per-spec requests.
 - [ ] Add more reference recipes from Underbelly, Dana, Corvitto, Ice Cream Science, etc.
-- [ ] Consider adding `compare_specs_*` tests for simple and label lactose-free dairy products.
 - [ ] Carry the original target key through proxy translation so downstream balancing warnings
       (reachability, ratio bands, etc.) name what the user targeted (e.g. `ServingTemp`), not the
       substituted proxy (e.g. `AbsNetPAC`); see `translate_balancing_targets`.
@@ -153,6 +152,7 @@
 
 ## Completed
 
+- [x] Consider adding `compare_specs_*` tests for simple and label lactose-free dairy products.
 - [x] `assert_eq_flt_test`, with epsilon `TESTS_EPSILON = 0.0001`, is too loose for many use cases.
       Consider tightening to `COMPOSITION_EPSILON` and/or adding a tighter/loser assert variant.
 - [x] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.

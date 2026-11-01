@@ -977,6 +977,273 @@ From [nutrition facts table](https://www.sealtest.ca/en/products/creams/table-cr
 
 From [nutrition facts table](https://www.sealtest.ca/en/products/creams/whipping-cream-35).
 
+## Lactantia PurFiltre Skim Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 90,
+    "total_fat": { "grams": 0.2 },
+    "saturated_fat": 0.1,
+    "sugars": 13,
+    "protein": 9
+  }
+}
+```
+
+From [nutrition facts table](https://lactantia.ca/food_product/lactantia-purfiltre-skim-milk/).
+
+## Lactantia PurFiltre 1% Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 100,
+    "total_fat": { "grams": 2.5 },
+    "saturated_fat": 1.5,
+    "trans_fat": 0.1,
+    "sugars": 12,
+    "protein": 9
+  }
+}
+```
+
+From [nutrition facts table](https://lactantia.ca/food_product/lactantia-purfiltre-1-milk-2/).
+
+## Lactantia PurFiltre 2% Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 130,
+    "total_fat": { "grams": 5 },
+    "saturated_fat": 3.5,
+    "trans_fat": 0.2,
+    "sugars": 12,
+    "protein": 9
+  }
+}
+```
+
+From [nutrition facts table](https://lactantia.ca/food_product/lactantia-purfiltre-2/).
+
+## Lactantia PurFiltre 3.25% Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 160,
+    "total_fat": { "grams": 8 },
+    "saturated_fat": 5,
+    "trans_fat": 0.3,
+    "sugars": 12,
+    "protein": 9
+  }
+}
+```
+
+From [nutrition facts table](https://lactantia.ca/food_product/lactantia-purfiltre-3-25-milk/).
+
+## Lactantia Half and Half Cream 10%
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 15 },
+    "energy": 20,
+    "total_fat": { "grams": 1.5 },
+    "saturated_fat": 1,
+    "sugars": 1,
+    "protein": 0.5
+  }
+}
+```
+
+From [nutrition facts table](https://lactantia.ca/food_product/lactantia-half-half-10-cream/).
+
+## Lactantia Table Cream 18%
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 15 },
+    "energy": 25,
+    "total_fat": { "grams": 2.5 },
+    "saturated_fat": 1.5,
+    "trans_fat": 0.1,
+    "sugars": 1,
+    "protein": 0.4
+  }
+}
+```
+
+From [nutrition facts table](https://lactantia.ca/food_product/lactantia-18-table-cream-1l/).
+
+## Lactantia Whipping Cream 35%
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 15 },
+    "energy": 50,
+    "total_fat": { "grams": 5 },
+    "saturated_fat": 3,
+    "trans_fat": 0.1,
+    "sugars": 0,
+    "protein": 0.3
+  }
+}
+```
+
+From [nutrition facts
+table](https://lactantia.ca/food_product/lactantia-35-old-fashioned-whipping-cream-1l/).
+
+## Lactantia Lactose-Free Skim Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 90,
+    "total_fat": { "grams": 0.2 },
+    "saturated_fat": 0.1,
+    "sugars": 13,
+    "protein": 9,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts table](https://lactantia.ca/food_product/lactantia-lactose-free-skim-milk/),
+the same as that of 'Lactantia PurFiltre Skim Milk'. Lactase splits the lactose into glucose and
+galactose, which the table counts alike as sugars.
+
+## Lactantia Lactose-Free 1% Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 100,
+    "total_fat": { "grams": 2.5 },
+    "saturated_fat": 1.5,
+    "trans_fat": 0.1,
+    "sugars": 12,
+    "protein": 9,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts table](https://lactantia.ca/food_product/lactantia-lactose-free-1-milk-2/),
+the same as that of 'Lactantia PurFiltre 1% Milk'. Lactase splits the lactose into glucose and
+galactose, which the table counts alike as sugars.
+
+## Lactantia Lactose-Free 2% Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 130,
+    "total_fat": { "grams": 5 },
+    "saturated_fat": 3.5,
+    "trans_fat": 0.2,
+    "sugars": 12,
+    "protein": 9,
+    "lactose_free": true
+  }
+}
+```
+
+From Maxi's [nutrition facts
+table](https://www.maxi.ca/en/milk-lactose-free-2-partly-skimmed/p/20301822001_EA), the same as
+that of 'Lactantia PurFiltre 2% Milk'. Lactase splits the lactose into glucose and galactose, which
+the table counts alike as sugars. Lactantia's [product
+page](https://lactantia.ca/food_product/lactantia-lactose-free/) gave the 3.25% milk's table when
+retrieved in October 2026.
+
+## Lactantia Lactose-Free 3.25% Milk
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 250 },
+    "energy": 160,
+    "total_fat": { "grams": 8 },
+    "saturated_fat": 5,
+    "trans_fat": 0.3,
+    "sugars": 12,
+    "protein": 9,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts table](https://lactantia.ca/food_product/lactantia-lactose-free-3-25/), the
+same as that of 'Lactantia PurFiltre 3.25% Milk'. Lactase splits the lactose into glucose and
+galactose, which the table counts alike as sugars.
+
+## Lactantia Lactose-Free Half and Half Cream 10%
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 15 },
+    "energy": 20,
+    "total_fat": { "grams": 1.5 },
+    "saturated_fat": 1,
+    "sugars": 1,
+    "protein": 0.5,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts
+table](https://lactantia.ca/food_product/lactose-free-10-half-and-half-cream/), the same as that of
+'Lactantia Half and Half Cream 10%'. Lactase splits the lactose into glucose and galactose, which
+the table counts alike as sugars.
+
+## Lactantia Lactose-Free Whipping Cream 35%
+
+```json
+{
+  "category": "Dairy",
+  "DairyLabelSpec": {
+    "serving_size": { "ml": 15 },
+    "energy": 50,
+    "total_fat": { "grams": 5 },
+    "saturated_fat": 3,
+    "trans_fat": 0.1,
+    "sugars": 0,
+    "protein": 0.3,
+    "lactose_free": true
+  }
+}
+```
+
+From [nutrition facts
+table](https://lactantia.ca/food_product/lactantia-lactose-free-35-whipping-cream/), the same as
+that of 'Lactantia Whipping Cream 35%'. Its table rounds the sugars to 0 g, so it lacks the glucose
+and galactose that 'Lactose-Free 35% Cream' carries.
+
 ## Fairlife Fat Free Ultra-Filtered Lactose-Free Milk
 
 ```json

@@ -1,8 +1,8 @@
 //! Cross-source consistency checks for dairy ingredients — milk, ultrafiltered milk, protein
 //! beverages, cream, evaporated and condensed milk, milk powders, milk protein concentrates, whey,
 //! casein, and protein powders — comparing each Simple/default entry against USDA, USDEC, Sealtest,
-//! Carnation, Goff & Hartel, Southward, and brand references. Each USDA listing is compared both as
-//! its embedded sheet and as its test-only `… (Label)` variant.
+//! Lactantia, Carnation, Goff & Hartel, Southward, and brand references. Each USDA listing is
+//! compared both as its embedded sheet and as its test-only `… (Label)` variant.
 
 #![cfg_attr(coverage, coverage(off))]
 #![allow(clippy::unwrap_used)]
@@ -52,6 +52,27 @@ const COMPARABLE_DAIRY_KEYS: &[CompKey] = &[
     CompKey::TransFat,
 ];
 
+/// [`COMPARABLE_DAIRY_KEYS`] for lactose-free dairy, with [`CompKey::MilkSugars`] in place of
+/// [`CompKey::Lactose`], which is zero in every source.
+const COMPARABLE_LACTOSE_FREE_DAIRY_KEYS: &[CompKey] = &[
+    CompKey::Energy,
+    CompKey::MilkFat,
+    CompKey::MilkSugars,
+    CompKey::MSNF,
+    CompKey::MilkSNFS,
+    CompKey::MilkProteins,
+    CompKey::MilkMinerals,
+    CompKey::MilkSolids,
+    CompKey::TotalSolids,
+    CompKey::Water,
+    CompKey::POD,
+    CompKey::PACsgr,
+    CompKey::PACmlk,
+    CompKey::TotalPAC,
+    CompKey::SaturatedFat,
+    CompKey::TransFat,
+];
+
 #[test]
 fn compare_specs_skim_milk() {
     assert_true!(is_alias_for("Skim Milk", "0% Milk"));
@@ -62,10 +83,26 @@ fn compare_specs_skim_milk() {
         ("USDA", "USDA Fat-Free (Skim) Milk"),
         ("USDA Label", "USDA Fat-Free (Skim) Milk (Label)"),
         ("Sealtest", "Sealtest 0% Skim Milk"),
+        ("Lactantia", "Lactantia PurFiltre Skim Milk"),
     ]
     .map(source_str_to_comp);
 
     let ceiling = KeyCeiling::new(10.0).with_source("Sealtest", CompKey::Energy, 30.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_1_milk() {
+    let sources = [
+        ("Simple", "1% Milk"),
+        ("Sealtest", "Sealtest 1% Milk"),
+        ("Lactantia", "Lactantia PurFiltre 1% Milk"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0).with_source("Lactantia", CompKey::Energy, 27.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -78,10 +115,13 @@ fn compare_specs_2_milk() {
         ("USDA", "USDA 2% Reduced-Fat Milk"),
         ("USDA Label", "USDA 2% Reduced-Fat Milk (Label)"),
         ("Sealtest", "Sealtest 2% Milk"),
+        ("Lactantia", "Lactantia PurFiltre 2% Milk"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with_source("Sealtest", CompKey::Energy, 20.0);
+    let ceiling = KeyCeiling::new(10.0)
+        .with_source("Sealtest", CompKey::Energy, 20.0)
+        .with_source("Lactantia", CompKey::Energy, 21.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -97,10 +137,13 @@ fn compare_specs_whole_milk() {
         ("USDA", "USDA Whole Milk"),
         ("USDA Label", "USDA Whole Milk (Label)"),
         ("Sealtest", "Sealtest 3.25% Milk"),
+        ("Lactantia", "Lactantia PurFiltre 3.25% Milk"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with_source("Sealtest", CompKey::Energy, 18.0);
+    let ceiling = KeyCeiling::new(10.0)
+        .with_source("Sealtest", CompKey::Energy, 18.0)
+        .with_source("Lactantia", CompKey::Energy, 24.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -293,17 +336,25 @@ fn compare_specs_half_and_half() {
         ("USDA", "USDA Half and Half Cream"),
         ("USDA Label", "USDA Half and Half Cream (Label)"),
         ("Sealtest", "Sealtest Half and Half Cream 10%"),
+        ("Lactantia", "Lactantia Half and Half Cream 10%"),
     ]
     .map(source_str_to_comp);
 
     // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), pulling
-    // Lactose, PACsgr, and TotalPAC a few pp above the default ceiling.
+    // Lactose, PACsgr, and TotalPAC a few pp above the default ceiling. Lactantia's also rounds
+    // its protein up, to 0.5 g, taking its MSNF to 10.6% vs Simple's 8.1%, and its fat share down.
     let ceiling = KeyCeiling::new(10.0)
         .with(CompKey::Energy, 14.0)
         .with_source("Sealtest", CompKey::Energy, 23.0)
         .with_source("Sealtest", CompKey::Lactose, 12.0)
         .with_source("Sealtest", CompKey::PACsgr, 12.0)
-        .with_source("Sealtest", CompKey::TotalPAC, 15.0);
+        .with_source("Sealtest", CompKey::TotalPAC, 15.0)
+        .with_source("Lactantia", CompKey::Energy, 38.0)
+        .with_source("Lactantia", CompKey::MilkFat, 12.0)
+        .with_source("Lactantia", CompKey::Lactose, 11.0)
+        .with_source("Lactantia", CompKey::MSNF, 12.0)
+        .with_source("Lactantia", CompKey::PACsgr, 11.0)
+        .with_source("Lactantia", CompKey::TotalPAC, 15.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -318,15 +369,23 @@ fn compare_specs_18_cream() {
         ("USDA", "USDA Light Cream"),
         ("USDA Label", "USDA Light Cream (Label)"),
         ("Sealtest", "Sealtest Table Cream 18%"),
+        ("Lactantia", "Lactantia Table Cream 18%"),
     ]
     .map(source_str_to_comp);
 
-    // Sealtest's 15ml serving rounds sugars and saturated fat coarsely, pushing TotalPAC
-    // and SaturatedFat above the default ceiling.
+    // Sealtest's 15ml serving rounds sugars and saturated fat coarsely, pushing TotalPAC and
+    // SaturatedFat above the default ceiling. Lactantia's rounds fat down, to 16.4%, and sugars up,
+    // to 6.6% lactose vs Simple's 4.0%; its 25 kcal sits below the ~28 its macronutrients give.
     let ceiling = KeyCeiling::new(10.0)
         .with_source("Sealtest", CompKey::Energy, 42.0)
         .with_source("Sealtest", CompKey::TotalPAC, 13.0)
-        .with_source("Sealtest", CompKey::SaturatedFat, 11.0);
+        .with_source("Sealtest", CompKey::SaturatedFat, 11.0)
+        .with_source("Lactantia", CompKey::Energy, 125.0)
+        .with_source("Lactantia", CompKey::MilkFat, 11.0)
+        .with_source("Lactantia", CompKey::Lactose, 11.0)
+        .with_source("Lactantia", CompKey::MSNF, 11.0)
+        .with_source("Lactantia", CompKey::PACsgr, 11.0)
+        .with_source("Lactantia", CompKey::TotalPAC, 15.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -342,6 +401,7 @@ fn compare_specs_whipping_cream() {
         ("USDA", "USDA Heavy Cream"),
         ("USDA Label", "USDA Heavy Cream (Label)"),
         ("Sealtest", "Sealtest Whipping Cream 35%"),
+        ("Lactantia", "Lactantia Whipping Cream 35%"),
     ]
     .map(source_str_to_comp);
 
@@ -351,12 +411,18 @@ fn compare_specs_whipping_cream() {
     // missing solids). Its 3g saturated fat label is also only ~58% of its fat, against the
     // standard 65%. USDA's sheet counts the 0.88 g by which its listing's carbohydrate
     // exceeds its sugars as MSNF, taking its MSNF gap with Sealtest just past the default ceiling.
+    // Lactantia's label rounds its sugars to 0g too, and its fat down to 5g while its 50 kcal
+    // stays, 9.4 kcal per gram of solids, above fat's own 9; Sealtest's 1g of carbohydrate,
+    // counted as other solids, dilutes its fat share against Lactantia's.
     let ceiling = KeyCeiling::new(10.0)
         .with_source("Sealtest", CompKey::Energy, 64.0)
         .with_source("Sealtest", CompKey::MSNF, 11.0)
         .with_source("Sealtest", CompKey::MilkSolids, 16.0)
         .with_source("Sealtest", CompKey::TotalPAC, 12.0)
-        .with_source("Sealtest", CompKey::SaturatedFat, 11.0);
+        .with_source("Sealtest", CompKey::SaturatedFat, 11.0)
+        .with_source("Lactantia", CompKey::Energy, 178.0)
+        .with_source("Lactantia", CompKey::MilkFat, 15.0)
+        .with_source("Lactantia", CompKey::TotalPAC, 11.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -392,6 +458,130 @@ fn compare_specs_clotted_cream() {
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_lactose_free_skim_milk() {
+    assert_true!(is_alias_for("Lactose-Free Skim Milk", "Lactose-Free 0% Milk"));
+
+    let sources = [
+        ("Simple", "Lactose-Free 0% Milk"),
+        ("Lactantia", "Lactantia Lactose-Free Skim Milk"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_lactose_free_1_milk() {
+    let sources = [
+        ("Simple", "Lactose-Free 1% Milk"),
+        ("Lactantia", "Lactantia Lactose-Free 1% Milk"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0).with_source("Lactantia", CompKey::Energy, 27.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_lactose_free_2_milk() {
+    let sources = [
+        ("Simple", "Lactose-Free 2% Milk"),
+        ("Lactantia", "Lactantia Lactose-Free 2% Milk"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_lactose_free_whole_milk() {
+    assert_true!(is_alias_for("Lactose-Free Whole Milk", "Lactose-Free 3.25% Milk"));
+
+    let sources = [
+        ("Simple", "Lactose-Free 3.25% Milk"),
+        ("Lactantia", "Lactantia Lactose-Free 3.25% Milk"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_lactose_free_half_and_half() {
+    assert_true!(is_alias_for("Lactose-Free Half and Half", "Lactose-Free 10% Cream"));
+
+    let sources = [
+        ("Simple", "Lactose-Free 10% Cream"),
+        ("Lactantia", "Lactantia Lactose-Free Half and Half Cream 10%"),
+    ]
+    .map(source_str_to_comp);
+
+    // Lactantia's 15ml serving rounds as in `compare_specs_half_and_half`, its PAC misses running
+    // higher as glucose and galactose carry nearly twice lactose's PAC per gram.
+    let ceiling = KeyCeiling::new(10.0)
+        .with_source("Lactantia", CompKey::Energy, 24.0)
+        .with_source("Lactantia", CompKey::PACsgr, 15.0)
+        .with_source("Lactantia", CompKey::TotalPAC, 18.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_lactose_free_whipping_cream() {
+    assert_true!(is_alias_for("Lactose-Free Whipping Cream", "Lactose-Free 35% Cream"));
+
+    let sources = [
+        ("Simple", "Lactose-Free 35% Cream"),
+        ("Lactantia", "Lactantia Lactose-Free Whipping Cream 35%"),
+    ]
+    .map(source_str_to_comp);
+
+    // Lactantia's 15ml serving rounds as in `compare_specs_whipping_cream`, its sugars to 0g, so it
+    // lacks the glucose and galactose behind Simple's PAC.
+    let ceiling = KeyCeiling::new(10.0)
+        .with_source("Lactantia", CompKey::Energy, 116.0)
+        .with_source("Lactantia", CompKey::PACsgr, 15.0)
+        .with_source("Lactantia", CompKey::TotalPAC, 18.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_lactose_free_labels_match_regular() {
+    // Lactantia's lactose-free tables are its regular ones, so only the sugars' species differs.
+    let keys: Vec<CompKey> = COMPARABLE_LACTOSE_FREE_DAIRY_KEYS
+        .iter()
+        .copied()
+        .filter(|key| ![CompKey::POD, CompKey::PACsgr, CompKey::TotalPAC].contains(key))
+        .collect();
+
+    for (lactose_free, regular) in [
+        ("Lactantia Lactose-Free Skim Milk", "Lactantia PurFiltre Skim Milk"),
+        ("Lactantia Lactose-Free 1% Milk", "Lactantia PurFiltre 1% Milk"),
+        ("Lactantia Lactose-Free 2% Milk", "Lactantia PurFiltre 2% Milk"),
+        ("Lactantia Lactose-Free 3.25% Milk", "Lactantia PurFiltre 3.25% Milk"),
+        ("Lactantia Lactose-Free Half and Half Cream 10%", "Lactantia Half and Half Cream 10%"),
+        ("Lactantia Lactose-Free Whipping Cream 35%", "Lactantia Whipping Cream 35%"),
+    ] {
+        let sources = [(lactose_free, lactose_free), (regular, regular)].map(source_str_to_comp);
+        assert_compositions_consistent(&sources, &keys, &KeyCeiling::exact());
+    }
 }
 
 #[test]
