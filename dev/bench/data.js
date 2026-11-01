@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793505576660,
+  "lastUpdate": 1793505605052,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -610807,6 +610807,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.04%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4318bf76339816db943ddb47d1f267415606a22a",
+          "message": "Add Neilson UF milks and protein beverages\n\nAdds Neilson's 0%, 2%, and 3.25% ultrafiltered milks and its 1%, 2%,\nand 3.25% 18g protein beverages as label entries, with fat in grams.\nThe milks list no lactase, so unlike the other ultrafiltered entries\nthey aren't lactose-free, and their sugars stay lactose. They join the\nultrafiltered protein-to-sugars check, at a ratio of 2.00.\n\nThe beverages list skim milk, water, milk protein concentrate, and\ncream, with lactase. compare_specs_protein_beverages_formulation\nbalances water and lactose-free defaults of the rest, MPC 85 standing\nin for the unlisted grade, to each label's fat, protein, and sugars.\nThe blend then matches the label's minerals, POD, and PAC too, as the\ndefaults lie on the milk solids lines, and its weights fall in the\nlisted order.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T23:49:33-04:00",
+          "tree_id": "9e507d60f583731b1cb329b8e3f5ad436197460a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4318bf76339816db943ddb47d1f267415606a22a"
+        },
+        "date": 1793505528043,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 45215,
+            "range": "±1.35%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 440837,
+            "range": "±0.63%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31737,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 330156,
+            "range": "±1.28%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
           }
         ]
       }
