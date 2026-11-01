@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793506401432,
+  "lastUpdate": 1793509484524,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -612646,6 +612646,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 533477,
             "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b558808ae457a069df53f8378e10bc9ee2de5e34",
+          "message": "Add Lactantia milk and cream label ladders\n\nAdds Lactantia's PurFiltre skim, 1%, 2%, and 3.25% milks and its 10%,\n18%, and 35% creams as label entries, with fat in grams, and their\nlactose-free counterparts, all but the 18%. Each lactose-free table is\nthe same as its regular one, which its entry's note names. Lactantia's\npage for the lactose-free 2% gave the 3.25% milk's table, so that entry\ncites Maxi's listing.\n\nThe regular labels join the milk and cream compare_specs suites, with a\nnew 1% suite that also covers Sealtest's 1% milk. Six lactose-free\nsuites set the Simple lactose-free entries against Lactantia's,\ncomparing MilkSugars in place of lactose; all new overrides are\nLactantia's. A further test holds each lactose-free label equal to its\nregular one on every key but the sugars' POD and PAC.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-01T00:54:58-04:00",
+          "tree_id": "0a43c03f002fb928cd3897579a08f100ec5ef680",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b558808ae457a069df53f8378e10bc9ee2de5e34"
+        },
+        "date": 1793509422370,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 69475,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 529892,
+            "range": "±0.61%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 48703,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 386749,
+            "range": "±0.87%",
             "unit": "ops/sec",
             "extra": "95 samples"
           }
