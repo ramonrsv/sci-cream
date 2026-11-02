@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: Simple, Sealtest, Lactantia
 
-Energy               6.60 pp  (Simple vs Sealtest)
+Energy               1.32 pp  (Simple vs Sealtest)
 MilkFat              0.32 pp  (Simple vs Sealtest)
 Lactose              0.05 pp  (Simple vs Sealtest)
 MSNF                 0.32 pp  (Simple vs Sealtest)
@@ -21,7 +21,7 @@ TotalPAC             0.17 pp  (Simple vs Sealtest)
 SaturatedFat         0.90 pp  (Simple vs Sealtest)
 TransFat             0.02 pp  (Simple vs Sealtest)
 
-Energy              26.72 pp  (Simple vs Lactantia)
+Energy               5.34 pp  (Simple vs Lactantia)
 MilkFat              0.22 pp  (Simple vs Lactantia)
 Lactose              1.61 pp  (Simple vs Lactantia)
 MSNF                 0.22 pp  (Simple vs Lactantia)
@@ -38,7 +38,7 @@ TotalPAC             1.53 pp  (Simple vs Lactantia)
 SaturatedFat         0.63 pp  (Simple vs Lactantia)
 TransFat             0.04 pp  (Simple vs Lactantia)
 
-Energy              20.12 pp  (Sealtest vs Lactantia)
+Energy               4.02 pp  (Sealtest vs Lactantia)
 MilkFat              0.11 pp  (Sealtest vs Lactantia)
 Lactose              1.66 pp  (Sealtest vs Lactantia)
 MSNF                 0.11 pp  (Sealtest vs Lactantia)

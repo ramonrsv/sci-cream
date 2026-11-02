@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Simple, USDA
 
-Energy               4.92 pp  (Simple vs USDA)
+Energy               0.98 pp  (Simple vs USDA)
 TotalFats            0.72 pp  (Simple vs USDA)
 CacaoSolids          0.00 pp  (Simple vs USDA)
 CocoaButter          0.72 pp  (Simple vs USDA)

@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Simple, USDA, Mona Lisa
 
-Energy              15.27 pp  (Simple vs USDA)
+Energy               3.05 pp  (Simple vs USDA)
 TotalFats            2.80 pp  (Simple vs USDA)
 CacaoSolids          2.10 pp  (Simple vs USDA)
 CocoaButter          2.80 pp  (Simple vs USDA)
@@ -31,7 +31,7 @@ TotalPAC             2.10 pp  (Simple vs USDA)
 SaturatedFat         1.68 pp  (Simple vs USDA)
 TransFat             0.00 pp  (Simple vs USDA)
 
-Energy               8.96 pp  (Simple vs Mona Lisa)
+Energy               1.79 pp  (Simple vs Mona Lisa)
 TotalFats            1.80 pp  (Simple vs Mona Lisa)
 CacaoSolids          0.60 pp  (Simple vs Mona Lisa)
 CocoaButter          1.80 pp  (Simple vs Mona Lisa)
@@ -58,7 +58,7 @@ TotalPAC             0.50 pp  (Simple vs Mona Lisa)
 SaturatedFat         1.08 pp  (Simple vs Mona Lisa)
 TransFat             0.00 pp  (Simple vs Mona Lisa)
 
-Energy               6.31 pp  (USDA vs Mona Lisa)
+Energy               1.26 pp  (USDA vs Mona Lisa)
 TotalFats            1.00 pp  (USDA vs Mona Lisa)
 CacaoSolids          2.70 pp  (USDA vs Mona Lisa)
 CocoaButter          1.00 pp  (USDA vs Mona Lisa)

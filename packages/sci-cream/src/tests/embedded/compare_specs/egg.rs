@@ -12,11 +12,6 @@ use crate::composition::CompKey;
 /// These keys carry meaningful, generally non-zero values for egg-based ingredients. Keys
 /// irrelevant to eggs (milk, cocoa, nut, sugar, and other non-egg components) are excluded so
 /// that comparisons stay focused on values a reader would expect to differ between sources.
-///
-/// **Energy:** as `kcal/g of solids × 100` it lands in `[400, 900]` vs `[0, 100]` for mass
-/// components, so the same fractional precision error shows up 4–9× larger. Energy ceiling
-/// overrides are common as a result; 20–45 pp is typical, past ~60 pp likely flags a real
-/// solids energy density disagreement.
 const COMPARABLE_EGG_KEYS: &[CompKey] = &[
     CompKey::Energy,
     CompKey::EggFat,
@@ -39,7 +34,7 @@ fn compare_specs_egg_yolk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.0).with(CompKey::Energy, 28.0);
+    let ceiling = KeyCeiling::new(5.0).with(CompKey::Energy, 6.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_EGG_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_EGG_KEYS));

@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Simple, Corvitto, Callebaut
 
-Energy              24.88 pp  (Simple vs Corvitto)
+Energy               4.98 pp  (Simple vs Corvitto)
 TotalFats            3.65 pp  (Simple vs Corvitto)
 CacaoSolids          0.00 pp  (Simple vs Corvitto)
 CocoaButter          3.65 pp  (Simple vs Corvitto)
@@ -31,7 +31,7 @@ TotalPAC             0.00 pp  (Simple vs Corvitto)
 SaturatedFat         2.19 pp  (Simple vs Corvitto)
 TransFat             0.00 pp  (Simple vs Corvitto)
 
-Energy              29.97 pp  (Simple vs Callebaut)
+Energy               5.99 pp  (Simple vs Callebaut)
 TotalFats            5.25 pp  (Simple vs Callebaut)
 CacaoSolids          1.00 pp  (Simple vs Callebaut)
 CocoaButter          5.25 pp  (Simple vs Callebaut)
@@ -58,7 +58,7 @@ TotalPAC             2.00 pp  (Simple vs Callebaut)
 SaturatedFat         3.15 pp  (Simple vs Callebaut)
 TransFat             0.00 pp  (Simple vs Callebaut)
 
-Energy               5.09 pp  (Corvitto vs Callebaut)
+Energy               1.02 pp  (Corvitto vs Callebaut)
 TotalFats            1.60 pp  (Corvitto vs Callebaut)
 CacaoSolids          1.00 pp  (Corvitto vs Callebaut)
 CocoaButter          1.60 pp  (Corvitto vs Callebaut)

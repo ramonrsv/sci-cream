@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: Simple, VanWees
 
-Energy               0.24 pp  (Simple vs VanWees)
+Energy               0.05 pp  (Simple vs VanWees)
 MilkFat              0.02 pp  (Simple vs VanWees)
 Lactose              1.45 pp  (Simple vs VanWees)
 MSNF                 0.02 pp  (Simple vs VanWees)

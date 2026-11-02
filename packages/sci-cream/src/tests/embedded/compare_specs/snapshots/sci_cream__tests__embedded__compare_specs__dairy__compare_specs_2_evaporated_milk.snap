@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: USDA, USDA Label, Carnation
 
-Energy               2.78 pp  (USDA vs USDA Label)
+Energy               0.56 pp  (USDA vs USDA Label)
 MilkFat              0.06 pp  (USDA vs USDA Label)
 Lactose              0.34 pp  (USDA vs USDA Label)
 MSNF                 0.06 pp  (USDA vs USDA Label)
@@ -21,7 +21,7 @@ TotalPAC             0.32 pp  (USDA vs USDA Label)
 SaturatedFat         0.04 pp  (USDA vs USDA Label)
 TransFat             0.00 pp  (USDA vs USDA Label)
 
-Energy              12.01 pp  (USDA vs Carnation)
+Energy               2.40 pp  (USDA vs Carnation)
 MilkFat              0.15 pp  (USDA vs Carnation)
 Lactose             22.00 pp  (USDA vs Carnation)
 MSNF                28.83 pp  (USDA vs Carnation)
@@ -38,7 +38,7 @@ TotalPAC            32.59 pp  (USDA vs Carnation)
 SaturatedFat         0.22 pp  (USDA vs Carnation)
 TransFat             0.01 pp  (USDA vs Carnation)
 
-Energy              14.79 pp  (USDA Label vs Carnation)
+Energy               2.96 pp  (USDA Label vs Carnation)
 MilkFat              0.21 pp  (USDA Label vs Carnation)
 Lactose             21.67 pp  (USDA Label vs Carnation)
 MSNF                28.89 pp  (USDA Label vs Carnation)

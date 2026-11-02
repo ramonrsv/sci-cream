@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Simple, Lindt
 
-Energy              20.45 pp  (Simple vs Lindt)
+Energy               4.09 pp  (Simple vs Lindt)
 TotalFats            3.00 pp  (Simple vs Lindt)
 CacaoSolids          0.00 pp  (Simple vs Lindt)
 CocoaButter          3.00 pp  (Simple vs Lindt)

@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: Simple, Goff & Hartel, Sealtest
 
-Energy               7.71 pp  (Simple vs Goff & Hartel)
+Energy               1.54 pp  (Simple vs Goff & Hartel)
 MilkFat              1.44 pp  (Simple vs Goff & Hartel)
 Lactose              1.57 pp  (Simple vs Goff & Hartel)
 MSNF                 1.44 pp  (Simple vs Goff & Hartel)
@@ -21,7 +21,7 @@ TotalPAC             2.10 pp  (Simple vs Goff & Hartel)
 SaturatedFat         0.94 pp  (Simple vs Goff & Hartel)
 TransFat             0.05 pp  (Simple vs Goff & Hartel)
 
-Energy             148.50 pp  (Simple vs Sealtest)
+Energy              29.70 pp  (Simple vs Sealtest)
 MilkFat              4.77 pp  (Simple vs Sealtest)
 Lactose              7.19 pp  (Simple vs Sealtest)
 MSNF                 4.77 pp  (Simple vs Sealtest)
@@ -38,7 +38,7 @@ TotalPAC             8.94 pp  (Simple vs Sealtest)
 SaturatedFat         3.19 pp  (Simple vs Sealtest)
 TransFat             0.17 pp  (Simple vs Sealtest)
 
-Energy             140.80 pp  (Goff & Hartel vs Sealtest)
+Energy              28.16 pp  (Goff & Hartel vs Sealtest)
 MilkFat              3.33 pp  (Goff & Hartel vs Sealtest)
 Lactose              5.62 pp  (Goff & Hartel vs Sealtest)
 MSNF                 3.33 pp  (Goff & Hartel vs Sealtest)

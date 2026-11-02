@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Simple, Valrhona
 
-Energy              14.05 pp  (Simple vs Valrhona)
+Energy               2.81 pp  (Simple vs Valrhona)
 TotalFats            0.00 pp  (Simple vs Valrhona)
 CacaoSolids          4.12 pp  (Simple vs Valrhona)
 CocoaButter          0.00 pp  (Simple vs Valrhona)

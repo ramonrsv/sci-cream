@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: Fairlife (US), Fairlife (Canada)
 
-Energy              24.41 pp  (Fairlife (US) vs Fairlife (Canada))
+Energy               4.88 pp  (Fairlife (US) vs Fairlife (Canada))
 MilkFat              1.37 pp  (Fairlife (US) vs Fairlife (Canada))
 Lactose              0.00 pp  (Fairlife (US) vs Fairlife (Canada))
 MSNF                 1.37 pp  (Fairlife (US) vs Fairlife (Canada))

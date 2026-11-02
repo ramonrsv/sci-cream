@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: Simple, USDEC
 
-Energy               2.24 pp  (Simple vs USDEC)
+Energy               0.45 pp  (Simple vs USDEC)
 MilkFat              0.21 pp  (Simple vs USDEC)
 Lactose              0.09 pp  (Simple vs USDEC)
 MSNF                 0.21 pp  (Simple vs USDEC)

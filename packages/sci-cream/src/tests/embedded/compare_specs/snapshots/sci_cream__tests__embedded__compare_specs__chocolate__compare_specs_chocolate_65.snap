@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Simple, Corvitto, USDA
 
-Energy              20.11 pp  (Simple vs Corvitto)
+Energy               4.02 pp  (Simple vs Corvitto)
 TotalFats            2.95 pp  (Simple vs Corvitto)
 CacaoSolids          0.00 pp  (Simple vs Corvitto)
 CocoaButter          2.95 pp  (Simple vs Corvitto)
@@ -31,7 +31,7 @@ TotalPAC             0.00 pp  (Simple vs Corvitto)
 SaturatedFat         1.77 pp  (Simple vs Corvitto)
 TransFat             0.00 pp  (Simple vs Corvitto)
 
-Energy              11.61 pp  (Simple vs USDA)
+Energy               2.32 pp  (Simple vs USDA)
 TotalFats            1.25 pp  (Simple vs USDA)
 CacaoSolids          1.70 pp  (Simple vs USDA)
 CocoaButter          1.25 pp  (Simple vs USDA)
@@ -58,7 +58,7 @@ TotalPAC             1.70 pp  (Simple vs USDA)
 SaturatedFat         0.75 pp  (Simple vs USDA)
 TransFat             0.00 pp  (Simple vs USDA)
 
-Energy               8.50 pp  (Corvitto vs USDA)
+Energy               1.70 pp  (Corvitto vs USDA)
 TotalFats            1.70 pp  (Corvitto vs USDA)
 CacaoSolids          1.70 pp  (Corvitto vs USDA)
 CocoaButter          1.70 pp  (Corvitto vs USDA)

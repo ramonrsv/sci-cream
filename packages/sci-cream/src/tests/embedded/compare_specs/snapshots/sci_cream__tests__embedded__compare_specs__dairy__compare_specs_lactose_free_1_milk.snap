@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS)"
 ---
 sources: Simple, Lactantia
 
-Energy              26.72 pp  (Simple vs Lactantia)
+Energy               5.34 pp  (Simple vs Lactantia)
 MilkFat              0.22 pp  (Simple vs Lactantia)
 MilkSugars           1.61 pp  (Simple vs Lactantia)
 MSNF                 0.22 pp  (Simple vs Lactantia)

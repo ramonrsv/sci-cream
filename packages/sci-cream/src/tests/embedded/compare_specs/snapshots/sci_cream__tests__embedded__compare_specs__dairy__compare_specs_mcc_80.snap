@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: Simple, Kommineni
 
-Energy               8.93 pp  (Simple vs Kommineni)
+Energy               1.79 pp  (Simple vs Kommineni)
 MilkFat              2.07 pp  (Simple vs Kommineni)
 Lactose              1.18 pp  (Simple vs Kommineni)
 MSNF                 2.07 pp  (Simple vs Kommineni)

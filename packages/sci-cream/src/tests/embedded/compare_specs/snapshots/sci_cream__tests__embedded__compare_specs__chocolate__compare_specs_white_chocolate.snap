@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Corvitto, Callebaut
 
-Energy              23.94 pp  (Corvitto vs Callebaut)
+Energy               4.79 pp  (Corvitto vs Callebaut)
 TotalFats            4.20 pp  (Corvitto vs Callebaut)
 CacaoSolids          0.50 pp  (Corvitto vs Callebaut)
 CocoaButter          0.50 pp  (Corvitto vs Callebaut)

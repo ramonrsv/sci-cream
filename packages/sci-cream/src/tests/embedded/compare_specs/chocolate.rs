@@ -14,11 +14,6 @@ use crate::composition::CompKey;
 /// comparisons stay focused on values a reader would expect to differ between sources. One list
 /// spans the whole category — dark, milk, white and cocoa powder. The milk components read zero on
 /// both sides of a cocoa-only pairing.
-///
-/// **Energy:** as `kcal/g of solids × 100` it lands in `[400, 900]` vs `[0, 100]` for mass
-/// components, so the same fractional precision error shows up 4–9× larger. Energy ceiling
-/// overrides are common as a result; 20–45 pp is typical, past ~60 pp likely flags a real
-/// solids energy density disagreement.
 const COMPARABLE_CHOCOLATE_KEYS: &[CompKey] = &[
     CompKey::Energy,
     CompKey::TotalFats,
@@ -57,7 +52,7 @@ fn compare_specs_chocolate_50() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(3.0).with(CompKey::Energy, 15.5).with(CompKey::HF, 4.0);
+    let ceiling = KeyCeiling::new(3.0).with(CompKey::Energy, 3.5).with(CompKey::HF, 4.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -72,7 +67,7 @@ fn compare_specs_chocolate_55() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.5).with(CompKey::Energy, 30.0);
+    let ceiling = KeyCeiling::new(5.5).with(CompKey::Energy, 6.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -88,7 +83,7 @@ fn compare_specs_chocolate_60() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.5).with(CompKey::Energy, 28.0);
+    let ceiling = KeyCeiling::new(5.5).with(CompKey::Energy, 6.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -103,7 +98,7 @@ fn compare_specs_chocolate_65() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(3.0).with(CompKey::Energy, 20.5).with(CompKey::HF, 4.5);
+    let ceiling = KeyCeiling::new(3.0).with(CompKey::Energy, 4.5).with(CompKey::HF, 4.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -120,7 +115,7 @@ fn compare_specs_chocolate_70() {
     .map(source_str_to_comp);
 
     let ceiling = KeyCeiling::new(4.5)
-        .with(CompKey::Energy, 35.5)
+        .with(CompKey::Energy, 7.5)
         .with(CompKey::CocoaSolids, 6.5)
         .with(CompKey::TotalSNFS, 8.0)
         .with(CompKey::HF, 8.0);
@@ -137,7 +132,7 @@ fn compare_specs_chocolate_75() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(2.0).with(CompKey::Energy, 3.0);
+    let ceiling = KeyCeiling::new(2.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -151,7 +146,7 @@ fn compare_specs_chocolate_85() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(4.0).with(CompKey::Energy, 24.0);
+    let ceiling = KeyCeiling::new(4.0).with(CompKey::Energy, 5.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -165,9 +160,7 @@ fn compare_specs_chocolate_95() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(4.0)
-        .with(CompKey::TotalCarbohydrates, 5.0)
-        .with(CompKey::Energy, 24.0);
+    let ceiling = KeyCeiling::new(4.0).with(CompKey::TotalCarbohydrates, 5.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -181,7 +174,7 @@ fn compare_specs_chocolate_100() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(4.0).with(CompKey::Energy, 21.0);
+    let ceiling = KeyCeiling::new(4.0).with(CompKey::Energy, 4.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -210,7 +203,7 @@ fn compare_specs_milk_chocolate_40() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.5).with(CompKey::HF, 6.5).with(CompKey::Energy, 31.5);
+    let ceiling = KeyCeiling::new(5.5).with(CompKey::HF, 6.5).with(CompKey::Energy, 6.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -226,8 +219,7 @@ fn compare_specs_white_chocolate() {
 
     let ceiling = KeyCeiling::new(5.0)
         .with(CompKey::MilkSolids, 7.5)
-        .with(CompKey::POD, 6.5)
-        .with(CompKey::Energy, 24.0);
+        .with(CompKey::POD, 6.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -241,7 +233,7 @@ fn compare_specs_cocoa_powder_13_fat() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 5.0);
+    let ceiling = KeyCeiling::new(1.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -255,7 +247,7 @@ fn compare_specs_cocoa_powder_17_fat() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 3.0);
+    let ceiling = KeyCeiling::new(1.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -271,7 +263,6 @@ fn compare_specs_cocoa_powder_10_12_fat() {
     .map(source_str_to_comp);
 
     let ceiling = KeyCeiling::new(1.0)
-        .with(CompKey::Energy, 3.0)
         .with(CompKey::TotalSolids, 4.0)
         .with(CompKey::Water, 4.0);
 
@@ -287,7 +278,7 @@ fn compare_specs_cocoa_powder_20_22_fat() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(4.5).with(CompKey::Energy, 14.5).with(CompKey::HF, 7.5);
+    let ceiling = KeyCeiling::new(4.5).with(CompKey::HF, 7.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -305,7 +296,6 @@ fn compare_specs_cocoa_powder_22_24_fat() {
     .map(source_str_to_comp);
 
     let ceiling = KeyCeiling::new(2.5)
-        .with(CompKey::Energy, 12.0)
         .with(CompKey::TotalCarbohydrates, 3.0)
         .with(CompKey::TotalSolids, 4.0)
         .with(CompKey::Water, 4.0);

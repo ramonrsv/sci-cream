@@ -13,6 +13,7 @@ use crate::tests::embedded::variants::get_comp_by_name;
 
 use crate::{
     composition::{CompKey, Composition, RatioKey},
+    constants::energy,
     data::get_spec_entry_by_name,
     error::Result,
     fpd::FpdKey,
@@ -267,17 +268,27 @@ pub(crate) fn solids_fraction_diff_pp(lhs: f64, ts_lhs: f64, rhs: f64, ts_rhs: f
 /// Returns the appropriate total solids "denominator" for solids-fraction comparison of `key`.
 ///
 /// For component-of-solids keys (every fat, sugar, protein, mineral, derived value, etc.), this
-/// returns the composition's [`CompKey::TotalSolids`]. For keys that are already in
-/// "fraction of whole product" units ([`CompKey::TotalSolids`] itself, [`CompKey::Water`]), it
-/// returns 100, which makes [`solids_fraction_diff_pp`] degenerate into a direct percentage-point
-/// comparison. [`CompKey::Energy`] is divided by [`CompKey::TotalSolids`] too — the resulting
-/// "kcal per gram of solids" is the natural concentration unit.
+/// returns the composition's [`CompKey::TotalSolids`]. For keys that are already in "fraction of
+/// whole product" units ([`CompKey::TotalSolids`] itself, [`CompKey::Water`]), it returns 100,
+/// which makes [`solids_fraction_diff_pp`] degenerate into a direct percentage-point comparison.
+///
+/// For [`CompKey::Energy`] it returns [`CompKey::TotalSolids`] times [`FAT_SWAP_KCAL_PER_G`].
+/// Per 100 g of solids, energy spans about 400–900 kcal against the mass components' 0–100 g, so
+/// this reads its gap in their unit instead: the pp of solids that would have to move from
+/// carbohydrate or protein to fat to produce it. Energy still reads past the mass keys where fat
+/// displaces zero-kcal fiber or ash, nearly twice as far, or where a label states energy its
+/// macronutrients don't give, as calorie rounding on a small serving does.
 fn solids_denominator_for(key: CompKey, comp: &Composition) -> f64 {
     match key {
         CompKey::TotalSolids | CompKey::Water => 100.0,
+        CompKey::Energy => comp.get(CompKey::TotalSolids) * FAT_SWAP_KCAL_PER_G,
         _ => comp.get(CompKey::TotalSolids),
     }
 }
+
+/// The most energy, in kcal, that a gram of solids gains moving from carbohydrate or protein to
+/// fat, so for any such move energy reads no more than the mass keys do.
+const FAT_SWAP_KCAL_PER_G: f64 = energy::FATS - energy::CARBOHYDRATES.min(energy::PROTEINS);
 
 /// A per-key tolerance table: a single default ceiling plus optional per-key overrides, and
 /// per-source ones for the pairs of sources that [`assert_compositions_consistent`] compares.
@@ -437,9 +448,9 @@ mod tests {
     use crate::tests::asserts::{assert_eq_flt, assert_true};
 
     use super::{
-        AssertKeys, EPSILON_6DP, KeyCeiling, assert_comp_eq_percent, assert_compositions_consistent,
-        assert_f64_fields_eq_zero, assert_f64_fields_ne_zero, compare_compositions, literal, relative_diff_percent,
-        root_mean_square, solids_fraction_diff_pp,
+        AssertKeys, EPSILON_6DP, FAT_SWAP_KCAL_PER_G, KeyCeiling, assert_comp_eq_percent,
+        assert_compositions_consistent, assert_f64_fields_eq_zero, assert_f64_fields_ne_zero, compare_compositions,
+        literal, relative_diff_percent, root_mean_square, solids_denominator_for, solids_fraction_diff_pp,
     };
     use crate::{
         composition::{CompKey, Composition, MilkProteins, RatioKey, Solids, SolidsBreakdown},
@@ -558,6 +569,21 @@ mod tests {
         assert_eq_flt!(solids_fraction_diff_pp(0.0, 0.0, 5.0, 50.0), 10.0);
         assert_eq_flt!(solids_fraction_diff_pp(5.0, 50.0, 0.0, 0.0), 10.0);
         assert_eq_flt!(solids_fraction_diff_pp(0.0, 0.0, 0.0, 0.0), 0.0);
+    }
+
+    // --- solids_denominator_for ---
+
+    #[test]
+    fn solids_denominator_for_reads_energy_as_solids_moved_to_fat() {
+        // 2.5 g of 20 g solids moving to fat → 12.5 pp, as the fat key reads the move
+        let (lhs, rhs) = (comp_ts(20.0), comp_ts(20.0).energy(2.5 * FAT_SWAP_KCAL_PER_G));
+        let diff = solids_fraction_diff_pp(
+            lhs.energy,
+            solids_denominator_for(CompKey::Energy, &lhs),
+            rhs.energy,
+            solids_denominator_for(CompKey::Energy, &rhs),
+        );
+        assert_eq_flt!(diff, 12.5);
     }
 
     // --- KeyCeiling ---

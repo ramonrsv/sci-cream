@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Callebaut 823, Callebaut 665
 
-Energy               2.71 pp  (Callebaut 823 vs Callebaut 665)
+Energy               0.54 pp  (Callebaut 823 vs Callebaut 665)
 TotalFats            0.50 pp  (Callebaut 823 vs Callebaut 665)
 CacaoSolids          2.10 pp  (Callebaut 823 vs Callebaut 665)
 CocoaButter          0.40 pp  (Callebaut 823 vs Callebaut 665)

@@ -4,7 +4,7 @@ expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: Simple, Southward, USDEC
 
-Energy               1.37 pp  (Simple vs Southward)
+Energy               0.27 pp  (Simple vs Southward)
 MilkFat              0.10 pp  (Simple vs Southward)
 Lactose              0.09 pp  (Simple vs Southward)
 MSNF                 0.10 pp  (Simple vs Southward)
@@ -21,7 +21,7 @@ TotalPAC             0.13 pp  (Simple vs Southward)
 SaturatedFat         0.07 pp  (Simple vs Southward)
 TransFat             0.00 pp  (Simple vs Southward)
 
-Energy               1.83 pp  (Simple vs USDEC)
+Energy               0.37 pp  (Simple vs USDEC)
 MilkFat              0.32 pp  (Simple vs USDEC)
 Lactose              0.11 pp  (Simple vs USDEC)
 MSNF                 0.32 pp  (Simple vs USDEC)
@@ -38,7 +38,7 @@ TotalPAC             0.23 pp  (Simple vs USDEC)
 SaturatedFat         0.21 pp  (Simple vs USDEC)
 TransFat             0.01 pp  (Simple vs USDEC)
 
-Energy               0.46 pp  (Southward vs USDEC)
+Energy               0.09 pp  (Southward vs USDEC)
 MilkFat              0.42 pp  (Southward vs USDEC)
 Lactose              0.21 pp  (Southward vs USDEC)
 MSNF                 0.42 pp  (Southward vs USDEC)

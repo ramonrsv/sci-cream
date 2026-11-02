@@ -28,11 +28,6 @@ use crate::{
 /// These keys carry meaningful, generally non-zero values for milk-based ingredients. Keys
 /// irrelevant to dairy (cocoa, nut, egg, and other non-milk components) are excluded so that
 /// comparisons stay focused on values a reader would expect to differ between sources.
-///
-/// **Energy:** as `kcal/g of solids × 100` it lands in `[400, 900]` vs `[0, 100]` for mass
-/// components, so the same fractional precision error shows up 4–9× larger. Energy ceiling
-/// overrides are common as a result; 20–45 pp is typical, past ~60 pp likely flags a real
-/// solids energy density disagreement.
 const COMPARABLE_DAIRY_KEYS: &[CompKey] = &[
     CompKey::Energy,
     CompKey::MilkFat,
@@ -87,7 +82,7 @@ fn compare_specs_skim_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with_source("Sealtest", CompKey::Energy, 30.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -102,7 +97,7 @@ fn compare_specs_1_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with_source("Lactantia", CompKey::Energy, 27.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -119,9 +114,7 @@ fn compare_specs_2_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0)
-        .with_source("Sealtest", CompKey::Energy, 20.0)
-        .with_source("Lactantia", CompKey::Energy, 21.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -141,9 +134,7 @@ fn compare_specs_whole_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0)
-        .with_source("Sealtest", CompKey::Energy, 18.0)
-        .with_source("Lactantia", CompKey::Energy, 24.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -157,7 +148,7 @@ fn compare_specs_fairlife_skim_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 25.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -171,7 +162,7 @@ fn compare_specs_fairlife_2_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 19.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -185,7 +176,7 @@ fn compare_specs_fairlife_whole_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 15.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -319,9 +310,9 @@ fn compare_specs_5_cream() {
     ]
     .map(source_str_to_comp);
 
-    // Sealtest's small 15ml serving rounds energy coarsely, in addition to the usual issue with
-    // energy's higher fractional precision vs mass components, pushing a high error, ~150 pp.
-    let ceiling = KeyCeiling::new(10.0).with_source("Sealtest", CompKey::Energy, 149.0);
+    // Sealtest's small 15ml serving rounds energy coarsely: its 10 kcal sits below the ~13 its
+    // macronutrients give, pushing a high error, ~30 pp.
+    let ceiling = KeyCeiling::new(10.0).with_source("Sealtest", CompKey::Energy, 30.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -344,12 +335,9 @@ fn compare_specs_half_and_half() {
     // Lactose, PACsgr, and TotalPAC a few pp above the default ceiling. Lactantia's also rounds
     // its protein up, to 0.5 g, taking its MSNF to 10.6% vs Simple's 8.1%, and its fat share down.
     let ceiling = KeyCeiling::new(10.0)
-        .with(CompKey::Energy, 14.0)
-        .with_source("Sealtest", CompKey::Energy, 23.0)
         .with_source("Sealtest", CompKey::Lactose, 12.0)
         .with_source("Sealtest", CompKey::PACsgr, 12.0)
         .with_source("Sealtest", CompKey::TotalPAC, 15.0)
-        .with_source("Lactantia", CompKey::Energy, 38.0)
         .with_source("Lactantia", CompKey::MilkFat, 12.0)
         .with_source("Lactantia", CompKey::Lactose, 11.0)
         .with_source("Lactantia", CompKey::MSNF, 12.0)
@@ -377,10 +365,9 @@ fn compare_specs_18_cream() {
     // SaturatedFat above the default ceiling. Lactantia's rounds fat down, to 16.4%, and sugars up,
     // to 6.6% lactose vs Simple's 4.0%; its 25 kcal sits below the ~28 its macronutrients give.
     let ceiling = KeyCeiling::new(10.0)
-        .with_source("Sealtest", CompKey::Energy, 42.0)
         .with_source("Sealtest", CompKey::TotalPAC, 13.0)
         .with_source("Sealtest", CompKey::SaturatedFat, 11.0)
-        .with_source("Lactantia", CompKey::Energy, 125.0)
+        .with_source("Lactantia", CompKey::Energy, 25.0)
         .with_source("Lactantia", CompKey::MilkFat, 11.0)
         .with_source("Lactantia", CompKey::Lactose, 11.0)
         .with_source("Lactantia", CompKey::MSNF, 11.0)
@@ -415,12 +402,12 @@ fn compare_specs_whipping_cream() {
     // stays, 9.4 kcal per gram of solids, above fat's own 9; Sealtest's 1g of carbohydrate,
     // counted as other solids, dilutes its fat share against Lactantia's.
     let ceiling = KeyCeiling::new(10.0)
-        .with_source("Sealtest", CompKey::Energy, 64.0)
+        .with_source("Sealtest", CompKey::Energy, 13.0)
         .with_source("Sealtest", CompKey::MSNF, 11.0)
         .with_source("Sealtest", CompKey::MilkSolids, 16.0)
         .with_source("Sealtest", CompKey::TotalPAC, 12.0)
         .with_source("Sealtest", CompKey::SaturatedFat, 11.0)
-        .with_source("Lactantia", CompKey::Energy, 178.0)
+        .with_source("Lactantia", CompKey::Energy, 36.0)
         .with_source("Lactantia", CompKey::MilkFat, 15.0)
         .with_source("Lactantia", CompKey::TotalPAC, 11.0);
 
@@ -454,7 +441,7 @@ fn compare_specs_clotted_cream() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 15.0);
+    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 3.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -484,7 +471,7 @@ fn compare_specs_lactose_free_1_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with_source("Lactantia", CompKey::Energy, 27.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_LACTOSE_FREE_DAIRY_KEYS));
@@ -533,7 +520,6 @@ fn compare_specs_lactose_free_half_and_half() {
     // Lactantia's 15ml serving rounds as in `compare_specs_half_and_half`, its PAC misses running
     // higher as glucose and galactose carry nearly twice lactose's PAC per gram.
     let ceiling = KeyCeiling::new(10.0)
-        .with_source("Lactantia", CompKey::Energy, 24.0)
         .with_source("Lactantia", CompKey::PACsgr, 15.0)
         .with_source("Lactantia", CompKey::TotalPAC, 18.0);
 
@@ -554,7 +540,7 @@ fn compare_specs_lactose_free_whipping_cream() {
     // Lactantia's 15ml serving rounds as in `compare_specs_whipping_cream`, its sugars to 0g, so it
     // lacks the glucose and galactose behind Simple's PAC.
     let ceiling = KeyCeiling::new(10.0)
-        .with_source("Lactantia", CompKey::Energy, 116.0)
+        .with_source("Lactantia", CompKey::Energy, 24.0)
         .with_source("Lactantia", CompKey::PACsgr, 15.0)
         .with_source("Lactantia", CompKey::TotalPAC, 18.0);
 
@@ -594,7 +580,7 @@ fn compare_specs_skim_evaporated_milk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with_source("Carnation", CompKey::Energy, 72.0);
+    let ceiling = KeyCeiling::new(10.0).with_source("Carnation", CompKey::Energy, 15.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -618,7 +604,6 @@ fn compare_specs_2_evaporated_milk() {
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
     let ceiling = KeyCeiling::new(10.0)
-        .with_source("Carnation", CompKey::Energy, 15.0)
         .with_source("Carnation", CompKey::Lactose, 23.0)
         .with_source("Carnation", CompKey::MSNF, 29.0)
         .with_source("Carnation", CompKey::MilkSolids, 29.0)
@@ -649,7 +634,6 @@ fn compare_specs_whole_evaporated_milk() {
     // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
     // given how much cross-source consistency it bought us.
     let ceiling = KeyCeiling::new(10.0)
-        .with_source("Carnation", CompKey::Energy, 40.0)
         .with_source("Carnation", CompKey::Lactose, 17.0)
         .with_source("Carnation", CompKey::MSNF, 22.0)
         .with_source("Carnation", CompKey::MilkSolids, 24.0)
@@ -671,16 +655,14 @@ fn compare_specs_sweetened_condensed_milk() {
     ]
     .map(source_str_to_comp);
 
-    // Energy stands out at ~67 pp — high even for this suite — and likely flags a real disagreement
+    // Energy stands out at ~13 pp — high even for this suite — and likely flags a real disagreement
     // in solids energy density: USDA's 321 kcal/100g vs Eagle Brand's 359 kcal/100g at similar TS.
     // @todo investigate which side has the more accurate energy density.
     //
     // (Rodrigues, 2017)[^50] reports protein at 6.04g/100g, Eagle Brand at 5.13g/100g (1g per 19.5g
     // serving), USDA at 7.91g/100g, and Goff & Hartel at 8.5g/100g. Low-Fat Eagle Brand jumps to
     // 10.2g/100g (1g -> 2g per serving), consistent with Goff & Hartel's 11.1g/100g for Skim Milk.
-    let ceiling = KeyCeiling::new(10.0)
-        .with_source("Eagle Brand", CompKey::Energy, 68.0)
-        .with_source("Carnation", CompKey::Energy, 24.0);
+    let ceiling = KeyCeiling::new(10.0).with_source("Eagle Brand", CompKey::Energy, 14.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -716,9 +698,7 @@ fn compare_specs_whole_milk_powder() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0)
-        .with_source("Medallion", CompKey::Energy, 16.0)
-        .with_source("Theland", CompKey::Energy, 27.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -860,7 +840,7 @@ fn compare_specs_whey_protein() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(10.0).with_source("Optimum Nutrition", CompKey::Energy, 21.0);
+    let ceiling = KeyCeiling::new(10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -889,7 +869,6 @@ fn compare_specs_whey_isolate() {
     // intended to mix into a clear juice-like drink rather than a shake — it lists only 80%
     // protein and exactly 0g fat and 0g sugar, so whatever else its solids hold shows up as water.
     let ceiling = KeyCeiling::new(10.0)
-        .with_source("MyProtein", CompKey::Energy, 13.0)
         .with_source("MyProtein", CompKey::TotalSolids, 15.0)
         .with_source("MyProtein", CompKey::Water, 15.0);
 
@@ -928,9 +907,7 @@ fn compare_specs_micellar_casein() {
 
     // MyProtein and Optimum Nutrition are flavored blends, ~73-77% protein with 6.7 g of other
     // carbohydrates per 100 g, while the Simple and USDEC entries are unflavored, ~83-86% protein.
-    // USDEC's sheet lists no energy, and the 2.2 g its values leave unaccounted carry none.
     let ceiling = KeyCeiling::new(10.0)
-        .with_source("USDEC", CompKey::Energy, 17.0)
         .with_source("MyProtein", CompKey::MilkSNFS, 12.0)
         .with_source("MyProtein", CompKey::MilkProteins, 12.0)
         .with_source("Optimum Nutrition", CompKey::MilkSNFS, 13.0)
