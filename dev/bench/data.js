@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793657022253,
+  "lastUpdate": 1793657191701,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -691468,6 +691468,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.25,
             "range": "0.47",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4b2b1f052074230229c2dd981a155b20f1bebecd",
+          "message": "Tighten compare_specs ceilings to their gaps\n\nSix defaults and an override sat at least a step above the largest\ngap they cover. Each now rounds that gap up to the next 0.5 step:\nchocolate_85, chocolate_95, and chocolate_100 drop from 4.0 to 3.5,\ncocoa_powder_17_fat from 1.0 to 0.5, egg_yolk from 5.0 to 4.5, and\ndouble_cream from 2.0 to 1.5, with chocolate_95's TotalCarbohydrates\noverride from 5.0 to 4.5.\n\nA gap that lands exactly on a step takes the step above, as floating\npoint can put it on either side: chocolate_100's TotalSNFS gap of 3 pp\nreads 2.999999999999997, so its default stops at 3.5, and\nchocolate_70's TotalSugars gap of 4 pp keeps it at 4.5.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T16:46:55-05:00",
+          "tree_id": "01662bf15789b663f859b7f682c002f042159f24",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4b2b1f052074230229c2dd981a155b20f1bebecd"
+        },
+        "date": 1793657110834,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 69.09,
+            "range": "8.46",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.6,
+            "range": "0.74",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.56,
+            "range": "0.75",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 198,
+            "range": "19.60",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 198,
+            "range": "19.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 64.24,
+            "range": "8.57",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.39,
+            "range": "0.40",
             "unit": "ms"
           }
         ]
