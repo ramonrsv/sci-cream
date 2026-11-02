@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793656337942,
+  "lastUpdate": 1793656349307,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -613507,6 +613507,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.87%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "63ad3f5a9c630ec16e88e98ce5ea636d60f5275d",
+          "message": "Read compare_specs energy as solids moved to fat\n\nAs kcal per 100 g of solids, energy spans about 400-900 against the\nmass keys' 0-100, so 40 of the 57 compare_specs ceilings overrode it.\nsolids_denominator_for now also divides it by FAT_SWAP_KCAL_PER_G, the\nmost energy a gram of solids gains moving from carbohydrate or protein\nto fat: FATS less the smaller of CARBOHYDRATES and PROTEINS. An energy\ngap then reads in pp of solids, as the move to fat that would produce\nit, and never past the mass keys for such a move. The old notes'\ntypical gap of 20-45 now reads 4-9 pp, within the 10 pp dairy default,\nand their 60 for a real disagreement reads 12 pp, past it.\n\nEnergy overrides drop from 40 suites to 16, rescaled. Eight chocolates\nand the egg yolk keep small ones, as fat displacing zero-kcal fiber or\nash reads up to 1.8 times as far. Seven dairy suites keep them for\nlabels whose stated energy their macronutrients don't give, such as\nSealtest's 5% cream at 10 kcal per 15 ml against about 13. The suites'\nenergy notes give way to the doc on solids_denominator_for, and a test\npins the reading.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T12:21:15-05:00",
+          "tree_id": "974b33c74cca9b863950846be3e987ae2ce9af37",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/63ad3f5a9c630ec16e88e98ce5ea636d60f5275d"
+        },
+        "date": 1793656303183,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 102082,
+            "range": "±1.97%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 754582,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 66263,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 481158,
+            "range": "±2.13%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
