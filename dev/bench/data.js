@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793656349307,
+  "lastUpdate": 1793656382856,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -660565,6 +660565,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1095.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "63ad3f5a9c630ec16e88e98ce5ea636d60f5275d",
+          "message": "Read compare_specs energy as solids moved to fat\n\nAs kcal per 100 g of solids, energy spans about 400-900 against the\nmass keys' 0-100, so 40 of the 57 compare_specs ceilings overrode it.\nsolids_denominator_for now also divides it by FAT_SWAP_KCAL_PER_G, the\nmost energy a gram of solids gains moving from carbohydrate or protein\nto fat: FATS less the smaller of CARBOHYDRATES and PROTEINS. An energy\ngap then reads in pp of solids, as the move to fat that would produce\nit, and never past the mass keys for such a move. The old notes'\ntypical gap of 20-45 now reads 4-9 pp, within the 10 pp dairy default,\nand their 60 for a real disagreement reads 12 pp, past it.\n\nEnergy overrides drop from 40 suites to 16, rescaled. Eight chocolates\nand the egg yolk keep small ones, as fat displacing zero-kcal fiber or\nash reads up to 1.8 times as far. Seven dairy suites keep them for\nlabels whose stated energy their macronutrients don't give, such as\nSealtest's 5% cream at 10 kcal per 15 ml against about 13. The suites'\nenergy notes give way to the doc on solids_denominator_for, and a test\npins the reading.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T12:21:15-05:00",
+          "tree_id": "974b33c74cca9b863950846be3e987ae2ce9af37",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/63ad3f5a9c630ec16e88e98ce5ea636d60f5275d"
+        },
+        "date": 1793656319099,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 934.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 703.06,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 881.96,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.46,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.91,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 687.02,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.47,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.29,
             "unit": "KB"
           },
           {
