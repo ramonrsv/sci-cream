@@ -425,7 +425,7 @@ fn compare_specs_double_cream() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(2.0);
+    let ceiling = KeyCeiling::new(1.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));

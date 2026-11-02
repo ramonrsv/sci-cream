@@ -34,7 +34,7 @@ fn compare_specs_egg_yolk() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.0).with(CompKey::Energy, 6.0);
+    let ceiling = KeyCeiling::new(4.5).with(CompKey::Energy, 6.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_EGG_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_EGG_KEYS));
