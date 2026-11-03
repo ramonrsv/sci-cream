@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793683431043,
+  "lastUpdate": 1793683972773,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -716531,6 +716531,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2106.88,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bac8913666200908e6323f580f45f1f4531b02a1",
+          "message": "Move SolidsSource to constants::composition::dairy\n\nThe dairy constants are organized by solids source, with a submodule\nper source, and every solids non-fat line takes one. The enum now sits\nbeside them, in dairy's own module. It was also the only thing the\nconstants needed from specs beyond doc links.\n\nIts docs move verbatim. The dairy spec drops the doc-only imports that\nonly its links used, and the docs guide drops an import nothing links.\nThe dairy and chocolate specs and the reconciliation tests import it\nfrom constants::composition::dairy, and specs::SolidsSource is gone.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-03T00:27:31-05:00",
+          "tree_id": "43bf3aed191c69b9ec23a99aa1203ab7269f7896",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bac8913666200908e6323f580f45f1f4531b02a1"
+        },
+        "date": 1793683925673,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1173.21,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 353.53,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1896.85,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 578.81,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 627.34,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2106.11,
             "unit": "KB"
           }
         ]
