@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793730088174,
+  "lastUpdate": 1793730116352,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -664523,6 +664523,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1095.12,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "25d45c9838fcfd118c8839437d72fdcfb912827e",
+          "message": "Split specs/dairy.rs into a file per spec\n\nEach dairy spec moves to a pub mod of its own under specs/dairy/:\nsimple, label, and sheet. Its tests go with it: its asset blocks, a\ntable of its own, and its other tests. dairy's mod.rs glob re-exports\nthe three, so every path still resolves; only the specs' docs pages\nmove, under their modules. specs/ingredient.rs concatenates the three\ntables, and tests/assets.rs re-exports the three test modules.\n\nThe seven helpers move to a private util module, as one block in\ntheir order. All are pub(super) but make_milk_proteins, which the\nchocolate spec also uses through a re-export in dairy's mod.rs.\nsplit_milk_sugars_by_type moves with the function it tests.\n\nThe test that checked all three specs for micellar casein protein\nbelow milk's becomes one per spec, and the Fairlife test takes the\nlabel spec's name, as its asset is a DairyLabelSpec. Each file takes\nthe imports its code and links use, which drops two doc-only imports\nnothing linked, and the footnotes' include_str! paths go a level\ndeeper.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-03T13:14:08-05:00",
+          "tree_id": "f6e0fe5c3a0b23c1ddd0fdce2ad7840c863b2e32",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/25d45c9838fcfd118c8839437d72fdcfb912827e"
+        },
+        "date": 1793729976196,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 934.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 703.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.57,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.57,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 882.02,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.96,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 687.08,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.52,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.35,
             "unit": "KB"
           },
           {
