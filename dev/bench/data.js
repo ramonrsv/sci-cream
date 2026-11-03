@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793682648930,
+  "lastUpdate": 1793682653928,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -662471,6 +662471,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1095.26,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "48165ca306790eff055f2714f48aa6d73313f351",
+          "message": "Split constants/composition.rs by module\n\nEach inline module moves to a file of its own: cacao, egg, and nut\nunder constants/composition/, and dairy's milk, whey, and casein under\ndairy/. dairy's own items, the solids non-fat lines and the milk fat\nand milk powder constants, go to a pub mod dairy that its parent glob\nre-exports, as composition/composition.rs is, so every path still\nresolves. Only those items' docs pages move, under dairy/dairy/.\n\nThe modules' outer docs become inner ones, which resolve links in the\nmodule itself rather than its parent: dairy's links to its submodules\nlose their dairy:: prefix, and the files take #[cfg(doc)] imports for\nthe rest. The footnotes' include_str! paths go a level or two deeper.\nThe lines' tests move verbatim, importing dairy for their dairy::\npaths.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T23:41:35-05:00",
+          "tree_id": "f645c4b3584c01760abb1c28e5efe91e91efaac1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/48165ca306790eff055f2714f48aa6d73313f351"
+        },
+        "date": 1793682568468,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 765.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 934.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 703.06,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 871.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 713.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 881.96,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 685.46,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 853.91,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 687.02,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 855.47,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1095.28,
             "unit": "KB"
           },
           {
