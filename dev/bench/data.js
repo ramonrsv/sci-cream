@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793682643472,
+  "lastUpdate": 1793682648930,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -615225,6 +615225,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.83%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "48165ca306790eff055f2714f48aa6d73313f351",
+          "message": "Split constants/composition.rs by module\n\nEach inline module moves to a file of its own: cacao, egg, and nut\nunder constants/composition/, and dairy's milk, whey, and casein under\ndairy/. dairy's own items, the solids non-fat lines and the milk fat\nand milk powder constants, go to a pub mod dairy that its parent glob\nre-exports, as composition/composition.rs is, so every path still\nresolves. Only those items' docs pages move, under dairy/dairy/.\n\nThe modules' outer docs become inner ones, which resolve links in the\nmodule itself rather than its parent: dairy's links to its submodules\nlose their dairy:: prefix, and the files take #[cfg(doc)] imports for\nthe rest. The footnotes' include_str! paths go a level or two deeper.\nThe lines' tests move verbatim, importing dairy for their dairy::\npaths.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T23:41:35-05:00",
+          "tree_id": "f645c4b3584c01760abb1c28e5efe91e91efaac1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/48165ca306790eff055f2714f48aa6d73313f351"
+        },
+        "date": 1793682567435,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47163,
+            "range": "±0.85%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 431908,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31737,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 332722,
+            "range": "±1.08%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
