@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793682931232,
+  "lastUpdate": 1793683431043,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -572257,6 +572257,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 710.5,
             "range": "11.19",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "48165ca306790eff055f2714f48aa6d73313f351",
+          "message": "Split constants/composition.rs by module\n\nEach inline module moves to a file of its own: cacao, egg, and nut\nunder constants/composition/, and dairy's milk, whey, and casein under\ndairy/. dairy's own items, the solids non-fat lines and the milk fat\nand milk powder constants, go to a pub mod dairy that its parent glob\nre-exports, as composition/composition.rs is, so every path still\nresolves. Only those items' docs pages move, under dairy/dairy/.\n\nThe modules' outer docs become inner ones, which resolve links in the\nmodule itself rather than its parent: dairy's links to its submodules\nlose their dairy:: prefix, and the files take #[cfg(doc)] imports for\nthe rest. The footnotes' include_str! paths go a level or two deeper.\nThe lines' tests move verbatim, importing dairy for their dairy::\npaths.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T23:41:35-05:00",
+          "tree_id": "f645c4b3584c01760abb1c28e5efe91e91efaac1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/48165ca306790eff055f2714f48aa6d73313f351"
+        },
+        "date": 1793683354179,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.75,
+            "range": "3.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 57,
+            "range": "3.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 66.88,
+            "range": "8.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2446.5,
+            "range": "65.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 384.38,
+            "range": "3.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 389.25,
+            "range": "4.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 414.63,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19686.88,
+            "range": "77.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 946.13,
+            "range": "19.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 56.5,
+            "range": "1.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.75,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.88,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 131.13,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 87.25,
+            "range": "4.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.36,
+            "range": "2.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 43.78,
+            "range": "0.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 654.63,
+            "range": "7.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 733,
+            "range": "9.75",
             "unit": "ms"
           }
         ]
