@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793682658529,
+  "lastUpdate": 1793682714136,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -692649,6 +692649,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.39,
             "range": "0.40",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "48165ca306790eff055f2714f48aa6d73313f351",
+          "message": "Split constants/composition.rs by module\n\nEach inline module moves to a file of its own: cacao, egg, and nut\nunder constants/composition/, and dairy's milk, whey, and casein under\ndairy/. dairy's own items, the solids non-fat lines and the milk fat\nand milk powder constants, go to a pub mod dairy that its parent glob\nre-exports, as composition/composition.rs is, so every path still\nresolves. Only those items' docs pages move, under dairy/dairy/.\n\nThe modules' outer docs become inner ones, which resolve links in the\nmodule itself rather than its parent: dairy's links to its submodules\nlose their dairy:: prefix, and the files take #[cfg(doc)] imports for\nthe rest. The footnotes' include_str! paths go a level or two deeper.\nThe lines' tests move verbatim, importing dairy for their dairy::\npaths.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T23:41:35-05:00",
+          "tree_id": "f645c4b3584c01760abb1c28e5efe91e91efaac1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/48165ca306790eff055f2714f48aa6d73313f351"
+        },
+        "date": 1793682635369,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 67.65,
+            "range": "8.68",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.74,
+            "range": "0.81",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.69,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 188,
+            "range": "11.14",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.51,
+            "range": "0.08",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 188,
+            "range": "11.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 63.01,
+            "range": "8.64",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.4,
+            "range": "0.44",
             "unit": "ms"
           }
         ]
