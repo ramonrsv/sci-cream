@@ -1,10 +1,7 @@
 //! Helpers shared by the two line suites: extending a source's line to the isolate's protein, its
 //! misses from the lines with its row of the fit report, and rounding, averaging, and formatting.
 
-use crate::{
-    constants::composition::dairy::{lactose_in_snf, milk::STD_PROTEIN_IN_MSNF, minerals_in_snf},
-    specs::SolidsSource,
-};
+use crate::constants::composition::dairy::{SolidsSource, lactose_in_snf, milk::STD_PROTEIN_IN_MSNF, minerals_in_snf};
 
 /// The value at `isolate_protein` of the line from milk solids' `milk_solids_value` through a
 /// source's `value` at its `protein`

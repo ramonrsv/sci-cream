@@ -17,13 +17,14 @@ use crate::{
             },
             dairy::{
                 STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
+                SolidsSource,
                 milk::{STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MSNF},
             },
         },
         hf, pac,
     },
     error::Result,
-    specs::dairy::{SolidsSource, make_milk_proteins},
+    specs::dairy::make_milk_proteins,
     validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_subset},
 };
 

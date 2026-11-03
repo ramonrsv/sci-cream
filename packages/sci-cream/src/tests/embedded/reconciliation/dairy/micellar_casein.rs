@@ -10,13 +10,11 @@
 use crate::tests::asserts::*;
 
 use super::util::{extend_to_isolate, mean, misses, percent, report_header, round_to, signed};
-use crate::{
-    constants::composition::dairy::{
-        casein::{STD_CASEIN_PROTEIN_IN_MCI_PROTEIN, STD_LACTOSE_IN_MCI, STD_MINERALS_IN_MCI, STD_PROTEIN_IN_MCI},
-        casein_in_protein, lactose_in_snf,
-        milk::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF},
-    },
-    specs::SolidsSource,
+use crate::constants::composition::dairy::{
+    SolidsSource,
+    casein::{STD_CASEIN_PROTEIN_IN_MCI_PROTEIN, STD_LACTOSE_IN_MCI, STD_MINERALS_IN_MCI, STD_PROTEIN_IN_MCI},
+    casein_in_protein, lactose_in_snf,
+    milk::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_MINERALS_IN_MSNF},
 };
 
 #[cfg(doc)]

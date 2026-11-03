@@ -28,9 +28,7 @@ use crate::{
             STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_PROTEIN_IN_MSNF, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN,
         },
     },
-    specs::{
-        ChocolateFat, ChocolateSpec, CocoaPowderSpec, DairyLabelSpec, DairySheetSpec, DairySimpleSpec, SolidsSource,
-    },
+    specs::{ChocolateFat, ChocolateSpec, CocoaPowderSpec, DairyLabelSpec, DairySheetSpec, DairySimpleSpec},
 };
 
 /// Main recipe as `OwnedLightRecipe` for doc tests

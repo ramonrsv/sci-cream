@@ -1,4 +1,6 @@
-//! The solids non-fat lines by [`SolidsSource`], and the milk fat and milk powder constants.
+//! [`SolidsSource`] and its solids non-fat lines, and the milk fat and milk powder constants.
+
+use serde::{Deserialize, Serialize};
 
 use super::{
     casein::{
@@ -14,10 +16,44 @@ use super::{
         STD_PROTEIN_IN_WS,
     },
 };
-use crate::specs::SolidsSource;
 
 #[cfg(doc)]
-use super::{casein, milk, whey};
+use crate::constants::composition::dairy::{
+    self,
+    casein::{self, STD_PROTEIN_IN_CASEINATE},
+    milk, whey,
+};
+
+/// Indicates the origin of the non-fat solids in a dairy product, which affects its composition
+#[derive(PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
+pub enum SolidsSource {
+    /// Milk solids (MSNF) and concentrates: an ~80/20 casein/whey split, lactose, 7.2-8% minerals
+    ///
+    /// Lactose and minerals decrease linearly as protein is concentrated, from plain milk solids to
+    /// isolates, as computed by [`lactose_in_snf`] and [`minerals_in_snf`], while the casein/whey
+    /// split stays the same. See [`dairy::milk`] for more information about the detailed
+    /// composition of milk products.
+    Milk,
+    /// Sweet whey solids (WS) and their concentrates: whey proteins, lactose, 3.6-8.5% minerals
+    ///
+    /// Lactose and minerals decrease linearly as protein is concentrated, from sweet whey to
+    /// isolates, as computed by [`lactose_in_snf`] and [`minerals_in_snf`]. See [`dairy::whey`] for
+    /// more information about the detailed composition of whey products.
+    Whey,
+    /// Micellar casein solids: mostly casein proteins, lactose, ~8% minerals
+    ///
+    /// Lactose, minerals, and the casein share of the protein follow the protein fraction, from
+    /// milk solids' to isolates', as computed by [`lactose_in_snf`], [`minerals_in_snf`], and
+    /// [`casein_in_protein`]; protein fractions below milk solids' are unsupported. See
+    /// [`dairy::casein`] for more information about the detailed composition of casein products.
+    MicellarCasein,
+    /// Caseinate solids: casein proteins, ~0.2% lactose, ~4% minerals
+    ///
+    /// Caseinates hold the fixed fractions [`STD_LACTOSE_IN_CASEINATE`],
+    /// [`STD_PROTEIN_IN_CASEINATE`], and [`STD_MINERALS_IN_CASEINATE`] of sodium caseinate. See
+    /// [`dairy::casein`] for more information about the detailed composition of casein products.
+    Caseinate,
+}
 
 /// Estimate the lactose fraction of `source`'s solids non-fat from their protein fraction.
 ///
@@ -212,7 +248,7 @@ mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::{constants::composition::dairy, specs::SolidsSource};
+    use crate::constants::composition::dairy::{self, SolidsSource};
 
     #[test]
     fn dairy_minerals_in_snf() {

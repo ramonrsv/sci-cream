@@ -67,10 +67,7 @@
 #![doc = include_str!("../../../../docs/references/index/540.md")]
 
 #[cfg(doc)]
-use crate::{
-    constants::composition::dairy::{casein_in_protein, lactose_in_snf, minerals_in_snf},
-    specs::SolidsSource,
-};
+use crate::constants::composition::dairy::{SolidsSource, casein_in_protein, lactose_in_snf, minerals_in_snf};
 
 /// Percentage of lactose typical of micellar casein isolate solids non-fat
 ///
