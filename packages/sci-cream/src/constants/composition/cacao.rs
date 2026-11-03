@@ -60,7 +60,7 @@
 use super::cacao;
 
 #[cfg(doc)]
-pub use crate::{
+use crate::{
     constants::composition,
     specs::{ChocolateSpec, CocoaPowderSpec},
 };

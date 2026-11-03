@@ -245,6 +245,7 @@ pub(crate) mod tests {
             [
                 INGREDIENT_ASSETS_TABLE_ALCOHOL.as_slice(),
                 INGREDIENT_ASSETS_TABLE_CHOCOLATE.as_slice(),
+                INGREDIENT_ASSETS_TABLE_COCOA_POWDER.as_slice(),
                 INGREDIENT_ASSETS_TABLE_COMPOSITE.as_slice(),
                 INGREDIENT_ASSETS_TABLE_DAIRY_LABEL.as_slice(),
                 INGREDIENT_ASSETS_TABLE_DAIRY_SHEET.as_slice(),
