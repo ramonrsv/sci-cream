@@ -242,7 +242,7 @@ the app's print stylesheet appends each `href`.
 
 #### Derived constants
 
-A constant in `constants/composition.rs` tied to others, derived from them or sourced and
+A constant in `constants/composition/` tied to others, derived from them or sourced and
 corroborated by them, is a literal, checked by a doctest that asserts the relation:
 
 - The check goes on the derived term, or the one the others are calculated from, like an isolate's
