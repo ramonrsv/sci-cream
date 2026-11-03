@@ -90,10 +90,10 @@
     "specs::chocolate::CocoaPowderSpec": "specs/chocolate/struct.CocoaPowderSpec.html",
     "specs::chocolate::CocoaPowderSpec::cocoa_butter": "specs/chocolate/struct.CocoaPowderSpec.html#structfield.cocoa_butter",
     "specs::composite::CompositeSpec": "specs/composite/struct.CompositeSpec.html",
-    "specs::dairy::DairyLabelSpec": "specs/dairy/struct.DairyLabelSpec.html",
-    "specs::dairy::DairySheetSpec": "specs/dairy/struct.DairySheetSpec.html",
-    "specs::dairy::DairySheetSpec::casein": "specs/dairy/struct.DairySheetSpec.html#structfield.casein",
-    "specs::dairy::DairySimpleSpec": "specs/dairy/struct.DairySimpleSpec.html",
+    "specs::dairy::label::DairyLabelSpec": "specs/dairy/label/struct.DairyLabelSpec.html",
+    "specs::dairy::sheet::DairySheetSpec": "specs/dairy/sheet/struct.DairySheetSpec.html",
+    "specs::dairy::sheet::DairySheetSpec::casein": "specs/dairy/sheet/struct.DairySheetSpec.html#structfield.casein",
+    "specs::dairy::simple::DairySimpleSpec": "specs/dairy/simple/struct.DairySimpleSpec.html",
     "specs::nut::NutSpec": "specs/nut/struct.NutSpec.html"
   },
   "anchors": {

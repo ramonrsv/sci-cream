@@ -14,9 +14,20 @@ use crate::{
 };
 
 pub(crate) use crate::specs::{
-    alcohol::tests::*, alias::tests::*, chocolate::tests::*, composite::tests::*, dairy::tests::*, egg::tests::*,
-    emulsifier::tests::*, fruit::tests::*, full::tests::*, ingredient::tests::*, micro::tests::*, nut::tests::*,
-    stabilizer::tests::*, sweetener::tests::*,
+    alcohol::tests::*,
+    alias::tests::*,
+    chocolate::tests::*,
+    composite::tests::*,
+    dairy::{label::tests::*, sheet::tests::*, simple::tests::*},
+    egg::tests::*,
+    emulsifier::tests::*,
+    fruit::tests::*,
+    full::tests::*,
+    ingredient::tests::*,
+    micro::tests::*,
+    nut::tests::*,
+    stabilizer::tests::*,
+    sweetener::tests::*,
 };
 
 /// Database seeded once from the compiled-in embedded JSON, shared by tests across the crate.
