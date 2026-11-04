@@ -1,4 +1,5 @@
-//! Helpers for the chocolate specs' fats, milk and cocoa solids, and hardness factor.
+//! Helpers for the chocolate specs' fats, milk and cocoa solids, and hardness factor, and for
+//! estimating a chocolate's cocoa and milk solids from its fiber and protein.
 
 use crate::{
     composition::{Carbohydrates, Fats, Fibers, MilkSolids, SimpleProteins, SimpleSolids, Sugars},
@@ -102,4 +103,27 @@ pub(super) fn make_cocoa_solids(cacao_solids: f64, cocoa_butter: f64, dutch_proc
 pub(super) fn calculate_cocoa_hardness(cacao_solids: f64, cocoa_butter: f64) -> f64 {
     let cocoa_snf = cacao_solids - cocoa_butter;
     cocoa_butter * hf::COCOA_BUTTER + cocoa_snf * hf::COCOA_SOLIDS
+}
+
+/// Estimates a chocolate's cocoa solids non-fat, per 100 g, from its `fiber`, which milk lacks
+///
+/// This estimation assumes that milk contributes no significant fiber, as USDA's milk powder
+/// listings report none, so all the fiber comes from the cocoa solids non-fat. Those are then
+/// estimated as <code>fiber / [cacao::STD_FIBER_IN_COCOA_SOLIDS]</code>.
+#[must_use]
+pub const fn estimate_cocoa_snf(fiber: f64) -> f64 {
+    fiber / STD_FIBER_IN_COCOA_SOLIDS
+}
+
+/// Estimates a chocolate's milk solids non-fat (MSNF), per 100 g, from its `protein` and `fiber`
+///
+/// Cocoa solids non-fat are first estimated from the `fiber` using [`estimate_cocoa_snf`], and
+/// their protein from [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`]. The remaining protein is taken to be
+/// entirely the MSNF's, then <code>milk_protein / [dairy::milk::STD_PROTEIN_IN_MSNF]</code> gives
+/// the MSNF, where `milk_protein` is calculated as `protein - cocoa_protein`.
+#[must_use]
+pub const fn estimate_chocolate_msnf(protein: f64, fiber: f64) -> f64 {
+    let cocoa_protein = estimate_cocoa_snf(fiber) * STD_PROTEIN_IN_COCOA_SOLIDS;
+    let milk_protein = protein - cocoa_protein;
+    milk_protein / STD_PROTEIN_IN_MSNF
 }

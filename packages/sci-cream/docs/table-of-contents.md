@@ -21,6 +21,7 @@
 - [Stabilizers](crate::docs#stabilizers)
 - [Emulsifiers](crate::docs#emulsifiers)
 - [Chocolate](crate::docs#chocolate)
+  - [Dutch Processed](crate::docs#dutch-processed)
 - Database
   - [Ingredients](crate::docs::ingredients)
   - [Recipes](crate::docs::recipes)

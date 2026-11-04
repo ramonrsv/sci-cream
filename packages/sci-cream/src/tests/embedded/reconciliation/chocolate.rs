@@ -3,7 +3,11 @@
 //! The `compare_specs` suites compare two spec-derived compositions, so for cocoa powders a wrong
 //! constant shifts both sides equally and passes unnoticed. Here one side is measured, so what the
 //! tolerance bounds is the model's error rather than the distance between two sets of inputs.
-//! Fat, and sugars for chocolate, are transcribed inputs and reconcile by construction.
+//! Fat, and sugars for the dark chocolates, are transcribed inputs and reconcile by construction.
+//!
+//! The milk and white entries split their listing between cocoa and milk by its fiber and protein,
+//! see [`estimate_chocolate_msnf`], which the Callebaut entries, whose milk solids their
+//! specification sheets declare, check against known answers.
 //!
 //! Energy is excluded: the listings share no convention, with 170273 on general Atwater and the
 //! cocoas on specific factors that discount fiber, landing near 220 where Atwater gives over 400.
@@ -11,10 +15,25 @@
 #![cfg_attr(coverage, coverage(off))]
 #![expect(clippy::doc_markdown)] // _FoodData_ false positive
 
+use crate::tests::asserts::shadow_asserts::assert_eq;
+#[expect(unused_imports)]
+use crate::tests::asserts::*;
+
+use crate::tests::embedded::variants::get_comp_by_name;
+
 use super::util::{EXACT_MATCH, Proximates, reconcile_proximates};
+use crate::{
+    composition::CompKey,
+    constants::composition::dairy::{STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, milk::STD_LACTOSE_IN_MSNF},
+    data::get_spec_entry_by_name,
+    specs::{
+        ChocolateFat, ChocolateSpec, IngredientSpec, SpecEntry, TaggedSpec, estimate_chocolate_msnf, estimate_cocoa_snf,
+    },
+    util::round_to_decimals,
+};
 
 #[cfg(doc)]
-use crate::constants::composition::cacao;
+use crate::constants::composition::{cacao, dairy::milk};
 
 /// Measured proximates of each embedded `USDA …` entry, from its FoodData Central listing.
 const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
@@ -59,6 +78,36 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates)] = &[
             ash: 2.32,
         },
         CHOCOLATE_CEILING,
+    ),
+    // https://fdc.nal.usda.gov/food-details/167587/nutrients
+    (
+        "USDA Milk Chocolate",
+        Proximates {
+            water: 1.5,
+            protein: 7.65,
+            fat: 29.66,
+            carbohydrate: 59.4,
+            fiber: 3.4,
+            sugars: 51.5,
+            ash: 1.78,
+        },
+        MILK_CHOCOLATE_CEILING,
+    ),
+    // https://fdc.nal.usda.gov/food-details/167571/nutrients
+    //
+    // Sugars here are calculated by USDA from other nutrients, not analytical
+    (
+        "USDA White Chocolate",
+        Proximates {
+            water: 1.3,
+            protein: 5.87,
+            fat: 32.09,
+            carbohydrate: 59.24,
+            fiber: 0.2,
+            sugars: 59.0,
+            ash: 1.5,
+        },
+        MILK_CHOCOLATE_CEILING,
     ),
     // https://fdc.nal.usda.gov/food-details/169593/nutrients
     (
@@ -127,6 +176,25 @@ const CHOCOLATE_CEILING: Proximates = Proximates {
     ash: 9.0,
 };
 
+/// Per-field ceilings on relative error against the measured value, in percent — milk and white.
+///
+/// Each entry splits its listing between cocoa and milk by fiber and protein, see
+/// [`estimate_chocolate_msnf`], and transcribes its fat. So fat matches exactly, and protein,
+/// fiber, and sugars match within the entry's one-decimal rounding, which at white's 0.2 g of fiber
+/// is 7.0% of it. Water reads as a full miss, as for the dark chocolates.
+///
+/// Ash is the loosest: white's entry gets nearly all its ash from its milk solids, at
+/// [`milk::STD_MINERALS_IN_MSNF`], which falls about 16% short of what its listing reports.
+const MILK_CHOCOLATE_CEILING: Proximates = Proximates {
+    water: FULL_MISS,
+    protein: 0.4,
+    fat: EXACT_MATCH,
+    carbohydrate: 3.0,
+    fiber: 7.5,
+    sugars: 0.1,
+    ash: 16.0,
+};
+
 /// Per-field ceilings on relative error against the measured value, in percent — cocoa powders.
 ///
 /// [`CocoaPowderSpec`](crate::specs::CocoaPowderSpec) has no sugars field, so each listing's sugars
@@ -147,5 +215,106 @@ const COCOA_CEILING: Proximates = Proximates {
 #[test]
 fn usda_chocolate_and_cocoa_reconcile() {
     let lines = reconcile_proximates(USDA_LISTINGS);
+    insta::assert_snapshot!(lines.join("\n"));
+}
+
+/// Derives a USDA dark chocolate entry from its listing, as its prose describes: `total_fat` and
+/// `sugars` from the listing, and `cacao_solids` as `100 - sugars`.
+fn derive_usda_dark_chocolate(listing: &Proximates) -> ChocolateSpec {
+    ChocolateSpec {
+        cacao_solids: round_to_decimals(100.0 - listing.sugars, 1),
+        milk_solids: None,
+        fat: Some(ChocolateFat::Total(listing.fat)),
+        sugars: Some(listing.sugars),
+        other_solids: None,
+    }
+}
+
+/// Derives a USDA milk or white chocolate entry from its listing, as its prose describes. Each
+/// field is rounded to the one decimal its entry is written with, and later fields build on those.
+fn derive_usda_milk_chocolate(listing: &Proximates) -> ChocolateSpec {
+    let msnf = estimate_chocolate_msnf(listing.protein, listing.fiber);
+    let milk_solids = round_to_decimals(msnf / (1.0 - STD_BUTTERFAT_IN_WHOLE_MILK_POWDER), 1);
+    let milk_fat = milk_solids * STD_BUTTERFAT_IN_WHOLE_MILK_POWDER;
+    let cacao_solids = round_to_decimals(listing.fat - milk_fat + estimate_cocoa_snf(listing.fiber), 1);
+    let sugars = round_to_decimals(listing.sugars - (milk_solids - milk_fat) * STD_LACTOSE_IN_MSNF, 1);
+
+    ChocolateSpec {
+        cacao_solids,
+        milk_solids: Some(milk_solids),
+        fat: Some(ChocolateFat::Total(listing.fat)),
+        sugars: Some(sugars),
+        other_solids: Some(round_to_decimals(100.0 - cacao_solids - milk_solids - sugars, 1)),
+    }
+}
+
+/// Each USDA chocolate entry is exactly what its prose derives from its listing.
+#[test]
+fn usda_chocolate_entries_follow_their_derivation() {
+    let mut checked = 0;
+
+    for (name, listing, _) in USDA_LISTINGS {
+        let Ok(SpecEntry::Ingredient(IngredientSpec {
+            spec: TaggedSpec::ChocolateSpec(spec),
+            ..
+        })) = get_spec_entry_by_name(name)
+        else {
+            continue; // A cocoa powder
+        };
+
+        let derived = if spec.milk_solids.is_some() {
+            derive_usda_milk_chocolate(listing)
+        } else {
+            derive_usda_dark_chocolate(listing)
+        };
+
+        assert_eq!(spec, derived, "{name}");
+        checked += 1;
+    }
+
+    assert_eq!(checked, 5);
+}
+
+/// Protein and fiber per 100 g of each Callebaut entry with milk solids, from the nutritional data
+/// of the specification sheet its prose links, which also declares its milk solids.
+const CALLEBAUT_SHEETS: &[(&str, f64, f64)] = &[
+    ("Callebaut 823 Milk Chocolate", 7.0, 2.1),
+    ("Callebaut 665 Milk Chocolate", 8.1, 1.1),
+    ("Callebaut Power 41 Milk Chocolate", 8.5, 4.1),
+    ("Callebaut Arriba Milk Chocolate", 9.1, 2.8),
+    ("Callebaut W2 White Chocolate", 6.0, 0.0),
+    ("Mona Lisa Milk Chocolate Blossoms", 6.5, 2.7),
+];
+
+/// Ceiling on [`estimate_chocolate_msnf`]'s relative error, in percent, against each entry's MSNF.
+///
+/// The estimate reads low on every entry, as the sheets that list milk protein put it at 35.5-36.9%
+/// of the MSNF, below [`milk::STD_PROTEIN_IN_MSNF`]. Like the rest of their nutritional data, those
+/// figures are calculated from the vendor's reference values rather than measured.
+const CALLEBAUT_MSNF_CEILING: f64 = 6.5;
+
+/// [`estimate_chocolate_msnf`] recovers each Callebaut entry's MSNF from its sheet's protein and
+/// fiber; the snapshot tables each estimate and its error.
+#[test]
+fn estimate_chocolate_msnf_recovers_callebaut_entries() {
+    let mut lines = vec![format!(
+        "{:<34}{:>9}{:>7}{:>8}{:>10}{:>9}",
+        "entry", "protein", "fiber", "MSNF", "estimate", "error"
+    )];
+
+    for &(name, protein, fiber) in CALLEBAUT_SHEETS {
+        let msnf = get_comp_by_name(name).get(CompKey::MSNF);
+        let estimate = estimate_chocolate_msnf(protein, fiber);
+        let error = (estimate - msnf) / msnf * 100.0;
+
+        lines.push(format!("{name:<34}{protein:>9.1}{fiber:>7.1}{msnf:>8.2}{estimate:>10.2}{error:>+8.2}%"));
+
+        assert!(
+            error.abs() <= CALLEBAUT_MSNF_CEILING,
+            "{name}: MSNF from protein is {error:+.2}% off the entry's {msnf:.2} \
+             (estimated {estimate:.2}, ceiling {CALLEBAUT_MSNF_CEILING:.2}%)"
+        );
+    }
+
     insta::assert_snapshot!(lines.join("\n"));
 }

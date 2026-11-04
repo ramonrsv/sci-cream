@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD041 -- files are used to generate JSON, may also be concatenated -->
+# Nuts
 
 ## Almond
 

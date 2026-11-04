@@ -105,9 +105,12 @@ pub mod ingredients {
     use crate::{
         constants::composition::{
             cacao::STD_WATER_IN_COCOA_POWDER,
-            dairy::milk::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MPI, STD_PROTEIN_IN_MSNF},
+            dairy::{
+                STD_BUTTERFAT_IN_WHOLE_MILK_POWDER,
+                milk::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MPI, STD_PROTEIN_IN_MSNF},
+            },
         },
-        specs::{ChocolateSpec, CocoaPowderSpec, CompositeSpec, NutSpec},
+        specs::{ChocolateSpec, CocoaPowderSpec, CompositeSpec, NutSpec, estimate_chocolate_msnf, estimate_cocoa_snf},
     };
 }
 

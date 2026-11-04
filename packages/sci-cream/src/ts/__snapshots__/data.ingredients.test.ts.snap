@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 419  (non-alias: 355, independent: 341)
+"total: 421  (non-alias: 357, independent: 343)
 
             0% Milk
             1% Milk
@@ -367,6 +367,7 @@ exports[`Embedded spec entries 1`] = `
             USDA Imitation Vanilla Extract
             USDA Instant Coffee Powder
             USDA Light Cream
+            USDA Milk Chocolate
             USDA No-Alcohol Imitation Vanilla Extract
             USDA Raw Egg White
             USDA Raw Egg Yolk
@@ -380,6 +381,7 @@ exports[`Embedded spec entries 1`] = `
             USDA Unsweetened Cocoa Powder, Processed with Alkali
             USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat
             USDA Vanilla Extract
+            USDA White Chocolate
             USDA Whole Evaporated Milk
             USDA Whole Milk
             USDA Whole Milk Powder

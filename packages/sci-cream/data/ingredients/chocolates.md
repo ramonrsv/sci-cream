@@ -1,4 +1,21 @@
-<!-- markdownlint-disable MD041 -- files are used to generate JSON, may also be concatenated -->
+<!-- markdownlint-disable MD033 -- needed for <code> equations with linked constants -->
+
+# Chocolates
+
+Chocolates are [`ChocolateSpec`]s and cocoa powders [`CocoaPowderSpec`]s, filled in from the most
+detailed source a product has:
+
+- **Specification sheets**, such as Barry Callebaut's, which distributors host. EU sheets state the
+  cacao solids, milk solids, fat, and sugar directly, while US sheets give only a cocoa content and
+  a nutrition panel. Product pages often quote minima, the sheet's value less its tolerance. Cocoa
+  powder sheets grade fat on dry matter, so take the total fat as sold.
+- **Nutrient databases**, such as USDA FoodData Central, whose fat carries over as it is, and the
+  sugars too for dark chocolate, whose cacao solids are then all that isn't sugar. For milk and
+  white chocolate, [`estimate_cocoa_snf`] and [`estimate_chocolate_msnf`] give the non-fat cocoa and
+  milk solids from fiber and protein, and the sugars exclude the lactose those milk solids carry.
+- **Nutrition labels**, dividing each figure by the serving size. Labels round coarsely: in the US,
+  fat between 0.5 and 5 g is declared to the nearest 0.5 g (U.S. FDA, CFR 21, 101.9(c)(2))[^52], so
+  a 5 g serving's _"0.5 g"_ covers anything from 5% to 15% fat.
 
 ## 50% Dark Chocolate
 
@@ -283,6 +300,8 @@ counts 40g of skimmed powdered milk in 200g of white chocolate (Corvitto, 2005, 
 USDA FoodData Central - SR Legacy - [Chocolate, dark, 45-59% cacao
 solids](https://fdc.nal.usda.gov/food-details/170271/nutrients)
 
+`cacao_solids` is calculated as `100 - sugars`, which falls within the 45-59% in the listing's name.
+
 ## USDA Dark Chocolate, 60-69% Cacao Solids
 
 ```json
@@ -295,6 +314,8 @@ solids](https://fdc.nal.usda.gov/food-details/170271/nutrients)
 USDA FoodData Central - SR Legacy - [Chocolate, dark, 60-69% cacao
 solids](https://fdc.nal.usda.gov/food-details/170272/nutrients)
 
+`cacao_solids` is calculated as `100 - sugars`, which falls within the 60-69% in the listing's name.
+
 ## USDA Dark Chocolate, 70-85% Cacao Solids
 
 ```json
@@ -306,6 +327,73 @@ solids](https://fdc.nal.usda.gov/food-details/170272/nutrients)
 
 USDA FoodData Central - SR Legacy - [Chocolate, dark, 70-85% cacao
 solids](https://fdc.nal.usda.gov/food-details/170273/nutrients)
+
+`cacao_solids` is calculated as `100 - sugars`, which falls within the 70-85% in the listing's name.
+
+## USDA Milk Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cacao_solids": 33.5,
+    "milk_solids": 20,
+    "total_fat": 29.66,
+    "sugars": 43.4,
+    "other_solids": 3.1
+  }
+}
+```
+
+USDA FoodData Central - SR Legacy - [Candies, milk
+chocolate](https://fdc.nal.usda.gov/food-details/167587/nutrients)
+
+The dark chocolate entries take `cacao_solids` as `100 - sugars`, but this listing also contains
+milk solids, which need to be estimated. This SR Legacy listing does not report lactose, so the
+split between cocoa and milk is instead derived from the reported fiber and protein; see
+[`estimate_cocoa_snf`] and [`estimate_chocolate_msnf`] for more details.
+
+- `cacao_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via [`estimate_cocoa_snf`] and
+  the 3.4 g of fiber. `milk_fat` is <code>milk_solids \* [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER]</code>
+- `milk_solids` as <code>MSNF / (1 - [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER])</code>, where MSNF is
+  estimated as 14.8% via [`estimate_chocolate_msnf`] and the 7.65 g of protein and 3.4 g of fiber
+- `total_fat` from the listing, internally split into cocoa butter and milk fat by [`ChocolateSpec`]
+- `sugars` as the 51.5 g total less the lactose that MSNF carries, at [`STD_LACTOSE_IN_MSNF`]
+- `other_solids` as the remainder, the listing's 1.5% water and 1.6% more, such as emulsifier
+
+## USDA White Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cacao_solids": 27.2,
+    "milk_solids": 20.7,
+    "total_fat": 32.09,
+    "sugars": 50.7,
+    "other_solids": 1.4
+  }
+}
+```
+
+USDA FoodData Central - SR Legacy - [Candies, white
+chocolate](https://fdc.nal.usda.gov/food-details/167571/nutrients)
+
+The dark chocolate entries take `cacao_solids` as `100 - sugars`, but this listing also contains
+milk solids, which need to be estimated. This SR Legacy listing does not report lactose, so the
+split between cocoa and milk is instead derived from the reported fiber and protein; see
+[`estimate_cocoa_snf`] and [`estimate_chocolate_msnf`] for more details.
+
+The listing's 0.2 g of fiber puts the cocoa solids non-fat at 0.5%, so nearly all the cacao solids
+are cocoa butter, and nearly all the protein is milk's, as expected of white chocolate.
+
+- `cacao_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via [`estimate_cocoa_snf`] and
+  the 0.2 g of fiber. `milk_fat` is <code>milk_solids \* [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER]</code>
+- `milk_solids` as <code>MSNF / (1 - [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER])</code>, where MSNF is
+  estimated as 15.3% via [`estimate_chocolate_msnf`] and the 5.87 g of protein and 0.2 g of fiber
+- `total_fat` from the listing, internally split into cocoa butter and milk fat by [`ChocolateSpec`]
+- `sugars` as the 59.0 g total less the lactose that MSNF carries, at [`STD_LACTOSE_IN_MSNF`]
+- `other_solids` as the remainder, the listing's 1.3% water and 0.1% more, such as emulsifier
 
 ## Lindt EXCELLENCE 70% Cacao Dark Chocolate
 

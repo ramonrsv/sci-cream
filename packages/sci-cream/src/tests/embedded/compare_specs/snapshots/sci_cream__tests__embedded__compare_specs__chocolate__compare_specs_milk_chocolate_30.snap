@@ -1,0 +1,32 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/chocolate.rs
+expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
+---
+sources: USDA, Mona Lisa
+
+Energy               0.08 pp  (USDA vs Mona Lisa)
+TotalFats            2.76 pp  (USDA vs Mona Lisa)
+CacaoSolids          3.90 pp  (USDA vs Mona Lisa)
+CocoaButter          1.46 pp  (USDA vs Mona Lisa)
+CocoaSolids          2.44 pp  (USDA vs Mona Lisa)
+MilkFat              1.30 pp  (USDA vs Mona Lisa)
+MilkSolids           3.10 pp  (USDA vs Mona Lisa)
+MSNF                 1.80 pp  (USDA vs Mona Lisa)
+MilkSNFS             0.82 pp  (USDA vs Mona Lisa)
+MilkProteins         0.68 pp  (USDA vs Mona Lisa)
+Lactose              0.98 pp  (USDA vs Mona Lisa)
+TotalFiber           0.92 pp  (USDA vs Mona Lisa)
+TotalSugars          8.12 pp  (USDA vs Mona Lisa)
+TotalCarbohydrates   6.44 pp  (USDA vs Mona Lisa)
+OtherSNFS            2.10 pp  (USDA vs Mona Lisa)
+TotalSNFS            5.36 pp  (USDA vs Mona Lisa)
+TotalProteins        1.25 pp  (USDA vs Mona Lisa)
+TotalSolids          0.00 pp  (USDA vs Mona Lisa)
+Water                0.00 pp  (USDA vs Mona Lisa)
+POD                  8.94 pp  (USDA vs Mona Lisa)
+PACsgr               8.12 pp  (USDA vs Mona Lisa)
+PACmlk               0.66 pp  (USDA vs Mona Lisa)
+HF                   5.71 pp  (USDA vs Mona Lisa)
+TotalPAC             7.46 pp  (USDA vs Mona Lisa)
+SaturatedFat         1.72 pp  (USDA vs Mona Lisa)
+TransFat             0.05 pp  (USDA vs Mona Lisa)

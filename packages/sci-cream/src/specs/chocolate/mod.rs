@@ -5,7 +5,8 @@
 pub mod chocolate;
 
 pub mod cocoa_powder;
-mod util;
+pub mod util;
 
 pub use chocolate::*;
 pub use cocoa_powder::*;
+pub use util::*;

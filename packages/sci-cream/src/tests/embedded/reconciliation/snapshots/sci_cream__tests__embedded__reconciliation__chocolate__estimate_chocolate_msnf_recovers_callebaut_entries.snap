@@ -1,0 +1,11 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/chocolate.rs
+expression: "lines.join(\"\\n\")"
+---
+entry                               protein  fiber    MSNF  estimate    error
+Callebaut 823 Milk Chocolate            7.0    2.1   15.80     15.19   -3.89%
+Callebaut 665 Milk Chocolate            8.1    1.1   21.10     19.78   -6.27%
+Callebaut Power 41 Milk Chocolate       8.5    4.1   16.30     15.87   -2.64%
+Callebaut Arriba Milk Chocolate         9.1    2.8   20.30     19.62   -3.33%
+Callebaut W2 White Chocolate            6.0    0.0   16.70     16.00   -4.19%
+Mona Lisa Milk Chocolate Blossoms       6.5    2.7   13.00     12.86   -1.10%

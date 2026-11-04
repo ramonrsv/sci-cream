@@ -181,6 +181,21 @@ fn compare_specs_chocolate_100() {
 }
 
 #[test]
+fn compare_specs_milk_chocolate_30() {
+    let sources = [
+        ("USDA", "USDA Milk Chocolate"),
+        ("Mona Lisa", "Mona Lisa Milk Chocolate Blossoms"),
+    ]
+    .map(source_str_to_comp);
+
+    // USDA carries markedly less sugar than the Callebaut-made blossoms, driving the largest gaps.
+    let ceiling = KeyCeiling::new(9.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
 fn compare_specs_milk_chocolate_35() {
     let sources = [
         ("Callebaut 823", "Callebaut 823 Milk Chocolate"),
@@ -213,13 +228,17 @@ fn compare_specs_milk_chocolate_40() {
 fn compare_specs_white_chocolate() {
     let sources = [
         ("Corvitto", "Corvitto White Chocolate"),
+        ("USDA", "USDA White Chocolate"),
         ("Callebaut", "Callebaut W2 White Chocolate"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.0)
-        .with(CompKey::MilkSolids, 7.5)
-        .with(CompKey::POD, 6.5);
+    // Corvitto's idealized 40% fat, 40% sugar, and 30% milk solids sit furthest from USDA's lower
+    // fat and milk solids and higher sugar, past the default for energy, milk solids, and POD.
+    let ceiling = KeyCeiling::new(8.5)
+        .with_source("Corvitto", CompKey::Energy, 9.0)
+        .with_source("Corvitto", CompKey::MilkSolids, 9.5)
+        .with_source("Corvitto", CompKey::POD, 10.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
