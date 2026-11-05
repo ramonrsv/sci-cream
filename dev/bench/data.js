@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793841351373,
+  "lastUpdate": 1793841469299,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -695958,6 +695958,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.88,
             "range": "0.28",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "35f161baec2cf6fae5c758142ce0d707bb6fa553",
+          "message": "Split specs/chocolate.rs into a file per spec\n\nEach spec moves to a pub mod of its own under specs/chocolate/:\nchocolate, which keeps ChocolateFat, and cocoa_powder. Its tests go\nwith it: its asset blocks, a table of its own, and its other tests.\nThe parent's mod.rs glob re-exports the two, so every path still\nresolves; only the specs' docs pages move, under their modules.\nspecs/ingredient.rs concatenates the two tables, and tests/assets.rs\nre-exports the two test modules.\n\nThe four helpers move to a private util module, in their order, as\npub(super). The two cocoa powder assets' tests, named for the\nchocolate spec, take their own spec's name, and the footnotes'\ninclude_str! paths go a level deeper.\n\ncacao's doc-only pub use of composition and the two specs becomes a\nplain use: it only served its links, and listed them as three\nre-exports on its docs page.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-03T13:31:36-05:00",
+          "tree_id": "e7aaa5ae337d669059d29c3e0b35e08ac763c4e9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/35f161baec2cf6fae5c758142ce0d707bb6fa553"
+        },
+        "date": 1793841391004,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 68.66,
+            "range": "9.30",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.55,
+            "range": "0.90",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.47,
+            "range": "0.89",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 187,
+            "range": "12.12",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.51,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 187,
+            "range": "12.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 64.05,
+            "range": "8.97",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.51,
+            "range": "0.46",
             "unit": "ms"
           }
         ]
