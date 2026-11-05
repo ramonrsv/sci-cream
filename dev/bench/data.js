@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793841940427,
+  "lastUpdate": 1793847728906,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -720119,6 +720119,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2107.59,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bb0d701428348ff456227ae23278e67c8944a752",
+          "message": "Add USDA milk and white chocolate entries\n\nSplit each listing between cocoa and milk solids by its fiber and\nprotein, using the new public estimate_cocoa_snf and\nestimate_chocolate_msnf in specs::chocolate::util. Milk fat is whole\nmilk powder's share of the milk solids.\n\n- Check that every USDA chocolate entry follows the derivation its\n  prose describes, and that estimate_chocolate_msnf recovers the MSNF\n  the Callebaut entries declare\n- Reconcile both entries against their listings' proximates, and\n  compare them with the Mona Lisa, Corvitto, and Callebaut entries\n- Title each ingredient file, and open chocolates.md with guidance on\n  entering chocolates from sheets, nutrient databases, and labels\n- Note how the USDA dark chocolate entries derive cacao_solids\n- List the Dutch Processed section in the docs table of contents\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-04T18:39:56-05:00",
+          "tree_id": "b85052f90abd1b7934ab9315c67b63bd61766edb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bb0d701428348ff456227ae23278e67c8944a752"
+        },
+        "date": 1793847651568,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1174.63,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.82,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1903.11,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 582.6,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 631.08,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2112.43,
             "unit": "KB"
           }
         ]
