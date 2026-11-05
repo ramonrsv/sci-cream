@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793847737579,
+  "lastUpdate": 1793847742430,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -666481,6 +666481,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1097.17,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.34,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 251.9,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bb0d701428348ff456227ae23278e67c8944a752",
+          "message": "Add USDA milk and white chocolate entries\n\nSplit each listing between cocoa and milk solids by its fiber and\nprotein, using the new public estimate_cocoa_snf and\nestimate_chocolate_msnf in specs::chocolate::util. Milk fat is whole\nmilk powder's share of the milk solids.\n\n- Check that every USDA chocolate entry follows the derivation its\n  prose describes, and that estimate_chocolate_msnf recovers the MSNF\n  the Callebaut entries declare\n- Reconcile both entries against their listings' proximates, and\n  compare them with the Mona Lisa, Corvitto, and Callebaut entries\n- Title each ingredient file, and open chocolates.md with guidance on\n  entering chocolates from sheets, nutrient databases, and labels\n- Note how the USDA dark chocolate entries derive cacao_solids\n- List the Dutch Processed section in the docs table of contents\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-04T18:39:56-05:00",
+          "tree_id": "b85052f90abd1b7934ab9315c67b63bd61766edb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bb0d701428348ff456227ae23278e67c8944a752"
+        },
+        "date": 1793847657632,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 768.37,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 936.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 705.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 874.19,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 716.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 884.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 688.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 856.59,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 689.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 858.15,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1097.98,
             "unit": "KB"
           },
           {
