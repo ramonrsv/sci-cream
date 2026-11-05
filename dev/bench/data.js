@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793847746815,
+  "lastUpdate": 1793847818837,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -696995,6 +696995,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.51,
             "range": "0.46",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bb0d701428348ff456227ae23278e67c8944a752",
+          "message": "Add USDA milk and white chocolate entries\n\nSplit each listing between cocoa and milk solids by its fiber and\nprotein, using the new public estimate_cocoa_snf and\nestimate_chocolate_msnf in specs::chocolate::util. Milk fat is whole\nmilk powder's share of the milk solids.\n\n- Check that every USDA chocolate entry follows the derivation its\n  prose describes, and that estimate_chocolate_msnf recovers the MSNF\n  the Callebaut entries declare\n- Reconcile both entries against their listings' proximates, and\n  compare them with the Mona Lisa, Corvitto, and Callebaut entries\n- Title each ingredient file, and open chocolates.md with guidance on\n  entering chocolates from sheets, nutrient databases, and labels\n- Note how the USDA dark chocolate entries derive cacao_solids\n- List the Dutch Processed section in the docs table of contents\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-04T18:39:56-05:00",
+          "tree_id": "b85052f90abd1b7934ab9315c67b63bd61766edb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bb0d701428348ff456227ae23278e67c8944a752"
+        },
+        "date": 1793847738057,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 70.26,
+            "range": "9.45",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.43,
+            "range": "2.31",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.41,
+            "range": "2.32",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 194,
+            "range": "12.17",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.47,
+            "range": "0.08",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 194,
+            "range": "12.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 65.44,
+            "range": "9.42",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.5,
+            "range": "0.43",
             "unit": "ms"
           }
         ]
