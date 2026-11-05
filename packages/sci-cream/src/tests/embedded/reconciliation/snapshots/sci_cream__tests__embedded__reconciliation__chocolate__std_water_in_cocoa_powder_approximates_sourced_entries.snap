@@ -1,0 +1,11 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/chocolate.rs
+expression: "lines.join(\"\\n\")"
+---
+entry                                                           water  default    error
+USDA Unsweetened Cocoa Powder                                    3.00     3.00   +0.00%
+USDA Unsweetened Cocoa Powder, Processed with Alkali             2.70     3.00  +11.11%
+USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat   3.00     3.00   +0.00%
+Callebaut Botanical Extra Brute Cocoa Powder                     3.50     3.00  -14.29%
+Callebaut Zestina Plein Arome Cocoa Powder                       3.50     3.00  -14.29%
+Callebaut 10/12 Natural Cocoa Powder                             3.50     3.00  -14.29%

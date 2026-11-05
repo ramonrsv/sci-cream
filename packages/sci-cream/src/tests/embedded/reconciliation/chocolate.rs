@@ -2,12 +2,16 @@
 //!
 //! The `compare_specs` suites compare two spec-derived compositions, so for cocoa powders a wrong
 //! constant shifts both sides equally and passes unnoticed. Here one side is measured, so what the
-//! tolerance bounds is the model's error rather than the distance between two sets of inputs.
-//! Fat, and sugars for the dark chocolates, are transcribed inputs and reconcile by construction.
+//! tolerance bounds is the model's error rather than the distance between two sets of inputs. Fat,
+//! sugars for the dark chocolates, and water for the cocoa powders are transcribed from their
+//! listings, so they reconcile by construction.
 //!
 //! The milk and white entries split their listing between cocoa and milk by its fiber and protein,
 //! see [`estimate_chocolate_msnf`], which the Callebaut entries, whose milk solids their
 //! specification sheets declare, check against known answers.
+//!
+//! Cocoa powders whose sources omit their water default to [`STD_WATER_IN_COCOA_POWDER`], which the
+//! USDA and Callebaut powders, whose sources give it, check against known answers.
 //!
 //! Energy is excluded: the listings share no convention, with 170273 on general Atwater and the
 //! cocoas on specific factors that discount fiber, landing near 220 where Atwater gives over 400.
@@ -24,10 +28,14 @@ use crate::tests::embedded::variants::get_comp_by_name;
 use super::util::{EXACT_MATCH, Proximates, reconcile_proximates};
 use crate::{
     composition::CompKey,
-    constants::composition::dairy::{STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, milk::STD_LACTOSE_IN_MSNF},
+    constants::composition::{
+        cacao::STD_WATER_IN_COCOA_POWDER,
+        dairy::{STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, milk::STD_LACTOSE_IN_MSNF},
+    },
     data::get_spec_entry_by_name,
     specs::{
-        ChocolateFat, ChocolateSpec, IngredientSpec, SpecEntry, TaggedSpec, estimate_chocolate_msnf, estimate_cocoa_snf,
+        ChocolateFat, ChocolateSpec, CocoaPowderSpec, IngredientSpec, SpecEntry, TaggedSpec, estimate_chocolate_msnf,
+        estimate_cocoa_snf,
     },
     util::round_to_decimals,
 };
@@ -199,14 +207,14 @@ const MILK_CHOCOLATE_CEILING: Proximates = Proximates {
 ///
 /// [`CocoaPowderSpec`](crate::specs::CocoaPowderSpec) has no sugars field, so each listing's sugars
 /// read as a full miss; that mass stays inside the modeled cocoa solids as carbohydrate, keeping
-/// that row tight. Water comes from [`cacao::STD_WATER_IN_COCOA_POWDER`] and ash tracks
-/// alkalization via [`cacao::STD_ASH_IN_DUTCHED_COCOA_SOLIDS`], so each misses only where a listing
-/// departs from it. Fiber is the loosest, with protein also wide against a shared constant.
+/// that row tight. Fat and water are transcribed, so both match exactly. Ash tracks alkalization
+/// via [`cacao::STD_ASH_IN_DUTCHED_COCOA_SOLIDS`], missing only where a listing departs from it.
+/// Fiber is the loosest, with protein also wide against a shared constant.
 const COCOA_CEILING: Proximates = Proximates {
-    water: 10.5,
-    protein: 8.5,
+    water: EXACT_MATCH,
+    protein: 9.0,
     fat: EXACT_MATCH,
-    carbohydrate: 3.5,
+    carbohydrate: 3.0,
     fiber: 18.5,
     sugars: FULL_MISS,
     ash: 8.5,
@@ -313,6 +321,52 @@ fn estimate_chocolate_msnf_recovers_callebaut_entries() {
             error.abs() <= CALLEBAUT_MSNF_CEILING,
             "{name}: MSNF from protein is {error:+.2}% off the entry's {msnf:.2} \
              (estimated {estimate:.2}, ceiling {CALLEBAUT_MSNF_CEILING:.2}%)"
+        );
+    }
+
+    insta::assert_snapshot!(lines.join("\n"));
+}
+
+/// Cocoa powders whose water comes from their source, measured by USDA or left over from
+/// Callebaut's nutritional data, unlike Valrhona's assumed default and Corvitto's conventional 0.
+const SOURCED_COCOA_WATER: &[&str] = &[
+    "USDA Unsweetened Cocoa Powder",
+    "USDA Unsweetened Cocoa Powder, Processed with Alkali",
+    "USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat",
+    "Callebaut Botanical Extra Brute Cocoa Powder",
+    "Callebaut Zestina Plein Arome Cocoa Powder",
+    "Callebaut 10/12 Natural Cocoa Powder",
+];
+
+/// Ceiling on [`STD_WATER_IN_COCOA_POWDER`]'s relative error, in percent, against each entry.
+///
+/// Near the USDA listings' mean, the default reads above their 2.7% and below Callebaut's 3.5%.
+const COCOA_WATER_CEILING: f64 = 14.5;
+
+/// [`STD_WATER_IN_COCOA_POWDER`] approximates the water of each [`SOURCED_COCOA_WATER`] entry; the
+/// snapshot tables each entry's water and the default's error.
+#[test]
+fn std_water_in_cocoa_powder_approximates_sourced_entries() {
+    let default = STD_WATER_IN_COCOA_POWDER * 100.0;
+    let mut lines = vec![format!("{:<63}{:>6}{:>9}{:>9}", "entry", "water", "default", "error")];
+
+    for &name in SOURCED_COCOA_WATER {
+        let Ok(SpecEntry::Ingredient(IngredientSpec {
+            spec: TaggedSpec::CocoaPowderSpec(CocoaPowderSpec { water: Some(water), .. }),
+            ..
+        })) = get_spec_entry_by_name(name)
+        else {
+            panic!("{name} is not an embedded CocoaPowderSpec with its water");
+        };
+
+        let error = (default - water) / water * 100.0;
+
+        lines.push(format!("{name:<63}{water:>6.2}{default:>9.2}{error:>+8.2}%"));
+
+        assert!(
+            error.abs() <= COCOA_WATER_CEILING,
+            "{name}: default water is {error:+.2}% off the entry's {water:.2} \
+             (default {default:.2}, ceiling {COCOA_WATER_CEILING:.2}%)"
         );
     }
 

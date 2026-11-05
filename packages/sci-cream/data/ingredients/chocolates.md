@@ -775,7 +775,7 @@ These are in agreement with the product page's _"Min Cocoa Solids: 28%"_.
 ## USDA Unsweetened Cocoa Powder
 
 ```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 13.7 } }
+{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 13.7, "water": 3 } }
 ```
 
 USDA FoodData Central - SR Legacy - [Cocoa, dry powder,
@@ -784,7 +784,10 @@ unsweetened](https://fdc.nal.usda.gov/food-details/169593/nutrients)
 ## USDA Unsweetened Cocoa Powder, Processed with Alkali
 
 ```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 13.1, "dutch_processed": true } }
+{
+  "category": "Chocolate",
+  "CocoaPowderSpec": { "cocoa_butter": 13.1, "water": 2.7, "dutch_processed": true }
+}
 ```
 
 USDA FoodData Central - SR Legacy - [Cocoa, dry powder, unsweetened, processed with
@@ -793,7 +796,10 @@ alkali](https://fdc.nal.usda.gov/food-details/169594/nutrients)
 ## USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat
 
 ```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 23.7, "dutch_processed": true } }
+{
+  "category": "Chocolate",
+  "CocoaPowderSpec": { "cocoa_butter": 23.7, "water": 3, "dutch_processed": true }
+}
 ```
 
 USDA FoodData Central - SR Legacy - [Cocoa, dry powder, hi-fat or breakfast, processed with
