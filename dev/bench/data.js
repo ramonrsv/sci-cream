@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793848084901,
+  "lastUpdate": 1793848095645,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -721105,6 +721105,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2112.43,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bb9dfb2f12e9a0d51089eb086cbfbbf8a019cea4",
+          "message": "Add water to the USDA cocoa powder entries\n\nEach listing measures its water, so the entries carry it rather than\ndefaulting to STD_WATER_IN_COCOA_POWDER. Only the alkalized 13.1% fat\npowder changes, at 2.7%; the other two list the default's 3%.\n\n- Reconcile cocoa water exactly, raising the protein ceiling to 9.0%\n  for the alkalized powder's 8.53% and tightening carbohydrate to 3.0%\n- Check STD_WATER_IN_COCOA_POWDER against the cocoa powders whose\n  sources give their water, USDA's and Callebaut's\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-04T21:59:24-05:00",
+          "tree_id": "c9569ee90b2f8e2e3f34efd6b2e7ad2b0f8210db",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bb9dfb2f12e9a0d51089eb086cbfbbf8a019cea4"
+        },
+        "date": 1793848015147,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1174.67,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 355.86,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1903.19,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 582.63,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 631.14,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2112.51,
             "unit": "KB"
           }
         ]
