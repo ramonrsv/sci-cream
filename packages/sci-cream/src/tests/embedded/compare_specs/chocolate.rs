@@ -1,5 +1,7 @@
 //! Cross-source consistency checks for chocolate ingredients, spanning dark, milk, white and
-//! cocoa powder, lining up each entry against labelled references from other sources.
+//! cocoa powder, lining up each entry against labelled references from other sources. Each USDA
+//! listing and each Callebaut and Mona Lisa sheet is compared both as its embedded entry and as its
+//! test-only `… (Label)` variant.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -48,7 +50,9 @@ fn compare_specs_chocolate_50() {
     let sources = [
         ("Simple", "50% Dark Chocolate"),
         ("USDA", "USDA Dark Chocolate, 45-59% Cacao Solids"),
+        ("USDA (Label)", "USDA Dark Chocolate, 45-59% Cacao Solids (Label)"),
         ("Mona Lisa", "Mona Lisa Dark Chocolate Curved Shavings"),
+        ("Mona Lisa (Label)", "Mona Lisa Dark Chocolate Curved Shavings (Label)"),
     ]
     .map(source_str_to_comp);
 
@@ -64,10 +68,15 @@ fn compare_specs_chocolate_55() {
         ("Simple", "55% Dark Chocolate"),
         ("Corvitto", "Corvitto 55% Dark Chocolate"),
         ("Callebaut", "Callebaut 811 Dark Chocolate"),
+        ("Callebaut (Label)", "Callebaut 811 Dark Chocolate (Label)"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.5).with(CompKey::Energy, 6.0);
+    // The label variant counts other solids as cocoa solids, carrying its energy past the default.
+    let ceiling =
+        KeyCeiling::new(5.5)
+            .with(CompKey::Energy, 6.0)
+            .with_source("Callebaut (Label)", CompKey::Energy, 6.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -80,10 +89,15 @@ fn compare_specs_chocolate_60() {
         ("Corvitto", "Corvitto 60% Dark Chocolate"),
         ("Callebaut 2815", "Callebaut 2815 Dark Chocolate"),
         ("Callebaut 60-40-38", "Callebaut 60-40-38 Dark Chocolate"),
+        ("Callebaut 60-40-38 (Label)", "Callebaut 60-40-38 Dark Chocolate (Label)"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.5).with(CompKey::Energy, 6.0);
+    // The label variant counts other solids as cocoa solids, hardening it past the default for HF.
+    let ceiling =
+        KeyCeiling::new(5.5)
+            .with(CompKey::Energy, 6.0)
+            .with_source("Callebaut 60-40-38 (Label)", CompKey::HF, 6.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -95,6 +109,7 @@ fn compare_specs_chocolate_65() {
         ("Simple", "65% Dark Chocolate"),
         ("Corvitto", "Corvitto 65% Dark Chocolate"),
         ("USDA", "USDA Dark Chocolate, 60-69% Cacao Solids"),
+        ("USDA (Label)", "USDA Dark Chocolate, 60-69% Cacao Solids (Label)"),
     ]
     .map(source_str_to_comp);
 
@@ -111,14 +126,18 @@ fn compare_specs_chocolate_70() {
         ("Corvitto", "Corvitto 70% Dark Chocolate"),
         ("Lindt", "Lindt EXCELLENCE 70% Cacao Dark Chocolate"),
         ("Callebaut", "Callebaut 70-30-38 Dark Chocolate"),
+        ("Callebaut (Label)", "Callebaut 70-30-38 Dark Chocolate (Label)"),
     ]
     .map(source_str_to_comp);
 
+    // The label variant counts other solids as cocoa solids, hardening it further from Corvitto's.
     let ceiling = KeyCeiling::new(4.5)
         .with(CompKey::Energy, 7.5)
         .with(CompKey::CocoaSolids, 6.5)
         .with(CompKey::TotalSNFS, 8.0)
-        .with(CompKey::HF, 8.0);
+        .with(CompKey::HF, 8.0)
+        .with_source("Callebaut (Label)", CompKey::CocoaSolids, 7.5)
+        .with_source("Callebaut (Label)", CompKey::HF, 10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -129,6 +148,7 @@ fn compare_specs_chocolate_75() {
     let sources = [
         ("Simple", "75% Dark Chocolate"),
         ("USDA", "USDA Dark Chocolate, 70-85% Cacao Solids"),
+        ("USDA (Label)", "USDA Dark Chocolate, 70-85% Cacao Solids (Label)"),
     ]
     .map(source_str_to_comp);
 
@@ -160,7 +180,10 @@ fn compare_specs_chocolate_95() {
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(3.5).with(CompKey::TotalCarbohydrates, 4.5);
+    // Lindt's sugars leave 97.5% cacao solids, whose extra fat carries its energy past the default.
+    let ceiling = KeyCeiling::new(3.5)
+        .with(CompKey::Energy, 4.0)
+        .with(CompKey::TotalCarbohydrates, 4.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -184,7 +207,10 @@ fn compare_specs_chocolate_100() {
 fn compare_specs_milk_chocolate_30() {
     let sources = [
         ("USDA", "USDA Milk Chocolate"),
+        ("USDA (Label)", "USDA Milk Chocolate (Label)"),
         ("Mona Lisa", "Mona Lisa Milk Chocolate Blossoms"),
+        ("Mona Lisa (Label)", "Mona Lisa Milk Chocolate Blossoms (Label)"),
+        ("Lindt", "Lindt Classic Milk Chocolate"),
     ]
     .map(source_str_to_comp);
 
@@ -199,11 +225,23 @@ fn compare_specs_milk_chocolate_30() {
 fn compare_specs_milk_chocolate_35() {
     let sources = [
         ("Callebaut 823", "Callebaut 823 Milk Chocolate"),
+        ("Callebaut 823 (Label)", "Callebaut 823 Milk Chocolate (Label)"),
         ("Callebaut 665", "Callebaut 665 Milk Chocolate"),
+        ("Callebaut 665 (Label)", "Callebaut 665 Milk Chocolate (Label)"),
+        ("Green & Black's", "Green & Black's Organic Milk Chocolate"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.5);
+    // Green & Black's carries more cocoa solids non-fat and milk solids, and less sugar, than the
+    // Callebaut entries, past the default for HF, POD, and milk solids. 823's label variant puts
+    // its milk solids at 20.5% from its protein, against its sheet's 21.8%.
+    let ceiling = KeyCeiling::new(5.5)
+        .with_source("Green & Black's", CompKey::MilkSolids, 6.5)
+        .with_source("Green & Black's", CompKey::POD, 7.0)
+        .with_source("Green & Black's", CompKey::HF, 10.0)
+        .with_source("Callebaut 823 (Label)", CompKey::MilkSolids, 8.0)
+        .with_source("Callebaut 823 (Label)", CompKey::MSNF, 6.0)
+        .with_source("Callebaut 823 (Label)", CompKey::HF, 7.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -214,11 +252,20 @@ fn compare_specs_milk_chocolate_40() {
     let sources = [
         ("Corvitto", "Corvitto 40% Milk Chocolate"),
         ("Callebaut Power 41", "Callebaut Power 41 Milk Chocolate"),
+        ("Callebaut Power 41 (Label)", "Callebaut Power 41 Milk Chocolate (Label)"),
         ("Callebaut Arriba", "Callebaut Arriba Milk Chocolate"),
+        ("Callebaut Arriba (Label)", "Callebaut Arriba Milk Chocolate (Label)"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(5.5).with(CompKey::HF, 6.5).with(CompKey::Energy, 6.5);
+    // Power 41's label variant estimates more cocoa solids non-fat from its fiber than its sheet
+    // declares, and Arriba's more milk solids from its protein, past the default for those and HF.
+    let ceiling = KeyCeiling::new(5.5)
+        .with(CompKey::HF, 6.5)
+        .with(CompKey::Energy, 6.5)
+        .with_source("Callebaut Power 41 (Label)", CompKey::CocoaSolids, 6.0)
+        .with_source("Callebaut Power 41 (Label)", CompKey::HF, 7.0)
+        .with_source("Callebaut Arriba (Label)", CompKey::MilkSolids, 6.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -229,16 +276,22 @@ fn compare_specs_white_chocolate() {
     let sources = [
         ("Corvitto", "Corvitto White Chocolate"),
         ("USDA", "USDA White Chocolate"),
+        ("USDA (Label)", "USDA White Chocolate (Label)"),
         ("Callebaut", "Callebaut W2 White Chocolate"),
+        ("Callebaut (Label)", "Callebaut W2 White Chocolate (Label)"),
+        ("Lindt", "Lindt Classic White Chocolate"),
+        ("Green & Black's", "Green & Black's Organic White Chocolate"),
     ]
     .map(source_str_to_comp);
 
     // Corvitto's idealized 40% fat, 40% sugar, and 30% milk solids sit furthest from USDA's lower
     // fat and milk solids and higher sugar, past the default for energy, milk solids, and POD.
+    // Green & Black's, at 38% fat and 39.5% sucrose, is further still from USDA on POD.
     let ceiling = KeyCeiling::new(8.5)
-        .with_source("Corvitto", CompKey::Energy, 9.0)
+        .with_source("Corvitto", CompKey::Energy, 9.5)
         .with_source("Corvitto", CompKey::MilkSolids, 9.5)
-        .with_source("Corvitto", CompKey::POD, 10.5);
+        .with_source("Corvitto", CompKey::POD, 10.5)
+        .with_source("Green & Black's", CompKey::POD, 11.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -249,6 +302,7 @@ fn compare_specs_cocoa_powder_13_fat() {
     let sources = [
         ("Simple", "Cocoa Powder, 13% Fat"),
         ("USDA", "USDA Unsweetened Cocoa Powder"),
+        ("USDA (Label)", "USDA Unsweetened Cocoa Powder (Label)"),
     ]
     .map(source_str_to_comp);
 
@@ -278,6 +332,7 @@ fn compare_specs_cocoa_powder_10_12_fat() {
         ("Simple", "Cocoa Powder, 10/12% Fat"),
         ("Corvitto", "Corvitto Cocoa Powder, 10/12% Fat"),
         ("Callebaut", "Callebaut 10/12 Natural Cocoa Powder"),
+        ("Callebaut (Label)", "Callebaut 10/12 Natural Cocoa Powder (Label)"),
     ]
     .map(source_str_to_comp);
 
@@ -309,8 +364,11 @@ fn compare_specs_cocoa_powder_22_24_fat() {
         ("Simple", "Cocoa Powder, 22/24% Fat"),
         ("Corvitto", "Corvitto Cocoa Powder, 22/24% Fat"),
         ("Callebaut Plein Arome", "Callebaut Zestina Plein Arome Cocoa Powder"),
+        ("Callebaut Plein Arome (Label)", "Callebaut Zestina Plein Arome Cocoa Powder (Label)"),
         ("Callebaut Extra Brute", "Callebaut Botanical Extra Brute Cocoa Powder"),
+        ("Callebaut Extra Brute (Label)", "Callebaut Botanical Extra Brute Cocoa Powder (Label)"),
         ("USDA", "USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat"),
+        ("USDA (Label)", "USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat (Label)"),
     ]
     .map(source_str_to_comp);
 

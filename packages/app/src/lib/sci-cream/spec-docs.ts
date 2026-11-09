@@ -13,17 +13,18 @@ export interface SpecDocLink {
 
 /**
  * Rustdoc page for each spec type, relative to {@link DOCS_BASE}. The paths cannot be templated:
- * `MicroSpec` is an enum, and the `dairy` module hosts three types.
+ * `MicroSpec` is an enum, and `chocolate` and `dairy` keep each type in a submodule.
  */
 const SPEC_TYPE_PAGES: Readonly<Record<string, string>> = {
   AlcoholSpec: "specs/alcohol/struct.AlcoholSpec.html",
   AliasSpec: "specs/alias/struct.AliasSpec.html",
-  ChocolateSpec: "specs/chocolate/struct.ChocolateSpec.html",
-  CocoaPowderSpec: "specs/chocolate/struct.CocoaPowderSpec.html",
+  ChocolateLabelSpec: "specs/chocolate/label/struct.ChocolateLabelSpec.html",
+  ChocolateSpec: "specs/chocolate/chocolate/struct.ChocolateSpec.html",
+  CocoaPowderSpec: "specs/chocolate/cocoa_powder/struct.CocoaPowderSpec.html",
   CompositeSpec: "specs/composite/struct.CompositeSpec.html",
-  DairyLabelSpec: "specs/dairy/struct.DairyLabelSpec.html",
-  DairySheetSpec: "specs/dairy/struct.DairySheetSpec.html",
-  DairySimpleSpec: "specs/dairy/struct.DairySimpleSpec.html",
+  DairyLabelSpec: "specs/dairy/label/struct.DairyLabelSpec.html",
+  DairySheetSpec: "specs/dairy/sheet/struct.DairySheetSpec.html",
+  DairySimpleSpec: "specs/dairy/simple/struct.DairySimpleSpec.html",
   EggSpec: "specs/egg/struct.EggSpec.html",
   EmulsifierSpec: "specs/emulsifier/struct.EmulsifierSpec.html",
   FruitSpec: "specs/fruit/struct.FruitSpec.html",
@@ -94,8 +95,10 @@ function nameMatches(pattern: RegExp): SpecDocRule["when"] {
  * additive — every match contributes — so a new heuristic is one more entry in this list.
  */
 const SPEC_DOC_RULES: readonly SpecDocRule[] = [
-  { when: ofKind("ChocolateSpec"), chapters: ["chocolate"] },
-  { when: ofKind("CocoaPowderSpec"), chapters: ["chocolate"] },
+  {
+    when: ofKind("ChocolateSpec", "CocoaPowderSpec", "ChocolateLabelSpec"),
+    chapters: ["chocolate"],
+  },
   { when: ofKind("SweetenerSpec"), chapters: ["sweeteners", "pac-afp-fpdf-se"] },
   { when: ofKind("DairySimpleSpec", "DairyLabelSpec", "DairySheetSpec"), chapters: ["dairy"] },
   { when: ofKind("StabilizerSpec"), chapters: ["stabilizers"] },

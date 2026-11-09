@@ -30,7 +30,8 @@ different industries and stages of processing. For clarity, within this library 
 
 [`ChocolateSpec`] and [`CocoaPowderSpec`] can be used to define chocolate and cocoa powder
 ingredients, which have fields for the above terms as well as for [`sugars`](ChocolateSpec::sugars)
-and [`other_solids`](ChocolateSpec::other_solids).
+and [`other_solids`](ChocolateSpec::other_solids). [`ChocolateLabelSpec`] can be used to define
+either from a nutrition label instead, deriving values from its figures and typical compositions.
 
 ## Dutch Processed
 

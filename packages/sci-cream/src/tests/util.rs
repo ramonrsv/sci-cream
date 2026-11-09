@@ -9,7 +9,7 @@ use strum::IntoEnumIterator;
 use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
 use crate::tests::asserts::*;
 
-use crate::tests::embedded::variants::get_comp_by_name;
+use crate::tests::embedded::variants::get_embedded_or_variant_comp_by_name;
 
 use crate::{
     composition::{CompKey, Composition, RatioKey},
@@ -60,7 +60,7 @@ pub(crate) fn assert_comp_eq_percent(lhs: &Composition, rhs: &Composition, key: 
         lhs.abs_diff_eq(&rhs, tolerance),
         "Composition values for {:?} differ by {:.2}% (max allowed {:.2}%)",
         key,
-        ((lhs - rhs).abs() / lhs) * 100.0,
+        relative_error_percent(rhs, lhs).abs(),
         tolerance_percent
     );
 }
@@ -229,6 +229,14 @@ pub(crate) fn relative_diff_percent(lhs: f64, rhs: f64) -> f64 {
     } else {
         (lhs - rhs).abs() / denominator * 100.0
     }
+}
+
+/// Relative error of a value against a nonzero baseline, as a signed percentage.
+///
+/// Unlike [`relative_diff_percent`], it divides by the `baseline`'s magnitude, so the argument
+/// order matters, and keeps the sign, positive where `value` exceeds the `baseline`.
+pub(crate) fn relative_error_percent(value: f64, baseline: f64) -> f64 {
+    (value - baseline) / baseline.abs() * 100.0
 }
 
 /// Root mean square of a set of values, i.e. `sqrt(mean(vᵢ²))`.
@@ -428,7 +436,7 @@ pub(crate) fn compare_compositions(sources: &[(&str, Composition)], keys: &[Comp
 /// Pairs a source label with the named ingredient's composition, embedded or test-only, for the
 /// cross-source `compare_specs` suites that line up labelled sources of one conceptual ingredient.
 pub(crate) fn source_str_to_comp(names: (&'static str, &str)) -> (&'static str, Composition) {
-    (names.0, get_comp_by_name(names.1))
+    (names.0, get_embedded_or_variant_comp_by_name(names.1))
 }
 
 /// Returns true if the given `alias` resolves to an [`AliasSpec`] whose `for_name` matches `name`.
@@ -450,7 +458,8 @@ mod tests {
     use super::{
         AssertKeys, EPSILON_6DP, FAT_SWAP_KCAL_PER_G, KeyCeiling, assert_comp_eq_percent,
         assert_compositions_consistent, assert_f64_fields_eq_zero, assert_f64_fields_ne_zero, compare_compositions,
-        literal, relative_diff_percent, root_mean_square, solids_denominator_for, solids_fraction_diff_pp,
+        literal, relative_diff_percent, relative_error_percent, root_mean_square, solids_denominator_for,
+        solids_fraction_diff_pp,
     };
     use crate::{
         composition::{CompKey, Composition, MilkProteins, RatioKey, Solids, SolidsBreakdown},
@@ -502,6 +511,27 @@ mod tests {
     fn relative_diff_percent_is_100_when_one_side_is_zero() {
         assert_eq_flt!(relative_diff_percent(0.0, 5.0), 100.0);
         assert_eq_flt!(relative_diff_percent(5.0, 0.0), 100.0);
+    }
+
+    // --- relative_error_percent ---
+
+    #[test]
+    fn relative_error_percent_is_zero_for_equal_values() {
+        assert_eq_flt!(relative_error_percent(50.0, 50.0), 0.0);
+    }
+
+    #[test]
+    fn relative_error_percent_uses_baseline_as_denominator() {
+        // The same difference of 10 reads against whichever side is the baseline.
+        assert_eq_flt!(relative_error_percent(110.0, 100.0), 10.0);
+        assert_eq_flt!(relative_error_percent(100.0, 110.0), -10.0 / 110.0 * 100.0);
+    }
+
+    #[test]
+    fn relative_error_percent_is_positive_above_the_baseline() {
+        assert_eq_flt!(relative_error_percent(6.0, 5.0), 20.0);
+        assert_eq_flt!(relative_error_percent(4.0, 5.0), -20.0);
+        assert_eq_flt!(relative_error_percent(-4.0, -5.0), 20.0);
     }
 
     // --- root_mean_square ---

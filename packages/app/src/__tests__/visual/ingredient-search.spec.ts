@@ -56,7 +56,7 @@ test.describe("Visual Regression: Ingredient Search", () => {
     // The spec type links to its rustdoc page
     await expect(detailPanel.getByRole("link", { name: "DairyLabelSpec" })).toHaveAttribute(
       "href",
-      "https://docs.rs/sci-cream/latest/sci_cream/specs/dairy/struct.DairyLabelSpec.html",
+      "https://docs.rs/sci-cream/latest/sci_cream/specs/dairy/label/struct.DairyLabelSpec.html",
     );
 
     expect(await captureFullContent(page, page.getByTestId("search-detail-panel"))).toMatchSnapshot(

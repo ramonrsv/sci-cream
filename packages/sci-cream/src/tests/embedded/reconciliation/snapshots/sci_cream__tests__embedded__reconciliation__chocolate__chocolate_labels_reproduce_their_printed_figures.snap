@@ -1,0 +1,99 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/chocolate.rs
+expression: "lines.join(\"\\n\")"
+---
+Lindt EXCELLENCE 70% Cacao Dark Chocolate, per 40 g (Canada)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               16.00     16.00     16.00    +0.00     +0.0%
+  carbohydrate      19.00     20.27     20.00    +1.27     +6.7%
+  fiber              5.00      4.54      5.00    -0.46     -9.3%
+  sugars            12.00     12.00     12.00    +0.00     +0.0%
+  protein            4.00      2.82      3.00    -1.18    -29.5%
+
+Lindt EXCELLENCE 85% Cacao Dark Chocolate, per 40 g (Canada)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               18.00     18.00     18.00    +0.00     +0.0%
+  carbohydrate      15.00     17.02     17.00    +2.02    +13.5%
+  fiber              6.00      6.05      6.00    +0.05     +0.8%
+  sugars             6.00      6.00      6.00    +0.00     +0.0%
+  protein            5.00      3.76      4.00    -1.24    -24.8%
+
+Lindt EXCELLENCE 95% Cacao Dark Chocolate, per 40 g (Canada)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               23.00     23.00     23.00    +0.00     +0.0%
+  carbohydrate      10.00     12.02     12.00    +2.02    +20.2%
+  fiber              7.00      6.05      6.00    -0.95    -13.6%
+  sugars             1.00      1.00      1.00    +0.00     +0.0%
+  protein            5.00      3.76      4.00    -1.24    -24.8%
+
+Lindt EXCELLENCE 100% Cacao Dark Chocolate, per 50 g (Canada)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               27.00     27.00     27.00    +0.00     +0.0%
+  carbohydrate      14.00     15.85     16.00    +1.85    +13.2%
+  fiber              8.00      8.69      9.00    +0.69     +8.7%
+  sugars             0.00      0.00      0.00    +0.00         -
+  protein            7.00      5.40      5.00    -1.60    -22.8%
+
+Lindt Classic Milk Chocolate, per 100 g (EU)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               32.00     32.00     32.00    +0.00     +0.0%
+  carbohydrate      56.00     56.16     56.00    +0.16     +0.3%
+  fiber                 -
+  sugars            55.00     55.00     55.00    +0.00     +0.0%
+  protein            7.00      7.00      7.00    +0.00     +0.0%
+
+Lindt Classic White Chocolate, per 40 g (Canada)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               14.00     14.00     14.00    +0.00     +0.0%
+  carbohydrate      22.00     22.00     22.00    +0.00     +0.0%
+  fiber              0.00      0.00      0.00    +0.00         -
+  sugars            22.00     22.00     22.00    +0.00     +0.0%
+  protein            3.00      3.00      3.00    +0.00     +0.0%
+
+Green & Black's Organic Milk Chocolate, per 100 g (EU)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               36.00     36.00     36.00    +0.00     +0.0%
+  carbohydrate      48.00     48.60     49.00    +0.60     +1.2%
+  fiber              2.80      3.15      3.20    +0.35    +12.7%
+  sugars            46.00     46.00     46.00    +0.00     +0.0%
+  protein            9.80      9.80      9.80    +0.00     +0.0%
+
+Green & Black's Organic White Chocolate, per 100 g (EU)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               38.00     38.00     38.00    +0.00     +0.0%
+  carbohydrate      51.00     51.00     51.00    +0.00     +0.0%
+  fiber              0.00      0.00      0.00    +0.00         -
+  sugars            51.00     51.00     51.00    +0.00     +0.0%
+  protein            7.90      7.90      7.90    +0.00     +0.0%
+
+Ghirardelli 100% Unsweetened Cocoa Powder, per 6 g (US)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat                1.00      1.00      1.00    +0.00     +0.0%
+  carbohydrate       3.00      3.32      3.00    +0.32    +10.7%
+  fiber              2.00      1.82      2.00    -0.18     -8.9%
+  sugars             0.00      0.00      0.00    +0.00         -
+  protein            1.00      1.13      1.00    +0.13    +13.3%
+
+Baker's Unsweetened Chocolate, per 15 g (Canada)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat                8.00      8.00      8.00    +0.00     +0.0%
+  carbohydrate       5.00      4.82      5.00    -0.18     -3.5%
+  fiber              3.00      2.65      3.00    -0.35    -11.8%
+  sugars             0.00      0.00      0.00    +0.00         -
+  protein            2.00      1.64      2.00    -0.36    -17.8%
+
+Hershey's 100% Natural Unsweetened Cocoa Powder, per 5 g (Canada)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat                0.50      0.50      0.50    +0.00     +0.0%
+  carbohydrate       3.00      3.00      3.00    -0.00     -0.1%
+  fiber              2.00      1.64      2.00    -0.36    -17.8%
+  sugars             0.00      0.00      0.00    +0.00         -
+  protein            1.00      1.02      1.00    +0.02     +2.2%
+
+Purest Natural Cocoa Powder, per 12 g (Canada)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat                1.50      1.50      1.50    +0.00     +0.0%
+  carbohydrate       6.00      6.99      7.00    +0.99    +16.4%
+  fiber              4.00      3.83      4.00    -0.17     -4.2%
+  sugars             0.00      0.00      0.00    +0.00         -
+  protein            2.00      2.38      2.00    +0.38    +19.1%

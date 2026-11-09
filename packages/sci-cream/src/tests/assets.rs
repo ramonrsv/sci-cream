@@ -13,21 +13,24 @@ use crate::{
     specs::IngredientSpec,
 };
 
-pub(crate) use crate::specs::{
-    alcohol::tests::*,
-    alias::tests::*,
-    chocolate::{chocolate::tests::*, cocoa_powder::tests::*},
-    composite::tests::*,
-    dairy::{label::tests::*, sheet::tests::*, simple::tests::*},
-    egg::tests::*,
-    emulsifier::tests::*,
-    fruit::tests::*,
-    full::tests::*,
-    ingredient::tests::*,
-    micro::tests::*,
-    nut::tests::*,
-    stabilizer::tests::*,
-    sweetener::tests::*,
+pub(crate) use crate::{
+    specs::{
+        alcohol::tests::*,
+        alias::tests::*,
+        chocolate::{chocolate::tests::*, cocoa_powder::tests::*, label::tests::*},
+        composite::tests::*,
+        dairy::{label::tests::*, sheet::tests::*, simple::tests::*},
+        egg::tests::*,
+        emulsifier::tests::*,
+        fruit::tests::*,
+        full::tests::*,
+        ingredient::tests::*,
+        micro::tests::*,
+        nut::tests::*,
+        stabilizer::tests::*,
+        sweetener::tests::*,
+    },
+    tests::embedded::variants::{VARIANTS_DB, get_embedded_or_variant_spec_by_name},
 };
 
 /// Database seeded once from the compiled-in embedded JSON, shared by tests across the crate.

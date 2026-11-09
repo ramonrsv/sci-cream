@@ -94,8 +94,9 @@ pub const STD_WATER_IN_CHOCOLATE: f64 = 0.01;
 
 /// Sugar content that is intrinsic to cocoa solids, naturally in the cacao nuts
 ///
-/// This value is derived from the three cocoa powders which have no added sugars, so total
-/// sugars is taken to be the intrinsic sugars: measured at (%) 2.10, 2.09, and 2.09
+/// This value is derived from the three cocoa powders, which have no added sugars, so their total
+/// sugars are taken to be the intrinsic sugars: 2.10%, 2.09%, and 2.09% of their cocoa solids.
+/// USDA imputes those sugars from similar foods rather than measuring them.
 ///
 /// This constant is used to calculate a more accurate cocoa solids content for the chocolate
 /// entries, to support more accurate derivations of the other cocoa solids components. However,

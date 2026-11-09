@@ -1,17 +1,18 @@
 //! Helpers shared by the reconciliation suites: proximates reconciliation against USDA listings,
-//! serving-mass estimation from component densities (via [`mixture_density`]), and FDA label
-//! rounding (21 CFR 101.9).
+//! serving-mass estimation from component densities (via [`mixture_density`]), and label rounding,
+//! the FDA's (21 CFR 101.9) and by market, [`LabelRounding`].
 
 use struct_iterable::Iterable;
 
 use crate::tests::asserts::EPSILON_8DP;
 
-use crate::tests::{embedded::variants::get_comp_by_name, util::relative_diff_percent};
+use crate::tests::{embedded::variants::get_embedded_or_variant_comp_by_name, util::relative_diff_percent};
 
 use crate::{
     composition::{CompKey, Composition},
     constants::density::{MixDensityParams, OTHER_DISSOLVED_SOLIDS, mixture_density, sugars::SUCROSE},
     error::Result,
+    util::round_to_decimals,
 };
 
 /// Encodes an exact match, for a field transcribed from the listing rather than predicted
@@ -60,7 +61,7 @@ impl Proximates {
     ///
     /// Ash is read as [`CompKey::TotalMinerals`], the minerals of all its solids.
     fn modeled(name: &str) -> Self {
-        let comp: Composition = get_comp_by_name(name);
+        let comp: Composition = get_embedded_or_variant_comp_by_name(name);
 
         Self {
             water: comp.get(CompKey::Water),
@@ -134,8 +135,8 @@ pub(super) fn serving_mass_g(comp: &Composition, oil_density: f64, serving_ml: f
 
 /// FDA calorie rounding: under 5 reads 0, 5 to 50 to the nearest 5, over 50 to the nearest 10.
 ///
-/// (U.S. FDA, CFR 21, 101.9 Nutrition labeling of food)[^52]
-#[doc = include_str!("../../../../docs/references/index/52.md")]
+/// (U.S. FDA, CFR 21, 101.9(c)(1))[^123]
+#[doc = include_str!("../../../../docs/references/index/123.md")]
 pub(super) fn fda_round_calories(kcal: f64) -> f64 {
     if kcal < 5.0 {
         0.0
@@ -148,8 +149,8 @@ pub(super) fn fda_round_calories(kcal: f64) -> f64 {
 
 /// FDA nutrient rounding (g): under 0.5 reads 0, 0.5 to 5 to the nearest 0.5, over 5 to nearest 1.
 ///
-/// (U.S. FDA, CFR 21, 101.9 Nutrition labeling of food)[^52]
-#[doc = include_str!("../../../../docs/references/index/52.md")]
+/// (U.S. FDA, CFR 21, 101.9(c)(2))[^123]
+#[doc = include_str!("../../../../docs/references/index/123.md")]
 pub(super) fn fda_round_grams(grams: f64) -> f64 {
     if grams < 0.5 {
         0.0
@@ -157,6 +158,70 @@ pub(super) fn fda_round_grams(grams: f64) -> f64 {
         (grams / 0.5).round() * 0.5
     } else {
         grams.round()
+    }
+}
+
+/// EU nutrient rounding (g), per 100 g: 0.5 or under reads 0, under 10 to the nearest 0.1, and
+/// from 10 to the nearest 1.
+///
+/// (European Commission, 2012, Table 4)[^133]
+#[doc = include_str!("../../../../docs/references/index/133.md")]
+fn eu_round_grams(grams: f64) -> f64 {
+    if grams >= 10.0 {
+        grams.round()
+    } else if grams > 0.5 {
+        round_to_decimals(grams, 1)
+    } else {
+        0.0
+    }
+}
+
+/// A nutrition label's rounding, by the market it's printed for
+///
+/// US labels follow 21 CFR 101.9(c)[^123], Canadian ones the table to B.01.401[^124], and EU and UK
+/// ones the European Commission's rounding guidelines, Table 4[^133], which apply per 100 g.
+#[doc = include_str!("../../../../docs/references/index/123.md")]
+#[doc = include_str!("../../../../docs/references/index/124.md")]
+#[doc = include_str!("../../../../docs/references/index/133.md")]
+#[derive(Copy, Clone, Debug)]
+pub(super) enum LabelRounding {
+    /// Canada's Food and Drug Regulations
+    Canada,
+    /// The European Commission's guidelines, for EU and UK labels per 100 g
+    EU,
+    /// The FDA's regulations
+    US,
+}
+
+impl LabelRounding {
+    /// Rounds a serving's fat, in grams, as the label prints it
+    pub(super) fn fat(self, grams: f64) -> f64 {
+        match self {
+            Self::Canada if grams < 0.5 => round_to_decimals(grams, 1),
+            Self::Canada if grams <= 5.0 => (grams * 2.0).round() / 2.0,
+            Self::Canada => grams.round(),
+            Self::EU => eu_round_grams(grams),
+            Self::US => fda_round_grams(grams),
+        }
+    }
+
+    /// Rounds a serving's carbohydrate, fiber, or sugars, in grams, as the label prints it
+    ///
+    /// A US label may print less than 1 g as _"less than 1 gram"_, which this doesn't model.
+    pub(super) fn carbohydrate(self, grams: f64) -> f64 {
+        match self {
+            Self::Canada | Self::US => grams.round(),
+            Self::EU => eu_round_grams(grams),
+        }
+    }
+
+    /// Rounds a serving's protein, in grams, as the label prints it
+    pub(super) fn protein(self, grams: f64) -> f64 {
+        match self {
+            Self::Canada if grams < 0.5 => round_to_decimals(grams, 1),
+            Self::Canada | Self::US => grams.round(),
+            Self::EU => eu_round_grams(grams),
+        }
     }
 }
 
@@ -177,5 +242,24 @@ mod tests {
         assert_eq!(fda_round_grams(0.7), 0.5);
         assert_eq!(fda_round_grams(3.01), 3.0);
         assert_eq!(fda_round_grams(6.4), 6.0);
+    }
+
+    #[test]
+    fn label_rounding_buckets() {
+        assert_eq!(LabelRounding::Canada.fat(0.43), 0.4);
+        assert_eq!(LabelRounding::US.fat(0.43), 0.0);
+        assert_eq!(LabelRounding::Canada.fat(3.2), 3.0);
+        assert_eq!(LabelRounding::US.fat(6.4), 6.0);
+        assert_eq!(LabelRounding::EU.fat(31.6), 32.0);
+        assert_eq!(LabelRounding::EU.fat(2.84), 2.8);
+        assert_eq!(LabelRounding::EU.fat(0.4), 0.0);
+
+        assert_eq!(LabelRounding::Canada.carbohydrate(0.43), 0.0);
+        assert_eq!(LabelRounding::US.carbohydrate(0.7), 1.0);
+        assert_eq!(LabelRounding::EU.carbohydrate(9.96), 10.0);
+
+        assert_eq!(LabelRounding::Canada.protein(0.43), 0.4);
+        assert_eq!(LabelRounding::US.protein(0.43), 0.0);
+        assert_eq!(LabelRounding::EU.protein(7.94), 7.9);
     }
 }

@@ -2,20 +2,56 @@
 
 # Chocolates
 
-Chocolates are [`ChocolateSpec`]s and cocoa powders [`CocoaPowderSpec`]s, filled in from the most
-detailed source a product has:
+These are chocolate and cocoa powder ingredients, defined using one of [`ChocolateSpec`],
+[`CocoaPowderSpec`], or [`ChocolateLabelSpec`]. **Simple specs** are simplified and idealized
+generic ingredients. Whilst they don't represent a particular real product, they are good
+representations of typical products for each class, and are considered the canonical generic
+option. They use either [`ChocolateSpec`] or [`CocoaPowderSpec`], e.g. "70% Dark Chocolate",
+"Cocoa Powder, 10/12% Fat", etc.
 
-- **Specification sheets**, such as Barry Callebaut's, which distributors host. EU sheets state the
-  cacao solids, milk solids, fat, and sugar directly, while US sheets give only a cocoa content and
-  a nutrition panel. Product pages often quote minima, the sheet's value less its tolerance. Cocoa
-  powder sheets grade fat on dry matter, so take the total fat as sold.
-- **Nutrient databases**, such as USDA FoodData Central, whose fat carries over as it is, and the
-  sugars too for dark chocolate, whose cacao solids are then all that isn't sugar. For milk and
-  white chocolate, [`estimate_cocoa_snf`] and [`estimate_chocolate_msnf`] give the non-fat cocoa and
-  milk solids from fiber and protein, and the sugars exclude the lactose those milk solids carry.
-- **Nutrition labels**, dividing each figure by the serving size. Labels round coarsely: in the US,
-  fat between 0.5 and 5 g is declared to the nearest 0.5 g (U.S. FDA, CFR 21, 101.9(c)(2))[^52], so
-  a 5 g serving's _"0.5 g"_ covers anything from 5% to 15% fat.
+For real products, which spec is used depends on the available information, preferring the most
+detailed source a product has. In descending order of preference:
+
+- **Specification sheets** are the preferred source, whenever one is available - they are usually
+  hosted by distributors. EU sheets state the cacao solids, milk solids, fat, and sugar directly,
+  while US sheets give only a cocoa content and a nutrition panel. Product pages often quote minima,
+  the sheet's value less its tolerance. These values translate to the spec fields relatively
+  trivially, using [`ChocolateSpec`] or [`CocoaPowderSpec`], e.g. "Callebaut 811 Dark Chocolate",
+  "Callebaut 823 Milk Chocolate", "Callebaut 10/12 Natural Cocoa Powder", etc.
+- **Nutrient databases**, such as [USDA FoodData Central](https://fdc.nal.usda.gov/), are not as
+  useful as specification sheets, since they don't provide a breakdown of cacao and milk solids.
+  However, they provide detailed and mostly _measured_ nutrition information, which allows them to
+  be the source of the standard cocoa fractions used in the internal model. Dark chocolate and cocoa
+  powder listings carry over their fat, and their sugars or water respectively, where the cacao
+  solids are all that isn't sugars or water; chocolates don't model water. Milk and white chocolate
+  entries estimate their cacao and milk solids, which the listings don't provide, via
+  [`estimate_chocolate_snf_split_from_protein_by_fiber`], and their sugars exclude the lactose those
+  milk solids carry. They use either [`ChocolateSpec`] or [`CocoaPowderSpec`], e.g. "USDA Dark
+  Chocolate, 70-85% Cacao Solids", "USDA Milk Chocolate", etc.
+- **Nutrition labels** are the most widely available information, but also the least detailed and
+  precise. They can be used, via [`ChocolateLabelSpec`], when no better source is available. Dark
+  chocolate labels often declare a cacao solids content, usually as a minimum, and milk and white
+  chocolate ones less often. EU labels must declare a dark or milk chocolate's minimum cacao solids
+  (Directive 2000/36/EC, 2000, Article 3(3))[^84], and UK ones a milk chocolate's minimum milk
+  solids as well (SI 2003/1659, 2003, regulation 6(1)(c)-(d))[^134]. Labels in some jurisdictions
+  round coarsely, which can be a significant source of inaccuracy: in the US, fat between 0.5 and 5
+  g is declared to the nearest 0.5 g, and under 0.5 g as 0 (U.S. FDA, CFR 21, 101.9(c)(2))[^123], so
+  a 5 g serving's _"0.5 g"_ covers anything from 10% to 15% fat.
+
+A few notes and clarifications about the entries in this list:
+
+- Corvitto entries are generic ingredients, like the simple specs, but with the compositions stated
+  in _I Segreti del Gelato (Secrets of Ice-Cream)_ (Corvitto, 2005)[^3].
+- Callebaut entries take fat from the sheet's total, and cocoa butter as the total less the milk fat
+  rather than the cacao solids less the cocoa solids non-fat, which can differ by rounding.
+- Callebaut's nutritional data is _"by calculation based on literature data"_ rather than measured,
+  so entries leave it out, as it would only swap the standard fractions for the vendor's own.
+- A cocoa powder's _"100%"_ means pure cocoa, i.e. no other ingredients, rather than a declared
+  content, as an actual 100% would leave no room for its water.
+- US and Canadian labels include fiber in the carbohydrate (U.S. FDA, CFR 21, 101.9(c)(6))[^123],
+  (CFIA, n.d., "Carbohydrates")[^125], while EU and UK labels print available carbohydrate
+  (Regulation (EU) No 1169/2011, 2011, Annex I 7., Article 30(2))[^126], (Regulation (EU) No
+  1169/2011, n.d., Annex I 7., Article 30(2))[^127], with fiber beside it if they declare it at all.
 
 ## 50% Dark Chocolate
 
@@ -194,6 +230,19 @@ Arôme](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Cal
 { "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "total_fat": 100 } }
 ```
 
+Cocoa butter is _"the fat obtained from cocoa beans or parts of cocoa beans"_, whose free fatty
+acids and unsaponifiable matter, both lipids, are limited to 1.75% and 0.5% (Directive 2000/36/EC,
+2000, Annex I A.1)[^84]. The sources show no significant content other than fat, and no fiber:
+USDA's SR Legacy [Oil, cocoa butter](https://fdc.nal.usda.gov/food-details/171421/nutrients)
+listing, and the specifications of [Barry Callebaut Cocoa Butter][barry_callebaut_cocoa_butter],
+[Cacao Barry Mycryo][cacao_barry_mycryo], [Belcolade Pure Prime Pressed Cocoa
+Butter][belcolade_cocoa_butter], and [GFWA Cacao Butter][gfwa_cacao_butter].
+
+[barry_callebaut_cocoa_butter]: https://argo.webstaurantstore.com/documents/nutrition/ncb-hd703-by-654.pdf
+[cacao_barry_mycryo]: https://cdn.api.groupe-pomona.fr/public/products/0202780/branch/es/medias/beurre-mycryo-100-cacao-en-pot-550-g-cacao-barry_0202780_es_technical.pdf
+[belcolade_cocoa_butter]: https://hbingredients.co.uk/cdn/shop/files/C.CB4.pdf
+[gfwa_cacao_butter]: https://cdn.shopify.com/s/files/1/1366/1771/files/GFWA_Product_Specification_-_Cacao_Butter_Block_Organic_-_OCB25I.pdf
+
 ## Corvitto 55% Dark Chocolate
 
 ```json
@@ -338,7 +387,7 @@ solids](https://fdc.nal.usda.gov/food-details/170273/nutrients)
   "ChocolateSpec": {
     "cacao_solids": 33.5,
     "milk_solids": 20,
-    "total_fat": 29.66,
+    "total_fat": 29.7,
     "sugars": 43.4,
     "other_solids": 3.1
   }
@@ -351,12 +400,14 @@ chocolate](https://fdc.nal.usda.gov/food-details/167587/nutrients)
 The dark chocolate entries take `cacao_solids` as `100 - sugars`, but this listing also contains
 milk solids, which need to be estimated. This SR Legacy listing does not report lactose, so the
 split between cocoa and milk is instead derived from the reported fiber and protein; see
-[`estimate_cocoa_snf`] and [`estimate_chocolate_msnf`] for more details.
+[`estimate_chocolate_snf_split_from_protein_by_fiber`].
 
-- `cacao_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via [`estimate_cocoa_snf`] and
-  the 3.4 g of fiber. `milk_fat` is <code>milk_solids \* [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER]</code>
-- `milk_solids` as <code>MSNF / (1 - [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER])</code>, where MSNF is
-  estimated as 14.8% via [`estimate_chocolate_msnf`] and the 7.65 g of protein and 3.4 g of fiber
+- `cacao_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via
+  [`estimate_chocolate_cocoa_snf_from_fiber`] and the 3.4 g of fiber. `milk_fat` is
+  <code>milk_solids \* [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER]</code>
+- `milk_solids` as <code>MSNF / (1 - [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER])</code>, where
+  MSNF is estimated as 14.8% via [`estimate_chocolate_snf_split_from_protein_by_fiber`] and the
+  7.65 g of protein and 3.4 g of fiber
 - `total_fat` from the listing, internally split into cocoa butter and milk fat by [`ChocolateSpec`]
 - `sugars` as the 51.5 g total less the lactose that MSNF carries, at [`STD_LACTOSE_IN_MSNF`]
 - `other_solids` as the remainder, the listing's 1.5% water and 1.6% more, such as emulsifier
@@ -369,7 +420,7 @@ split between cocoa and milk is instead derived from the reported fiber and prot
   "ChocolateSpec": {
     "cacao_solids": 27.2,
     "milk_solids": 20.7,
-    "total_fat": 32.09,
+    "total_fat": 32.1,
     "sugars": 50.7,
     "other_solids": 1.4
   }
@@ -382,15 +433,17 @@ chocolate](https://fdc.nal.usda.gov/food-details/167571/nutrients)
 The dark chocolate entries take `cacao_solids` as `100 - sugars`, but this listing also contains
 milk solids, which need to be estimated. This SR Legacy listing does not report lactose, so the
 split between cocoa and milk is instead derived from the reported fiber and protein; see
-[`estimate_cocoa_snf`] and [`estimate_chocolate_msnf`] for more details.
+[`estimate_chocolate_snf_split_from_protein_by_fiber`].
 
 The listing's 0.2 g of fiber puts the cocoa solids non-fat at 0.5%, so nearly all the cacao solids
 are cocoa butter, and nearly all the protein is milk's, as expected of white chocolate.
 
-- `cacao_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via [`estimate_cocoa_snf`] and
-  the 0.2 g of fiber. `milk_fat` is <code>milk_solids \* [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER]</code>
-- `milk_solids` as <code>MSNF / (1 - [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER])</code>, where MSNF is
-  estimated as 15.3% via [`estimate_chocolate_msnf`] and the 5.87 g of protein and 0.2 g of fiber
+- `cacao_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via
+  [`estimate_chocolate_cocoa_snf_from_fiber`] and the 0.2 g of fiber. `milk_fat` is
+  <code>milk_solids \* [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER]</code>
+- `milk_solids` as <code>MSNF / (1 - [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER])</code>, where
+  MSNF is estimated as 15.3% via [`estimate_chocolate_snf_split_from_protein_by_fiber`] and the
+  5.87 g of protein and 0.2 g of fiber
 - `total_fat` from the listing, internally split into cocoa butter and milk fat by [`ChocolateSpec`]
 - `sugars` as the 59.0 g total less the lactose that MSNF carries, at [`STD_LACTOSE_IN_MSNF`]
 - `other_solids` as the remainder, the listing's 1.3% water and 0.1% more, such as emulsifier
@@ -398,45 +451,129 @@ are cocoa butter, and nearly all the protein is milk's, as expected of white cho
 ## Lindt EXCELLENCE 70% Cacao Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 70, "total_fat": 40, "sugars": 30 } }
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "DarkChocolate",
+    "serving_size": { "grams": 40 },
+    "total_fat": 16,
+    "carbohydrates": { "total": 19, "fiber": 5, "sugars": 12 },
+    "protein": 4,
+    "cacao_solids": { "min": 70 }
+  }
+}
 ```
 
-70% cocoa solids from the label. From [nutrition facts
-table](https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g): 16g/40g fat =>
-40% cocoa butter, 12g/40g sugars => 30% sugar.
+From the [nutrition facts
+table](https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g), which declares
+_"CACAO SOLIDS: 70% MINIMUM"_.
 
 ## Lindt EXCELLENCE 85% Cacao Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 85, "total_fat": 45, "sugars": 15 } }
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "DarkChocolate",
+    "serving_size": { "grams": 40 },
+    "total_fat": 18,
+    "carbohydrates": { "total": 15, "fiber": 6, "sugars": 6 },
+    "protein": 5,
+    "cacao_solids": { "min": 85 }
+  }
+}
 ```
 
-85% cocoa solids from the label. From [nutrition facts
-table](https://www.lindt.ca/en/lindt-excellence-85-cacao-dark-chocolate-bar-100g): 18g/40g fat =>
-45% cocoa butter, 6g/40g sugars => 15% sugar.
+From the [nutrition facts
+table](https://www.lindt.ca/en/lindt-excellence-85-cacao-dark-chocolate-bar-100g), which declares
+_"CACAO SOLIDS: 85% MINIMUM"_. The values are sourced from an alternative [No Frills
+listing](https://www.nofrills.ca/en/excellence-85-cacao-dark-chocolate-bar/p/20312527001_EA), from
+a product photo, not the listing's typed table, which appears to have an incorrect _"Fat"_ value.
 
 ## Lindt EXCELLENCE 95% Cacao Dark Chocolate
 
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 95, "total_fat": 57.5, "sugars": 3, "other_solids": 2 }
+  "ChocolateLabelSpec": {
+    "kind": "DarkChocolate",
+    "serving_size": { "grams": 40 },
+    "total_fat": 23,
+    "carbohydrates": { "total": 10, "fiber": 7, "sugars": 1 },
+    "protein": 5,
+    "cacao_solids": { "min": 95 }
+  }
 }
 ```
 
-95% cocoa solids from the label. From [nutrition facts
-table](https://www.lindt.ca/en/lindt-excellence-95-cacao-dark-chocolate-bar-80g): 23g/40g fat =>
-57.5% cocoa butter, 1g/40g sugars => ~3% sugar, other solids 2% by difference.
+From the [nutrition facts
+table](https://www.lindt.ca/en/lindt-excellence-95-cacao-dark-chocolate-bar-80g), which declares
+_"CACAO SOLIDS: 95% MINIMUM"_.
 
 ## Lindt EXCELLENCE 100% Cacao Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "total_fat": 54 } }
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "DarkChocolate",
+    "serving_size": { "grams": 50 },
+    "total_fat": 27,
+    "carbohydrates": { "total": 14, "fiber": 8, "sugars": 0 },
+    "protein": 7,
+    "cacao_solids": { "actual": 100 }
+  }
+}
 ```
 
-100% cocoa solids from the label. From the [nutrition facts
-table](https://www.lindt.ca/en/lindt-excellence-100-cacao-bar-50g): 27g/50g fat => 54% cocoa butter,
-0g sugars.
+From the [nutrition facts table](https://www.lindt.ca/en/lindt-excellence-100-cacao-bar-50g), which
+declares _"CACAO SOLIDS: 100%"_.
+
+## Lindt Classic Milk Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "MilkChocolate",
+    "serving_size": { "grams": 100 },
+    "total_fat": 32,
+    "carbohydrates": { "available": 56, "sugars": 55 },
+    "protein": 7,
+    "cacao_solids": { "min": 30 },
+    "milk_solids": { "min": 20 }
+  }
+}
+```
+
+Sold as [_Classic Recipe_](https://www.lindt.co.uk/lindt-classic-recipe-milk-chocolate-100g) in the
+UK and as [_SWISS CLASSIC_](https://www.lindt.ca/en/lindt-swiss-classic-milk-chocolate-bar-100g) in
+Canada, where its [label](https://www.staples.ca/products/892120-en-lindt-swiss-classic-bar-milk)
+lists matching ingredients, which add lactose and barley malt extract to the milk powders. From the
+UK [product page](https://www.lindt.co.uk/lindt-classic-recipe-milk-chocolate-100g), per 100 g,
+with _"Cocoa : 30% minimum. Milk solids : 20% minimum"_.
+
+The UK label gives no fiber, so the cacao minimum stands in for the cacao solids. The Canadian
+label's 1 g of fiber per 30 g covers 1.7-5.0 g per 100 g once rounded, too coarse to estimate them
+from. The added lactose counts as sucrose.
+
+## Lindt Classic White Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "WhiteChocolate",
+    "serving_size": { "grams": 40 },
+    "total_fat": 14,
+    "carbohydrates": { "total": 22, "fiber": 0, "sugars": 22 },
+    "protein": 3
+  }
+}
+```
+
+Sold as _SWISS CLASSIC_ in Canada. From the [product
+page](https://www.lindt.ca/en/lindt-swiss-classic-white-chocolate-bar-100g)'s label.
 
 ## Valrhona Guanaja 70% Dark Chocolate
 
@@ -570,8 +707,8 @@ The values are taken from the spec sheet, which writes its decimals with commas:
   _"cocoa mass 11,0%"_
 - `milk_solids` from _"Dry milk solids 21,8%"_, corroborated by _"whole milk powder 22,5%"_
 - `milk_fat` from _"Milkfat 6,0%"_
-- `cocoa_butter` as 35,1% less _"Dry fatfree cocoa solids 4,9%"_, corroborated by _"TOTAL FAT
-  CONTENT 36,2%"_ less the milkfat
+- `cocoa_butter` as _"TOTAL FAT CONTENT 36,2%"_ less the milkfat, corroborated by 35,1% less
+  _"Dry fatfree cocoa solids 4,9%"_
 - `sugars` from _"sugar 42,0%"_
 - `other_solids` the remainder from the above
 
@@ -621,7 +758,7 @@ milk solids"_, _"35.5% Fat %"_ (off by 0.2%).
   "ChocolateSpec": {
     "cacao_solids": 42.2,
     "milk_solids": 20.4,
-    "split_fats": { "cocoa_butter": 32.3, "milk_fat": 4.1 },
+    "split_fats": { "cocoa_butter": 32.2, "milk_fat": 4.1 },
     "sugars": 36,
     "other_solids": 1.4
   }
@@ -639,8 +776,8 @@ The values are taken from the spec sheet:
 - `milk_solids` from _"Dry milk solids 20.4%"_, corroborated by _"whole milk powder 14.5%"_ plus
   _"skimmed milk powder 6.0%"_
 - `milk_fat` from _"Milkfat 4.1%"_
-- `cocoa_butter` as 42.2% less _"Dry fatfree cocoa solids 9.9%"_, corroborated by _"TOTAL FAT
-  CONTENT 36.3%"_ less the milkfat
+- `cocoa_butter` as _"TOTAL FAT CONTENT 36.3%"_ less the milkfat, corroborated by 42.2% less
+  _"Dry fatfree cocoa solids 9.9%"_ (off by 0.1%)
 - `sugars` from _"sugar 36.0%"_
 - `other_solids` the remainder from the above
 
@@ -655,7 +792,7 @@ Dry milk solids"_, _"36.3% Fat %"_.
   "ChocolateSpec": {
     "cacao_solids": 40.5,
     "milk_solids": 25.5,
-    "split_fats": { "cocoa_butter": 33.9, "milk_fat": 5.2 },
+    "split_fats": { "cocoa_butter": 33.8, "milk_fat": 5.2 },
     "sugars": 33,
     "other_solids": 1
   }
@@ -673,8 +810,8 @@ The values are taken from the spec sheet:
 - `milk_solids` from _"Dry milk solids 25.5%"_, corroborated by _"whole milk powder 19.0%"_ plus
   _"skimmed milk powder 7.5%"_
 - `milk_fat` from _"Milkfat 5.2%"_
-- `cocoa_butter` as 40.5% less _"Dry fatfree cocoa solids 6.6%"_, corroborated by _"TOTAL FAT
-  CONTENT 39.0%"_ less the milkfat
+- `cocoa_butter` as _"TOTAL FAT CONTENT 39.0%"_ less the milkfat, corroborated by 40.5% less
+  _"Dry fatfree cocoa solids 6.6%"_ (off by 0.1%)
 - `sugars` from _"sugar 33.0%"_
 - `other_solids` the remainder from the above
 
@@ -732,7 +869,7 @@ The values are taken from the spec sheet:
 - `cacao_solids` from _"Dry cocoa solids 49.4%"_, corroborated by _"cocoa mass 43.0%"_ plus
   _"cocoa butter 7.0%"_
 - `total_fat` from _"TOTAL FAT 30.3 g"_, corroborated by 49.4% less _"Dry fatfree cocoa solids
-  19.2%"_
+  19.2%"_ (off by 0.1%)
 - `sugars` from _"sugar 49.5%"_
 - `other_solids` the remainder from the above
 
@@ -772,6 +909,48 @@ couverture. The values are taken from the spec sheet:
 
 These are in agreement with the product page's _"Min Cocoa Solids: 28%"_.
 
+## Green & Black's Organic Milk Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "MilkChocolate",
+    "serving_size": { "grams": 100 },
+    "total_fat": 36,
+    "carbohydrates": { "available": 48, "fiber": 2.8, "sugars": 46 },
+    "protein": 9.8,
+    "cacao_solids": { "min": 37 },
+    "milk_solids": { "min": 24 }
+  }
+}
+```
+
+From the [Ocado
+listing](https://www.ocado.com/products/green-black-s-organic-milk-chocolate-bar/15055011) of the UK
+bar, with _"COCOA SOLIDS 37% MINIMUM, MILK SOLIDS 24% MINIMUM"_.
+
+## Green & Black's Organic White Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "WhiteChocolate",
+    "serving_size": { "grams": 100 },
+    "total_fat": 38,
+    "carbohydrates": { "available": 51, "fiber": 0, "sugars": 51 },
+    "protein": 7.9,
+    "cacao_solids": { "min": 30 },
+    "milk_solids": { "min": 26 }
+  }
+}
+```
+
+From the [Ocado
+listing](https://www.ocado.com/products/green-black-s-organic-white-chocolate-bar/13811011) of the
+UK bar, with _"minimum Cocoa Solids 30 %, minimum Milk Solids 26 %"_.
+
 ## USDA Unsweetened Cocoa Powder
 
 ```json
@@ -808,32 +987,60 @@ alkali](https://fdc.nal.usda.gov/food-details/170657/nutrients)
 ## Ghirardelli 100% Unsweetened Cocoa Powder
 
 ```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 16.67 } }
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "CocoaPowder",
+    "serving_size": { "grams": 6 },
+    "total_fat": 1,
+    "carbohydrates": { "total": 3, "fiber": 2, "sugars": 0 },
+    "protein": 1
+  }
+}
 ```
 
-100% cocoa solids from the label. From the [nutrition facts
-table](https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs):
-1g/6g fat => 16.67% cocoa butter, 0g sugars.
+From the [nutrition facts
+table](https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs).
+The powder is natural, _"non-alkalized"_.
 
 ## Baker's Unsweetened Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "total_fat": 53.3 } }
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "DarkChocolate",
+    "serving_size": { "grams": 15 },
+    "total_fat": 8,
+    "carbohydrates": { "total": 5, "fiber": 3, "sugars": 0 },
+    "protein": 2
+  }
+}
 ```
 
-100% cacao solids from the ingredients list. From the [nutrition facts
-table](https://www.kraftheinz.com/en-CA/bakers/products/00066188008405-100-pure-unsweetened-chocolate-baking-bar):
-8g/15g fat => 53.3% cocoa butter, 0g sugars.
+From the [nutrition facts
+table](https://www.kraftheinz.com/en-CA/bakers/products/00066188008405-100-pure-unsweetened-chocolate-baking-bar).
 
 ## Hershey's 100% Natural Unsweetened Cocoa Powder
 
 ```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 10 } }
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "CocoaPowder",
+    "serving_size": { "grams": 5 },
+    "total_fat": 0.5,
+    "carbohydrates": { "total": 3, "fiber": 2, "sugars": 0 },
+    "protein": 1
+  }
+}
 ```
 
-100% cocoa solids from the label. From the [nutrition facts
-table](https://www.hersheyland.com/products/hersheys-cocoa-100-cacao-natural-unsweetened-8-oz-can.html):
-0.5g/5g fat => 10% cocoa butter, 0g sugars.
+From the nutrition facts on the Canadian [Walmart.ca
+listing](https://www.walmart.ca/en/ip/HERSHEY-S-Unsweetened-Cocoa-Powder-Natural-and-Organic-226-g/6000197192541),
+which describes the powder as _"natural, non-alkalized"_. The US [product
+page](https://www.hersheyland.com/products/hersheys-cocoa-100-cacao-natural-unsweetened-8-oz-can.html)
+gives the same figures without the fiber, and the protein as _"<1g"_.
 
 ## Valrhona Unsweetened Cocoa Powder
 
@@ -865,12 +1072,21 @@ to be water and the ash introduced by the Dutch processing: 3% is the standard c
 ## Purest Natural Cocoa Powder
 
 ```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 12.5 } }
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "CocoaPowder",
+    "serving_size": { "grams": 12 },
+    "total_fat": 1.5,
+    "carbohydrates": { "total": 6, "fiber": 4, "sugars": 0 },
+    "protein": 2
+  }
+}
 ```
 
-From the nutrition facts table in a [vendor
-listing](https://www.amazon.ca/PUREST-NATURAL-Cocoa-Powder-300g/dp/B07F42XJLJ): _"Per 2 tbs (12g),
-Fat 1.5g"_, which is 12.5% fat, modeled as `cocoa_butter`.
+From the nutrition facts on the [Amazon.ca
+listing](https://www.amazon.ca/PUREST-NATURAL-Cocoa-Powder-300g/dp/B07F42XJLJ). The only ingredient
+listed is _"NATURAL COCOA"_.
 
 ## Callebaut Botanical Extra Brute Cocoa Powder
 

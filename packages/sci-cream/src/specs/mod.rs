@@ -45,14 +45,15 @@ pub mod stabilizer;
 pub mod sweetener;
 pub mod units;
 
+// `chocolate` and `dairy` are globbed by submodule, as their `label` modules would clash
 pub use alcohol::*;
 pub use alias::*;
-pub use chocolate::*;
+pub use chocolate::{chocolate::*, cocoa_powder::*, label::*, util::*};
 pub use composite::*;
-pub use dairy::*;
+pub use dairy::{label::*, sheet::*, simple::*};
 pub use egg::*;
 pub use emulsifier::*;
-pub use entry::SpecEntry;
+pub use entry::*;
 pub use fruit::*;
 pub use full::*;
 pub use ingredient::*;

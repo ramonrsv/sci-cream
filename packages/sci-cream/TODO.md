@@ -57,6 +57,14 @@
       is smaller than the scatter within each kind: 1.7 points for protein against 2.0 for powders.
 - [ ] Consider modeling the sugars `STD_SUGARS_IN_COCOA_SOLIDS` measures, today only a derivation
       basis. `ChocolateSpec`'s `sugars` must read as added-only; `Sugars::other` blocks POD/PAC.
+- [ ] Explore "cacao" as the umbrella term for chocolates and cocoa powders, instead of "chocolate",
+      as `constants::composition::cacao` and the FDA's Part 163, "Cacao Products", already use it.
+      It would reach `Category::Chocolate`, mirrored by the app's database enum, `specs::chocolate`,
+      `ChocolateLabelSpec`, `ChocolateKind`, the docs' chocolate chapter, and `chocolates.md`.
+- [ ] Consider checking that a `ChocolateLabelSpec`'s composed protein is within a tolerance of the
+      label's, which actual declarations leave unchecked; see the `@todo` in its `to_composition`.
+- [ ] Review the 'Lindt Classic Milk Chocolate' entry, which counts its added lactose as sucrose and
+      so overstates its POD, though `specs::chocolate` says added lactose needs a `CompositeSpec`.
 - [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
 - [ ] Add wine ingredients, and considered adding evaporated wine - how to handle, parametric?
 - [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '\* [Evap 15]', etc.
@@ -83,6 +91,8 @@
 - [ ] Model the minerals of eggs, nuts, and fruits, which their specs leave in `others`. `NutSpec`
       and `FruitSpec` take carbohydrate, so their ash is what the solids leave beside it, protein,
       and fat, as USDA's proximates sum; `EggSpec` takes none, so eggs need a sourced ash fraction.
+- [ ] Consider bounding `EggSpec`'s other solids, e.g. 0-10%; `water + fat + protein <= 100` allows
+      for their typical 2-3% but leaves them unbounded. See the `@todo` in its `to_composition`.
 - [ ] Derive the milk salts' PAC from the dissolved share of `MilkMinerals`, not all the ash, as
       micellar calcium and phosphate don't depress the freezing point.
 - [ ] Revisit `DairyLabelSpec`'s 2% water floor, which keeps label sugars and protein exact by

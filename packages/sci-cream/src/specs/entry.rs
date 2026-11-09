@@ -131,7 +131,7 @@ pub(crate) mod tests {
 
     #[test]
     fn resolve_spec_entry_into_ingredient() {
-        let db = &*EMBEDDED_DB;
+        let db = &*VARIANTS_DB;
 
         SPEC_ENTRIES.iter().for_each(|(_, entry)| {
             let expected_ingredient = match entry {

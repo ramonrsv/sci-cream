@@ -1,0 +1,258 @@
+[
+  {
+    "name": "USDA Dark Chocolate, 45-59% Cacao Solids (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "DarkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 31.3,
+      "carbohydrates": { "total": 61.2, "fiber": 7, "sugars": 47.9 },
+      "protein": 4.88
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/170271/nutrients"
+  },
+  {
+    "name": "USDA Dark Chocolate, 60-69% Cacao Solids (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "DarkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 38.3,
+      "carbohydrates": { "total": 52.4, "fiber": 8, "sugars": 36.7 },
+      "protein": 6.12
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/170272/nutrients"
+  },
+  {
+    "name": "USDA Dark Chocolate, 70-85% Cacao Solids (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "DarkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 42.6,
+      "carbohydrates": { "total": 45.9, "fiber": 10.9, "sugars": 24 },
+      "protein": 7.79
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/170273/nutrients"
+  },
+  {
+    "name": "USDA Milk Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "MilkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 29.7,
+      "carbohydrates": { "total": 59.4, "fiber": 3.4, "sugars": 51.5 },
+      "protein": 7.65
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/167587/nutrients"
+  },
+  {
+    "name": "USDA White Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "WhiteChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 32.1,
+      "carbohydrates": { "total": 59.2, "fiber": 0.2, "sugars": 59 },
+      "protein": 5.87
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/167571/nutrients"
+  },
+  {
+    "name": "USDA Unsweetened Cocoa Powder (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "CocoaPowder",
+      "serving_size": { "grams": 100 },
+      "total_fat": 13.7,
+      "carbohydrates": { "total": 57.9, "fiber": 37, "sugars": 1.75 },
+      "protein": 19.6
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/169593/nutrients"
+  },
+  {
+    "name": "USDA Unsweetened Cocoa Powder, Processed with Alkali (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "CocoaPowder",
+      "serving_size": { "grams": 100 },
+      "total_fat": 13.1,
+      "carbohydrates": { "total": 58.3, "fiber": 29.8, "sugars": 1.76 },
+      "protein": 18.1,
+      "dutch_processed": true
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/169594/nutrients"
+  },
+  {
+    "name": "USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "CocoaPowder",
+      "serving_size": { "grams": 100 },
+      "total_fat": 23.7,
+      "carbohydrates": { "total": 49.7, "fiber": 33.9, "sugars": 1.53 },
+      "protein": 16.8,
+      "dutch_processed": true
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/170657/nutrients"
+  },
+  {
+    "name": "Callebaut 811 Dark Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "DarkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 36.6,
+      "carbohydrates": { "available": 45.8, "fiber": 8.1, "sugars": 43.1 },
+      "protein": 5.1
+    },
+    "comments": "https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Dark-Callets-1kg-%28811-E1-U68%29.pdf"
+  },
+  {
+    "name": "Callebaut 60-40-38 Dark Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "DarkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 38.8,
+      "carbohydrates": { "available": 40.1, "fiber": 9.7, "sugars": 37 },
+      "protein": 6.2
+    },
+    "comments": "https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Dark-604038-%2860-40-38NV-01B%29.pdf"
+  },
+  {
+    "name": "Callebaut 70-30-38 Dark Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "DarkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 38.9,
+      "carbohydrates": { "available": 30.8, "fiber": 14, "sugars": 26.3 },
+      "protein": 8.8
+    },
+    "comments": "https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Extra-Bitter-Callets-10kg-%2870-30-38NV-01B%29.pdf"
+  },
+  {
+    "name": "Callebaut 823 Milk Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "MilkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 36.2,
+      "carbohydrates": { "available": 50.9, "fiber": 2.1, "sugars": 49.9 },
+      "protein": 7
+    },
+    "comments": "https://slrsupplies.com/wp-content/uploads/2021/02/Choco-BLOCK-823-Callebaut-823NV.pdf"
+  },
+  {
+    "name": "Callebaut 665 Milk Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "MilkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 35.7,
+      "carbohydrates": { "available": 51.1, "fiber": 1.1, "sugars": 49.8 },
+      "protein": 8.1
+    },
+    "comments": "https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Milk-665-%28665NV-01B%29.pdf"
+  },
+  {
+    "name": "Callebaut Power 41 Milk Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "MilkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 36.3,
+      "carbohydrates": { "available": 46.2, "fiber": 4.1, "sugars": 44.7 },
+      "protein": 8.5
+    },
+    "comments": "https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Power-41-%28841-E4-U71%29.pdf"
+  },
+  {
+    "name": "Callebaut Arriba Milk Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "MilkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 39,
+      "carbohydrates": { "available": 44.4, "fiber": 2.8, "sugars": 43.3 },
+      "protein": 9.1
+    },
+    "comments": "https://www.sephra.com/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Arriba-%28CHM-Q415AR-E4-U70%29.pdf"
+  },
+  {
+    "name": "Callebaut W2 White Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "WhiteChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 35.8,
+      "carbohydrates": { "available": 55.3, "fiber": 0, "sugars": 54.9 },
+      "protein": 6
+    },
+    "comments": "https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-White-Callets-1kg-%28W2-E1-U68%20%29.pdf"
+  },
+  {
+    "name": "Mona Lisa Dark Chocolate Curved Shavings (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "DarkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 30.3,
+      "carbohydrates": { "available": 52.3, "fiber": 8, "sugars": 49.7 },
+      "protein": 5.1
+    },
+    "comments": "https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Dark-Chocolate-Curved-Shavings%20%28CHD-SV-U4C-E0-74A%29.pdf"
+  },
+  {
+    "name": "Mona Lisa Milk Chocolate Blossoms (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "MilkChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 26.9,
+      "carbohydrates": { "available": 60.7, "fiber": 2.7, "sugars": 59.4 },
+      "protein": 6.5
+    },
+    "comments": "https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Milk-Blossoms-1kg%20%28CHM-BS-9U15-E0-07B%29.pdf"
+  },
+  {
+    "name": "Callebaut Botanical Extra Brute Cocoa Powder (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "CocoaPowder",
+      "serving_size": { "grams": 100 },
+      "total_fat": 23,
+      "carbohydrates": { "available": 8.8, "fiber": 29, "sugars": 0.4 },
+      "protein": 18.9,
+      "dutch_processed": true
+    },
+    "comments": "https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Botanical-Extra-Brute-Cocoa-Powder-1kg%20%28DCP-22BOEXB-E0-89B%29.pdf"
+  },
+  {
+    "name": "Callebaut Zestina Plein Arome Cocoa Powder (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "CocoaPowder",
+      "serving_size": { "grams": 100 },
+      "total_fat": 23,
+      "carbohydrates": { "available": 9.1, "fiber": 29.8, "sugars": 0.4 },
+      "protein": 19.5,
+      "dutch_processed": true
+    },
+    "comments": "https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Zestina-Plein-Arome-1kg%20%28DCP-22ZEPLA-E0-89B%29.pdf"
+  },
+  {
+    "name": "Callebaut 10/12 Natural Cocoa Powder (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "CocoaPowder",
+      "serving_size": { "grams": 100 },
+      "total_fat": 11,
+      "carbohydrates": { "total": 57.6, "fiber": 36.2, "sugars": 0.5 },
+      "protein": 22.9
+    },
+    "comments": "https://linneasinc.com/wp-content/uploads/2025/11/6-NCP1012-SPEC.pdf"
+  }
+]

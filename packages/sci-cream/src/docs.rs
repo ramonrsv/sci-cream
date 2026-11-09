@@ -28,7 +28,10 @@ use crate::{
             STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_PROTEIN_IN_MSNF, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN,
         },
     },
-    specs::{ChocolateFat, ChocolateSpec, CocoaPowderSpec, DairyLabelSpec, DairySheetSpec, DairySimpleSpec},
+    specs::{
+        ChocolateFat, ChocolateLabelSpec, ChocolateSpec, CocoaPowderSpec, DairyLabelSpec, DairySheetSpec,
+        DairySimpleSpec,
+    },
 };
 
 /// Main recipe as `OwnedLightRecipe` for doc tests
@@ -110,7 +113,10 @@ pub mod ingredients {
                 milk::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MPI, STD_PROTEIN_IN_MSNF},
             },
         },
-        specs::{ChocolateSpec, CocoaPowderSpec, CompositeSpec, NutSpec, estimate_chocolate_msnf, estimate_cocoa_snf},
+        specs::{
+            ChocolateLabelSpec, ChocolateSpec, CocoaPowderSpec, CompositeSpec, NutSpec,
+            estimate_chocolate_cocoa_snf_from_fiber, estimate_chocolate_snf_split_from_protein_by_fiber,
+        },
     };
 }
 

@@ -38,6 +38,8 @@ describe("specDocLinks", () => {
 
   test("kind rules add their chapters", () => {
     expect(labelsFor("70% Dark Chocolate")).toContain("Chocolate");
+    expect(labelsFor("Cocoa Powder, 10/12% Fat")).toContain("Chocolate");
+    expect(labelsFor("Lindt EXCELLENCE 70% Cacao Dark Chocolate")).toContain("Chocolate");
     expect(labelsFor("Sucrose")).toContain("Sweeteners");
     expect(labelsFor("Sucrose")).toContain("PAC, AFP, FPDF, SE");
     expect(labelsFor("3.25% Milk")).toContain("Dairy");

@@ -76,7 +76,7 @@ fn compare_specs_skim_milk() {
         ("Simple", "0% Milk"),
         ("Goff & Hartel", "Goff & Hartel Skim Milk"),
         ("USDA", "USDA Fat-Free (Skim) Milk"),
-        ("USDA Label", "USDA Fat-Free (Skim) Milk (Label)"),
+        ("USDA (Label)", "USDA Fat-Free (Skim) Milk (Label)"),
         ("Sealtest", "Sealtest 0% Skim Milk"),
         ("Lactantia", "Lactantia PurFiltre Skim Milk"),
     ]
@@ -108,7 +108,7 @@ fn compare_specs_2_milk() {
     let sources = [
         ("Simple", "2% Milk"),
         ("USDA", "USDA 2% Reduced-Fat Milk"),
-        ("USDA Label", "USDA 2% Reduced-Fat Milk (Label)"),
+        ("USDA (Label)", "USDA 2% Reduced-Fat Milk (Label)"),
         ("Sealtest", "Sealtest 2% Milk"),
         ("Lactantia", "Lactantia PurFiltre 2% Milk"),
     ]
@@ -128,7 +128,7 @@ fn compare_specs_whole_milk() {
         ("Simple", "3.25% Milk"),
         ("Goff & Hartel", "Goff & Hartel 3% Milk"),
         ("USDA", "USDA Whole Milk"),
-        ("USDA Label", "USDA Whole Milk (Label)"),
+        ("USDA (Label)", "USDA Whole Milk (Label)"),
         ("Sealtest", "Sealtest 3.25% Milk"),
         ("Lactantia", "Lactantia PurFiltre 3.25% Milk"),
     ]
@@ -325,7 +325,7 @@ fn compare_specs_half_and_half() {
     let sources = [
         ("Simple", "10% Cream"),
         ("USDA", "USDA Half and Half Cream"),
-        ("USDA Label", "USDA Half and Half Cream (Label)"),
+        ("USDA (Label)", "USDA Half and Half Cream (Label)"),
         ("Sealtest", "Sealtest Half and Half Cream 10%"),
         ("Lactantia", "Lactantia Half and Half Cream 10%"),
     ]
@@ -355,7 +355,7 @@ fn compare_specs_18_cream() {
     let sources = [
         ("Simple", "18% Cream"),
         ("USDA", "USDA Light Cream"),
-        ("USDA Label", "USDA Light Cream (Label)"),
+        ("USDA (Label)", "USDA Light Cream (Label)"),
         ("Sealtest", "Sealtest Table Cream 18%"),
         ("Lactantia", "Lactantia Table Cream 18%"),
     ]
@@ -386,7 +386,7 @@ fn compare_specs_whipping_cream() {
         ("Simple", "35% Cream"),
         ("Goff & Hartel", "Goff & Hartel 35% Cream"),
         ("USDA", "USDA Heavy Cream"),
-        ("USDA Label", "USDA Heavy Cream (Label)"),
+        ("USDA (Label)", "USDA Heavy Cream (Label)"),
         ("Sealtest", "Sealtest Whipping Cream 35%"),
         ("Lactantia", "Lactantia Whipping Cream 35%"),
     ]
@@ -575,7 +575,7 @@ fn compare_specs_skim_evaporated_milk() {
     let sources = [
         ("Goff & Hartel", "Goff & Hartel Condensed Skim Milk, 20% MSNF"),
         ("USDA", "USDA Fat-Free Evaporated Milk"),
-        ("USDA Label", "USDA Fat-Free Evaporated Milk (Label)"),
+        ("USDA (Label)", "USDA Fat-Free Evaporated Milk (Label)"),
         ("Carnation", "Carnation Fat Free Evaporated Milk"),
     ]
     .map(source_str_to_comp);
@@ -590,7 +590,7 @@ fn compare_specs_skim_evaporated_milk() {
 fn compare_specs_2_evaporated_milk() {
     let sources = [
         ("USDA", "USDA 2% Reduced-Fat Evaporated Milk"),
-        ("USDA Label", "USDA 2% Reduced-Fat Evaporated Milk (Label)"),
+        ("USDA (Label)", "USDA 2% Reduced-Fat Evaporated Milk (Label)"),
         ("Carnation", "Carnation 2% Evaporated Partly Skimmed Milk"),
     ]
     .map(source_str_to_comp);
@@ -620,7 +620,7 @@ fn compare_specs_whole_evaporated_milk() {
     let sources = [
         ("Goff & Hartel", "Goff & Hartel 8% Condensed Milk"),
         ("USDA", "USDA Whole Evaporated Milk"),
-        ("USDA Label", "USDA Whole Evaporated Milk (Label)"),
+        ("USDA (Label)", "USDA Whole Evaporated Milk (Label)"),
         ("Carnation", "Carnation Evaporated Milk"),
     ]
     .map(source_str_to_comp);
@@ -648,7 +648,7 @@ fn compare_specs_whole_evaporated_milk() {
 fn compare_specs_sweetened_condensed_milk() {
     let sources = [
         ("USDA", "USDA Sweetened Condensed Milk"),
-        ("USDA Label", "USDA Sweetened Condensed Milk (Label)"),
+        ("USDA (Label)", "USDA Sweetened Condensed Milk (Label)"),
         ("Goff & Hartel", "Goff & Hartel Sweetened Condensed Milk"),
         ("Eagle Brand", "Eagle Brand Original Sweetened Condensed Milk"),
         ("Carnation", "Carnation Sweetened Condensed Milk (US)"),
@@ -674,7 +674,7 @@ fn compare_specs_skim_milk_powder() {
         ("Simple", "Skimmed Milk Powder"),
         ("Goff & Hartel", "Goff & Hartel Skim Milk Powder"),
         ("USDA", "USDA Skim Milk Powder"),
-        ("USDA Label", "USDA Skim Milk Powder (Label)"),
+        ("USDA (Label)", "USDA Skim Milk Powder (Label)"),
         ("Medallion", "Medallion Skim Milk Powder"),
         ("Theland", "Theland Skim Milk Powder"),
     ]
@@ -692,7 +692,7 @@ fn compare_specs_whole_milk_powder() {
         ("Simple", "Whole Milk Powder"),
         ("Goff & Hartel", "Goff & Hartel Whole Milk Powder"),
         ("USDA", "USDA Whole Milk Powder"),
-        ("USDA Label", "USDA Whole Milk Powder (Label)"),
+        ("USDA (Label)", "USDA Whole Milk Powder (Label)"),
         ("Medallion", "Medallion Whole Milk Powder"),
         ("Theland", "Theland Whole Milk Powder"),
     ]
@@ -786,7 +786,7 @@ fn compare_specs_mpc_85() {
 
 #[test]
 fn compare_specs_sweet_whey() {
-    let sources = [("USDA", "USDA Sweet Whey"), ("USDA Label", "USDA Sweet Whey (Label)")].map(source_str_to_comp);
+    let sources = [("USDA", "USDA Sweet Whey"), ("USDA (Label)", "USDA Sweet Whey (Label)")].map(source_str_to_comp);
 
     let ceiling = KeyCeiling::new(10.0);
 
@@ -800,7 +800,7 @@ fn compare_specs_whey_powder() {
         ("Simple", "Whey Powder"),
         ("Goff & Hartel", "Goff & Hartel Dry Whey"),
         ("USDA", "USDA Sweet Whey Powder"),
-        ("USDA Label", "USDA Sweet Whey Powder (Label)"),
+        ("USDA (Label)", "USDA Sweet Whey Powder (Label)"),
     ]
     .map(source_str_to_comp);
 

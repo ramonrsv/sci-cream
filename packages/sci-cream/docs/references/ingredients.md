@@ -85,3 +85,13 @@
 [^540]: Glenstal Foods. (n.d.). [_Sodium Caseinate_](https://www.glenstalfoods.com/wordpress/wp-content/uploads/2021/01/Glenstal_S-Caseinate.pdf).
 
 [^541]: Rogers & Company Foods. (2025, April). [_Micellar Casein Isolate_](https://rogersfoods.com.au/wp-content/uploads/Micellar-Casein-Isolate-Specifications.pdf).
+
+[^542]: Barry Callebaut. (2024, August). [_Dark Couverture Chocolate 811, Product Specification 811-E1-U68_](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Dark-Callets-1kg-%28811-E1-U68%29.pdf).
+
+[^543]: Barry Callebaut. (2023, March). [_Couverture Milk Chocolate 823, Product Specification 823NVCAL-101_](https://slrsupplies.com/wp-content/uploads/2021/02/Choco-BLOCK-823-Callebaut-823NV.pdf).
+
+[^544]: Barry Callebaut. (2024, August). [_White Chocolate W2, Product Specification W2-E1-U68_](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-White-Callets-1kg-%28W2-E1-U68%20%29.pdf).
+
+[^545]: Barry Callebaut. (2018, April). [_10/12 Natural Cocoa Powder, Product Specification NCP-10C101-CAL-A99_](https://linneasinc.com/wp-content/uploads/2025/11/6-NCP1012-SPEC.pdf).
+
+[^546]: [_Green & Black's Organic Milk Chocolate Bar_](https://www.ocado.com/products/green-black-s-organic-milk-chocolate-bar/15055011). (2026). Ocado.

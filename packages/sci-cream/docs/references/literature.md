@@ -245,3 +245,27 @@
 [^121]: American Dairy Products Institute. (2023). [_Whole Milk Powder Standard_](https://adpi.org/wp-content/uploads/2023/07/Whole-Milk-Powder-Standard-v3.0_2023.pdf).
 
 [^122]: American Dairy Products Institute. (2023). [_Dry Whole Milk Standard_](https://adpi.org/wp-content/uploads/2023/07/Dry-Whole-Milk-Standard-v3.0_2023.pdf).
+
+[^123]: U.S. Food & Drug Administration. (n.d.). [_CFR - Code of Federal Regulations Title 21, Section 101.9 - Nutrition labeling of food_](https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101/subpart-A/section-101.9).
+
+[^124]: Government of Canada. (n.d.). [_Food and Drug Regulations (C.R.C., c. 870), Section B.01.401_](https://laws-lois.justice.gc.ca/eng/regulations/C.R.C.,_c._870/section-B.01.401.html). Justice Laws Website.
+
+[^125]: Canadian Food Inspection Agency. (n.d.). [_Elements within the Nutrition Facts table_](https://inspection.canada.ca/en/food-labels/labelling/industry/nutrition-labelling/elements-within-nutrition-facts-table).
+
+[^126]: The European Parliament & the Council of the European Union. (2011, October). [_Regulation (EU) No 1169/2011_](https://eur-lex.europa.eu/eli/reg/2011/1169/oj). EUR-Lex.
+
+[^127]: The European Parliament & the Council of the European Union. (n.d.). [_Regulation (EU) No 1169/2011_](https://www.legislation.gov.uk/eur/2011/1169/contents). The National Archives.
+
+[^128]: Secretaría de Economía & Secretaría de Salud. (2020, March). [_Modificación a la Norma Oficial Mexicana NOM-051-SCFI/SSA1-2010_](https://dof.gob.mx/2020/SEECO/NOM_051.pdf). Diario Oficial de la Federación.
+
+[^129]: Food Standards Australia New Zealand. (n.d.). [_Australia New Zealand Food Standards Code - Standard 1.1.2 - Definitions used throughout the Code_](https://www.legislation.gov.au/F2015L00385/latest/text). Federal Register of Legislation.
+
+[^130]: Food Standards Australia New Zealand. (n.d.). [_Australia New Zealand Food Standards Code - Standard 1.2.8 - Nutrition information requirements_](https://www.legislation.gov.au/F2015L00395/latest/text). Federal Register of Legislation.
+
+[^131]: Food Standards Australia New Zealand. (n.d.). [_Australia New Zealand Food Standards Code - Schedule 11 - Calculation of values for nutrition information panel_](https://www.legislation.gov.au/F2015L00481/latest/text). Federal Register of Legislation.
+
+[^132]: Codex Alimentarius Commission. (2015). [_Guidelines on Nutrition Labelling (CXG 2-1985)_](https://www.fao.org/input/download/standards/34/CXG_002e_2015.pdf). FAO/WHO.
+
+[^133]: The European Commission. (2012, December). [_Guidance document for competent authorities for the control of compliance with EU legislation with regard to the setting of tolerances for nutrient values declared on a label_](https://food.ec.europa.eu/system/files/2016-10/labelling_nutrition-vitamins_minerals-guidance_tolerances_1212_en.pdf). Health and Consumers Directorate-General.
+
+[^134]: Department of Health. (2003, June). [_The Cocoa and Chocolate Products (England) Regulations 2003_](https://www.legislation.gov.uk/uksi/2003/1659/contents). The National Archives.

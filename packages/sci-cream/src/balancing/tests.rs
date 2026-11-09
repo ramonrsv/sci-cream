@@ -2903,11 +2903,12 @@ fn ratio_band_with_empty_denominator_is_the_value_range() {
 
 #[test]
 fn ratio_band_pins_a_single_source_ratio() {
-    // Only cocoa has CocoaSolids > 0, so CocoaButter : CocoaSolids is pinned to its 16.7 : 80.3
+    // Only cocoa has CocoaSolids > 0, so CocoaButter : CocoaSolids is pinned to its 16.7 : 80.3,
+    // from its label's 1 g of fat per 6 g and the standard 3% water
     let comps = comps_from_names(DAIRY_COCOA_ING);
     let (min, max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
     assert_eq_flt!(min, max);
-    assert_eq_flt!(min, 16.67 / 80.33);
+    assert_eq_flt!(min, (100.0 / 6.0) / (97.0 - 100.0 / 6.0));
 }
 
 #[test]

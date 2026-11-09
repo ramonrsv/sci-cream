@@ -6,7 +6,7 @@ use crate::{
     composition::{Carbohydrates, Composition, PAC, ScaleComponents, SimpleSolids, Solids, Sugars, ToComposition},
     constants::{composition::dairy::milk::STD_LACTOSE_IN_MSNF, pac},
     error::Result,
-    specs::chocolate::util::{calculate_cocoa_hardness, make_cocoa_solids, make_milk_solids, resolve_fats},
+    specs::chocolate::util::{calculate_cocoa_hardness, make_cocoa_solids, make_milk_solids, resolve_chocolate_fats},
     validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_subset},
 };
 
@@ -74,39 +74,112 @@ pub enum ChocolateFat {
 ///
 /// # Examples
 ///
-/// (Lindt 70% Cacao Dark Chocolate, 2025)[^507] per 40g serving:
+/// A generic 70% dark chocolate, with the cacao solids its name advertises:
 /// - Cacao solids: 70%
-/// - Cocoa butter: 16g fat => 40%
-/// - Sugars: 12g => 30%
+/// - Cocoa butter: by default [`cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS`] of the cacao solids
+/// - Sugars: the remaining 30%
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::asserts::assert_eq_flt;
 /// use sci_cream::{
 ///     composition::{CompKey, ToComposition},
-///     specs::{ChocolateFat, ChocolateSpec}
+///     specs::ChocolateSpec
 /// };
 ///
 /// let comp = ChocolateSpec {
 ///     cacao_solids: 70.0,
 ///     milk_solids: None,
-///     fat: Some(ChocolateFat::Total(40.0)),
+///     fat: None,
 ///     sugars: Some(30.0),
 ///     other_solids: None,
 /// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Sucrose), 30.0);
 /// assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
-/// assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
-/// assert_eq!(comp.get(CompKey::CocoaSolids), 30.0);
+/// assert_eq_flt!(comp.get(CompKey::CocoaButter), 39.9);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 30.1);
 ///
-/// assert_eq_flt!(comp.get(CompKey::Energy), 545.52);
-/// assert_eq!(comp.get(CompKey::TotalFats), 40.0);
-/// assert_eq!(comp.get(CompKey::TotalProteins), 7.05);
-/// assert_eq!(comp.get(CompKey::TotalFiber), 11.34);
+/// assert_eq_flt!(comp.get(CompKey::Energy), 544.8384);
+/// assert_eq_flt!(comp.get(CompKey::TotalFats), 39.9);
+/// assert_eq_flt!(comp.get(CompKey::TotalProteins), 7.0735);
+/// assert_eq_flt!(comp.get(CompKey::TotalFiber), 11.3778);
 /// # Ok(()) }
 /// ```
-#[doc = include_str!("../../../docs/references/index/507.md")]
+///
+/// (Callebaut 811 Dark Chocolate, 2024)[^542]:
+/// - Cacao solids: _"Dry cocoa solids 56.0%"_
+/// - Cocoa butter: _"TOTAL FAT CONTENT 36.6%"_, as it has no milk fat
+/// - Sugars: _"sugar 43.0%"_
+/// - Other solids: the remaining 1%
+///
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// # use sci_cream::asserts::assert_eq_flt;
+/// # use sci_cream::{composition::{CompKey, ToComposition}, specs::{ChocolateFat, ChocolateSpec}};
+/// #
+/// let comp = ChocolateSpec {
+///     cacao_solids: 56.0,
+///     milk_solids: None,
+///     fat: Some(ChocolateFat::Total(36.6)),
+///     sugars: Some(43.0),
+///     other_solids: Some(1.0),
+/// }.to_composition()?;
+///
+/// assert_eq!(comp.get(CompKey::Sucrose), 43.0);
+/// assert_eq!(comp.get(CompKey::CacaoSolids), 56.0);
+/// assert_eq!(comp.get(CompKey::CocoaButter), 36.6);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 19.4);
+/// assert_eq!(comp.get(CompKey::OtherSNFS), 1.0);
+///
+/// assert_eq_flt!(comp.get(CompKey::Energy), 543.7696);
+/// assert_eq!(comp.get(CompKey::TotalFats), 36.6);
+/// assert_eq_flt!(comp.get(CompKey::TotalProteins), 4.559);
+/// assert_eq_flt!(comp.get(CompKey::TotalFiber), 7.3332);
+/// # Ok(()) }
+/// ```
+///
+/// (Callebaut 823 Milk Chocolate, 2023)[^543]:
+/// - Cacao solids: _"Dry cocoa solids 35,1%"_
+/// - Cocoa butter: _"TOTAL FAT CONTENT 36,2%"_ less the milk fat => 30.2%
+/// - Milk solids: _"Dry milk solids 21,8%"_
+/// - Milk fat: _"Milkfat 6,0%"_
+/// - Sugars: _"sugar 42,0%"_
+/// - Other solids: the remaining 1.1%
+///
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// # use sci_cream::asserts::{assert_eq_4dp, assert_eq_flt};
+/// # use sci_cream::{composition::{CompKey, ToComposition}, specs::{ChocolateFat, ChocolateSpec}};
+/// #
+/// let comp = ChocolateSpec {
+///     cacao_solids: 35.1,
+///     milk_solids: Some(21.8),
+///     fat: Some(ChocolateFat::Split { cocoa_butter: 30.2, milk_fat: 6.0 }),
+///     sugars: Some(42.0),
+///     other_solids: Some(1.1),
+/// }.to_composition()?;
+///
+/// assert_eq!(comp.get(CompKey::Sucrose), 42.0);
+/// assert_eq_flt!(comp.get(CompKey::CacaoSolids), 35.1);
+/// assert_eq!(comp.get(CompKey::CocoaButter), 30.2);
+/// assert_eq_4dp!(comp.get(CompKey::CocoaSolids), 4.9);
+/// assert_eq_4dp!(comp.get(CompKey::OtherSNFS), 1.1);
+///
+/// assert_eq!(comp.get(CompKey::MilkSolids), 21.8);
+/// assert_eq!(comp.get(CompKey::MilkFat), 6.0);
+/// assert_eq_flt!(comp.get(CompKey::MSNF), 15.8);
+/// assert_eq_flt!(comp.get(CompKey::Lactose), 8.611);
+///
+/// assert_eq_flt!(comp.get(CompKey::Energy), 562.6456);
+/// assert_eq_flt!(comp.get(CompKey::TotalFats), 36.2);
+/// assert_eq_flt!(comp.get(CompKey::TotalSugars), 50.611);
+/// assert_eq_flt!(comp.get(CompKey::TotalProteins), 7.0765);
+/// assert_eq_flt!(comp.get(CompKey::TotalFiber), 1.8522);
+/// # Ok(()) }
+/// ```
+#[doc = include_str!("../../../docs/references/index/542.md")]
+#[doc = include_str!("../../../docs/references/index/543.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct ChocolateSpec {
@@ -161,7 +234,7 @@ impl ToComposition for ChocolateSpec {
         let milk_solids = milk_solids.unwrap_or(0.0);
         let sugars = sugars.unwrap_or(0.0);
         let other_solids = other_solids.unwrap_or(0.0);
-        let (cocoa_butter, milk_fat) = resolve_fats(cacao_solids, milk_solids, fat);
+        let (cocoa_butter, milk_fat) = resolve_chocolate_fats(cacao_solids, milk_solids, fat);
 
         verify_are_positive(&[cacao_solids, milk_solids, cocoa_butter, milk_fat, sugars, other_solids])?;
         verify_is_subset(cocoa_butter, cacao_solids, "cocoa_butter <= cacao_solids")?;
@@ -206,7 +279,7 @@ pub(crate) mod tests {
 
     use super::*;
     use crate::{
-        composition::{CompKey, Fats, Fibers, SimpleProteins, SolidsBreakdown},
+        composition::{CompKey, Fats, Fibers, MilkProteins, SimpleProteins, SolidsBreakdown},
         constants::composition::{
             cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS,
             dairy::{
@@ -218,258 +291,6 @@ pub(crate) mod tests {
         ingredient::Category,
         specs::IngredientSpec,
     };
-
-    fn empty_chocolate_spec() -> ChocolateSpec {
-        ChocolateSpec {
-            cacao_solids: 0.0,
-            milk_solids: None,
-            fat: None,
-            sugars: None,
-            other_solids: None,
-        }
-    }
-
-    pub(crate) const ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE_STR: &str = r#"{
-      "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
-      "category": "Chocolate",
-      "ChocolateSpec": {
-        "cacao_solids": 70,
-        "total_fat": 40,
-        "sugars": 30
-      }
-    }"#;
-
-    pub(crate) static ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE: LazyLock<IngredientSpec> =
-        LazyLock::new(|| IngredientSpec {
-            name: "Lindt EXCELLENCE 70% Cacao Dark Chocolate".to_string(),
-            category: Category::Chocolate,
-            spec: ChocolateSpec {
-                cacao_solids: 70.0,
-                fat: Some(ChocolateFat::Total(40.0)),
-                sugars: Some(30.0),
-                ..empty_chocolate_spec()
-            }
-            .into(),
-        });
-
-    pub(crate) static COMP_LINDT_70_DARK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
-        Composition::new()
-            .energy(545.52)
-            .solids(
-                Solids::new()
-                    .cocoa(
-                        SolidsBreakdown::new()
-                            .fats(Fats::new().total(40.0).saturated(24.0))
-                            .carbohydrates(
-                                Carbohydrates::new()
-                                    .fiber(Fibers::new().other(11.34))
-                                    .others_from_total(20.67)
-                                    .unwrap(),
-                            )
-                            .proteins(SimpleProteins::from_total(7.05))
-                            .minerals(2.28),
-                    )
-                    .other(
-                        SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(30.0))),
-                    ),
-            )
-            .pod(30.0)
-            .pac(PAC::new().sugars(30.0).hardness_factor(90.0))
-    });
-
-    #[test]
-    fn to_composition_chocolate_spec_lindt_70_dark_chocolate() {
-        let comp = asset_composition(&ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE);
-
-        comp.assert_all_keys(&[
-            (CompKey::Energy, 545.52),
-            (CompKey::CacaoSolids, 70.0),
-            (CompKey::CocoaButter, 40.0),
-            (CompKey::CocoaSolids, 30.0),
-            (CompKey::OtherSNFS, 0.0),
-            (CompKey::TotalSolids, 100.0),
-            (CompKey::TotalFats, 40.0),
-            (CompKey::TotalSNF, 60.0),
-            (CompKey::TotalSNFS, 30.0),
-            (CompKey::TotalProteins, 7.05),
-            (CompKey::TotalMinerals, 2.28),
-            (CompKey::TotalCarbohydrates, 50.67),
-            (CompKey::TotalFiber, 11.34),
-            (CompKey::TotalSugars, 30.0),
-            (CompKey::Sucrose, 30.0),
-            (CompKey::TotalSweeteners, 30.0),
-            (CompKey::POD, 30.0),
-            (CompKey::NetPAC, -60.0),
-            (CompKey::TotalPAC, 30.0),
-            (CompKey::PACsgr, 30.0),
-            (CompKey::HF, 90.0),
-            (CompKey::SaturatedFat, 24.0),
-            (CompKey::TransFat, 0.0),
-        ]);
-
-        // Added sugars in chocolates is considered part of total sweeteners, not of Cacao Solids
-        assert_eq!(comp.get(CompKey::CacaoSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
-
-        assert_eq!(comp.solids.cocoa.minerals, 2.28);
-    }
-
-    pub(crate) const ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS_STR: &str = r#"{
-      "name": "Lindt EXCELLENCE 95% Cacao Dark Chocolate",
-      "category": "Chocolate",
-      "ChocolateSpec": {
-        "cacao_solids": 95,
-        "total_fat": 57.5,
-        "sugars": 3,
-        "other_solids": 2
-      }
-    }"#;
-
-    pub(crate) static ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS: LazyLock<IngredientSpec> =
-        LazyLock::new(|| IngredientSpec {
-            name: "Lindt EXCELLENCE 95% Cacao Dark Chocolate".to_string(),
-            category: Category::Chocolate,
-            spec: ChocolateSpec {
-                cacao_solids: 95.0,
-                milk_solids: None,
-                fat: Some(ChocolateFat::Total(57.5)),
-                sugars: Some(3.0),
-                other_solids: Some(2.0),
-            }
-            .into(),
-        });
-
-    pub(crate) static COMP_LINDT_95_DARK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
-        Composition::new()
-            .energy(611.4)
-            .solids(
-                Solids::new()
-                    .cocoa(
-                        SolidsBreakdown::new()
-                            .fats(Fats::new().total(57.5).saturated(34.5))
-                            .carbohydrates(
-                                Carbohydrates::new()
-                                    .fiber(Fibers::new().other(14.175))
-                                    .others_from_total(25.8375)
-                                    .unwrap(),
-                            )
-                            .proteins(SimpleProteins::from_total(8.8125))
-                            .minerals(2.85),
-                    )
-                    .other(
-                        SolidsBreakdown::new()
-                            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)))
-                            .others(2.0),
-                    ),
-            )
-            .pod(3.0)
-            .pac(PAC::new().sugars(3.0).hardness_factor(119.25))
-    });
-
-    #[test]
-    fn to_composition_chocolate_spec_lindt_95_dark_chocolate_other_solids() {
-        let comp = asset_composition(&ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS);
-
-        comp.assert_all_keys(&[
-            (CompKey::Energy, 611.4),
-            (CompKey::CacaoSolids, 95.0),
-            (CompKey::CocoaButter, 57.5),
-            (CompKey::CocoaSolids, 37.5),
-            (CompKey::OtherSNFS, 2.0),
-            (CompKey::TotalSolids, 100.0),
-            (CompKey::TotalFats, 57.5),
-            (CompKey::TotalSNF, 42.5),
-            (CompKey::TotalSNFS, 39.5),
-            (CompKey::TotalProteins, 8.8125),
-            (CompKey::TotalMinerals, 2.85),
-            (CompKey::TotalCarbohydrates, 28.8375),
-            (CompKey::TotalFiber, 14.175),
-            (CompKey::TotalSugars, 3.0),
-            (CompKey::Sucrose, 3.0),
-            (CompKey::TotalSweeteners, 3.0),
-            (CompKey::POD, 3.0),
-            (CompKey::NetPAC, -116.25),
-            (CompKey::TotalPAC, 3.0),
-            (CompKey::PACsgr, 3.0),
-            (CompKey::HF, 119.25),
-            (CompKey::SaturatedFat, 34.5),
-            (CompKey::TransFat, 0.0),
-        ]);
-
-        assert_eq_flt!(comp.solids.cocoa.minerals, 2.85);
-        assert_eq!(comp.solids.other.others, 2.0);
-    }
-
-    pub(crate) const ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE_STR: &str = r#"{
-      "name": "Lindt EXCELLENCE 100% Cacao Dark Chocolate",
-      "category": "Chocolate",
-      "ChocolateSpec": {
-        "cacao_solids": 100,
-        "total_fat": 54
-      }
-    }"#;
-
-    pub(crate) static ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE: LazyLock<IngredientSpec> =
-        LazyLock::new(|| IngredientSpec {
-            name: "Lindt EXCELLENCE 100% Cacao Dark Chocolate".to_string(),
-            category: Category::Chocolate,
-            spec: ChocolateSpec {
-                cacao_solids: 100.0,
-                fat: Some(ChocolateFat::Total(54.0)),
-                ..empty_chocolate_spec()
-            }
-            .into(),
-        });
-
-    pub(crate) static COMP_LINDT_100_DARK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
-        Composition::new()
-            .energy(586.464)
-            .solids(
-                Solids::new().cocoa(
-                    SolidsBreakdown::new()
-                        .fats(Fats::new().total(54.0).saturated(32.4))
-                        .carbohydrates(
-                            Carbohydrates::new()
-                                .fiber(Fibers::new().other(17.388))
-                                .others_from_total(31.694)
-                                .unwrap(),
-                        )
-                        .proteins(SimpleProteins::from_total(10.81))
-                        .minerals(3.496),
-                ),
-            )
-            .pod(0.0)
-            .pac(PAC::new().hardness_factor(131.4))
-    });
-
-    #[test]
-    fn to_composition_chocolate_spec_lindt_100_dark_chocolate() {
-        let comp = asset_composition(&ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE);
-
-        comp.assert_all_keys(&[
-            (CompKey::Energy, 586.464),
-            (CompKey::CacaoSolids, 100.0),
-            (CompKey::CocoaButter, 54.0),
-            (CompKey::CocoaSolids, 46.0),
-            (CompKey::OtherSNFS, 0.0),
-            (CompKey::TotalSolids, 100.0),
-            (CompKey::TotalFats, 54.0),
-            (CompKey::TotalSNF, 46.0),
-            (CompKey::TotalSNFS, 46.0),
-            (CompKey::TotalProteins, 10.81),
-            (CompKey::TotalMinerals, 3.496),
-            (CompKey::TotalCarbohydrates, 31.694),
-            (CompKey::TotalFiber, 17.388),
-            (CompKey::TotalSweeteners, 0.0),
-            (CompKey::POD, 0.0),
-            (CompKey::NetPAC, -131.4),
-            (CompKey::TotalPAC, 0.0),
-            (CompKey::HF, 131.4),
-            (CompKey::SaturatedFat, 32.4),
-            (CompKey::TransFat, 0.0),
-        ]);
-
-        assert_eq_flt!(comp.solids.cocoa.minerals, 3.496);
-    }
 
     pub(crate) const ING_SPEC_CHOCOLATE_70_DARK_CHOCOLATE_STR: &str = r#"{
       "name": "70% Dark Chocolate",
@@ -486,9 +307,10 @@ pub(crate) mod tests {
             category: Category::Chocolate,
             spec: ChocolateSpec {
                 cacao_solids: 70.0,
+                milk_solids: None,
                 fat: None,
                 sugars: Some(30.0),
-                ..empty_chocolate_spec()
+                other_solids: None,
             }
             .into(),
         });
@@ -548,6 +370,9 @@ pub(crate) mod tests {
             (CompKey::TransFat, 0.0),
         ]);
 
+        // Added sugars in chocolates is considered part of total sweeteners, not of Cacao Solids
+        assert_eq!(comp.get(CompKey::CacaoSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
+
         assert_eq_flt!(comp.solids.cocoa.minerals, 2.2876);
     }
 
@@ -566,9 +391,10 @@ pub(crate) mod tests {
             category: Category::Chocolate,
             spec: ChocolateSpec {
                 cacao_solids: 95.0,
+                milk_solids: None,
                 fat: None,
                 sugars: Some(5.0),
-                ..empty_chocolate_spec()
+                other_solids: None,
             }
             .into(),
         });
@@ -645,9 +471,10 @@ pub(crate) mod tests {
             category: Category::Chocolate,
             spec: ChocolateSpec {
                 cacao_solids: 100.0,
+                milk_solids: None,
                 fat: None,
                 sugars: None,
-                ..empty_chocolate_spec()
+                other_solids: None,
             }
             .into(),
         });
@@ -703,24 +530,311 @@ pub(crate) mod tests {
         assert_eq_flt!(comp.solids.cocoa.minerals, 3.268);
     }
 
+    /// (Barry Callebaut, 2024)[^542]
+    #[doc = include_str!("../../../docs/references/index/542.md")]
+    pub(crate) const ING_SPEC_CHOCOLATE_CALLEBAUT_811_DARK_CHOCOLATE_STR: &str = r#"{
+      "name": "Callebaut 811 Dark Chocolate",
+      "category": "Chocolate",
+      "ChocolateSpec": {
+        "cacao_solids": 56,
+        "total_fat": 36.6,
+        "sugars": 43,
+        "other_solids": 1
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_CHOCOLATE_CALLEBAUT_811_DARK_CHOCOLATE: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Callebaut 811 Dark Chocolate".to_string(),
+            category: Category::Chocolate,
+            spec: ChocolateSpec {
+                cacao_solids: 56.0,
+                milk_solids: None,
+                fat: Some(ChocolateFat::Total(36.6)),
+                sugars: Some(43.0),
+                other_solids: Some(1.0),
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_CALLEBAUT_811_DARK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(543.7696)
+            .solids(
+                Solids::new()
+                    .cocoa(
+                        SolidsBreakdown::new()
+                            .fats(Fats::new().total(36.6).saturated(21.96))
+                            .carbohydrates(
+                                Carbohydrates::new()
+                                    .fiber(Fibers::new().other(7.3332))
+                                    .others_from_total(13.3666)
+                                    .unwrap(),
+                            )
+                            .proteins(SimpleProteins::from_total(4.559))
+                            .minerals(1.4744),
+                    )
+                    .other(
+                        SolidsBreakdown::new()
+                            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(43.0)))
+                            .others(1.0),
+                    ),
+            )
+            .pod(43.0)
+            .pac(PAC::new().sugars(43.0).hardness_factor(67.86))
+    });
+
+    #[test]
+    fn to_composition_chocolate_spec_callebaut_811_dark_chocolate() {
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_CALLEBAUT_811_DARK_CHOCOLATE);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 543.7696),
+            (CompKey::CacaoSolids, 56.0),
+            (CompKey::CocoaButter, 36.6),
+            (CompKey::CocoaSolids, 19.4),
+            (CompKey::OtherSNFS, 1.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 36.6),
+            (CompKey::TotalSNF, 63.4),
+            (CompKey::TotalSNFS, 20.4),
+            (CompKey::TotalProteins, 4.559),
+            (CompKey::TotalMinerals, 1.4744),
+            (CompKey::TotalCarbohydrates, 56.3666),
+            (CompKey::TotalFiber, 7.3332),
+            (CompKey::TotalSugars, 43.0),
+            (CompKey::Sucrose, 43.0),
+            (CompKey::TotalSweeteners, 43.0),
+            (CompKey::POD, 43.0),
+            (CompKey::NetPAC, -24.86),
+            (CompKey::TotalPAC, 43.0),
+            (CompKey::PACsgr, 43.0),
+            (CompKey::HF, 67.86),
+            (CompKey::SaturatedFat, 21.96),
+            (CompKey::TransFat, 0.0),
+        ]);
+
+        assert_eq_flt!(comp.solids.cocoa.minerals, 1.4744);
+        assert_eq!(comp.solids.other.others, 1.0);
+    }
+
+    /// (Barry Callebaut, 2023)[^543]
+    #[doc = include_str!("../../../docs/references/index/543.md")]
+    pub(crate) const ING_SPEC_CHOCOLATE_CALLEBAUT_823_MILK_CHOCOLATE_STR: &str = r#"{
+      "name": "Callebaut 823 Milk Chocolate",
+      "category": "Chocolate",
+      "ChocolateSpec": {
+        "cacao_solids": 35.1,
+        "milk_solids": 21.8,
+        "split_fats": { "cocoa_butter": 30.2, "milk_fat": 6 },
+        "sugars": 42,
+        "other_solids": 1.1
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_CHOCOLATE_CALLEBAUT_823_MILK_CHOCOLATE: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Callebaut 823 Milk Chocolate".to_string(),
+            category: Category::Chocolate,
+            spec: ChocolateSpec {
+                cacao_solids: 35.1,
+                milk_solids: Some(21.8),
+                fat: Some(ChocolateFat::Split {
+                    cocoa_butter: 30.2,
+                    milk_fat: 6.0,
+                }),
+                sugars: Some(42.0),
+                other_solids: Some(1.1),
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_CALLEBAUT_823_MILK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(562.6456)
+            .solids(
+                Solids::new()
+                    .cocoa(
+                        SolidsBreakdown::new()
+                            .fats(Fats::new().total(30.2).saturated(18.12))
+                            .carbohydrates(
+                                Carbohydrates::new()
+                                    .fiber(Fibers::new().other(1.8522))
+                                    .others_from_total(3.3761)
+                                    .unwrap(),
+                            )
+                            .proteins(SimpleProteins::from_total(1.1515))
+                            .minerals(0.3724),
+                    )
+                    .milk(
+                        SolidsBreakdown::new()
+                            .fats(Fats::new().total(6.0).saturated(3.9).trans(0.21))
+                            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(8.611)))
+                            .proteins(MilkProteins::new().casein(4.74).whey(1.185))
+                            .minerals(1.264),
+                    )
+                    .other(
+                        SolidsBreakdown::new()
+                            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(42.0)))
+                            .others(1.1),
+                    ),
+            )
+            .pod(43.37776)
+            .pac(PAC::new().sugars(50.611).msnf_ws_salts(5.804_984).hardness_factor(36.0))
+    });
+
+    #[test]
+    fn to_composition_chocolate_spec_callebaut_823_milk_chocolate() {
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_CALLEBAUT_823_MILK_CHOCOLATE);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 562.6456),
+            (CompKey::MilkSolids, 21.8),
+            (CompKey::MilkFat, 6.0),
+            (CompKey::MSNF, 15.8),
+            (CompKey::MilkSugars, 8.611),
+            (CompKey::MilkSNFS, 7.189),
+            (CompKey::MilkProteins, 5.925),
+            (CompKey::Casein, 4.74),
+            (CompKey::Whey, 1.185),
+            (CompKey::MilkMinerals, 1.264),
+            (CompKey::CacaoSolids, 35.1),
+            (CompKey::CocoaButter, 30.2),
+            (CompKey::CocoaSolids, 4.9),
+            (CompKey::OtherSNFS, 1.1),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 36.2),
+            (CompKey::TotalSNF, 63.8),
+            (CompKey::TotalSNFS, 13.189),
+            (CompKey::TotalProteins, 7.0765),
+            (CompKey::TotalMinerals, 1.6364),
+            (CompKey::TotalCarbohydrates, 53.9871),
+            (CompKey::TotalFiber, 1.8522),
+            (CompKey::TotalSugars, 50.611),
+            (CompKey::Sucrose, 42.0),
+            (CompKey::Lactose, 8.611),
+            (CompKey::TotalSweeteners, 50.611),
+            (CompKey::POD, 43.37776),
+            (CompKey::NetPAC, 20.415_984),
+            (CompKey::TotalPAC, 56.415_984),
+            (CompKey::PACsgr, 50.611),
+            (CompKey::PACmlk, 5.804_984),
+            (CompKey::HF, 36.0),
+            (CompKey::SaturatedFat, 22.02),
+            (CompKey::TransFat, 0.21),
+        ]);
+
+        assert_eq_flt!(comp.solids.cocoa.minerals, 0.3724);
+        assert_eq_flt!(comp.solids.other.others, 1.1);
+    }
+
+    /// (Barry Callebaut, 2024)[^544]
+    #[doc = include_str!("../../../docs/references/index/544.md")]
+    pub(crate) const ING_SPEC_CHOCOLATE_CALLEBAUT_W2_WHITE_CHOCOLATE_STR: &str = r#"{
+      "name": "Callebaut W2 White Chocolate",
+      "category": "Chocolate",
+      "ChocolateSpec": {
+        "cacao_solids": 29.5,
+        "milk_solids": 23,
+        "split_fats": { "cocoa_butter": 29.5, "milk_fat": 6.3 },
+        "sugars": 46.5,
+        "other_solids": 1
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_CHOCOLATE_CALLEBAUT_W2_WHITE_CHOCOLATE: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Callebaut W2 White Chocolate".to_string(),
+            category: Category::Chocolate,
+            spec: ChocolateSpec {
+                cacao_solids: 29.5,
+                milk_solids: Some(23.0),
+                fat: Some(ChocolateFat::Split {
+                    cocoa_butter: 29.5,
+                    milk_fat: 6.3,
+                }),
+                sugars: Some(46.5),
+                other_solids: Some(1.0),
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_CALLEBAUT_W2_WHITE_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(569.656)
+            .solids(
+                Solids::new()
+                    .cocoa(SolidsBreakdown::new().fats(Fats::new().total(29.5).saturated(17.7)))
+                    .milk(
+                        SolidsBreakdown::new()
+                            .fats(Fats::new().total(6.3).saturated(4.095).trans(0.2205))
+                            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(9.1015)))
+                            .proteins(MilkProteins::new().casein(5.01).whey(1.2525))
+                            .minerals(1.336),
+                    )
+                    .other(
+                        SolidsBreakdown::new()
+                            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(46.5)))
+                            .others(1.0),
+                    ),
+            )
+            .pod(47.95624)
+            .pac(
+                PAC::new()
+                    .sugars(55.6015)
+                    .msnf_ws_salts(6.135_648)
+                    .hardness_factor(26.55),
+            )
+    });
+
+    #[test]
+    fn to_composition_chocolate_spec_callebaut_w2_white_chocolate() {
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_CALLEBAUT_W2_WHITE_CHOCOLATE);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 569.656),
+            (CompKey::MilkSolids, 23.0),
+            (CompKey::MilkFat, 6.3),
+            (CompKey::MSNF, 16.7),
+            (CompKey::MilkSugars, 9.1015),
+            (CompKey::MilkSNFS, 7.5985),
+            (CompKey::MilkProteins, 6.2625),
+            (CompKey::Casein, 5.01),
+            (CompKey::Whey, 1.2525),
+            (CompKey::MilkMinerals, 1.336),
+            (CompKey::CacaoSolids, 29.5),
+            (CompKey::CocoaButter, 29.5),
+            // Cocoa butter is its only cocoa ingredient, leaving no cocoa solids non-fat
+            (CompKey::CocoaSolids, 0.0),
+            (CompKey::OtherSNFS, 1.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 35.8),
+            (CompKey::TotalSNF, 64.2),
+            (CompKey::TotalSNFS, 8.5985),
+            (CompKey::TotalProteins, 6.2625),
+            (CompKey::TotalMinerals, 1.336),
+            (CompKey::TotalCarbohydrates, 55.6015),
+            (CompKey::TotalSugars, 55.6015),
+            (CompKey::Sucrose, 46.5),
+            (CompKey::Lactose, 9.1015),
+            (CompKey::TotalSweeteners, 55.6015),
+            (CompKey::POD, 47.95624),
+            (CompKey::NetPAC, 35.187_148),
+            (CompKey::TotalPAC, 61.737_148),
+            (CompKey::PACsgr, 55.6015),
+            (CompKey::PACmlk, 6.135_648),
+            (CompKey::HF, 26.55),
+            (CompKey::SaturatedFat, 21.795),
+            (CompKey::TransFat, 0.2205),
+        ]);
+
+        assert_eq!(comp.solids.cocoa.minerals, 0.0);
+        assert_eq!(comp.solids.other.others, 1.0);
+    }
+
     pub(crate) static INGREDIENT_ASSETS_TABLE_CHOCOLATE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             vec![
-                (
-                    ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE_STR,
-                    ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE.clone(),
-                    Some(*COMP_LINDT_70_DARK_CHOCOLATE),
-                ),
-                (
-                    ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS_STR,
-                    ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS.clone(),
-                    Some(*COMP_LINDT_95_DARK_CHOCOLATE),
-                ),
-                (
-                    ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE_STR,
-                    ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE.clone(),
-                    Some(*COMP_LINDT_100_DARK_CHOCOLATE),
-                ),
                 (
                     ING_SPEC_CHOCOLATE_70_DARK_CHOCOLATE_STR,
                     ING_SPEC_CHOCOLATE_70_DARK_CHOCOLATE.clone(),
@@ -736,8 +850,33 @@ pub(crate) mod tests {
                     ING_SPEC_CHOCOLATE_100_DARK_CHOCOLATE.clone(),
                     Some(*COMP_100_DARK_CHOCOLATE),
                 ),
+                (
+                    ING_SPEC_CHOCOLATE_CALLEBAUT_811_DARK_CHOCOLATE_STR,
+                    ING_SPEC_CHOCOLATE_CALLEBAUT_811_DARK_CHOCOLATE.clone(),
+                    Some(*COMP_CALLEBAUT_811_DARK_CHOCOLATE),
+                ),
+                (
+                    ING_SPEC_CHOCOLATE_CALLEBAUT_823_MILK_CHOCOLATE_STR,
+                    ING_SPEC_CHOCOLATE_CALLEBAUT_823_MILK_CHOCOLATE.clone(),
+                    Some(*COMP_CALLEBAUT_823_MILK_CHOCOLATE),
+                ),
+                (
+                    ING_SPEC_CHOCOLATE_CALLEBAUT_W2_WHITE_CHOCOLATE_STR,
+                    ING_SPEC_CHOCOLATE_CALLEBAUT_W2_WHITE_CHOCOLATE.clone(),
+                    Some(*COMP_CALLEBAUT_W2_WHITE_CHOCOLATE),
+                ),
             ]
         });
+
+    fn empty_chocolate_spec() -> ChocolateSpec {
+        ChocolateSpec {
+            cacao_solids: 0.0,
+            milk_solids: None,
+            fat: None,
+            sugars: None,
+            other_solids: None,
+        }
+    }
 
     #[test]
     fn to_composition_err_on_negative_field() {
@@ -893,7 +1032,9 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq_8dp!(&comp, &*COMP_LINDT_70_DARK_CHOCOLATE);
+        assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
+        assert_eq!(comp.get(CompKey::MilkFat), 0.0);
+        assert_eq!(comp.get(CompKey::TotalFats), 40.0);
     }
 
     #[test]

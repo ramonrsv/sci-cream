@@ -18,8 +18,9 @@ use crate::{
     ingredient::{Category, Ingredient, IntoIngredient, ResolveIntoIngredient},
     resolution::IngredientGetter,
     specs::{
-        AlcoholSpec, ChocolateSpec, CocoaPowderSpec, CompositeSpec, DairyLabelSpec, DairySheetSpec, DairySimpleSpec,
-        EggSpec, EmulsifierSpec, FruitSpec, FullSpec, MicroSpec, NutSpec, StabilizerSpec, SweetenerSpec,
+        AlcoholSpec, ChocolateLabelSpec, ChocolateSpec, CocoaPowderSpec, CompositeSpec, DairyLabelSpec, DairySheetSpec,
+        DairySimpleSpec, EggSpec, EmulsifierSpec, FruitSpec, FullSpec, MicroSpec, NutSpec, StabilizerSpec,
+        SweetenerSpec,
     },
 };
 
@@ -38,6 +39,7 @@ pub enum TaggedSpec {
     FruitSpec(FruitSpec),
     ChocolateSpec(ChocolateSpec),
     CocoaPowderSpec(CocoaPowderSpec),
+    ChocolateLabelSpec(ChocolateLabelSpec),
     NutSpec(NutSpec),
     EggSpec(EggSpec),
     AlcoholSpec(AlcoholSpec),
@@ -58,6 +60,7 @@ impl ToComposition for TaggedSpec {
             Self::FruitSpec(spec) => spec.to_composition(),
             Self::ChocolateSpec(spec) => spec.to_composition(),
             Self::CocoaPowderSpec(spec) => spec.to_composition(),
+            Self::ChocolateLabelSpec(spec) => spec.to_composition(),
             Self::NutSpec(spec) => spec.to_composition(),
             Self::EggSpec(spec) => spec.to_composition(),
             Self::AlcoholSpec(spec) => spec.to_composition(),
@@ -122,6 +125,12 @@ impl From<ChocolateSpec> for TaggedSpec {
 impl From<CocoaPowderSpec> for TaggedSpec {
     fn from(spec: CocoaPowderSpec) -> Self {
         Self::CocoaPowderSpec(spec)
+    }
+}
+
+impl From<ChocolateLabelSpec> for TaggedSpec {
+    fn from(spec: ChocolateLabelSpec) -> Self {
+        Self::ChocolateLabelSpec(spec)
     }
 }
 
@@ -234,17 +243,14 @@ pub(crate) mod tests {
     use crate::tests::assets::*;
 
     use super::*;
-    use crate::{
-        data::{get_all_independent_ingredient_specs, get_spec_entry_by_name},
-        database::IngredientDatabase,
-        specs::SpecEntry,
-    };
+    use crate::{data::get_all_independent_ingredient_specs, database::IngredientDatabase, specs::SpecEntry};
 
     pub(crate) static INGREDIENT_ASSETS_TABLE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             [
                 INGREDIENT_ASSETS_TABLE_ALCOHOL.as_slice(),
                 INGREDIENT_ASSETS_TABLE_CHOCOLATE.as_slice(),
+                INGREDIENT_ASSETS_TABLE_CHOCOLATE_LABEL.as_slice(),
                 INGREDIENT_ASSETS_TABLE_COCOA_POWDER.as_slice(),
                 INGREDIENT_ASSETS_TABLE_COMPOSITE.as_slice(),
                 INGREDIENT_ASSETS_TABLE_DAIRY_LABEL.as_slice(),
@@ -276,7 +282,7 @@ pub(crate) mod tests {
     #[test]
     fn ingredient_spec_database_matches_assets() {
         INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, _)| {
-            assert_eq!(SpecEntry::Ingredient(spec.clone()), get_spec_entry_by_name(&spec.name).unwrap());
+            assert_eq!(*spec, get_embedded_or_variant_spec_by_name(&spec.name));
         });
     }
 

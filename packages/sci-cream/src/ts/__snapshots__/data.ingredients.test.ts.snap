@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 421  (non-alias: 357, independent: 343)
+"total: 425  (non-alias: 361, independent: 347)
 
             0% Milk
             1% Milk
@@ -159,6 +159,8 @@ exports[`Embedded spec entries 1`] = `
             Goff & Hartel Whole Milk Powder
 [alias]     Grand Marnier
             Grand Marnier Cordon Rouge
+            Green & Black's Organic Milk Chocolate
+            Green & Black's Organic White Chocolate
 [alias]     Ground Nutmeg
             Guar Gum
             Gum Arabic
@@ -224,6 +226,8 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Lemon Extract
             Lemon Juice
 [alias]     Lemon Zest
+            Lindt Classic Milk Chocolate
+            Lindt Classic White Chocolate
             Lindt EXCELLENCE 100% Cacao Dark Chocolate
             Lindt EXCELLENCE 70% Cacao Dark Chocolate
             Lindt EXCELLENCE 85% Cacao Dark Chocolate

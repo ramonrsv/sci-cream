@@ -15,12 +15,12 @@ targets:
   Sucrose                           17.07
 
   [      key       | target | achieved |  error  ]
-  CocoaSolids          6.00      5.28     11.97 pp
-  CocoaButter          1.00      1.10      9.61 pp
+  CocoaSolids          6.00      5.28     11.95 pp
+  CocoaButter          1.00      1.10      9.60 pp
   TotalSugars         20.00     20.00      0.00 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      11.97 pp     8.86 pp
+     1.0000        0      11.95 pp     8.85 pp
 
 [nnls]
   [           ingredient           | qty ]
@@ -30,9 +30,9 @@ targets:
   Sucrose                           17.77
 
   [      key       | target | achieved |  error  ]
-  CocoaSolids          6.00      5.28     11.97 pp
-  CocoaButter          1.00      1.10      9.61 pp
+  CocoaSolids          6.00      5.28     11.95 pp
+  CocoaButter          1.00      1.10      9.60 pp
   TotalSugars         20.00     20.00      0.00 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      11.97 pp     8.86 pp
+     1.0000        0      11.95 pp     8.85 pp

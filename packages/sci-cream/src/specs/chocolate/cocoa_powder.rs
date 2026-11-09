@@ -44,39 +44,71 @@ use crate::{
 ///
 /// # Examples
 ///
-/// (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^511] per 6g serving:
-/// - Cocoa butter: 1g fat => 16.67%
-/// - Cacao solids: 100% less the default 3% water => 97% (calculated internally)
+/// A generic cocoa powder of the 10/12% grade:
+/// - Cocoa butter: the grade's midpoint => 11%
+/// - Water: by default [`cacao::STD_WATER_IN_COCOA_POWDER`] => 3%
+/// - Cacao solids: 100% less the water => 97% (calculated internally)
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// # use sci_cream::asserts::assert_eq_flt;
-/// # use sci_cream::{
-/// #     composition::{CompKey, ToComposition},
-/// #     specs::CocoaPowderSpec
-/// # };
-/// #
+/// # use sci_cream::asserts::{assert_eq_4dp, assert_eq_flt};
+/// use sci_cream::{
+///     composition::{CompKey, ToComposition},
+///     specs::CocoaPowderSpec
+/// };
+///
 /// let comp = CocoaPowderSpec {
 ///     cacao_solids: None,
-///     cocoa_butter: 16.67,
+///     cocoa_butter: 11.0,
 ///     other_solids: None,
 ///     water: None,
 ///     dutch_processed: None,
 /// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
-/// assert_eq_flt!(comp.get(CompKey::Water), 3.0);
+/// assert_eq_4dp!(comp.get(CompKey::Water), 3.0);
 /// assert_eq_flt!(comp.get(CompKey::CacaoSolids), 97.0);
-/// assert_eq!(comp.get(CompKey::CocoaButter), 16.67);
-/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 80.33);
+/// assert_eq!(comp.get(CompKey::CocoaButter), 11.0);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 86.0);
 ///
-/// assert_eq_flt!(comp.get(CompKey::Energy), 325.47072);
-/// assert_eq!(comp.get(CompKey::TotalFats), 16.67);
-/// assert_eq_flt!(comp.get(CompKey::TotalProteins), 18.87755);
-/// assert_eq_flt!(comp.get(CompKey::TotalFiber), 30.36474);
+/// assert_eq_flt!(comp.get(CompKey::Energy), 286.824);
+/// assert_eq!(comp.get(CompKey::TotalFats), 11.0);
+/// assert_eq_flt!(comp.get(CompKey::TotalProteins), 20.21);
+/// assert_eq_flt!(comp.get(CompKey::TotalFiber), 32.508);
 /// # Ok(()) }
 /// ```
-#[doc = include_str!("../../../docs/references/index/511.md")]
+///
+/// (Callebaut 10/12 Natural Cocoa Powder, 2018)[^545], per 100 g:
+/// - Cocoa butter: _"TOTAL FAT 11.0 g"_ => 11%
+/// - Water: 100 g less the 96.5 g its nutritional data accounts for => 3.5%
+/// - Cacao solids: 100% less the water => 96.5% (calculated internally)
+///
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// # use sci_cream::asserts::assert_eq_flt;
+/// # use sci_cream::{composition::{CompKey, ToComposition}, specs::CocoaPowderSpec};
+/// #
+/// let comp = CocoaPowderSpec {
+///     cacao_solids: None,
+///     cocoa_butter: 11.0,
+///     other_solids: None,
+///     water: Some(3.5),
+///     dutch_processed: None,
+/// }.to_composition()?;
+///
+/// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+/// assert_eq!(comp.get(CompKey::Water), 3.5);
+/// assert_eq_flt!(comp.get(CompKey::CacaoSolids), 96.5);
+/// assert_eq!(comp.get(CompKey::CocoaButter), 11.0);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 85.5);
+///
+/// assert_eq_flt!(comp.get(CompKey::Energy), 285.732);
+/// assert_eq!(comp.get(CompKey::TotalFats), 11.0);
+/// assert_eq_flt!(comp.get(CompKey::TotalProteins), 20.0925);
+/// assert_eq_flt!(comp.get(CompKey::TotalFiber), 32.319);
+/// # Ok(()) }
+/// ```
+#[doc = include_str!("../../../docs/references/index/545.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct CocoaPowderSpec {
@@ -164,86 +196,154 @@ pub(crate) mod tests {
         specs::IngredientSpec,
     };
 
-    fn empty_cocoa_powder_spec() -> CocoaPowderSpec {
-        CocoaPowderSpec {
+    pub(crate) const ING_SPEC_COCOA_POWDER_10_12_FAT_STR: &str = r#"{
+      "name": "Cocoa Powder, 10/12% Fat",
+      "category": "Chocolate",
+      "CocoaPowderSpec": {
+        "cocoa_butter": 11
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_COCOA_POWDER_10_12_FAT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Cocoa Powder, 10/12% Fat".to_string(),
+        category: Category::Chocolate,
+        spec: CocoaPowderSpec {
             cacao_solids: None,
-            cocoa_butter: 0.0,
+            cocoa_butter: 11.0,
             other_solids: None,
             water: None,
             dutch_processed: None,
         }
+        .into(),
+    });
+
+    pub(crate) static COMP_COCOA_POWDER_10_12_FAT: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(286.824)
+            .solids(
+                Solids::new().cocoa(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(11.0).saturated(6.6))
+                        .carbohydrates(
+                            Carbohydrates::new()
+                                .fiber(Fibers::new().other(32.508))
+                                .others_from_total(59.254)
+                                .unwrap(),
+                        )
+                        .proteins(SimpleProteins::from_total(20.21))
+                        .minerals(6.536),
+                ),
+            )
+            .pod(0.0)
+            .pac(PAC::new().hardness_factor(164.7))
+    });
+
+    #[test]
+    fn to_composition_cocoa_powder_spec_10_12_fat() {
+        let comp = asset_composition(&ING_SPEC_COCOA_POWDER_10_12_FAT);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 286.824),
+            (CompKey::CacaoSolids, 97.0),
+            (CompKey::CocoaButter, 11.0),
+            (CompKey::CocoaSolids, 86.0),
+            (CompKey::OtherSNFS, 0.0),
+            (CompKey::TotalSolids, 97.0),
+            (CompKey::TotalFats, 11.0),
+            (CompKey::TotalSNF, 86.0),
+            (CompKey::TotalSNFS, 86.0),
+            (CompKey::TotalProteins, 20.21),
+            (CompKey::TotalMinerals, 6.536),
+            (CompKey::Water, 3.0),
+            (CompKey::TotalCarbohydrates, 59.254),
+            (CompKey::TotalFiber, 32.508),
+            (CompKey::TotalSweeteners, 0.0),
+            (CompKey::POD, 0.0),
+            (CompKey::NetPAC, -164.7),
+            (CompKey::TotalPAC, 0.0),
+            (CompKey::HF, 164.7),
+            (CompKey::SaturatedFat, 6.6),
+            (CompKey::TransFat, 0.0),
+        ]);
+
+        assert_eq_flt!(comp.solids.cocoa.minerals, 6.536);
     }
 
-    pub(crate) const ING_SPEC_COCOA_POWDER_GHIRARDELLI_100_COCOA_POWDER_STR: &str = r#"{
-      "name": "Ghirardelli 100% Unsweetened Cocoa Powder",
+    /// (Barry Callebaut, 2018)[^545]
+    #[doc = include_str!("../../../docs/references/index/545.md")]
+    pub(crate) const ING_SPEC_COCOA_POWDER_CALLEBAUT_10_12_NATURAL_COCOA_POWDER_STR: &str = r#"{
+      "name": "Callebaut 10/12 Natural Cocoa Powder",
       "category": "Chocolate",
       "CocoaPowderSpec": {
-        "cocoa_butter": 16.67
+        "cocoa_butter": 11,
+        "water": 3.5
       }
     }"#;
 
-    pub(crate) static ING_SPEC_COCOA_POWDER_GHIRARDELLI_100_COCOA_POWDER: LazyLock<IngredientSpec> =
+    pub(crate) static ING_SPEC_COCOA_POWDER_CALLEBAUT_10_12_NATURAL_COCOA_POWDER: LazyLock<IngredientSpec> =
         LazyLock::new(|| IngredientSpec {
-            name: "Ghirardelli 100% Unsweetened Cocoa Powder".to_string(),
+            name: "Callebaut 10/12 Natural Cocoa Powder".to_string(),
             category: Category::Chocolate,
             spec: CocoaPowderSpec {
-                cocoa_butter: 16.67,
-                ..empty_cocoa_powder_spec()
+                cacao_solids: None,
+                cocoa_butter: 11.0,
+                other_solids: None,
+                water: Some(3.5),
+                dutch_processed: None,
             }
             .into(),
         });
 
-    pub(crate) static COMP_GHIRARDELLI_100_COCOA_POWDER: LazyLock<Composition> = LazyLock::new(|| {
+    pub(crate) static COMP_CALLEBAUT_10_12_NATURAL_COCOA_POWDER: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
-            .energy(325.47072)
+            .energy(285.732)
             .solids(
                 Solids::new().cocoa(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(16.67).saturated(10.002))
+                        .fats(Fats::new().total(11.0).saturated(6.6))
                         .carbohydrates(
                             Carbohydrates::new()
-                                .fiber(Fibers::new().other(30.36474))
-                                .others_from_total(55.34737)
+                                .fiber(Fibers::new().other(32.319))
+                                .others_from_total(58.9095)
                                 .unwrap(),
                         )
-                        .proteins(SimpleProteins::from_total(18.87755))
-                        .minerals(6.10508),
+                        .proteins(SimpleProteins::from_total(20.0925))
+                        .minerals(6.498),
                 ),
             )
             .pod(0.0)
-            .pac(PAC::new().hardness_factor(159.597))
+            .pac(PAC::new().hardness_factor(163.8))
     });
 
     #[test]
-    fn to_composition_cocoa_powder_spec_ghirardelli_100_cocoa_powder() {
-        let comp = asset_composition(&ING_SPEC_COCOA_POWDER_GHIRARDELLI_100_COCOA_POWDER);
+    fn to_composition_cocoa_powder_spec_callebaut_10_12_natural_cocoa_powder() {
+        let comp = asset_composition(&ING_SPEC_COCOA_POWDER_CALLEBAUT_10_12_NATURAL_COCOA_POWDER);
 
         comp.assert_all_keys(&[
-            // Different similar products list the energy from 250 to 325
-            (CompKey::Energy, 325.47072),
-            (CompKey::CacaoSolids, 97.0),
-            (CompKey::CocoaButter, 16.67),
-            (CompKey::CocoaSolids, 80.33),
+            (CompKey::Energy, 285.732),
+            (CompKey::CacaoSolids, 96.5),
+            (CompKey::CocoaButter, 11.0),
+            (CompKey::CocoaSolids, 85.5),
             (CompKey::OtherSNFS, 0.0),
-            (CompKey::TotalSolids, 97.0),
-            (CompKey::TotalFats, 16.67),
-            (CompKey::TotalSNF, 80.33),
-            (CompKey::TotalSNFS, 80.33),
-            (CompKey::TotalProteins, 18.87755),
-            (CompKey::TotalMinerals, 6.10508),
-            (CompKey::Water, 3.0),
-            (CompKey::TotalCarbohydrates, 55.34737),
-            (CompKey::TotalFiber, 30.36474),
+            (CompKey::TotalSolids, 96.5),
+            (CompKey::TotalFats, 11.0),
+            (CompKey::TotalSNF, 85.5),
+            (CompKey::TotalSNFS, 85.5),
+            (CompKey::TotalProteins, 20.0925),
+            (CompKey::TotalMinerals, 6.498),
+            (CompKey::Water, 3.5),
+            (CompKey::TotalCarbohydrates, 58.9095),
+            (CompKey::TotalFiber, 32.319),
             (CompKey::TotalSweeteners, 0.0),
             (CompKey::POD, 0.0),
-            (CompKey::NetPAC, -159.597),
+            (CompKey::NetPAC, -163.8),
             (CompKey::TotalPAC, 0.0),
-            (CompKey::HF, 159.597),
-            (CompKey::SaturatedFat, 10.002),
+            (CompKey::HF, 163.8),
+            (CompKey::SaturatedFat, 6.6),
             (CompKey::TransFat, 0.0),
         ]);
 
-        assert_eq_flt!(comp.solids.cocoa.minerals, 6.10508);
+        assert_eq_flt!(comp.solids.cocoa.minerals, 6.498);
     }
 
     pub(crate) const ING_SPEC_COCOA_POWDER_VALRHONA_COCOA_POWDER_STR: &str = r#"{
@@ -348,9 +448,14 @@ pub(crate) mod tests {
         LazyLock::new(|| {
             vec![
                 (
-                    ING_SPEC_COCOA_POWDER_GHIRARDELLI_100_COCOA_POWDER_STR,
-                    ING_SPEC_COCOA_POWDER_GHIRARDELLI_100_COCOA_POWDER.clone(),
-                    Some(*COMP_GHIRARDELLI_100_COCOA_POWDER),
+                    ING_SPEC_COCOA_POWDER_10_12_FAT_STR,
+                    ING_SPEC_COCOA_POWDER_10_12_FAT.clone(),
+                    Some(*COMP_COCOA_POWDER_10_12_FAT),
+                ),
+                (
+                    ING_SPEC_COCOA_POWDER_CALLEBAUT_10_12_NATURAL_COCOA_POWDER_STR,
+                    ING_SPEC_COCOA_POWDER_CALLEBAUT_10_12_NATURAL_COCOA_POWDER.clone(),
+                    Some(*COMP_CALLEBAUT_10_12_NATURAL_COCOA_POWDER),
                 ),
                 (
                     ING_SPEC_COCOA_POWDER_VALRHONA_COCOA_POWDER_STR,
@@ -359,6 +464,16 @@ pub(crate) mod tests {
                 ),
             ]
         });
+
+    fn empty_cocoa_powder_spec() -> CocoaPowderSpec {
+        CocoaPowderSpec {
+            cacao_solids: None,
+            cocoa_butter: 0.0,
+            other_solids: None,
+            water: None,
+            dutch_processed: None,
+        }
+    }
 
     #[test]
     fn to_composition_cocoa_powder_err_when_components_do_not_sum_to_100() {
