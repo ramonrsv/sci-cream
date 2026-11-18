@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795042170354,
+  "lastUpdate": 1795042814913,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -671030,6 +671030,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/blog/[slug] route-only JS (gzip)",
             "value": 707.4,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 875.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 708.93,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 876.65,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1039.15,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8051e19f61233cb9ceb03b1d1a8d30b08697400e",
+          "message": "Fix e2e hangs with Playwright 1.65's browsers\n\nChrome 159 hovers whatever loads under the resting cursor during a\npage's first navigation, and Firefox 159 does so on later ones,\nwherever an action left the cursor. On the sidebar's hover zone that\nopens the peek drawer, which covers the content until the cursor\nmoves, so a click beneath it retries until the test times out.\n\nMove parkCursor from the visual util to the e2e one and call it at\nthe end of goToPageAndWaitFor. The web-vitals test and bench, which\nnavigate with page.goto, park before their click.\n\nFirefox 159 gives Playwright no execution context in a frame that\nframe-ancestors blocks, so the check that /share stays un-frameable\nhangs past its timeout. Mark it fixme on Firefox: the embed checks\nbefore it still run there, and the CSP header test runs everywhere.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T17:18:45-05:00",
+          "tree_id": "7ce8968c43e57729da64f3eab25d5db4e3b5aa96",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8051e19f61233cb9ceb03b1d1a8d30b08697400e"
+        },
+        "date": 1795042741471,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 779.38,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 947.1,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 724,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 891.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 733.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 901.39,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 707.39,
             "unit": "KB"
           },
           {
