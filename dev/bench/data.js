@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795041329071,
+  "lastUpdate": 1795041354376,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -669985,6 +669985,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/blog/[slug] route-only JS (gzip)",
             "value": 707.39,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 875.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 708.93,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 876.65,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1039.15,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "98506a8e0442298ea9f980b84fbc231044b6f310",
+          "message": "Exclude migration 0001 from Squawk's lint\n\nSquawk 2.73 flags the three DROP CONSTRAINTs at the top of 0001 under\nban-drop-constraint. Each is replaced in the same migration: the\nunique constraints by primary keys on the same columns, and the\nforeign key recreated against them, so no guarantee is lost.\n\nA committed migration can't change, as check-migrations-unchanged.sh\nenforces, so the file can't take a squawk-ignore. Exclude it in\n.squawk.toml instead, beside the baseline, each path's reason moving\ninside the list as excluded_rules has them.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T10:26:28-05:00",
+          "tree_id": "eae4f921234e042522e7794b700d5c5e840227ee",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/98506a8e0442298ea9f980b84fbc231044b6f310"
+        },
+        "date": 1795041305740,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 779.38,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 947.1,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 724,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 891.73,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 733.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 901.39,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 707.4,
             "unit": "KB"
           },
           {
