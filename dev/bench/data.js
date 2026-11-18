@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795045430219,
+  "lastUpdate": 1795045559813,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -581188,6 +581188,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 454.5,
             "range": "22.55",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "818c29d042f54dd2623a2bd4e8cfe720232e7ab2",
+          "message": "Update visual snapshots for Geist and lucide\n\nThe JS dependency upgrade brought geist 1.9.2 and lucide-react 1.74.\nGeist's glyphs render text slightly differently, and lucide redrew\nthe Trash and BookOpen icons the toolbars and sidebar use. No\nsnapshot changes size, and the differences stay within text and\nicons.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T18:30:35-05:00",
+          "tree_id": "ea09a12d34036a7681f6f1b7b4b66e31e01cd089",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/818c29d042f54dd2623a2bd4e8cfe720232e7ab2"
+        },
+        "date": 1795045495790,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 35.5,
+            "range": "2.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 40.25,
+            "range": "2.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 43.13,
+            "range": "2.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1818.25,
+            "range": "48.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 300.13,
+            "range": "3.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 314.38,
+            "range": "7.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 318.88,
+            "range": "2.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15506.75,
+            "range": "73.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 712,
+            "range": "14.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.38,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 45.75,
+            "range": "1.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.75,
+            "range": "2.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 33.5,
+            "range": "1.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 112.25,
+            "range": "4.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 65,
+            "range": "5.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 43.18,
+            "range": "0.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 32.67,
+            "range": "0.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 528.5,
+            "range": "18.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 535.25,
+            "range": "23.71",
             "unit": "ms"
           }
         ]
