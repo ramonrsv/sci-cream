@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795044628982,
+  "lastUpdate": 1795044637925,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -726549,6 +726549,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2203.96,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7e554941bbe2822c997c4de1371e463832f19b93",
+          "message": "Fix clippy 1.100 warnings in the crate\n\nClippy 1.100 warns at four sites, which fails CI's clippy job under\n`-D warnings`.\n\nIt now checks loop bodies for redundant clones. The loops that index\nthe embedded specs and recipes cloned each entry into the map, though\n`into_values()` already yields an owned value used nowhere after.\nMove it in instead; the key is still cloned, as the duplicate panic\nmessage uses it.\n\nempty_enums fires inside serde's Deserialize derive for PropKey and\nBalanceKey. With `#[serde(untagged)]` on every variant, serde still\nemits a matcher for the tagged variants, of which there are none, as\nan empty enum. Mark each enum untagged instead, as SpecEntry is;\nserde handles both forms the same, so the wire format is unchanged.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T18:23:05-05:00",
+          "tree_id": "49722f5a71dc375cac70a0c8d5c904e1ba0e5649",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7e554941bbe2822c997c4de1371e463832f19b93"
+        },
+        "date": 1795044580453,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1236.96,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 370.28,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1990.82,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 605.47,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 654.14,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2200.33,
             "unit": "KB"
           }
         ]
