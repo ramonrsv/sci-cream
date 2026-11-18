@@ -23,19 +23,17 @@ use crate::recipe::Recipe;
 /// target on that proxy before solving. This union is the balancing-facing counterpart of
 /// [`PropKey`](crate::properties::PropKey).
 ///
-/// **Note**: The different variants all use `#[serde(untagged)]` to allow a flat list of keys in
-/// the WASM-facing balancing API, in line with how the TypeScript wrappers handle `PropKey`. This
-/// requires that all variant names be unique across all the underlying key types.
+/// **Note**: The enum uses `#[serde(untagged)]` to allow a flat list of keys in the WASM-facing
+/// balancing API, in line with how the TypeScript wrappers handle `PropKey`. This requires that
+/// all variant names be unique across all the underlying key types.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum BalanceKey {
     /// An extensive composition key (additive, scalable by quantity).
-    #[serde(untagged)]
     Comp(CompKey),
     /// An intensive ratio key (`numerator / denominator`, non-additive).
-    #[serde(untagged)]
     Ratio(RatioKey),
     /// An intensive freezing-point-derived key, translated to a ratio proxy before solving.
-    #[serde(untagged)]
     Fpd(FpdKey),
 }
 

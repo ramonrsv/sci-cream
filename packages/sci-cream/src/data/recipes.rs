@@ -82,7 +82,7 @@ static PARSED_EMBEDDED_RECIPE_ENTRIES: LazyLock<HashMap<String, RecipeEntry>> = 
             let key = recipe.gen_id();
 
             assert!(
-                recipes.insert(key.clone(), recipe.clone()).is_none(),
+                recipes.insert(key.clone(), recipe).is_none(),
                 "Duplicate recipe ID found: '{key}' (from file '{filename}')"
             );
         }

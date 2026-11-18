@@ -18,9 +18,9 @@ use crate::{
 /// intensive ratios ([`RatioKey`]), and freezing-point-derived values ([`FpdKey`]).
 /// Only [`CompKey`] is additive/scalable; the other two are non-additive derived properties.
 ///
-/// **Note**: The different variants all use `#[serde(untagged)]` to allow a flat list of keys in
-/// the WASM-facing balancing API, in line with how the TypeScript wrappers handle `PropKey`. This
-/// requires that all variant names be unique across all the underlying key types.
+/// **Note**: The enum uses `#[serde(untagged)]` to allow a flat list of keys in the WASM-facing
+/// balancing API, in line with how the TypeScript wrappers handle `PropKey`. This requires that
+/// all variant names be unique across all the underlying key types.
 ///
 /// # Example
 ///
@@ -32,15 +32,13 @@ use crate::{
 /// assert_eq!(mix_props.get(FpdKey::FPD.into()), 0.0);
 /// ```
 #[derive(Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(untagged)]
 pub enum PropKey {
     /// [`CompKey`] for extensive [`Composition`] properties from [`MixProperties::composition`]
-    #[serde(untagged)]
     Comp(CompKey),
     /// [`RatioKey`] for intensive [`Composition`] ratios from [`MixProperties::composition`]
-    #[serde(untagged)]
     Ratio(RatioKey),
     /// [`FpdKey`] for [`FPD`] properties from [`MixProperties::fpd`]
-    #[serde(untagged)]
     Fpd(FpdKey),
 }
 

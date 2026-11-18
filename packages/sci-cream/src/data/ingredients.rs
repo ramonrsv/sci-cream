@@ -89,7 +89,7 @@ static PARSED_EMBEDDED_SPEC_ENTRIES: LazyLock<HashMap<String, SpecEntry>> = Lazy
             let key = spec.name().to_string();
 
             assert!(
-                specs.insert(key.clone(), spec.clone()).is_none(),
+                specs.insert(key.clone(), spec).is_none(),
                 "Duplicate ingredient spec name found: '{key}' (from file '{filename}')"
             );
         }
