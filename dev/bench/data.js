@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795043696876,
+  "lastUpdate": 1795044628982,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -623869,6 +623869,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.13%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7e554941bbe2822c997c4de1371e463832f19b93",
+          "message": "Fix clippy 1.100 warnings in the crate\n\nClippy 1.100 warns at four sites, which fails CI's clippy job under\n`-D warnings`.\n\nIt now checks loop bodies for redundant clones. The loops that index\nthe embedded specs and recipes cloned each entry into the map, though\n`into_values()` already yields an owned value used nowhere after.\nMove it in instead; the key is still cloned, as the duplicate panic\nmessage uses it.\n\nempty_enums fires inside serde's Deserialize derive for PropKey and\nBalanceKey. With `#[serde(untagged)]` on every variant, serde still\nemits a matcher for the tagged variants, of which there are none, as\nan empty enum. Mark each enum untagged instead, as SpecEntry is;\nserde handles both forms the same, so the wire format is unchanged.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T18:23:05-05:00",
+          "tree_id": "49722f5a71dc375cac70a0c8d5c904e1ba0e5649",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7e554941bbe2822c997c4de1371e463832f19b93"
+        },
+        "date": 1795044572336,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 71200,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 601777,
+            "range": "±0.35%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 51358,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 528243,
+            "range": "±0.64%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
           }
         ]
       }
