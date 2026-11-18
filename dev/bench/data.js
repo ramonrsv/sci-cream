@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795041282884,
+  "lastUpdate": 1795041295708,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -724143,6 +724143,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/becb5a77f4cabc290bac40f9b503443c4d86c140"
         },
         "date": 1795040838509,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1239.68,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 372.22,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1994.45,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 608,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 656.49,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2203.96,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "98506a8e0442298ea9f980b84fbc231044b6f310",
+          "message": "Exclude migration 0001 from Squawk's lint\n\nSquawk 2.73 flags the three DROP CONSTRAINTs at the top of 0001 under\nban-drop-constraint. Each is replaced in the same migration: the\nunique constraints by primary keys on the same columns, and the\nforeign key recreated against them, so no guarantee is lost.\n\nA committed migration can't change, as check-migrations-unchanged.sh\nenforces, so the file can't take a squawk-ignore. Exclude it in\n.squawk.toml instead, beside the baseline, each path's reason moving\ninside the list as excluded_rules has them.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T10:26:28-05:00",
+          "tree_id": "eae4f921234e042522e7794b700d5c5e840227ee",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/98506a8e0442298ea9f980b84fbc231044b6f310"
+        },
+        "date": 1795041237863,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
