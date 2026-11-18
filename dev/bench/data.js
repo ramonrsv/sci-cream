@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795045095676,
+  "lastUpdate": 1795045144212,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -580381,6 +580381,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 477.13,
             "range": "18.58",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7e554941bbe2822c997c4de1371e463832f19b93",
+          "message": "Fix clippy 1.100 warnings in the crate\n\nClippy 1.100 warns at four sites, which fails CI's clippy job under\n`-D warnings`.\n\nIt now checks loop bodies for redundant clones. The loops that index\nthe embedded specs and recipes cloned each entry into the map, though\n`into_values()` already yields an owned value used nowhere after.\nMove it in instead; the key is still cloned, as the duplicate panic\nmessage uses it.\n\nempty_enums fires inside serde's Deserialize derive for PropKey and\nBalanceKey. With `#[serde(untagged)]` on every variant, serde still\nemits a matcher for the tagged variants, of which there are none, as\nan empty enum. Mark each enum untagged instead, as SpecEntry is;\nserde handles both forms the same, so the wire format is unchanged.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T18:23:05-05:00",
+          "tree_id": "49722f5a71dc375cac70a0c8d5c904e1ba0e5649",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7e554941bbe2822c997c4de1371e463832f19b93"
+        },
+        "date": 1795045098770,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 29.25,
+            "range": "1.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 34.63,
+            "range": "3.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 37.38,
+            "range": "3.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1567.88,
+            "range": "62.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 216.38,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 227.88,
+            "range": "3.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 227.63,
+            "range": "4.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 11275.25,
+            "range": "66.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 672,
+            "range": "11.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 37.38,
+            "range": "1.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 37,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 29.63,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 28,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 98.5,
+            "range": "6.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 45.5,
+            "range": "5.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 32.99,
+            "range": "0.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 22.43,
+            "range": "0.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 418.5,
+            "range": "14.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 454.5,
+            "range": "22.55",
             "unit": "ms"
           }
         ]
