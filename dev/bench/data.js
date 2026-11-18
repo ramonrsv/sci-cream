@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795044948066,
+  "lastUpdate": 1795044952202,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -712809,6 +712809,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/7e554941bbe2822c997c4de1371e463832f19b93"
         },
         "date": 1795044674212,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "818c29d042f54dd2623a2bd4e8cfe720232e7ab2",
+          "message": "Update visual snapshots for Geist and lucide\n\nThe JS dependency upgrade brought geist 1.9.2 and lucide-react 1.74.\nGeist's glyphs render text slightly differently, and lucide redrew\nthe Trash and BookOpen icons the toolbars and sidebar use. No\nsnapshot changes size, and the differences stay within text and\nicons.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T18:30:35-05:00",
+          "tree_id": "ea09a12d34036a7681f6f1b7b4b66e31e01cd089",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/818c29d042f54dd2623a2bd4e8cfe720232e7ab2"
+        },
+        "date": 1795044951302,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
