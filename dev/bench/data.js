@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795042831245,
+  "lastUpdate": 1795042956926,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -701784,6 +701784,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.01,
             "range": "0.33",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8051e19f61233cb9ceb03b1d1a8d30b08697400e",
+          "message": "Fix e2e hangs with Playwright 1.65's browsers\n\nChrome 159 hovers whatever loads under the resting cursor during a\npage's first navigation, and Firefox 159 does so on later ones,\nwherever an action left the cursor. On the sidebar's hover zone that\nopens the peek drawer, which covers the content until the cursor\nmoves, so a click beneath it retries until the test times out.\n\nMove parkCursor from the visual util to the e2e one and call it at\nthe end of goToPageAndWaitFor. The web-vitals test and bench, which\nnavigate with page.goto, park before their click.\n\nFirefox 159 gives Playwright no execution context in a frame that\nframe-ancestors blocks, so the check that /share stays un-frameable\nhangs past its timeout. Mark it fixme on Firefox: the embed checks\nbefore it still run there, and the CSP header test runs everywhere.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T17:18:45-05:00",
+          "tree_id": "7ce8968c43e57729da64f3eab25d5db4e3b5aa96",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8051e19f61233cb9ceb03b1d1a8d30b08697400e"
+        },
+        "date": 1795042876314,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 71.08,
+            "range": "6.68",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 18.49,
+            "range": "4.85",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 18.47,
+            "range": "4.86",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 189.5,
+            "range": "8.93",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 189.5,
+            "range": "8.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 65.75,
+            "range": "5.32",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.97,
+            "range": "0.38",
             "unit": "ms"
           }
         ]
