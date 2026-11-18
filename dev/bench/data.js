@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794975937392,
+  "lastUpdate": 1794976012072,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -102982,6 +102982,204 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 7,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "261018dd4b7da93eebd09f475b7f233eb2dff749",
+          "message": "Add ChocolateLabelSpec for nutrition labels\n\nA spec for chocolates and cocoa powders that takes a nutrition label\nas printed, per serving, with the cacao and milk solids it declares,\nas a minimum or an actual value. Its kind, DarkChocolate,\nMilkChocolate, WhiteChocolate, or CocoaPowder, fixes what the label\ncan't tell, and the solids it derives compose through ChocolateSpec\nand CocoaPowderSpec by their standard fractions. Carbohydrate is\ntotal or available, as US and EU labels respectively print it. It\nerrors on figures beyond the serving, solids short of a declared\nminimum, and fields its kind can't have.\n\nA dark chocolate's cacao solids are all that isn't sugar, floored by\na declared minimum where the sugars' rounding can account for the\ngap, and a cocoa powder's all but the standard water. A milk\nchocolate's protein is shared between its cocoa and milk solids,\nsplit by an actual declaration, or else by the fiber, whose estimate\na declared minimum floors, a zero fiber counting as none. A white\nchocolate's is all milk's.\n\nThe milk and white splits are public, as derive_milk_chocolate_solids\nand derive_white_chocolate_solids, and so is resolve_fats, renamed\nresolve_chocolate_fats. estimate_cocoa_snf becomes\nestimate_chocolate_cocoa_snf_from_fiber, and estimate_chocolate_msnf\nbecomes estimate_chocolate_snf_split_from_protein_by_fiber, returning\nthe cocoa and milk solids non-fat as a pair, beside its declared-side\nsiblings, estimate_chocolate_snf_split_from_protein_by_cacao_solids\nand estimate_chocolate_snf_split_from_protein_by_milk_solids.\n\n- Convert the Lindt EXCELLENCE, Baker's, Ghirardelli, Hershey's, and\n  Purest entries to labels, and add Lindt Classic and Green & Black's\n  milk and white chocolates. Lindt 95% reads 97.5% cacao solids, and\n  Baker's and Ghirardelli take their fat unrounded\n- Take Power 41's and Arriba's cocoa butter as their sheets' total fat\n  less the milk fat, so every Callebaut entry's fat adds up to it\n- Add test-only label variants of the USDA entries and the Callebaut\n  and Mona Lisa sheets, compare them beside their entries, and\n  reconcile the USDA ones against their listings\n- Name the dairy comparisons' USDA label source \"USDA (Label)\", as\n  the chocolate ones name theirs\n- Check that each label entry rounds to its printed figures as its\n  market does, by the FDA's, Canada's, or the European Commission's\n  rules, within relative ceilings where the standard fractions miss\n- Check that the Callebaut and Mona Lisa label variants recover their\n  entries' solids declaring none, their pages' minima, or their\n  sheets' actual solids\n- Add relative_error_percent, a signed counterpart to\n  relative_diff_percent against a baseline, for the Callebaut MSNF,\n  cocoa water, and label checks\n- Replace the simple specs' retail fixtures with generic and Callebaut\n  ones citing their sheets, moving the Lindt and Ghirardelli ones to\n  the label spec, and add doc examples of both kinds\n- Rework chocolates.md's intro for labels, ranking the sources a\n  product's entry can take and citing the labeling rules it describes,\n  and link the label spec from the chocolate docs and the app\n- Re-export specs::chocolate and specs::dairy by submodule, as their\n  label modules would clash\n- Point the app's docs links for the chocolate and dairy specs at\n  their submodules' pages\n- Note that USDA imputes the sugars STD_SUGARS_IN_COCOA_SOLIDS uses\n- Add TODOs for \"cacao\" as an umbrella term, checking a label's\n  composed protein, Lindt Classic Milk's added lactose, and bounding\n  EggSpec's other solids\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-17T23:08:30-05:00",
+          "tree_id": "0c0202b36558f2f1dabfb74cdb6dd8beabbce78a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/261018dd4b7da93eebd09f475b7f233eb2dff749"
+        },
+        "date": 1794975931410,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3987,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 149453,
+            "range": "± 3696",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2459,
+            "range": "± 79",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 149685,
+            "range": "± 1198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4268,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4091,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4135,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4177,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4127,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4309,
+            "range": "± 67",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 4341,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 4343,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 102100,
+            "range": "± 1031",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 105396,
+            "range": "± 623",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 220460185,
+            "range": "± 1005691",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 620806,
+            "range": "± 20192",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6004,
+            "range": "± 127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 57,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6082,
+            "range": "± 152",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 91843,
+            "range": "± 4141",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 88047,
+            "range": "± 510",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 144796,
+            "range": "± 1280",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 142840,
+            "range": "± 1208",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 326710,
+            "range": "± 3178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14883,
+            "range": "± 316",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 637,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 15,
             "range": "± 0",
             "unit": "ns/iter"
           }
