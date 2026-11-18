@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793848612550,
+  "lastUpdate": 1794975540994,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -722379,6 +722379,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2112.51,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "261018dd4b7da93eebd09f475b7f233eb2dff749",
+          "message": "Add ChocolateLabelSpec for nutrition labels\n\nA spec for chocolates and cocoa powders that takes a nutrition label\nas printed, per serving, with the cacao and milk solids it declares,\nas a minimum or an actual value. Its kind, DarkChocolate,\nMilkChocolate, WhiteChocolate, or CocoaPowder, fixes what the label\ncan't tell, and the solids it derives compose through ChocolateSpec\nand CocoaPowderSpec by their standard fractions. Carbohydrate is\ntotal or available, as US and EU labels respectively print it. It\nerrors on figures beyond the serving, solids short of a declared\nminimum, and fields its kind can't have.\n\nA dark chocolate's cacao solids are all that isn't sugar, floored by\na declared minimum where the sugars' rounding can account for the\ngap, and a cocoa powder's all but the standard water. A milk\nchocolate's protein is shared between its cocoa and milk solids,\nsplit by an actual declaration, or else by the fiber, whose estimate\na declared minimum floors, a zero fiber counting as none. A white\nchocolate's is all milk's.\n\nThe milk and white splits are public, as derive_milk_chocolate_solids\nand derive_white_chocolate_solids, and so is resolve_fats, renamed\nresolve_chocolate_fats. estimate_cocoa_snf becomes\nestimate_chocolate_cocoa_snf_from_fiber, and estimate_chocolate_msnf\nbecomes estimate_chocolate_snf_split_from_protein_by_fiber, returning\nthe cocoa and milk solids non-fat as a pair, beside its declared-side\nsiblings, estimate_chocolate_snf_split_from_protein_by_cacao_solids\nand estimate_chocolate_snf_split_from_protein_by_milk_solids.\n\n- Convert the Lindt EXCELLENCE, Baker's, Ghirardelli, Hershey's, and\n  Purest entries to labels, and add Lindt Classic and Green & Black's\n  milk and white chocolates. Lindt 95% reads 97.5% cacao solids, and\n  Baker's and Ghirardelli take their fat unrounded\n- Take Power 41's and Arriba's cocoa butter as their sheets' total fat\n  less the milk fat, so every Callebaut entry's fat adds up to it\n- Add test-only label variants of the USDA entries and the Callebaut\n  and Mona Lisa sheets, compare them beside their entries, and\n  reconcile the USDA ones against their listings\n- Name the dairy comparisons' USDA label source \"USDA (Label)\", as\n  the chocolate ones name theirs\n- Check that each label entry rounds to its printed figures as its\n  market does, by the FDA's, Canada's, or the European Commission's\n  rules, within relative ceilings where the standard fractions miss\n- Check that the Callebaut and Mona Lisa label variants recover their\n  entries' solids declaring none, their pages' minima, or their\n  sheets' actual solids\n- Add relative_error_percent, a signed counterpart to\n  relative_diff_percent against a baseline, for the Callebaut MSNF,\n  cocoa water, and label checks\n- Replace the simple specs' retail fixtures with generic and Callebaut\n  ones citing their sheets, moving the Lindt and Ghirardelli ones to\n  the label spec, and add doc examples of both kinds\n- Rework chocolates.md's intro for labels, ranking the sources a\n  product's entry can take and citing the labeling rules it describes,\n  and link the label spec from the chocolate docs and the app\n- Re-export specs::chocolate and specs::dairy by submodule, as their\n  label modules would clash\n- Point the app's docs links for the chocolate and dairy specs at\n  their submodules' pages\n- Note that USDA imputes the sugars STD_SUGARS_IN_COCOA_SOLIDS uses\n- Add TODOs for \"cacao\" as an umbrella term, checking a label's\n  composed protein, Lindt Classic Milk's added lactose, and bounding\n  EggSpec's other solids\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-17T23:08:30-05:00",
+          "tree_id": "0c0202b36558f2f1dabfb74cdb6dd8beabbce78a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/261018dd4b7da93eebd09f475b7f233eb2dff749"
+        },
+        "date": 1794975495100,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1239.68,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 372.22,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1995.01,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 608.08,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 656.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2204.52,
             "unit": "KB"
           }
         ]
