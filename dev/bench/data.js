@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795040920438,
+  "lastUpdate": 1795040927952,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -621292,6 +621292,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.19%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "becb5a77f4cabc290bac40f9b503443c4d86c140",
+          "message": "Upgrade JS dependencies for Ubuntu 26.04 CI\n\nCI's runners are on Ubuntu 26.04, where Playwright 1.60 doesn't\nsupport chromium; @playwright/test 1.65.1 does. The workspace's other\nJS dependencies are upgraded with it, but for two held back.\n\nTypeScript stays at 6.0: 7.0 drops the JavaScript compiler API, which\nvite-plugin-dts loads, and typescript-eslint supports only below 6.1.\nVitest stays at 4.1: vite-plugin-wasm 3.6.0 recognizes Vitest by a\nplugin name that Vitest 5 no longer registers, so it fetches the\ncrate's wasm by a relative URL, which Node rejects, failing the tests\nthat import its bindings.\n\n- Import sharp's OverlayOptions by name, as 0.35.5's ESM types have\n  no namespace\n- Give the heading permalink's className as an array, as @types/hast\n  3.0.5 types it\n- Read the inline style in the key filter and batch checklist tests,\n  as jsdom 31's getComputedStyle resolves rem to px and an undefined\n  var() to the empty string\n- Suppress the seven sites that eslint-plugin-react-hooks 7.1.1, from\n  eslint-config-next 16.4.6, newly flags, until a follow-up fixes them\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T00:36:26-05:00",
+          "tree_id": "586af8dbb43ba7adf92f2a36ee96ea85d262a326",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/becb5a77f4cabc290bac40f9b503443c4d86c140"
+        },
+        "date": 1795040846376,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47559,
+            "range": "±1.14%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 438512,
+            "range": "±1.08%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 30892,
+            "range": "±1.23%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 342388,
+            "range": "±1.23%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
