@@ -1,9 +1,16 @@
 # Squawk lints migrations for hazards Postgres will not warn about. Rules are excluded only where
 # the hazard genuinely does not apply here — not to silence output.
 
-# A snapshot of the schema production already had, applied only to fresh databases and recorded on
-# production by `pnpm db:baseline` rather than run there. It is history, not a proposed change.
-excluded_paths = ["drizzle/0000_baseline.sql"]
+excluded_paths = [
+  # A snapshot of the schema production already had, applied only to fresh databases and recorded
+  # on production by `pnpm db:baseline` rather than run there. It is history, not a proposed change.
+  "drizzle/0000_baseline.sql",
+
+  # Each constraint it drops, which `ban-drop-constraint` flags, is replaced in the same migration:
+  # the unique ones by primary keys on the same columns, the foreign key recreated against them.
+  # Committed migrations are immutable, so it can't take a `squawk-ignore`.
+  "drizzle/0001_drop_surrogate_keys.sql",
+]
 
 excluded_rules = [
   # Lock contention. The largest table holds a few hundred rows, so the table scans and ACCESS
