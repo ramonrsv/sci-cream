@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795044637925,
+  "lastUpdate": 1795044671026,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -672055,6 +672055,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1039.15,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7e554941bbe2822c997c4de1371e463832f19b93",
+          "message": "Fix clippy 1.100 warnings in the crate\n\nClippy 1.100 warns at four sites, which fails CI's clippy job under\n`-D warnings`.\n\nIt now checks loop bodies for redundant clones. The loops that index\nthe embedded specs and recipes cloned each entry into the map, though\n`into_values()` already yields an owned value used nowhere after.\nMove it in instead; the key is still cloned, as the duplicate panic\nmessage uses it.\n\nempty_enums fires inside serde's Deserialize derive for PropKey and\nBalanceKey. With `#[serde(untagged)]` on every variant, serde still\nemits a matcher for the tagged variants, of which there are none, as\nan empty enum. Mark each enum untagged instead, as SpecEntry is;\nserde handles both forms the same, so the wire format is unchanged.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T18:23:05-05:00",
+          "tree_id": "49722f5a71dc375cac70a0c8d5c904e1ba0e5649",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7e554941bbe2822c997c4de1371e463832f19b93"
+        },
+        "date": 1795044576990,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 777.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 944.92,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 721.82,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 889.54,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 731.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 899.21,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 705.22,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 872.94,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 706.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 874.47,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1036.98,
             "unit": "KB"
           },
           {
