@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795045003747,
+  "lastUpdate": 1795045060624,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -727492,6 +727492,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/7e554941bbe2822c997c4de1371e463832f19b93"
         },
         "date": 1795044580453,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1236.96,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 370.28,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1990.82,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 605.47,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 654.14,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2200.33,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "818c29d042f54dd2623a2bd4e8cfe720232e7ab2",
+          "message": "Update visual snapshots for Geist and lucide\n\nThe JS dependency upgrade brought geist 1.9.2 and lucide-react 1.74.\nGeist's glyphs render text slightly differently, and lucide redrew\nthe Trash and BookOpen icons the toolbars and sidebar use. No\nsnapshot changes size, and the differences stay within text and\nicons.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T18:30:35-05:00",
+          "tree_id": "ea09a12d34036a7681f6f1b7b4b66e31e01cd089",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/818c29d042f54dd2623a2bd4e8cfe720232e7ab2"
+        },
+        "date": 1795044976449,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
