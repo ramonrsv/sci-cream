@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795042819518,
+  "lastUpdate": 1795042826104,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -623008,6 +623008,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 337763,
             "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8051e19f61233cb9ceb03b1d1a8d30b08697400e",
+          "message": "Fix e2e hangs with Playwright 1.65's browsers\n\nChrome 159 hovers whatever loads under the resting cursor during a\npage's first navigation, and Firefox 159 does so on later ones,\nwherever an action left the cursor. On the sidebar's hover zone that\nopens the peek drawer, which covers the content until the cursor\nmoves, so a click beneath it retries until the test times out.\n\nMove parkCursor from the visual util to the e2e one and call it at\nthe end of goToPageAndWaitFor. The web-vitals test and bench, which\nnavigate with page.goto, park before their click.\n\nFirefox 159 gives Playwright no execution context in a frame that\nframe-ancestors blocks, so the check that /share stays un-frameable\nhangs past its timeout. Mark it fixme on Firefox: the embed checks\nbefore it still run there, and the CSP header test runs everywhere.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T17:18:45-05:00",
+          "tree_id": "7ce8968c43e57729da64f3eab25d5db4e3b5aa96",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8051e19f61233cb9ceb03b1d1a8d30b08697400e"
+        },
+        "date": 1795042743116,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 44489,
+            "range": "±1.22%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 389522,
+            "range": "±1.42%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 30357,
+            "range": "±1.12%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 311905,
+            "range": "±1.13%",
             "unit": "ops/sec",
             "extra": "91 samples"
           }
