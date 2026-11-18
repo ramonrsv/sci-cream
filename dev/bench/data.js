@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795040897404,
+  "lastUpdate": 1795040920438,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -723404,6 +723404,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2204.52,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "becb5a77f4cabc290bac40f9b503443c4d86c140",
+          "message": "Upgrade JS dependencies for Ubuntu 26.04 CI\n\nCI's runners are on Ubuntu 26.04, where Playwright 1.60 doesn't\nsupport chromium; @playwright/test 1.65.1 does. The workspace's other\nJS dependencies are upgraded with it, but for two held back.\n\nTypeScript stays at 6.0: 7.0 drops the JavaScript compiler API, which\nvite-plugin-dts loads, and typescript-eslint supports only below 6.1.\nVitest stays at 4.1: vite-plugin-wasm 3.6.0 recognizes Vitest by a\nplugin name that Vitest 5 no longer registers, so it fetches the\ncrate's wasm by a relative URL, which Node rejects, failing the tests\nthat import its bindings.\n\n- Import sharp's OverlayOptions by name, as 0.35.5's ESM types have\n  no namespace\n- Give the heading permalink's className as an array, as @types/hast\n  3.0.5 types it\n- Read the inline style in the key filter and batch checklist tests,\n  as jsdom 31's getComputedStyle resolves rem to px and an undefined\n  var() to the empty string\n- Suppress the seven sites that eslint-plugin-react-hooks 7.1.1, from\n  eslint-config-next 16.4.6, newly flags, until a follow-up fixes them\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T00:36:26-05:00",
+          "tree_id": "586af8dbb43ba7adf92f2a36ee96ea85d262a326",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/becb5a77f4cabc290bac40f9b503443c4d86c140"
+        },
+        "date": 1795040838509,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1239.68,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 372.22,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1994.45,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 608,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 656.49,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2203.96,
             "unit": "KB"
           }
         ]
