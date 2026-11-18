@@ -395,7 +395,7 @@ export function RecipeEditor({
   const signedIn = useSignedIn();
 
   const recipesRef = useRef(allRecipes);
-  recipesRef.current = allRecipes;
+  recipesRef.current = allRecipes; // eslint-disable-line react-hooks/refs
 
   /**
    * Update multiple recipes at once, with a single state update.
@@ -710,7 +710,7 @@ export function RecipeEditor({
 
   // Drop a stale de-evaporate error when switching recipe slots.
   useEffect(() => {
-    setDeevaporateError(undefined);
+    setDeevaporateError(undefined); // eslint-disable-line react-hooks/set-state-in-effect
   }, [currentRecipeIdx]);
 
   // Clear the custom new-version input whenever the loaded version changes (slot switch or save).
@@ -718,7 +718,7 @@ export function RecipeEditor({
     ? `${currentRecipe.savedRef.recipeId}-${currentRecipe.savedRef.versionNumber}`
     : "";
   useEffect(() => {
-    setNewVersionInput("");
+    setNewVersionInput(""); // eslint-disable-line react-hooks/set-state-in-effect
   }, [savedRefKey]);
 
   const validIngredients = wasmResources.wasmBridge.get_all_ingredient_names();

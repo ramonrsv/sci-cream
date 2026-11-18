@@ -284,8 +284,8 @@ describe("KeyFilterSelect", () => {
     const fatItem = items.find((li) => li.textContent?.includes(key_as_med_str(TestKey.Fat)))!;
     const sugarItem = items.find((li) => li.textContent?.includes(key_as_med_str(TestKey.Sugar)))!;
     expect(fatItem).toHaveClass("font-semibold");
-    expect(sugarItem).toHaveStyle({ paddingLeft: "0.75rem" });
-    expect(fatItem).not.toHaveStyle({ paddingLeft: "0.75rem" });
+    expect(sugarItem.style.paddingLeft).toBe("0.75rem");
+    expect(fatItem.style.paddingLeft).not.toBe("0.75rem");
   });
 
   it("key checkboxes reflect the current selectedKeys set", async () => {

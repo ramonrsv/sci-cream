@@ -853,7 +853,7 @@ export function WatchersView({
 
   // Drop a stale runtime balance error once the inputs change, so a prior failure doesn't linger.
   useEffect(() => {
-    setBalanceError(undefined);
+    setBalanceError(undefined); // eslint-disable-line react-hooks/set-state-in-effect
   }, [balanceTargetsKey, main]);
 
   // Removal only takes effect under the Custom filter (which derives its keys from the selection);
@@ -915,7 +915,7 @@ export function WatchersView({
   // re-trigger it. `useLayoutEffect` runs before paint, avoiding a one-frame stale-delta flicker.
   useLayoutEffect(() => {
     if (!autoBalance || balanceDisabled) return;
-    onBalance();
+    onBalance(); // eslint-disable-line react-hooks/set-state-in-effect
     // Suppress the `onBalance` missing-dep warning: listing it would re-run this every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

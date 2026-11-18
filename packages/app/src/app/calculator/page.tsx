@@ -181,7 +181,7 @@ export default function CalculatorPage() {
   // schema (version/fingerprint) no longer matches the current panel set.
   useEffect(() => {
     const stored = loadStoredLayouts(defaultLayouts);
-    if (stored) setLayouts(stored);
+    if (stored) setLayouts(stored); // eslint-disable-line react-hooks/set-state-in-effect
     hydratedRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

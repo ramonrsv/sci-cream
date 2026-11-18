@@ -1,5 +1,5 @@
 import { Page, Locator } from "@playwright/test";
-import sharp from "sharp";
+import sharp, { type OverlayOptions } from "sharp";
 
 import { APP_CONTENT_ID } from "@/lib/app-shell";
 import { sleep_ms } from "@/lib/util";
@@ -172,7 +172,7 @@ export async function captureFullContent(
   }
 
   const stitchedHeight = pieces.reduce((sum, p) => sum + p.height, 0);
-  const composites: sharp.OverlayOptions[] = [];
+  const composites: OverlayOptions[] = [];
   let y = 0;
   for (const p of pieces) {
     composites.push({ input: p.buf, left: 0, top: y });

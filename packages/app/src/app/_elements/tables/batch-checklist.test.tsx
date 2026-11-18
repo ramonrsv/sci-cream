@@ -44,7 +44,7 @@ describe("BatchChecklist container colors", () => {
     });
 
     for (const chip of chipsForRecipe(0)) {
-      expect(chip).toHaveStyle({ "--cat": `var(${CATEGORY_COLORS[0]!})` });
+      expect(chip.style.getPropertyValue("--cat")).toBe(`var(${CATEGORY_COLORS[0]!})`);
       expect(chip).not.toHaveClass("cat-solid");
     }
   });
@@ -56,7 +56,7 @@ describe("BatchChecklist container colors", () => {
     });
 
     for (const chip of chipsForRecipe(0)) {
-      expect(chip).toHaveStyle({ "--cat": `var(${CategoryColor.Purple})` });
+      expect(chip.style.getPropertyValue("--cat")).toBe(`var(${CategoryColor.Purple})`);
     }
   });
 

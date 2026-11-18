@@ -62,7 +62,7 @@ const HEADING_TAGS = ["h1", "h2", "h3", "h4", "h5", "h6"];
 /** Permalink appended to every heading, styled by `.heading-permalink` in `globals.css`. */
 const HEADING_PERMALINK = {
   behavior: "append" as const,
-  properties: { className: "heading-permalink", ariaLabel: "Permalink to this section" },
+  properties: { className: ["heading-permalink"], ariaLabel: "Permalink to this section" },
   content: { type: "text" as const, value: "#" },
 };
 

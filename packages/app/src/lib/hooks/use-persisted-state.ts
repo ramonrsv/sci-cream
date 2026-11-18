@@ -47,7 +47,7 @@ export function usePersistedState<T>(
         if (raw !== null) {
           const deserialized = options?.deserialize ? options.deserialize(raw) : (raw as T);
           if (!options?.isValid || options.isValid(deserialized)) {
-            setValue(deserialized);
+            setValue(deserialized); // eslint-disable-line react-hooks/set-state-in-effect
           }
         }
       }
