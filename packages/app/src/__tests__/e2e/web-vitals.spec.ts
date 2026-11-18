@@ -2,6 +2,8 @@ import { test, expect } from "@playwright/test";
 
 import { Metric } from "@/app/_elements/web-vitals";
 
+import { parkCursor } from "@/__tests__/e2e/util";
+
 declare global {
   interface Window {
     __webVitals: Record<string, Metric>;
@@ -13,6 +15,9 @@ test("should collect web vitals metrics and be good", async ({ page }) => {
 
   await page.waitForLoadState("networkidle");
   await page.waitForLoadState("load");
+
+  // The cursor may rest on the sidebar's hover zone, whose peek drawer would cover the heading
+  await parkCursor(page);
 
   // Interact with page to trigger INP/FID
   await page.getByRole("heading", { name: "Calculator" }).click();

@@ -1,10 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 
-import { goToPageAndWaitFor, waitForHydration } from "../e2e/util";
+import { goToPageAndWaitFor, parkCursor, waitForHydration } from "../e2e/util";
 import { VIEWPORT_MOBILE_SMALL_PORTRAIT } from "./assets";
 import {
   commentMetaMask,
-  parkCursor,
   setViewportHeightForAllAppContentScreenshot,
   waitForCommentThread,
 } from "./util";

@@ -651,6 +651,14 @@ export async function loginAsTestUserWithCredentials(
 }
 /* eslint-enable jsdoc/check-param-names */
 
+/**
+ * Park the cursor top-right, off the content and off the sidebar's hover zone that would open the
+ * peek drawer over it. Top-right stays in the cropped-out header, so it adds no hover artifacts.
+ */
+export async function parkCursor(page: Page) {
+  await page.mouse.move((page.viewportSize()?.width ?? 1) - 1, 0);
+}
+
 /** Enum representing different playwright `Page` load states */
 export enum LoadState {
   Load = "load",
@@ -663,6 +671,9 @@ export enum LoadState {
  *
  * This function navigates to the given URL and waits for the specified load state to be reached.
  * By default, it navigates to the root URL and waits for `LoadState::NetworkIdle = "networkidle"`.
+ *
+ * It then parks the cursor: a browser may hover whatever loads beneath it, and on the sidebar's
+ * hover zone that opens the peek drawer, which overlays the content until the cursor moves.
  */
 export async function goToPageAndWaitFor(
   page: Page,
@@ -671,6 +682,7 @@ export async function goToPageAndWaitFor(
 ) {
   await page.goto(url);
   await page.waitForLoadState(loadState);
+  await parkCursor(page);
 }
 
 /**

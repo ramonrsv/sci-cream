@@ -4,18 +4,12 @@ import sharp, { type OverlayOptions } from "sharp";
 import { APP_CONTENT_ID } from "@/lib/app-shell";
 import { sleep_ms } from "@/lib/util";
 
+import { parkCursor } from "@/__tests__/e2e/util";
+
 /** Scrolls to the bottom of the page and waits for a short period to allow lazy-loaded content. */
 export async function scrollToBottomOfPage(page: Page) {
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await sleep_ms(500); // Wait for any lazy-loaded content to load
-}
-
-/**
- * Park the cursor top-right, off the content and off the sidebar's hover zone that would open the
- * peek drawer over it. Top-right stays in the cropped-out header, so it adds no hover artifacts.
- */
-export async function parkCursor(page: Page) {
-  await page.mouse.move((page.viewportSize()?.width ?? 1) - 1, 0);
 }
 
 /**

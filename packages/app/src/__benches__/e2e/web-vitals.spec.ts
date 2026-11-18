@@ -4,6 +4,8 @@ import type { Metric } from "@/app/_elements/web-vitals";
 import { HYDRATION_MARK } from "@/lib/app-shell";
 import { sleep_ms } from "@/lib/util";
 
+import { parkCursor } from "@/__tests__/e2e/util";
+
 import {
   BenchmarkResultForUpload,
   analyzeMeasurements,
@@ -65,6 +67,9 @@ async function collectMetrics(page: Page): Promise<Record<string, number>> {
   await page.goto("");
   await page.waitForLoadState("networkidle");
   await page.waitForLoadState("load");
+
+  // The cursor may rest on the sidebar's hover zone, whose peek drawer would cover the heading
+  await parkCursor(page);
 
   // Interact to generate INP and finalize LCP.
   await page.getByRole("heading", { name: "Calculator" }).click();

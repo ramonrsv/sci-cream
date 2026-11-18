@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 
-import { goToPageAndWaitFor } from "../e2e/util";
+import { goToPageAndWaitFor, parkCursor } from "../e2e/util";
 import { VIEWPORT_MOBILE_SMALL_PORTRAIT } from "./assets";
-import { commentMetaMask, parkCursor, waitForCommentThread } from "./util";
+import { commentMetaMask, waitForCommentThread } from "./util";
 
 /**
  * Visual coverage for blog posts.
