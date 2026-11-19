@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795066895196,
+  "lastUpdate": 1795066912532,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -631921,6 +631921,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.09%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9e056680aaadabc6850813f8efa6e85d32e9628f",
+          "message": "Resolve the recipe editor's react-hooks lints\n\neslint-plugin-react-hooks 7.1.1 flags three sites in RecipeEditor,\nsuppressed in the dependency upgrade until they could be fixed.\n\n- The save timer read the recipes through a ref written during\n  render, which a discarded render leaves pointing at recipes that\n  never committed. Read them through an Effect Event instead.\n- An effect cleared the de-evaporate error after each slot switch.\n  RecipeSelect's onChange is the only way the slot changes, so clear\n  it in a handler that sets the slot.\n- An effect cleared the new-version input when the loaded version\n  changed. Compare the version key during render instead, React's\n  pattern for adjusting state to a changed input, so the old text no\n  longer shows for a frame.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T00:20:13-05:00",
+          "tree_id": "f516075e4736a44d6b213a059f69e718fafa1a1a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9e056680aaadabc6850813f8efa6e85d32e9628f"
+        },
+        "date": 1795066828561,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47406,
+            "range": "±0.64%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 454204,
+            "range": "±0.56%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32628,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 343289,
+            "range": "±1.13%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
