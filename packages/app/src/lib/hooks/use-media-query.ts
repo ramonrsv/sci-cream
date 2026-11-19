@@ -1,25 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 /**
  * Whether the given CSS media `query` currently matches.
  *
- * SSR/test-safe: starts `false`, resolves on mount, then tracks `matchMedia` (false if unavailable,
- * e.g. SSR, stub-less jsdom). Callers layer meaning on top (e.g. `useIsNarrow`, `useCanHover`).
+ * SSR/test-safe: `false` while hydrating, then tracks `matchMedia` (false if unavailable, e.g.
+ * SSR, stub-less jsdom). Callers layer meaning on top (e.g. `useIsNarrow`, `useCanHover`).
  */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
-
-  useEffect(() => {
-    if (typeof window.matchMedia !== "function") return;
-    const mql = window.matchMedia(query);
-    // The server has no `matchMedia`, so the initial match can only be read after hydration.
-    setMatches(mql.matches); // eslint-disable-line react-hooks/set-state-in-effect
-    const onChange = (event: MediaQueryListEvent) => setMatches(event.matches);
-    mql.addEventListener("change", onChange);
-    return () => mql.removeEventListener("change", onChange);
-  }, [query]);
-
-  return matches;
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      if (typeof window.matchMedia !== "function") return () => {};
+      const mql = window.matchMedia(query);
+      mql.addEventListener("change", onChange);
+      return () => mql.removeEventListener("change", onChange);
+    },
+    [query],
+  );
+  const getSnapshot = () =>
+    typeof window.matchMedia === "function" && window.matchMedia(query).matches;
+  return useSyncExternalStore(subscribe, getSnapshot, () => false);
 }
