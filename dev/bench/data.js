@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795131820388,
+  "lastUpdate": 1795131863836,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -719807,6 +719807,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.15,
             "range": "0.42",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "656f6d42070c9f40d6c7984a28ac0fd8d1733117",
+          "message": "Move the calculator's grid config into lib\n\nCalculatorPage rebuilt its breakpoints, columns, and default layouts\non every render, so the two effects that read the default layouts\nsuppressed exhaustive-deps to keep their empty dependency arrays.\n\nThe config moves to lib/calculator-grid.ts, exported as\nGRID_BREAKPOINTS, GRID_COLS, and DEFAULT_GRID_LAYOUTS and built once\nwhen the module loads. The helpers that build the layouts move into\nmakeDefaultLayouts, keeping their names and tables. A module constant\nis no dependency, so both effects' empty arrays are complete and the\nsuppressions go.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T17:55:36-05:00",
+          "tree_id": "fcc06a741e318efe7174e5275dafc3e0b9e8067c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/656f6d42070c9f40d6c7984a28ac0fd8d1733117"
+        },
+        "date": 1795131794653,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 58.16,
+            "range": "8.70",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.81,
+            "range": "3.44",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.77,
+            "range": "3.45",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 147,
+            "range": "10.15",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 147,
+            "range": "10.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 54.75,
+            "range": "7.98",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.51,
+            "range": "0.35",
             "unit": "ms"
           }
         ]
