@@ -16,7 +16,7 @@ use crate::{
         },
         units::Unit,
     },
-    validate::{verify_are_positive, verify_is_subset},
+    validate::{verify_are_above_zero, verify_are_positive, verify_is_subset},
 };
 
 #[cfg(doc)]
@@ -320,7 +320,8 @@ impl ToComposition for ChocolateLabelSpec {
         let (printed_carbs, label_fiber) = (amount.printed(), fiber.unwrap_or(0.0));
         let total_carbohydrates = amount.total(label_fiber);
 
-        verify_are_positive(&[serving_size, total_fat, printed_carbs, label_fiber, sugars, protein])?;
+        verify_are_above_zero(&[serving_size])?;
+        verify_are_positive(&[total_fat, printed_carbs, label_fiber, sugars, protein])?;
         verify_is_subset(sugars + label_fiber, total_carbohydrates, "sugars + fiber <= carbohydrates")?;
         verify_is_subset(
             total_fat + total_carbohydrates + protein,
@@ -1276,6 +1277,24 @@ pub(crate) mod tests {
             ..lindt_70_label()
         };
         assert!(matches!(label.to_composition(), Err(Error::UnsupportedCompositionUnit(_))));
+    }
+
+    #[test]
+    fn to_composition_err_on_a_serving_size_not_above_zero() {
+        for serving_size in [0.0, -40.0] {
+            let label = ChocolateLabelSpec {
+                serving_size: Unit::Grams(serving_size),
+                total_fat: 0.0,
+                carbohydrates: LabelCarbohydrates {
+                    amount: CarbohydrateAmount::Total(0.0),
+                    fiber: None,
+                    sugars: 0.0,
+                },
+                protein: 0.0,
+                ..lindt_70_label()
+            };
+            assert!(matches!(label.to_composition(), Err(Error::CompositionNotAboveZero(_))));
+        }
     }
 
     #[test]

@@ -121,6 +121,26 @@ pub fn verify_are_positive(values: &[f64]) -> Result<()> {
     Ok(())
 }
 
+/// Checks whether the given value is above zero by more than a [`COMPOSITION_EPSILON`] tolerance.
+#[must_use]
+pub fn is_above_zero(value: f64) -> bool {
+    value > 0.0 && !are_equal(value, 0.0)
+}
+
+/// Verifies that all values in the given slice are above zero, per [`is_above_zero`].
+///
+/// # Errors
+///
+/// Return [`Error::CompositionNotAboveZero`] if any value is zero or negative.
+pub fn verify_are_above_zero(values: &[f64]) -> Result<()> {
+    for &value in values {
+        if !is_above_zero(value) {
+            return Err(Error::CompositionNotAboveZero(value));
+        }
+    }
+    Ok(())
+}
+
 /// Checks whether the given value is between 0 and 100 (inclusive).
 #[must_use]
 pub fn is_within_100_percent(value: f64) -> bool {
@@ -212,6 +232,7 @@ pub fn is_within_range_rel(value: f64, min: f64, max: f64, rel_tol: f64) -> bool
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::float_cmp)]
 mod tests {
+    use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
     use super::*;
@@ -318,6 +339,85 @@ mod tests {
         assert!(matches!(
             verify_are_positive(&[1.0, -5.0, -3.0]),
             Err(Error::CompositionNotPositive(v)) if v == -5.0
+        ));
+    }
+
+    // --- is_above_zero ---
+
+    #[test]
+    fn is_above_zero_true_for_positive_value() {
+        assert_true!(is_above_zero(1.0));
+    }
+
+    #[test]
+    fn is_above_zero_true_for_tiny_positive_beyond_epsilon() {
+        // 1e-12 exceeds COMPOSITION_EPSILON (1e-13), treated as above zero
+        assert_true!(is_above_zero(1e-12));
+    }
+
+    #[test]
+    fn is_above_zero_false_for_zero() {
+        assert_false!(is_above_zero(0.0));
+    }
+
+    #[test]
+    fn is_above_zero_false_for_tiny_positive_within_epsilon() {
+        // 1e-14 is within COMPOSITION_EPSILON (1e-13), treated as zero
+        assert_false!(is_above_zero(1e-14));
+    }
+
+    #[test]
+    fn is_above_zero_false_for_negative_value() {
+        assert_false!(is_above_zero(-1.0));
+    }
+
+    #[test]
+    fn is_positive_is_above_zero_or_zero() {
+        for value in [-1.0, -1e-12, -1e-14, 0.0, 1e-14, 1e-12, 1.0] {
+            assert_eq!(is_positive(value), is_above_zero(value) || are_equal(value, 0.0));
+        }
+    }
+
+    // --- verify_are_above_zero ---
+
+    #[test]
+    fn verify_are_above_zero_ok_with_empty_slice() {
+        assert!(verify_are_above_zero(&[]).is_ok());
+    }
+
+    #[test]
+    fn verify_are_above_zero_ok_with_all_above_zero() {
+        assert!(verify_are_above_zero(&[1e-12, 1.0, 50.0, 100.0]).is_ok());
+    }
+
+    #[test]
+    fn verify_are_above_zero_err_with_zero() {
+        assert!(matches!(
+            verify_are_above_zero(&[0.0]),
+            Err(Error::CompositionNotAboveZero(v)) if v == 0.0
+        ));
+    }
+
+    #[test]
+    fn verify_are_above_zero_err_with_tiny_positive_within_epsilon() {
+        // 1e-14 is within COMPOSITION_EPSILON (1e-13), so treated as zero
+        assert!(matches!(verify_are_above_zero(&[1e-14]), Err(Error::CompositionNotAboveZero(_))));
+    }
+
+    #[test]
+    fn verify_are_above_zero_err_with_negative_value() {
+        assert!(matches!(
+            verify_are_above_zero(&[-1.0]),
+            Err(Error::CompositionNotAboveZero(v)) if v == -1.0
+        ));
+    }
+
+    #[test]
+    fn verify_are_above_zero_err_stops_at_first_not_above_zero() {
+        // Only the first value not above zero is reported
+        assert!(matches!(
+            verify_are_above_zero(&[1.0, 0.0, -3.0]),
+            Err(Error::CompositionNotAboveZero(v)) if v == 0.0
         ));
     }
 

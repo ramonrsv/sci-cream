@@ -19,7 +19,7 @@ use crate::{
         dairy::util::{estimate_minerals, estimate_snf, estimate_unaccounted, make_dairy_sugars, make_milk_proteins},
         units::Unit,
     },
-    validate::{Validate, verify_are_positive, verify_is_subset},
+    validate::{Validate, verify_are_above_zero, verify_are_positive, verify_is_subset},
 };
 
 #[cfg(doc)]
@@ -166,6 +166,10 @@ impl ToComposition for DairyLabelSpec {
             solids_source,
         } = *self;
 
+        if let Unit::Grams(size) | Unit::Milliliters(size) = serving_size {
+            verify_are_above_zero(&[size])?;
+        }
+
         let lactose_free = lactose_free.unwrap_or(false);
         let sucrose = sucrose.unwrap_or(0.0);
         let dairy_sugars = sugars - sucrose;
@@ -201,7 +205,6 @@ impl ToComposition for DairyLabelSpec {
         let trans_fat = trans_fat.unwrap_or(STD_TRANS_FAT_IN_MILK_FAT * total_fat);
 
         verify_are_positive(&[
-            serving_size,
             total_fat,
             saturated_fat,
             trans_fat,
@@ -1624,10 +1627,6 @@ pub(crate) mod tests {
 
         let neg_cases = [
             DairyLabelSpec {
-                serving_size: Unit::Grams(-1.0),
-                ..base
-            },
-            DairyLabelSpec {
                 total_fat: Unit::Grams(-1.0),
                 ..base
             },
@@ -1646,6 +1645,31 @@ pub(crate) mod tests {
         for spec in neg_cases {
             let result = spec.to_composition();
             assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn dairy_label_spec_err_on_a_serving_size_not_above_zero() {
+        for serving_size in [
+            Unit::Grams(0.0),
+            Unit::Milliliters(0.0),
+            Unit::Grams(-1.0),
+            Unit::Milliliters(-1.0),
+        ] {
+            let spec = DairyLabelSpec {
+                serving_size,
+                energy: None,
+                total_fat: Unit::Grams(0.0),
+                saturated_fat: None,
+                trans_fat: None,
+                carbohydrates: None,
+                sugars: 0.0,
+                protein: 0.0,
+                lactose_free: None,
+                sucrose: None,
+                solids_source: None,
+            };
+            assert!(matches!(spec.to_composition(), Err(Error::CompositionNotAboveZero(_))));
         }
     }
 

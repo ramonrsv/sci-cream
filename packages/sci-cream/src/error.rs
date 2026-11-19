@@ -35,6 +35,9 @@ pub enum Error {
     /// Composition value is not positive.
     #[error("Composition value is not positive: {0}")]
     CompositionNotPositive(f64),
+    /// Composition value is not above zero.
+    #[error("Composition value is not above zero: {0}")]
+    CompositionNotAboveZero(f64),
     /// General invalid composition error.
     #[error("Invalid composition: {0}")]
     InvalidComposition(String),

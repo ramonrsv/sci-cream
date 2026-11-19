@@ -10,7 +10,9 @@ use crate::{
     constants::molar_mass::pac_from_molar_mass,
     error::{Error, Result},
     specs::units::{CompositionBasis, Scaling, Unit},
-    validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_within_100_percent},
+    validate::{
+        Validate, verify_are_above_zero, verify_are_positive, verify_is_100_percent, verify_is_within_100_percent,
+    },
 };
 
 #[cfg(doc)]
@@ -284,7 +286,10 @@ impl ToComposition for SweetenerSpec {
 
                 match unit {
                     Unit::Grams(grams) => grams * factor,
-                    Unit::MolarMass(molar_mass) => pac_from_molar_mass(molar_mass) * factor,
+                    Unit::MolarMass(molar_mass) => {
+                        verify_are_above_zero(&[molar_mass])?;
+                        pac_from_molar_mass(molar_mass) * factor
+                    }
                     _ => Err(Error::UnsupportedCompositionUnit(unit))?,
                 }
             }
@@ -2319,6 +2324,22 @@ pub(crate) mod tests {
 
         for spec in neg_cases {
             assert!(matches!(spec.to_composition(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn to_composition_err_on_a_molar_mass_not_above_zero() {
+        for molar_mass in [0.0, -1.0] {
+            let spec = SweetenerSpec {
+                sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+                fiber: None,
+                other_carbohydrates: None,
+                other_solids: None,
+                basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+                pod: None,
+                pac: Some(Scaling::OfWhole(Unit::MolarMass(molar_mass))),
+            };
+            assert!(matches!(spec.to_composition(), Err(Error::CompositionNotAboveZero(_))));
         }
     }
 
