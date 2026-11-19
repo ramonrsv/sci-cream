@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, Fragment, ReactNode, useState, useEffect, useRef } from "react";
+import { ChangeEvent, Fragment, ReactNode, useState, useEffect, useEffectEvent } from "react";
 import {
   ClipboardCopy,
   ClipboardPaste,
@@ -394,9 +394,6 @@ export function RecipeEditor({
 
   const signedIn = useSignedIn();
 
-  const recipesRef = useRef(allRecipes);
-  recipesRef.current = allRecipes; // eslint-disable-line react-hooks/refs
-
   /**
    * Update multiple recipes at once, with a single state update.
    *
@@ -694,10 +691,11 @@ export function RecipeEditor({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Periodically store recipes to local storage
+  const storeRecipes = useEffectEvent(() => {
+    setRecipeStoresToStorage(allRecipes.map((recipe) => stringifyRecipeToStore(recipe)));
+  });
   useEffect(() => {
-    const intervalID = setInterval(() => {
-      setRecipeStoresToStorage(recipesRef.current.map((recipe) => stringifyRecipeToStore(recipe)));
-    }, 2000);
+    const intervalID = setInterval(() => storeRecipes(), 2000);
     return () => clearInterval(intervalID);
   }, []);
 
@@ -708,18 +706,21 @@ export function RecipeEditor({
     return () => clearTimeout(id);
   }, [saveStatus]);
 
-  // Drop a stale de-evaporate error when switching recipe slots.
-  useEffect(() => {
-    setDeevaporateError(undefined); // eslint-disable-line react-hooks/set-state-in-effect
-  }, [currentRecipeIdx]);
+  /** Switch recipe slots, dropping the previous slot's stale de-evaporate error. */
+  const selectRecipeIdx: React.Dispatch<React.SetStateAction<number>> = (action) => {
+    setCurrentRecipeIdx(action);
+    setDeevaporateError(undefined);
+  };
 
   // Clear the custom new-version input whenever the loaded version changes (slot switch or save).
   const savedRefKey = currentRecipe.savedRef
     ? `${currentRecipe.savedRef.recipeId}-${currentRecipe.savedRef.versionNumber}`
     : "";
-  useEffect(() => {
-    setNewVersionInput(""); // eslint-disable-line react-hooks/set-state-in-effect
-  }, [savedRefKey]);
+  const [prevSavedRefKey, setPrevSavedRefKey] = useState(savedRefKey);
+  if (savedRefKey !== prevSavedRefKey) {
+    setPrevSavedRefKey(savedRefKey);
+    setNewVersionInput("");
+  }
 
   const validIngredients = wasmResources.wasmBridge.get_all_ingredient_names();
 
@@ -828,7 +829,7 @@ export function RecipeEditor({
         <RecipeSelect
           allRecipes={allRecipes}
           enabledRecipeIndices={getRecipeIndices(allRecipes)}
-          currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
+          currentRecipeIdxState={[currentRecipeIdx, selectRecipeIdx]}
         />
         <div className="ml-auto flex flex-wrap items-center justify-end gap-1">
           {/* Evaporation input: grams of water removed */}
