@@ -1664,6 +1664,64 @@ describe("WatchersView Auto-balance", () => {
     expect(onApply).toHaveBeenCalledTimes(1);
   });
 
+  /** A solve that always fails, as on infeasible targets the live validation misses. */
+  const failingBalance = vi.fn(() => {
+    throw new Error("infeasible");
+  });
+  /** A bridge whose targets pass validation, so balancing stays enabled, but whose solve throws. */
+  const throwingBridge = {
+    has_ingredient: () => true,
+    balance_recipe: failingBalance,
+    validate_recipe_targets: () => ({ issues: [] }),
+  } as unknown as WasmBridge;
+
+  it("surfaces a balance error when auto-balance fails on mount", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      render(
+        <WatchersView
+          main={main}
+          wasmBridge={throwingBridge}
+          onApplyBalancedMain={vi.fn()}
+          autoBalanceState={[true, vi.fn()]}
+        />,
+      );
+
+      expect(failingBalance).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId("watchers-balance-button").title).toContain("infeasible");
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
+  });
+
+  it("surfaces a balance error when a target change makes auto-balance fail", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      render(
+        <WatchersView
+          main={main}
+          wasmBridge={throwingBridge}
+          onApplyBalancedMain={vi.fn()}
+          autoBalanceState={[true, vi.fn()]}
+        />,
+      );
+
+      failingBalance.mockClear(); // ignore the initial (mount) balance
+
+      const input = screen.getByTestId(`watcher-card-${String(MSNF)}-target`);
+      fireEvent.change(input, { target: { value: "12" } });
+
+      expect(failingBalance).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId("watchers-balance-button").title).toContain("infeasible");
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
+  });
+
   it("does not balance an empty main even when auto is on", () => {
     localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
     const onApply = vi.fn();

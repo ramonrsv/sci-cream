@@ -5,7 +5,7 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
-  useEffect,
+  useEffectEvent,
   useLayoutEffect,
   useMemo,
   useState,
@@ -705,7 +705,10 @@ export function WatchersView({
     {},
   );
 
-  const [balanceError, setBalanceError] = useState<string | undefined>(undefined);
+  /** The last balance failure, with the inputs it was computed for. */
+  const [balanceFailure, setBalanceFailure] = useState<
+    { message: string; main: Recipe; targetsKey: string } | undefined
+  >(undefined);
   const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
 
   /** Returns `true` when every recipe has a zero/NaN value for the given property key */
@@ -851,10 +854,12 @@ export function WatchersView({
     return map;
   }, [report]);
 
-  // Drop a stale runtime balance error once the inputs change, so a prior failure doesn't linger.
-  useEffect(() => {
-    setBalanceError(undefined); // eslint-disable-line react-hooks/set-state-in-effect
-  }, [balanceTargetsKey, main]);
+  // A balance failure shows only while the inputs it was computed for stand,
+  // so a prior failure doesn't linger once the targets or the recipe change.
+  const balanceError =
+    balanceFailure?.main === main && balanceFailure.targetsKey === balanceTargetsKey
+      ? balanceFailure.message
+      : undefined;
 
   // Removal only takes effect under the Custom filter (which derives its keys from the selection);
   // under Auto, the heuristic ignores the selection, so the remove button is hidden there.
@@ -882,11 +887,11 @@ export function WatchersView({
         main.evaporation,
       ) as LightRecipe;
 
-      setBalanceError(undefined);
+      setBalanceFailure(undefined);
       onApplyBalancedMain(balanced);
     } catch (err) {
       console.error("balance failed:", err);
-      setBalanceError(String(err));
+      setBalanceFailure({ message: String(err), main, targetsKey: balanceTargetsKey });
     }
   };
 
@@ -910,14 +915,17 @@ export function WatchersView({
   const balanceDisabled =
     !balancingSupported || !recipeHasIngredients(main) || balanceTargets.length === 0 || hasErrors;
 
+  // An Effect Event, so the effect below runs this render's `onBalance` without depending on it.
+  const autoBalanceNow = useEffectEvent(() => onBalance());
+
   // Continuous (auto) balancing: while on, re-balance on target/priority/lock/total/evap or
   // ingredient-set change. Keyed on those, not `main`, so the balancer's own quantity write can't
   // re-trigger it. `useLayoutEffect` runs before paint, avoiding a one-frame stale-delta flicker.
   useLayoutEffect(() => {
     if (!autoBalance || balanceDisabled) return;
-    onBalance(); // eslint-disable-line react-hooks/set-state-in-effect
-    // Suppress the `onBalance` missing-dep warning: listing it would re-run this every render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Auto-balance follows inputs owned by several components, so no single handler can run it.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    autoBalanceNow();
   }, [
     autoBalance,
     balanceDisabled,
