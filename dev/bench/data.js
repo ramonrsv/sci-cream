@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795125282747,
+  "lastUpdate": 1795125682635,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -592321,6 +592321,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 719.13,
             "range": "15.52",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "610201f269b1ef500d16cb49efeead5b9aa44546",
+          "message": "Replace updateIdx with the WasmResources wrapper\n\nA reseed changes the bridge's database in place, so updateIdx marked\nthe change for memos and effects. The two search panels listed it in\ntheir dependency arrays without reading it, each needing an\nexhaustive-deps suppression.\n\nA reseed also replaces the WasmResources wrapper, whose identity\ncarries the same signal. The search-panel memos now read the bridge\nthrough it and depend on it, so the lint checks them again, and\nrecipe.tsx's refresh effect depends on it too. updateIdx goes from\nthe type, the provider, and the tests, and the WasmResources doc\nstates the rule.\n\nTests that built embedded-data resources by hand now call\nmakeWasmResourcesFromEmbeddedData.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T14:02:38-05:00",
+          "tree_id": "1995b03b06b1873fa7e7d115ac96c5c8b38faf7e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/610201f269b1ef500d16cb49efeead5b9aa44546"
+        },
+        "date": 1795125597042,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 44.25,
+            "range": "3.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49.88,
+            "range": "3.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 50.75,
+            "range": "2.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2156,
+            "range": "36.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 369.38,
+            "range": "4.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 379.63,
+            "range": "5.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 391.25,
+            "range": "4.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 18978.88,
+            "range": "53.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 801.38,
+            "range": "12.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 58,
+            "range": "1.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59,
+            "range": "2.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 51.63,
+            "range": "5.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.5,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 133.13,
+            "range": "4.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 73.63,
+            "range": "3.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 47.49,
+            "range": "0.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 37.23,
+            "range": "0.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 628.63,
+            "range": "20.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 675.13,
+            "range": "24.69",
             "unit": "ms"
           }
         ]
