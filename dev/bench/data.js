@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795126211628,
+  "lastUpdate": 1795127220451,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -637396,6 +637396,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.05%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "330ae03583b3375b7512a71ecdfce2cc18fa657c",
+          "message": "Fix or explain bare exhaustive-deps suppressions\n\nThree exhaustive-deps suppressions covered effects that read values\nthey must not rerun on. They now read those through Effect Events:\nthe recipe editor's restore from localStorage on mount, its refresh\non a reseed, and the theme-select test's helper, whose setTheme\nchanges with the theme and so can't be a dependency.\n\nTwo suppressions stay, now with reasons: WatchersView's report memo\ndepends on string keys in place of the target and lock arrays, which\nare rebuilt each render, and usePersistedState's effect leaves out\noptions, which may be an inline literal, new each render.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T17:11:47-05:00",
+          "tree_id": "6042dddf800bcdd15c029214800d66fb719c0ac5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/330ae03583b3375b7512a71ecdfce2cc18fa657c"
+        },
+        "date": 1795127169557,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 94239,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 730874,
+            "range": "±1.43%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 61512,
+            "range": "±1.50%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 460938,
+            "range": "±2.74%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
           }
         ]
       }
