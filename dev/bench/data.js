@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795109845893,
+  "lastUpdate": 1795109849633,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -724999,6 +724999,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/506cc79e4acffc4dcc01cb066dee8b9cf1c287c1"
         },
         "date": 1795105935585,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5d50162ebb8e3dce8c2353c5e0793ef99e8798d7",
+          "message": "Explain the post-hydration setState suppressions\n\nFour mount effects bring in client-only state once hydration is done:\nthe restores from localStorage in usePersistedState and the calculator,\nuseMediaQuery's initial match, and the navbar's mounted flag. React's\ndocs describe this two-pass render for content the server can't know,\nbut set-state-in-effect can't tell it from a cascading update.\n\nKeep the effects, and give each bare suppression a one-line reason:\ntwo added with eslint-plugin-react-hooks 7.1.1, and two older ones.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T11:35:56-05:00",
+          "tree_id": "c73d7d67ba9facc81457e3c0cb0c12d446f5846a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5d50162ebb8e3dce8c2353c5e0793ef99e8798d7"
+        },
+        "date": 1795109848900,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
