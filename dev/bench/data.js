@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795110454243,
+  "lastUpdate": 1795110478682,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -590242,6 +590242,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 656.38,
             "range": "15.07",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5d50162ebb8e3dce8c2353c5e0793ef99e8798d7",
+          "message": "Explain the post-hydration setState suppressions\n\nFour mount effects bring in client-only state once hydration is done:\nthe restores from localStorage in usePersistedState and the calculator,\nuseMediaQuery's initial match, and the navbar's mounted flag. React's\ndocs describe this two-pass render for content the server can't know,\nbut set-state-in-effect can't tell it from a cascading update.\n\nKeep the effects, and give each bare suppression a one-line reason:\ntwo added with eslint-plugin-react-hooks 7.1.1, and two older ones.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T11:35:56-05:00",
+          "tree_id": "c73d7d67ba9facc81457e3c0cb0c12d446f5846a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5d50162ebb8e3dce8c2353c5e0793ef99e8798d7"
+        },
+        "date": 1795110410948,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 34.13,
+            "range": "1.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 39.38,
+            "range": "2.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 44,
+            "range": "2.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1894.63,
+            "range": "71.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 301.88,
+            "range": "3.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 313.25,
+            "range": "4.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 323.63,
+            "range": "2.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15638.63,
+            "range": "50.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 702.25,
+            "range": "8.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.38,
+            "range": "2.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 43.63,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 34.75,
+            "range": "1.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 33.63,
+            "range": "1.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 111,
+            "range": "4.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 71.5,
+            "range": "8.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 40.01,
+            "range": "0.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.87,
+            "range": "0.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 507.38,
+            "range": "14.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 548.63,
+            "range": "28.70",
             "unit": "ms"
           }
         ]
