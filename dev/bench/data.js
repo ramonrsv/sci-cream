@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795065028708,
+  "lastUpdate": 1795065157987,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -629273,6 +629273,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.66%",
             "unit": "ops/sec",
             "extra": "98 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "459248b49b7378c00e47f973a5e0b07bbf83a0ba",
+          "message": "Track the Firefox fixme and dependency holds\n\nEach waits on an upstream release. The app's TODO gets the Firefox\nfixme on the recipe-share blocked-frame check; the crate's gets the\nTypeScript and Vitest holds, as its own devDependencies are what\nblock them, with the app following.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:45:46-05:00",
+          "tree_id": "650e336150296b6577cc121f82ea32fb9a4fffca",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/459248b49b7378c00e47f973a5e0b07bbf83a0ba"
+        },
+        "date": 1795065074155,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 56387,
+            "range": "±1.01%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 424271,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 39407,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 313479,
+            "range": "±1.09%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
