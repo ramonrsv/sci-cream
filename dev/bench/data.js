@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795065179078,
+  "lastUpdate": 1795065315451,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -734273,6 +734273,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2193.62,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e353d50a76240a8b57f367b1a977cc0aae5c6c14",
+          "message": "Upgrade the crate's dependencies, incompatible\n\nBump nnls to 0.5 and ndarray to 0.17, which brings ndarray-stats 0.7\nthrough nnls. The crate builds against them unchanged.\n\nKeep getrandom on 0.2, against cargo upgrade's suggestion: nnls still\npulls in v0.2 through rand 0.8, and the entry exists only to enable\nthat version's \"js\" feature on wasm32. v0.4 has no such feature, so\nthe bump fails to resolve. Say so in its comment.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T00:10:41-05:00",
+          "tree_id": "b195a9327716df459ce61fe1dbf230b6158a2a8f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e353d50a76240a8b57f367b1a977cc0aae5c6c14"
+        },
+        "date": 1795065249431,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1232.37,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 368.49,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1984.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 602.16,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 650.83,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2194.16,
             "unit": "KB"
           }
         ]
