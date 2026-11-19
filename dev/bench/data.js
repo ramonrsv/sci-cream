@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795132428450,
+  "lastUpdate": 1795132439946,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -594133,6 +594133,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 546,
             "range": "18.24",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "656f6d42070c9f40d6c7984a28ac0fd8d1733117",
+          "message": "Move the calculator's grid config into lib\n\nCalculatorPage rebuilt its breakpoints, columns, and default layouts\non every render, so the two effects that read the default layouts\nsuppressed exhaustive-deps to keep their empty dependency arrays.\n\nThe config moves to lib/calculator-grid.ts, exported as\nGRID_BREAKPOINTS, GRID_COLS, and DEFAULT_GRID_LAYOUTS and built once\nwhen the module loads. The helpers that build the layouts move into\nmakeDefaultLayouts, keeping their names and tables. A module constant\nis no dependency, so both effects' empty arrays are complete and the\nsuppressions go.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T17:55:36-05:00",
+          "tree_id": "fcc06a741e318efe7174e5275dafc3e0b9e8067c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/656f6d42070c9f40d6c7984a28ac0fd8d1733117"
+        },
+        "date": 1795132370203,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 35.38,
+            "range": "3.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 42.5,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 48.13,
+            "range": "2.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1819.38,
+            "range": "18.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 303.25,
+            "range": "3.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 315.88,
+            "range": "2.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 321.63,
+            "range": "3.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15532.38,
+            "range": "48.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 714.25,
+            "range": "4.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 45.88,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 36.63,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 31.25,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 108.75,
+            "range": "2.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 61.88,
+            "range": "11.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 41.12,
+            "range": "0.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.86,
+            "range": "0.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 535.88,
+            "range": "27.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 571.5,
+            "range": "24.64",
             "unit": "ms"
           }
         ]
