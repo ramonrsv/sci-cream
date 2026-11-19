@@ -1,2 +1,2 @@
 # These crates have duplicate versions purely from dependencies themselves
-allowed-duplicate-crates = ["glam"]
+allowed-duplicate-crates = ["glam", "syn"]
