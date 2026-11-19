@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795127670714,
+  "lastUpdate": 1795127745448,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -593128,6 +593128,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 675.13,
             "range": "24.69",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "330ae03583b3375b7512a71ecdfce2cc18fa657c",
+          "message": "Fix or explain bare exhaustive-deps suppressions\n\nThree exhaustive-deps suppressions covered effects that read values\nthey must not rerun on. They now read those through Effect Events:\nthe recipe editor's restore from localStorage on mount, its refresh\non a reseed, and the theme-select test's helper, whose setTheme\nchanges with the theme and so can't be a dependency.\n\nTwo suppressions stay, now with reasons: WatchersView's report memo\ndepends on string keys in place of the target and lock arrays, which\nare rebuilt each render, and usePersistedState's effect leaves out\noptions, which may be an inline literal, new each render.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T17:11:47-05:00",
+          "tree_id": "6042dddf800bcdd15c029214800d66fb719c0ac5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/330ae03583b3375b7512a71ecdfce2cc18fa657c"
+        },
+        "date": 1795127695517,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 29.63,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 31.25,
+            "range": "2.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 36.38,
+            "range": "1.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1575.75,
+            "range": "50.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 215,
+            "range": "3.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 227.63,
+            "range": "3.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 240,
+            "range": "5.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 11768,
+            "range": "57.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 24.8,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 692,
+            "range": "11.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 39.38,
+            "range": "2.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 40.5,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 31.75,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 29.25,
+            "range": "1.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 106.5,
+            "range": "6.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 42,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 35.48,
+            "range": "0.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.81,
+            "range": "1.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 499.38,
+            "range": "25.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 546,
+            "range": "18.24",
             "unit": "ms"
           }
         ]
