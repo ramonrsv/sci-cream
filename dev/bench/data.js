@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795131745773,
+  "lastUpdate": 1795131764288,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -638453,6 +638453,58 @@ window.BENCHMARK_DATA = {
             "range": "±2.74%",
             "unit": "ops/sec",
             "extra": "84 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "656f6d42070c9f40d6c7984a28ac0fd8d1733117",
+          "message": "Move the calculator's grid config into lib\n\nCalculatorPage rebuilt its breakpoints, columns, and default layouts\non every render, so the two effects that read the default layouts\nsuppressed exhaustive-deps to keep their empty dependency arrays.\n\nThe config moves to lib/calculator-grid.ts, exported as\nGRID_BREAKPOINTS, GRID_COLS, and DEFAULT_GRID_LAYOUTS and built once\nwhen the module loads. The helpers that build the layouts move into\nmakeDefaultLayouts, keeping their names and tables. A module constant\nis no dependency, so both effects' empty arrays are complete and the\nsuppressions go.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T17:55:36-05:00",
+          "tree_id": "fcc06a741e318efe7174e5275dafc3e0b9e8067c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/656f6d42070c9f40d6c7984a28ac0fd8d1733117"
+        },
+        "date": 1795131715928,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 103984,
+            "range": "±1.45%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 808221,
+            "range": "±1.79%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 67788,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 541666,
+            "range": "±2.22%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
