@@ -41,8 +41,8 @@ const DOCS_PAGES: DocsPageCase[] = [
 /**
  * Load a docs route and screenshot the whole page.
  *
- * The cursor is parked so no link renders a hover state, and the viewport is grown to the content
- * height: the app shell is `h-screen`, so `fullPage` would capture only the first screen.
+ * The cursor is parked on load so no link renders a hover state, and the viewport is grown to the
+ * content height: the app shell is `h-screen`, so `fullPage` would capture only the first screen.
  *
  * Badge rows are masked whole: shields.io bakes its text into the art, so each image's width moves
  * with it. The `.badges` wrapper is a full-width block, so its box is stable. Comment metadata rows
@@ -55,7 +55,6 @@ async function shootDocsPage(page: Page, doc: DocsPageCase, dark: boolean) {
   if (dark) await page.emulateMedia({ colorScheme: "dark" });
   await goToPageAndWaitFor(page, doc.url);
   if (doc.url !== DOCS_INDEX) await waitForCommentThread(page);
-  await parkCursor(page);
   await setViewportHeightForAllAppContentScreenshot(page);
   await expect(page).toHaveScreenshot(`${doc.screenshot}${dark ? "-dark" : ""}.png`, {
     mask: [page.locator(".badges"), ...commentMetaMask(page)],
@@ -89,7 +88,6 @@ test.describe("Visual Regression: Documentation", () => {
       await page.setViewportSize(VIEWPORT_MOBILE_SMALL_PORTRAIT.viewport);
       await goToPageAndWaitFor(page, url);
       await waitForHydration(page);
-      await parkCursor(page);
     }
 
     test("contents collapsed", async ({ page }) => {

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { goToPageAndWaitFor, parkCursor } from "../e2e/util";
+import { goToPageAndWaitFor } from "../e2e/util";
 import { VIEWPORT_MOBILE_SMALL_PORTRAIT } from "./assets";
 import { commentMetaMask, waitForCommentThread } from "./util";
 
@@ -35,7 +35,6 @@ test.describe("Visual Regression: Blog Posts", () => {
       if (dark) await page.emulateMedia({ colorScheme: "dark" });
       await goToPageAndWaitFor(page, "/blog/2026-04-27-welcome");
       await waitForCommentThread(page);
-      await parkCursor(page);
 
       const thread = page.locator(".comments");
       await expect(thread).toHaveScreenshot(`blog-comments${dark ? "-dark" : ""}.png`, {

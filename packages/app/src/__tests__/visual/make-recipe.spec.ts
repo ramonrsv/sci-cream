@@ -532,7 +532,6 @@ test.describe("Visual Regression: Make Recipe", () => {
   test("make recipe - invalid link error", async ({ page }) => {
     await goToPageAndWaitFor(page, "/make-recipe#not-a-real-payload");
     await expect(page.getByTestId("make-recipe-error")).toBeVisible();
-    await parkCursor(page);
     await expect(page.getByTestId("make-recipe-error")).toHaveScreenshot("make-recipe-error.png");
   });
 });
