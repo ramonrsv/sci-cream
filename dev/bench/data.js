@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795127245620,
+  "lastUpdate": 1795127299383,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -718578,6 +718578,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.65,
             "range": "0.40",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "330ae03583b3375b7512a71ecdfce2cc18fa657c",
+          "message": "Fix or explain bare exhaustive-deps suppressions\n\nThree exhaustive-deps suppressions covered effects that read values\nthey must not rerun on. They now read those through Effect Events:\nthe recipe editor's restore from localStorage on mount, its refresh\non a reseed, and the theme-select test's helper, whose setTheme\nchanges with the theme and so can't be a dependency.\n\nTwo suppressions stay, now with reasons: WatchersView's report memo\ndepends on string keys in place of the target and lock arrays, which\nare rebuilt each render, and usePersistedState's effect leaves out\noptions, which may be an inline literal, new each render.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T17:11:47-05:00",
+          "tree_id": "6042dddf800bcdd15c029214800d66fb719c0ac5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/330ae03583b3375b7512a71ecdfce2cc18fa657c"
+        },
+        "date": 1795127232169,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.59,
+            "range": "7.75",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 18.36,
+            "range": "4.41",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 18.34,
+            "range": "4.42",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 161,
+            "range": "9.11",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 161,
+            "range": "9.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.68,
+            "range": "7.71",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.15,
+            "range": "0.42",
             "unit": "ms"
           }
         ]
