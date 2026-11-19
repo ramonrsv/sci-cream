@@ -6,8 +6,6 @@ import {
   ResponsiveLayouts,
   useContainerWidth,
   type Layout,
-  type LayoutItem,
-  type ResizeHandleAxis,
 } from "react-grid-layout";
 import type { LightRecipe } from "@workspace/sci-cream";
 
@@ -25,7 +23,8 @@ import {
 import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
 import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { useSeededWasmResources } from "@/lib/resources/wasm";
-import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
+import { REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
+import { DEFAULT_GRID_LAYOUTS, GRID_BREAKPOINTS, GRID_COLS } from "@/lib/calculator-grid";
 import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-layout";
 import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
@@ -85,106 +84,16 @@ export default function CalculatorPage() {
 
   const propertiesChartPanelProps = { recipes, targets: targetsState[STATE_VAL] };
 
-  // 2160p: 3840px, /2 = 1920px
-  // 1440p: 2560px, /2 = 1280px
-  // 1080p: 1920px, /2 =  960px
-
-  /** Pixel-width breakpoints for the responsive grid layout */
-  const breakpoints = { xl: 2080, lg: 1600, md: 1120, sm: 720, xs: 0 };
-
-  /** Number of grid columns at each breakpoint */
-  const cols = { xl: 32, lg: 24, md: 16, sm: 12, xs: 8 };
-
-  const h = REACT_GRID_COMPONENT_HEIGHT;
-  const fullW = (bp: keyof typeof cols) => cols[bp];
-
-  const horizVert = ["e", "w", "s"] as ResizeHandleAxis[];
-
-  /** Base layout item configuration shared across all breakpoint layouts */
-  // prettier-ignore
-  const base = {
-    "recipe":      { i: "recipe",      h, resizeHandles: horizVert, minW: 5 },
-    "watchers":    { i: "watchers",    h, resizeHandles: horizVert, minW: 4 },
-    "props-chart": { i: "props-chart", h, resizeHandles: horizVert },
-    "properties":  { i: "properties",  h, resizeHandles: horizVert, minW: 4 },
-    "fpd-graph":   { i: "fpd-graph",   h, resizeHandles: horizVert },
-    "composition": { i: "composition", h, resizeHandles: horizVert, minW: 5 },
-  };
-
-  /** Merge override properties into a base layout item, producing a fully-typed `LayoutItem` */
-  const update = (i: keyof typeof base, updates: Partial<LayoutItem>): LayoutItem => {
-    return { ...base[i], ...updates } as LayoutItem;
-  };
-
-  // prettier-ignore
-  const xlLayout: LayoutItem[] = [
-    update("recipe",      { x:  0, y:     0, w:   7 }),
-    update("watchers",    { x:  7, y:     0, w:  12 }),
-    update("props-chart", { x: 19, y:     0, w:  13 }),
-    update("properties",  { x:  0, y:     h, w:   7 }),
-    update("fpd-graph",   { x:  7, y:     h, w:  10 }),
-    update("composition", { x: 17, y:     h, w:  15 }),
-  ];
-
-  // prettier-ignore
-  const lgLayout: LayoutItem[] = [
-    update("recipe",      { x:  0, y:     0, w:   7 }),
-    update("watchers",    { x:  7, y:     0, w:  17, h: 7}),
-    update("props-chart", { x:  7, y:     7, w:  17, h: 7 }),
-    update("properties",  { x:  0, y:     h, w:   7 }),
-    update("fpd-graph",   { x:  7, y:    14, w:   9, h: 8 }),
-    update("composition", { x: 16, y:    14, w:   8 }),
-  ];
-
-  // prettier-ignore
-  const mdLayout: LayoutItem[] = [
-    update("recipe",      { x:  0, y:     0, w:   6 }),
-    update("watchers",    { x:  6, y:     0, w:  10, h: 7}),
-    update("props-chart", { x:  6, y:     7, w:  10, h: 7 }),
-    update("properties",  { x:  0, y:     h, w:   6 }),
-    update("fpd-graph",   { x:  6, y:    14, w:  10, h: 8 }),
-    update("composition", { x:  0, y: h * 2, w:  fullW("md") }),
-  ];
-
-  // prettier-ignore
-  const smLayout: LayoutItem[] = [
-    update("recipe",      { x:  0, y:     0, w:  5 }),
-    update("watchers",    { x:  5, y:     0, w:  7 }),
-    update("properties",  { x:  0, y:     h, w:  4 }),
-    update("props-chart", { x:  4, y:     h, w:  8 }),
-    update("fpd-graph",   { x:  0, y: h * 2, w:  6 }),
-    update("composition", { x:  6, y: h * 2, w:  6 }),
-  ];
-
-  // prettier-ignore
-  const xsLayout: LayoutItem[] = [
-    update("recipe",      { x:  0, y:     0, w:  fullW("xs") }),
-    update("watchers",    { x:  0, y:     h, w:  fullW("xs") }),
-    update("props-chart", { x:  0, y: h * 2, w:  fullW("xs") }),
-    update("properties",  { x:  0, y: h * 3, w:  fullW("xs") }),
-    update("fpd-graph",   { x:  0, y: h * 4, w:  fullW("xs"), h: h - 1 }),
-    update("composition", { x:  0, y: h * 5 - 1, w: fullW("xs") }),
-  ];
-
-  const defaultLayouts: ResponsiveLayouts = {
-    xl: xlLayout,
-    lg: lgLayout,
-    md: mdLayout,
-    sm: smLayout,
-    xs: xsLayout,
-  };
-
-  const [layouts, setLayouts] = useState<ResponsiveLayouts>(defaultLayouts);
+  const [layouts, setLayouts] = useState<ResponsiveLayouts>(DEFAULT_GRID_LAYOUTS);
   const hydratedRef = useRef(false);
 
   // Hydrate stored layouts on mount; falls through to defaults when storage is empty or its
   // schema (version/fingerprint) no longer matches the current panel set.
   useEffect(() => {
-    const stored = loadStoredLayouts(defaultLayouts);
+    const stored = loadStoredLayouts(DEFAULT_GRID_LAYOUTS);
     // Stored layouts can be read only after hydration, so the restore lands in this mount effect.
     if (stored) setLayouts(stored); // eslint-disable-line react-hooks/set-state-in-effect
     hydratedRef.current = true;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Persist on every committed layout change. Skipped until hydration completes so the initial
@@ -198,17 +107,16 @@ export default function CalculatorPage() {
   // Listen for reset events fired by the Header's "Reset layout" button (which lives outside
   // this component's React tree); fall back to the hardcoded defaults when one arrives.
   useEffect(() => {
-    return onLayoutReset(() => setLayouts(defaultLayouts));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return onLayoutReset(() => setLayouts(DEFAULT_GRID_LAYOUTS));
   }, []);
 
   return (
     <div ref={containerRef} className="page-gutters">
       {mounted && (
         <ResponsiveGridLayout
-          breakpoints={breakpoints}
+          breakpoints={GRID_BREAKPOINTS}
           width={width}
-          cols={cols}
+          cols={GRID_COLS}
           layouts={layouts}
           onLayoutChange={handleLayoutChange}
           rowHeight={REACT_GRID_ROW_HEIGHT}
