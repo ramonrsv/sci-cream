@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795131764288,
+  "lastUpdate": 1795131816688,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -687955,6 +687955,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1034.29,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "656f6d42070c9f40d6c7984a28ac0fd8d1733117",
+          "message": "Move the calculator's grid config into lib\n\nCalculatorPage rebuilt its breakpoints, columns, and default layouts\non every render, so the two effects that read the default layouts\nsuppressed exhaustive-deps to keep their empty dependency arrays.\n\nThe config moves to lib/calculator-grid.ts, exported as\nGRID_BREAKPOINTS, GRID_COLS, and DEFAULT_GRID_LAYOUTS and built once\nwhen the module loads. The helpers that build the layouts move into\nmakeDefaultLayouts, keeping their names and tables. A module constant\nis no dependency, so both effects' empty arrays are complete and the\nsuppressions go.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T17:55:36-05:00",
+          "tree_id": "fcc06a741e318efe7174e5275dafc3e0b9e8067c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/656f6d42070c9f40d6c7984a28ac0fd8d1733117"
+        },
+        "date": 1795131756952,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 774.56,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 942.28,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 719.08,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 886.8,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 728.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 896.48,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 702.48,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 870.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 704.01,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 871.73,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1034.3,
             "unit": "KB"
           },
           {
