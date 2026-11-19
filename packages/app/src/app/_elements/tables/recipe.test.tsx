@@ -13,7 +13,7 @@ import {
   type RecipeContext,
   RecipeContextState,
 } from "@/lib/recipe/recipe";
-import { makeWasmResources, WasmResources } from "@/lib/resources/wasm";
+import { makeWasmResourcesFromEmbeddedData, WasmResources } from "@/lib/resources/wasm";
 import { useSessionResources, type SessionResources } from "@/lib/resources/session";
 import {
   createUserRecipe,
@@ -25,14 +25,7 @@ import { RecipeEditor, RecipeTable } from "@/app/_elements/tables/recipe";
 import { recipeIdxKey } from "@/app/_elements/selects/recipe-select";
 import { RetainedStateContext } from "@/lib/hooks/use-retained-state";
 
-import {
-  Category,
-  Ingredient,
-  into_ingredient_from_spec,
-  Composition,
-  Bridge as WasmBridge,
-  new_ingredient_database_seeded_from_embedded_data,
-} from "@workspace/sci-cream";
+import { Category, Ingredient, into_ingredient_from_spec, Composition } from "@workspace/sci-cream";
 
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
 import { renderWithRetainedState } from "@/__tests__/unit/retained-state";
@@ -277,9 +270,7 @@ describe("RecipeEditor", () => {
     mockSize = null;
 
     recipeContext = makeEmptyRecipeContext();
-    wasmResources = makeWasmResources(
-      new WasmBridge(new_ingredient_database_seeded_from_embedded_data()),
-    );
+    wasmResources = makeWasmResourcesFromEmbeddedData();
 
     setRecipeContext = vi.fn();
     refreshUserRecipes = vi.fn().mockResolvedValue(undefined);

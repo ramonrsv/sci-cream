@@ -679,7 +679,7 @@ export function RecipeEditor({
       ),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wasmResources.updateIdx]);
+  }, [wasmResources]);
 
   // On initial load, populate recipes from local storage
   useEffect(() => {

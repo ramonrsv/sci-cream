@@ -9,14 +9,9 @@ import {
   type RecipeContext,
   RecipeContextState,
 } from "@/lib/recipe/recipe";
-import { makeWasmResources, WasmResources } from "@/lib/resources/wasm";
+import { makeWasmResourcesFromEmbeddedData, WasmResources } from "@/lib/resources/wasm";
 import { useSessionResources, type SessionResources } from "@/lib/resources/session";
 import { RecipeEditorPanel } from "./recipe-editor-panel";
-
-import {
-  Bridge as WasmBridge,
-  new_ingredient_database_seeded_from_embedded_data,
-} from "@workspace/sci-cream";
 
 vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
@@ -36,9 +31,7 @@ describe("RecipeEditorPanel", () => {
     localStorage.clear();
 
     recipeContext = makeEmptyRecipeContext();
-    wasmResources = makeWasmResources(
-      new WasmBridge(new_ingredient_database_seeded_from_embedded_data()),
-    );
+    wasmResources = makeWasmResourcesFromEmbeddedData();
 
     vi.mocked(useSessionResources).mockReturnValue({
       wasmResourcesState: [wasmResources, vi.fn()],

@@ -38,8 +38,8 @@ async function applyFetch<T>(
  *
  * Both caches are fetched once when the session email becomes available and refreshed explicitly
  * via {@link SessionResources.refreshUserRecipes} / {@link SessionResources.refreshUserIngredients}
- * after mutations. The bridge object identity is stable across reseeds — only `updateIdx` and the
- * `WasmResources` wrapper change — so it is never `.free()`d here.
+ * after mutations. The bridge object identity is stable across reseeds — only the `WasmResources`
+ * wrapper changes — so it is never `.free()`d here.
  */
 export function SessionResourcesProvider({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
@@ -49,7 +49,7 @@ export function SessionResourcesProvider({ children }: { children: ReactNode }) 
   const [resources, setResources] = wasmResourcesState;
 
   // The bridge identity never changes (reseeds mutate it in place), so capturing it once is safe
-  // and keeps it out of the refresh callback's deps, avoiding a re-fetch loop on updateIdx bumps.
+  // and keeps it out of the refresh callback's deps, avoiding a re-fetch loop on each reseed.
   const bridgeRef = useRef(resources.wasmBridge);
 
   const [userIngredientSpecs, setUserIngredientSpecs] = useState<IngredientTransfer[]>([]);
@@ -69,7 +69,8 @@ export function SessionResourcesProvider({ children }: { children: ReactNode }) 
         OnConflict.Overwrite,
       );
 
-      setResources((prev) => makeWasmResources(prev.wasmBridge, prev.updateIdx + 1));
+      // Re-wrap the bridge: the new object is how consumers see the reseed.
+      setResources((prev) => makeWasmResources(prev.wasmBridge));
     },
     [setResources],
   );

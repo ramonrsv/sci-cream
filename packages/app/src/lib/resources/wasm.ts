@@ -12,9 +12,17 @@ import {
 // `SessionResourcesProvider`); re-exported here so it sits alongside the other resource helpers.
 export { useSeededWasmResources } from "@/lib/resources/session";
 
-/** Shared WASM resources: the bridge used for ingredient lookups and mix-property calculations */
+/**
+ * Shared WASM resources: the bridge used for ingredient lookups and mix-property calculations.
+ *
+ * `wasmBridge` is the main interface to `@workspace/sci-cream`, while `hasIngredient` abstracts
+ * ingredient lookups: whether it calls `has_ingredient` or a faster path is hidden from callers.
+ *
+ * The bridge's `clear` and `seed*` methods mutate it in place, unseen by React, so a reseed must
+ * replace this object, re-wrapping the bridge with {@link makeWasmResources}. A memo or effect that
+ * reads the database must list this object in its dependencies: the bridge alone never changes.
+ */
 export interface WasmResources {
-  updateIdx: number;
   wasmBridge: WasmBridge;
   hasIngredient(name: string): boolean;
 }
@@ -25,13 +33,9 @@ export type WasmResourcesState = [
   React.Dispatch<React.SetStateAction<WasmResources>>,
 ];
 
-/** Wrap a `WasmBridge` in a `WasmResources` object, creating a `hasIngredient` helper object */
-export function makeWasmResources(wasmBridge: WasmBridge, updateIdx: number = 0): WasmResources {
-  return {
-    updateIdx,
-    wasmBridge,
-    hasIngredient: (name: string) => wasmBridge.has_ingredient(name),
-  };
+/** Wrap a `WasmBridge` in a `WasmResources`, its `hasIngredient` calling `has_ingredient` */
+export function makeWasmResources(wasmBridge: WasmBridge): WasmResources {
+  return { wasmBridge, hasIngredient: (name: string) => wasmBridge.has_ingredient(name) };
 }
 
 /** Create a `WasmResources` backed by an empty (unseeded) ingredient database */

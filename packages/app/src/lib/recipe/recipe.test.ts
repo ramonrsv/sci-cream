@@ -31,7 +31,7 @@ import {
   type Recipe,
 } from "./recipe";
 
-import type { WasmResources } from "@/lib/resources/wasm";
+import { makeWasmResourcesFromEmbeddedData, type WasmResources } from "@/lib/resources/wasm";
 
 import {
   Category,
@@ -710,12 +710,7 @@ describe("Recipe Helper Functions", () => {
     let resources: WasmResources;
 
     beforeEach(() => {
-      const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
-      resources = {
-        updateIdx: 0,
-        wasmBridge: bridge,
-        hasIngredient: (n) => bridge.has_ingredient(n),
-      };
+      resources = makeWasmResourcesFromEmbeddedData();
       recipe = makeEmptyRecipeContext().recipes[0];
     });
 
@@ -1198,12 +1193,7 @@ describe("Recipe Helper Functions", () => {
     let resources: WasmResources;
 
     beforeEach(() => {
-      const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
-      resources = {
-        updateIdx: 0,
-        wasmBridge: bridge,
-        hasIngredient: (n) => bridge.has_ingredient(n),
-      };
+      resources = makeWasmResourcesFromEmbeddedData();
       recipe = makeUpdatedRecipeFromStore(
         makeEmptyRecipeContext().recipes[0],
         { name: "", serializedRows: "Whole Milk\t1000" },
@@ -1275,12 +1265,7 @@ describe("Recipe Helper Functions", () => {
     let resources: WasmResources;
 
     beforeEach(() => {
-      const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
-      resources = {
-        updateIdx: 0,
-        wasmBridge: bridge,
-        hasIngredient: (n) => bridge.has_ingredient(n),
-      };
+      resources = makeWasmResourcesFromEmbeddedData();
     });
 
     it("restores the stored evaporation onto the recipe", () => {

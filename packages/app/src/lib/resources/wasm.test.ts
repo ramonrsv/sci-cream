@@ -17,7 +17,6 @@ describe("WasmResources", () => {
       const resources = makeEmptyWasmResources();
       expect(resources.wasmBridge).toBeInstanceOf(WasmBridge);
       expect(resources.wasmBridge.get_all_ingredients()).toHaveLength(0);
-      expect(resources.updateIdx).toBe(0);
       expect(resources.hasIngredient("Whole Milk")).toBe(false);
     });
   });

@@ -85,12 +85,14 @@ function SpecDocLinks({ entry }: { entry: SpecEntryJson }) {
 
 /** Detail-panel body for an ingredient: JSON spec + resolved composition side-by-side */
 function IngredientDetailBody({ entry }: { entry: Tagged<SpecEntryJson> }) {
-  const { wasmBridge, updateIdx: wasmUpdateIdx } = useSeededWasmResources()[STATE_VAL];
+  const wasmResources = useSeededWasmResources()[STATE_VAL];
 
+  // Keyed on `wasmResources` to rerun on reseeds; see `WasmResources`.
   const ingredient = useMemo<Ingredient | undefined>(() => {
+    const { wasmBridge } = wasmResources;
     const name = specEntryName(entry);
     return wasmBridge.has_ingredient(name) ? wasmBridge.get_ingredient_by_name(name) : undefined;
-  }, [entry, wasmUpdateIdx, wasmBridge]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [entry, wasmResources]);
 
   // Free the prior `Ingredient` once a new entry replaces it, never the live one still read by
   // `ingredient.composition` below (see `useFreeOnReplace` for why an effect cleanup is unsafe).

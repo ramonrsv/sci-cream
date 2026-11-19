@@ -227,7 +227,7 @@ function RecipeDetailPanel({
   onUpdateSavedRecipeVersion,
   onToggleSavedRecipeFavourite,
 }: RecipeDetailPanelProps) {
-  const { wasmBridge, updateIdx: wasmUpdateIdx } = useSeededWasmResources()[STATE_VAL];
+  const wasmResources = useSeededWasmResources()[STATE_VAL];
 
   const isSaved = entry._source === EntitySource.Saved;
   const hasMultipleVersions = entry.versions.length > 1;
@@ -252,15 +252,16 @@ function RecipeDetailPanel({
     }))
     .reverse();
 
+  // Keyed on `wasmResources` to rerun on reseeds; see `WasmResources`.
   const recipe = useMemo<Recipe>(
     () =>
       makeRecipeFromRows(
         entry.name,
         selectedVersion?.recipe ?? null,
-        wasmBridge,
+        wasmResources.wasmBridge,
         selectedVersion?.evaporation,
       ),
-    [entry, selectedVersion, wasmBridge, wasmUpdateIdx], // eslint-disable-line react-hooks/exhaustive-deps
+    [entry, selectedVersion, wasmResources],
   );
 
   // Free the prior `MixProperties` once a new recipe replaces it, never the live one (see
@@ -339,7 +340,7 @@ function RecipeDetailPanel({
       {/* Version select (2+ versions), edit action (any saved version), delete (2+ versions) */}
       <RecipeDetailBody
         recipe={recipe}
-        isValidIngredient={(name) => wasmBridge.has_ingredient(name)}
+        isValidIngredient={(name) => wasmResources.wasmBridge.has_ingredient(name)}
         persistKey={STORAGE_KEYS.recipeSearchPropertiesView}
         toolbarStart={
           hasMultipleVersions || editVersionEnabled ? (

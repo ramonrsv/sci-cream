@@ -66,8 +66,8 @@ export function useSessionResources(): SessionResources {
 /**
  * Reads the shared {@link WasmResourcesState} tuple from {@link SessionResourcesProvider}.
  *
- * A focused accessor for consumers that need only the WASM bridge (and its `updateIdx`): the
- * bridge is the single session-scoped instance, seeded from embedded data plus the user's specs.
+ * A focused accessor for consumers that need only the WASM resources: the bridge is the single
+ * session-scoped instance, seeded from embedded data plus the user's specs.
  */
 export function useSeededWasmResources(): WasmResourcesState {
   return useSessionResources().wasmResourcesState;
