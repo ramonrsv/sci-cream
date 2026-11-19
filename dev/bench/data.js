@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795064886397,
+  "lastUpdate": 1795065022937,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -584416,6 +584416,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 527.75,
             "range": "26.30",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "77f54d0387b82614323932d081a6caf57e6c1d53",
+          "message": "Drop visual parkCursor calls repeating the load's\n\ngoToPageAndWaitFor parks the cursor after every load, so four visual\ncalls that follow it with nothing moving the cursor in between only\nrepeat it. Remove them, and the blog spec's now-unused import. The\nparks after a click, a scroll, or other actions stay.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:48:49-05:00",
+          "tree_id": "797a5927b8ebe9d2459c85df021d77cc2022723a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/77f54d0387b82614323932d081a6caf57e6c1d53"
+        },
+        "date": 1795064965910,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 32.13,
+            "range": "2.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 37.5,
+            "range": "4.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 46,
+            "range": "2.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1627.88,
+            "range": "49.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 257,
+            "range": "4.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 259.25,
+            "range": "5.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 268.63,
+            "range": "2.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 13220.88,
+            "range": "74.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 692.88,
+            "range": "8.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.13,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 43.38,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.63,
+            "range": "7.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 30.63,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 103.75,
+            "range": "4.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 58.38,
+            "range": "15.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 36.36,
+            "range": "0.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.9,
+            "range": "0.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 489.5,
+            "range": "24.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 528.38,
+            "range": "30.74",
             "unit": "ms"
           }
         ]
