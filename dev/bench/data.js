@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795045559813,
+  "lastUpdate": 1795063035036,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -728745,6 +728745,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2200.33,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9189a72524c60aa99771f92837d7c6442513a47f",
+          "message": "Resolve Vite 8.3 config warnings\n\nVite 8.3 warns about two things in the crate's and app's configs.\n\nIts planned native config loader can't provide `__dirname`, which\nvite.config.ts uses for the library entry. Use `import.meta.dirname`,\nwhich today's bundling loader also maps to the config's directory.\n\nIt also flags vite-tsconfig-paths, now that Vite resolves tsconfig\n`paths` itself. The app needs that for its `@/*` alias, so set\n`resolve.tsconfigPaths` there; the crate's tsconfig has no `paths`,\nso its plugin did nothing and goes without a replacement. Remove the\ndependency from both packages, along with globrex and the deprecated\ntsconfck, which only it used.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:26:18-05:00",
+          "tree_id": "38fd3aba9a438f92131db51a47a46600e1528228",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9189a72524c60aa99771f92837d7c6442513a47f"
+        },
+        "date": 1795062985533,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1236.96,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 370.28,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1990.82,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 605.47,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 654.13,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2200.3,
             "unit": "KB"
           }
         ]
