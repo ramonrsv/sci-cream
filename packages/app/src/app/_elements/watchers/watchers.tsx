@@ -829,6 +829,7 @@ export function WatchersView({
       console.error("validate failed:", err);
       return undefined;
     }
+    // The keys stand in for `balanceTargets` and `balanceLocks`, which are rebuilt each render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wasmBridge, main, balanceTargetsKey, balanceLocksKey]);
 

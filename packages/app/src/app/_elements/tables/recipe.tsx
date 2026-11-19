@@ -663,7 +663,7 @@ export function RecipeEditor({
 
   // Prevents stale ingredient context if a row is changed (e.g. a recipe is pasted) before we have
   // had a chance to fetch all user-defined ingredients and seed them into the wasmBridge database.
-  useEffect(() => {
+  const refreshIngredients = useEffectEvent(() => {
     updateRecipes(
       allRecipes.map((recipe) =>
         makeUpdatedRecipe(
@@ -678,17 +678,18 @@ export function RecipeEditor({
         ),
       ),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wasmResources]);
+  });
+  useEffect(() => refreshIngredients(), [wasmResources]);
 
   // On initial load, populate recipes from local storage
-  useEffect(() => {
+  const restoreRecipes = useEffectEvent(() => {
     updateRecipes(
       getRecipeStoresFromStorage().map((recipeStore, idx) =>
         makeUpdatedRecipeFromStore(allRecipes[idx], recipeStore, wasmResources),
       ),
     );
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  });
+  useEffect(() => restoreRecipes(), []);
 
   // Periodically store recipes to local storage
   const storeRecipes = useEffectEvent(() => {

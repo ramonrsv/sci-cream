@@ -4,7 +4,7 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { useEffect } from "react";
+import { useEffect, useEffectEvent } from "react";
 import { useTheme, ThemeProvider } from "next-themes";
 
 import { Theme, appThemeToNextTheme, resolvedNextThemeToAppTheme } from "@/lib/theme";
@@ -43,10 +43,9 @@ describe("ThemeSelect", () => {
   /** Controller component that manages theme state and exposes it via variable for assertions */
   function ThemeController({ initialTheme }: { initialTheme: Theme }) {
     const { resolvedTheme, setTheme } = useTheme();
+    const applyTheme = useEffectEvent((theme: Theme) => setTheme(appThemeToNextTheme(theme)));
 
-    useEffect(() => {
-      setTheme(appThemeToNextTheme(initialTheme));
-    }, [initialTheme]); // eslint-disable-line react-hooks/exhaustive-deps
+    useEffect(() => applyTheme(initialTheme), [initialTheme]);
 
     useEffect(() => {
       currentTheme = resolvedNextThemeToAppTheme(resolvedTheme);

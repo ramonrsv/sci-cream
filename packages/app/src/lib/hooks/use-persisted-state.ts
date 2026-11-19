@@ -56,6 +56,7 @@ export function usePersistedState<T>(
     }
     if (key === undefined) return;
     setLocalStorage(key, options?.serialize ? options.serialize(value) : value);
+    // `options` may be an inline literal, new each render, so only `key` and `value` rerun it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, value]);
 
