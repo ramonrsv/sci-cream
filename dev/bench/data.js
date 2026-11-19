@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795110249194,
+  "lastUpdate": 1795110442616,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -740520,6 +740520,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/5d50162ebb8e3dce8c2353c5e0793ef99e8798d7"
         },
         "date": 1795109798099,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1232.37,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 368.49,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1984.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 602.16,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 650.83,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2194.16,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1cc0e22846ce47bc1ef5987bfeb4c54225f70a0b",
+          "message": "Move useMediaQuery onto useSyncExternalStore\n\nuseMediaQuery kept a copy of the match in state: it started false,\nread matchMedia in a mount effect, and updated from the change\nlistener. useSyncExternalStore reads the match itself, with false as\nthe server snapshot, so hydration still renders false before the real\nvalue, and the effect and its set-state-in-effect suppression go.\n\nA component mounting after hydration now gets the real value on its\nfirst render, rather than false for a frame. Only the navbar uses the\nhook, through useIsNarrow and useCanHover, and it mounts during\nhydration, so the app behaves the same.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T12:33:49-05:00",
+          "tree_id": "5db0469e1dd044301866f0f821bab120cec2fb07",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1cc0e22846ce47bc1ef5987bfeb4c54225f70a0b"
+        },
+        "date": 1795110393714,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
