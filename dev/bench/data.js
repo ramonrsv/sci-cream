@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795132529061,
+  "lastUpdate": 1795132551104,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -720838,6 +720838,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.51,
             "range": "0.35",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "86e3f7fbd5524d0562cf28005b8f874d196a340d",
+          "message": "Require serving sizes and molar masses above zero\n\nChocolateLabelSpec and DairyLabelSpec divide their figures by the\nserving size, and SweetenerSpec its PAC by a molar mass, so a zero\nturned them to NaN, or to an infinite PAC that validation accepted.\nThe new verify_are_above_zero rejects zero and negative divisors with\nCompositionNotAboveZero, taking values within COMPOSITION_EPSILON of\nzero as zero, as verify_are_positive does.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T18:35:59-05:00",
+          "tree_id": "951d60c89126fd306484d80f310f675a259470ca",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/86e3f7fbd5524d0562cf28005b8f874d196a340d"
+        },
+        "date": 1795132493293,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 57.76,
+            "range": "6.09",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 17.89,
+            "range": "3.48",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 17.86,
+            "range": "3.48",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 144.5,
+            "range": "9.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 144.5,
+            "range": "9.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 53.94,
+            "range": "6.37",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.78,
+            "range": "0.99",
             "unit": "ms"
           }
         ]
