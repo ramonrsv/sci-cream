@@ -47,6 +47,7 @@ export function usePersistedState<T>(
         if (raw !== null) {
           const deserialized = options?.deserialize ? options.deserialize(raw) : (raw as T);
           if (!options?.isValid || options.isValid(deserialized)) {
+            // `localStorage` can't be read during hydration, so the value is restored on mount.
             setValue(deserialized); // eslint-disable-line react-hooks/set-state-in-effect
           }
         }

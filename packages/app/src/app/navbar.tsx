@@ -123,6 +123,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    // The shell needs client-only state, so it replaces its placeholders only after hydration.
     setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
 

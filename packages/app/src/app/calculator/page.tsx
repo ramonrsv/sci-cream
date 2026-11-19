@@ -181,6 +181,7 @@ export default function CalculatorPage() {
   // schema (version/fingerprint) no longer matches the current panel set.
   useEffect(() => {
     const stored = loadStoredLayouts(defaultLayouts);
+    // Stored layouts can be read only after hydration, so the restore lands in this mount effect.
     if (stored) setLayouts(stored); // eslint-disable-line react-hooks/set-state-in-effect
     hydratedRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -14,6 +14,7 @@ export function useMediaQuery(query: string): boolean {
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;
     const mql = window.matchMedia(query);
+    // The server has no `matchMedia`, so the initial match can only be read after hydration.
     setMatches(mql.matches); // eslint-disable-line react-hooks/set-state-in-effect
     const onChange = (event: MediaQueryListEvent) => setMatches(event.matches);
     mql.addEventListener("change", onChange);
