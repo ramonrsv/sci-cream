@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795065933416,
+  "lastUpdate": 1795066150922,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -586960,6 +586960,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 510.5,
             "range": "25.24",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e353d50a76240a8b57f367b1a977cc0aae5c6c14",
+          "message": "Upgrade the crate's dependencies, incompatible\n\nBump nnls to 0.5 and ndarray to 0.17, which brings ndarray-stats 0.7\nthrough nnls. The crate builds against them unchanged.\n\nKeep getrandom on 0.2, against cargo upgrade's suggestion: nnls still\npulls in v0.2 through rand 0.8, and the entry exists only to enable\nthat version's \"js\" feature on wasm32. v0.4 has no such feature, so\nthe bump fails to resolve. Say so in its comment.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T00:10:41-05:00",
+          "tree_id": "b195a9327716df459ce61fe1dbf230b6158a2a8f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e353d50a76240a8b57f367b1a977cc0aae5c6c14"
+        },
+        "date": 1795066092258,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 28,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 34.13,
+            "range": "3.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 37.5,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1498.88,
+            "range": "42.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 262.63,
+            "range": "2.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 271.88,
+            "range": "3.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 279.13,
+            "range": "4.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 13337.5,
+            "range": "40.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 678.25,
+            "range": "12.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 42.5,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 40,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 33,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 26.5,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 98.63,
+            "range": "4.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 51.88,
+            "range": "9.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 32.03,
+            "range": "0.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 25.27,
+            "range": "0.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 475.88,
+            "range": "28.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 484.13,
+            "range": "5.95",
             "unit": "ms"
           }
         ]
