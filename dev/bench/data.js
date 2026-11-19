@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795067319587,
+  "lastUpdate": 1795067421866,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -588163,6 +588163,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 484.13,
             "range": "5.95",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9e056680aaadabc6850813f8efa6e85d32e9628f",
+          "message": "Resolve the recipe editor's react-hooks lints\n\neslint-plugin-react-hooks 7.1.1 flags three sites in RecipeEditor,\nsuppressed in the dependency upgrade until they could be fixed.\n\n- The save timer read the recipes through a ref written during\n  render, which a discarded render leaves pointing at recipes that\n  never committed. Read them through an Effect Event instead.\n- An effect cleared the de-evaporate error after each slot switch.\n  RecipeSelect's onChange is the only way the slot changes, so clear\n  it in a handler that sets the slot.\n- An effect cleared the new-version input when the loaded version\n  changed. Compare the version key during render instead, React's\n  pattern for adjusting state to a changed input, so the old text no\n  longer shows for a frame.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T00:20:13-05:00",
+          "tree_id": "f516075e4736a44d6b213a059f69e718fafa1a1a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9e056680aaadabc6850813f8efa6e85d32e9628f"
+        },
+        "date": 1795067374836,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 36.38,
+            "range": "2.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 37.88,
+            "range": "2.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 40.5,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1532.63,
+            "range": "31.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 216,
+            "range": "5.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 222.13,
+            "range": "3.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 229.5,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 11102.25,
+            "range": "134.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 665.63,
+            "range": "5.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 38.5,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 38.75,
+            "range": "1.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 30.13,
+            "range": "0.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 30.88,
+            "range": "1.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 97.5,
+            "range": "5.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 56.5,
+            "range": "12.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 33.38,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 22.88,
+            "range": "1.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 430,
+            "range": "11.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 457.13,
+            "range": "18.38",
             "unit": "ms"
           }
         ]
