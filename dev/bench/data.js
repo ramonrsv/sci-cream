@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795063035036,
+  "lastUpdate": 1795063041296,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -625585,6 +625585,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 400380,
             "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9189a72524c60aa99771f92837d7c6442513a47f",
+          "message": "Resolve Vite 8.3 config warnings\n\nVite 8.3 warns about two things in the crate's and app's configs.\n\nIts planned native config loader can't provide `__dirname`, which\nvite.config.ts uses for the library entry. Use `import.meta.dirname`,\nwhich today's bundling loader also maps to the config's directory.\n\nIt also flags vite-tsconfig-paths, now that Vite resolves tsconfig\n`paths` itself. The app needs that for its `@/*` alias, so set\n`resolve.tsconfigPaths` there; the crate's tsconfig has no `paths`,\nso its plugin did nothing and goes without a replacement. Remove the\ndependency from both packages, along with globrex and the deprecated\ntsconfck, which only it used.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:26:18-05:00",
+          "tree_id": "38fd3aba9a438f92131db51a47a46600e1528228",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9189a72524c60aa99771f92837d7c6442513a47f"
+        },
+        "date": 1795062991785,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 105118,
+            "range": "±0.68%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 774490,
+            "range": "±2.06%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 72055,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "99 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 566082,
+            "range": "±1.11%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
