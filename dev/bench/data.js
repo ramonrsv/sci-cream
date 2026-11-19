@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795105936710,
+  "lastUpdate": 1795105957587,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -632978,6 +632978,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.13%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "506cc79e4acffc4dcc01cb066dee8b9cf1c287c1",
+          "message": "Fix lost auto-balance errors in WatchersView\n\nWith auto-balance on, a failed balance never showed its error. The\nauto-balance layout effect set it, then React ran the pending passive\neffect that clears the error when the targets or the recipe change,\nwhich overwrote it in the same update. So the error was lost on mount\nand after every target change; only switching auto-balance on kept\nit.\n\nStore a failure with the recipe and targets it was computed for, and\nderive the shown error from it while those inputs stand. A stale\nerror still can't linger, and the clearing effect that\nset-state-in-effect flagged is gone. Two new tests cover the error on\nmount and after a target change.\n\nCall onBalance from the auto-balance effect through an Effect Event,\nso its dependency array is checked again instead of suppressed. The\neffect keeps one set-state-in-effect suppression, now with a reason:\nits inputs come from several components, so no handler can run it.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T10:55:56-05:00",
+          "tree_id": "3657666f7318e044c718aaaadb88041e6b45ab56",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/506cc79e4acffc4dcc01cb066dee8b9cf1c287c1"
+        },
+        "date": 1795105897724,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 71462,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 610254,
+            "range": "±0.28%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 51841,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 528448,
+            "range": "±0.80%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
           }
         ]
       }
