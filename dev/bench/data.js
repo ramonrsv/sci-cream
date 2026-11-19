@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795064515089,
+  "lastUpdate": 1795064550727,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -628020,6 +628020,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.07%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "77f54d0387b82614323932d081a6caf57e6c1d53",
+          "message": "Drop visual parkCursor calls repeating the load's\n\ngoToPageAndWaitFor parks the cursor after every load, so four visual\ncalls that follow it with nothing moving the cursor in between only\nrepeat it. Remove them, and the blog spec's now-unused import. The\nparks after a click, a scroll, or other actions stay.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:48:49-05:00",
+          "tree_id": "797a5927b8ebe9d2459c85df021d77cc2022723a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/77f54d0387b82614323932d081a6caf57e6c1d53"
+        },
+        "date": 1795064464928,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 46668,
+            "range": "±1.21%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 448209,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31758,
+            "range": "±0.94%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 336015,
+            "range": "±1.36%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
