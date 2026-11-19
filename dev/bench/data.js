@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795063762738,
+  "lastUpdate": 1795063824767,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -705908,6 +705908,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.56,
             "range": "0.33",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "669f428527a71b04281e31c5273e1c0b5248a027",
+          "message": "Drop npx from the app's package scripts\n\nUnder `pnpm run`, pnpm 10 passes its own settings to scripts as\nnpm_config_* variables, and npm 11 warns about the three it doesn't\nknow whenever a script starts npx. drizzle-kit and jsdoc are\ndevDependencies already on the scripts' PATH, so call them directly.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:38:09-05:00",
+          "tree_id": "b113c728bfa7ac60066e8e4c647cb02b507f803b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/669f428527a71b04281e31c5273e1c0b5248a027"
+        },
+        "date": 1795063758700,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 57.85,
+            "range": "4.79",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.14,
+            "range": "0.70",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.13,
+            "range": "0.72",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 152.5,
+            "range": "8.82",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 152.5,
+            "range": "8.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 54.55,
+            "range": "4.75",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.63,
+            "range": "0.29",
             "unit": "ms"
           }
         ]
