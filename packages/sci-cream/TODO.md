@@ -159,6 +159,10 @@
       there is no need to constantly track those. Still good to run them on a nightly/weekly sanity.
 - [ ] Look into possible optimizations using the new `FastComposition`, including on the JS side.
 - [ ] Split the coupled `balancing::tests` module, should go into separate `solve` and `validate`.
+- [ ] Lift the TypeScript hold at `^6.0.3`, in both packages, once `typescript-eslint` supports
+      TS 7 and `vite-plugin-dts` no longer needs the JS compiler API that TS 7 drops.
+- [ ] Lift the Vitest hold at 4.1.x, in both packages, once `vite-plugin-wasm` detects Vitest 5,
+      which no longer registers a plugin named `"vitest"`; tests that import the WASM fail under it.
 
 ## Completed
 

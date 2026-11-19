@@ -162,6 +162,8 @@
 - [ ] Untangle the overlapping batch shapes: `AddableRecipe`, `RecipeSnapshot`, `VersionChoice`,
       `BatchSelection`, `BatchRecipe`, and `SavedBatchJson` all describe a recipe in a batch, and
       `lib/batch/builder` converts between them in every direction. Versions are split the same way.
+- [ ] Remove the Firefox `test.fixme` in `recipe-share.spec.ts` once Playwright can query a frame
+      Firefox blocks by `frame-ancestors`; with 1.65.1 the query hangs instead of counting 0.
 
 ## Completed
 
