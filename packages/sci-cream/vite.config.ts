@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [wasm(), dts({ bundleTypes: true, tsconfigPath: "./tsconfig.json" })],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/ts/index.ts"),
+      entry: path.resolve(import.meta.dirname, "src/ts/index.ts"),
       name: "MyLibrary",
       fileName: "index",
       formats: ["es"], // this is important

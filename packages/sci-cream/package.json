@@ -85,7 +85,6 @@
     "vite-plugin-dts": "^5.1.2",
     "vite-plugin-top-level-await": "^1.6.0",
     "vite-plugin-wasm": "^3.6.0",
-    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.12"
   }
 }
