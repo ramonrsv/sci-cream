@@ -29,11 +29,11 @@
     "dev:turbopack": "next dev --turbopack",
     "dev:webpack": "next dev --webpack",
     "start": "next start",
-    "db:generate": "npx drizzle-kit generate",
-    "db:migrate": "npx drizzle-kit migrate",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
     "db:baseline": "pnpm tsx ./scripts/baseline.ts",
     "seed-db": "pnpm db:migrate && pnpm tsx ./scripts/seed.ts",
-    "doc": "tsc --noEmit false --outDir ./dist && npx jsdoc -c ./jsdoc.config.json"
+    "doc": "tsc --noEmit false --outDir ./dist && jsdoc -c ./jsdoc.config.json"
   },
   "dependencies": {
     "@fontsource/noto-emoji": "5.3.2",
