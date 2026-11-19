@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795063737365,
+  "lastUpdate": 1795063762738,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -581995,6 +581995,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 535.25,
             "range": "23.71",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9189a72524c60aa99771f92837d7c6442513a47f",
+          "message": "Resolve Vite 8.3 config warnings\n\nVite 8.3 warns about two things in the crate's and app's configs.\n\nIts planned native config loader can't provide `__dirname`, which\nvite.config.ts uses for the library entry. Use `import.meta.dirname`,\nwhich today's bundling loader also maps to the config's directory.\n\nIt also flags vite-tsconfig-paths, now that Vite resolves tsconfig\n`paths` itself. The app needs that for its `@/*` alias, so set\n`resolve.tsconfigPaths` there; the crate's tsconfig has no `paths`,\nso its plugin did nothing and goes without a replacement. Remove the\ndependency from both packages, along with globrex and the deprecated\ntsconfck, which only it used.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:26:18-05:00",
+          "tree_id": "38fd3aba9a438f92131db51a47a46600e1528228",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9189a72524c60aa99771f92837d7c6442513a47f"
+        },
+        "date": 1795063687401,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 41.25,
+            "range": "3.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 45.75,
+            "range": "3.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 48.5,
+            "range": "4.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2071.13,
+            "range": "79.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 334,
+            "range": "8.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 338.5,
+            "range": "5.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 350.25,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16757.25,
+            "range": "45.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 746.63,
+            "range": "18.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.5,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 53.63,
+            "range": "1.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 45.38,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.38,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 119,
+            "range": "4.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 70.5,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 46.86,
+            "range": "1.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 35.04,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 573.75,
+            "range": "14.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 615.25,
+            "range": "15.66",
             "unit": "ms"
           }
         ]
