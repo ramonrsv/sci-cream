@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795064799975,
+  "lastUpdate": 1795064803799,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -718522,6 +718522,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/77f54d0387b82614323932d081a6caf57e6c1d53"
         },
         "date": 1795064514275,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d90d90abad6084d8114b186b36bb6da7eec1fe8e",
+          "message": "Upgrade the crate's dependencies, compatible\n\nBump every dependency to its latest semver-compatible version:\ndiesel 2.4.0, serde 1.0.229, serde_json 1.0.154, thiserror 2.0.21,\nand all_asserts 2.3.4.\n\ndiesel 2.4's derives build on syn 3, through darling 0.24, while the\nother proc macros in the tree still use syn 2. Allow syn as a\nduplicate in clippy.toml, beside glam, so multiple_crate_versions\nstays quiet until they converge.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:55:09-05:00",
+          "tree_id": "b9d2bfbd597972449229281288e72750dc43a52a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d90d90abad6084d8114b186b36bb6da7eec1fe8e"
+        },
+        "date": 1795064802957,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
