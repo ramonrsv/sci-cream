@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795065454855,
+  "lastUpdate": 1795065473619,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -629934,6 +629934,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.09%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e353d50a76240a8b57f367b1a977cc0aae5c6c14",
+          "message": "Upgrade the crate's dependencies, incompatible\n\nBump nnls to 0.5 and ndarray to 0.17, which brings ndarray-stats 0.7\nthrough nnls. The crate builds against them unchanged.\n\nKeep getrandom on 0.2, against cargo upgrade's suggestion: nnls still\npulls in v0.2 through rand 0.8, and the entry exists only to enable\nthat version's \"js\" feature on wasm32. v0.4 has no such feature, so\nthe bump fails to resolve. Say so in its comment.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T00:10:41-05:00",
+          "tree_id": "b195a9327716df459ce61fe1dbf230b6158a2a8f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e353d50a76240a8b57f367b1a977cc0aae5c6c14"
+        },
+        "date": 1795065388625,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47192,
+            "range": "±1.12%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 443503,
+            "range": "±1.08%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32023,
+            "range": "±1.00%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 350421,
+            "range": "±1.09%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
