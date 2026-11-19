@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795110501791,
+  "lastUpdate": 1795110591568,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -715999,6 +715999,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.16,
             "range": "0.22",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1cc0e22846ce47bc1ef5987bfeb4c54225f70a0b",
+          "message": "Move useMediaQuery onto useSyncExternalStore\n\nuseMediaQuery kept a copy of the match in state: it started false,\nread matchMedia in a mount effect, and updated from the change\nlistener. useSyncExternalStore reads the match itself, with false as\nthe server snapshot, so hydration still renders false before the real\nvalue, and the effect and its set-state-in-effect suppression go.\n\nA component mounting after hydration now gets the real value on its\nfirst render, rather than false for a frame. Only the navbar uses the\nhook, through useIsNarrow and useCanHover, and it mounts during\nhydration, so the app behaves the same.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T12:33:49-05:00",
+          "tree_id": "5db0469e1dd044301866f0f821bab120cec2fb07",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1cc0e22846ce47bc1ef5987bfeb4c54225f70a0b"
+        },
+        "date": 1795110510803,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 77.7,
+            "range": "9.37",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 23.16,
+            "range": "6.36",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 23.11,
+            "range": "6.37",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 192.5,
+            "range": "13.77",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 192.5,
+            "range": "13.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 69.39,
+            "range": "9.20",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.69,
+            "range": "0.44",
             "unit": "ms"
           }
         ]
