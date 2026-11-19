@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795110591568,
+  "lastUpdate": 1795110824367,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -106348,6 +106348,204 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1cc0e22846ce47bc1ef5987bfeb4c54225f70a0b",
+          "message": "Move useMediaQuery onto useSyncExternalStore\n\nuseMediaQuery kept a copy of the match in state: it started false,\nread matchMedia in a mount effect, and updated from the change\nlistener. useSyncExternalStore reads the match itself, with false as\nthe server snapshot, so hydration still renders false before the real\nvalue, and the effect and its set-state-in-effect suppression go.\n\nA component mounting after hydration now gets the real value on its\nfirst render, rather than false for a frame. Only the navbar uses the\nhook, through useIsNarrow and useCanHover, and it mounts during\nhydration, so the app behaves the same.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T12:33:49-05:00",
+          "tree_id": "5db0469e1dd044301866f0f821bab120cec2fb07",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1cc0e22846ce47bc1ef5987bfeb4c54225f70a0b"
+        },
+        "date": 1795110777150,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 2121,
+            "range": "± 127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 76429,
+            "range": "± 2481",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1140,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 74063,
+            "range": "± 1178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 2276,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 2110,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 2109,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 2118,
+            "range": "± 68",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 2137,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 2308,
+            "range": "± 253",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 2244,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 2332,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 57339,
+            "range": "± 2441",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 57204,
+            "range": "± 2435",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 139327120,
+            "range": "± 6867279",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 365165,
+            "range": "± 7683",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 3658,
+            "range": "± 125",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 25,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 3161,
+            "range": "± 208",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 46830,
+            "range": "± 721",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 45088,
+            "range": "± 4634",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 74353,
+            "range": "± 1536",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 71819,
+            "range": "± 1026",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 187120,
+            "range": "± 4157",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 7685,
+            "range": "± 66",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 369,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 8,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 7,
             "range": "± 0",
             "unit": "ns/iter"
           }
