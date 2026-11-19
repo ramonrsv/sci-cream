@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795064039885,
+  "lastUpdate": 1795064081784,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -706597,6 +706597,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.63,
             "range": "0.29",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "459248b49b7378c00e47f973a5e0b07bbf83a0ba",
+          "message": "Track the Firefox fixme and dependency holds\n\nEach waits on an upstream release. The app's TODO gets the Firefox\nfixme on the recipe-share blocked-frame check; the crate's gets the\nTypeScript and Vitest holds, as its own devDependencies are what\nblock them, with the app following.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:45:46-05:00",
+          "tree_id": "650e336150296b6577cc121f82ea32fb9a4fffca",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/459248b49b7378c00e47f973a5e0b07bbf83a0ba"
+        },
+        "date": 1795063998222,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 75.39,
+            "range": "13.23",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 20.41,
+            "range": "5.60",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 20.38,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 196,
+            "range": "11.31",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 196,
+            "range": "11.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 70.5,
+            "range": "13.20",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.03,
+            "range": "0.53",
             "unit": "ms"
           }
         ]
