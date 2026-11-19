@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795063676961,
+  "lastUpdate": 1795063701504,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -626302,6 +626302,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.11%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "669f428527a71b04281e31c5273e1c0b5248a027",
+          "message": "Drop npx from the app's package scripts\n\nUnder `pnpm run`, pnpm 10 passes its own settings to scripts as\nnpm_config_* variables, and npm 11 warns about the three it doesn't\nknow whenever a script starts npx. drizzle-kit and jsdoc are\ndevDependencies already on the scripts' PATH, so call them directly.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:38:09-05:00",
+          "tree_id": "b113c728bfa7ac60066e8e4c647cb02b507f803b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/669f428527a71b04281e31c5273e1c0b5248a027"
+        },
+        "date": 1795063653091,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 95281,
+            "range": "±2.09%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 739002,
+            "range": "±1.39%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 57995,
+            "range": "±1.52%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 419993,
+            "range": "±3.06%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
           }
         ]
       }
