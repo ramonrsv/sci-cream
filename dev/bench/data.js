@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795064261980,
+  "lastUpdate": 1795064319077,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -104555,6 +104555,204 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 634,
             "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "459248b49b7378c00e47f973a5e0b07bbf83a0ba",
+          "message": "Track the Firefox fixme and dependency holds\n\nEach waits on an upstream release. The app's TODO gets the Firefox\nfixme on the recipe-share blocked-frame check; the crate's gets the\nTypeScript and Vitest holds, as its own devDependencies are what\nblock them, with the app following.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-18T23:45:46-05:00",
+          "tree_id": "650e336150296b6577cc121f82ea32fb9a4fffca",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/459248b49b7378c00e47f973a5e0b07bbf83a0ba"
+        },
+        "date": 1795064234847,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4082,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 151134,
+            "range": "± 3171",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2427,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 148515,
+            "range": "± 1051",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4359,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4178,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4227,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4272,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4222,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4405,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 4443,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 4415,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 101780,
+            "range": "± 1241",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 106130,
+            "range": "± 1089",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 224249795,
+            "range": "± 1519857",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 632637,
+            "range": "± 2751",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6159,
+            "range": "± 61",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 68,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6177,
+            "range": "± 160",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 93001,
+            "range": "± 542",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 90479,
+            "range": "± 416",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 146065,
+            "range": "± 723",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 144004,
+            "range": "± 864",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 330925,
+            "range": "± 2580",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14350,
+            "range": "± 464",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 8",
             "unit": "ns/iter"
           },
           {
