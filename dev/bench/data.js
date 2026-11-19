@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795105957587,
+  "lastUpdate": 1795106019928,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -713472,6 +713472,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.98,
             "range": "0.41",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "506cc79e4acffc4dcc01cb066dee8b9cf1c287c1",
+          "message": "Fix lost auto-balance errors in WatchersView\n\nWith auto-balance on, a failed balance never showed its error. The\nauto-balance layout effect set it, then React ran the pending passive\neffect that clears the error when the targets or the recipe change,\nwhich overwrote it in the same update. So the error was lost on mount\nand after every target change; only switching auto-balance on kept\nit.\n\nStore a failure with the recipe and targets it was computed for, and\nderive the shown error from it while those inputs stand. A stale\nerror still can't linger, and the clearing effect that\nset-state-in-effect flagged is gone. Two new tests cover the error on\nmount and after a target change.\n\nCall onBalance from the auto-balance effect through an Effect Event,\nso its dependency array is checked again instead of suppressed. The\neffect keeps one set-state-in-effect suppression, now with a reason:\nits inputs come from several components, so no handler can run it.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T10:55:56-05:00",
+          "tree_id": "3657666f7318e044c718aaaadb88041e6b45ab56",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/506cc79e4acffc4dcc01cb066dee8b9cf1c287c1"
+        },
+        "date": 1795105938420,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 77.27,
+            "range": "10.35",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 22.85,
+            "range": "5.67",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 22.81,
+            "range": "5.64",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 192,
+            "range": "11.66",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 192,
+            "range": "11.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 72.73,
+            "range": "10.23",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.94,
+            "range": "0.67",
             "unit": "ms"
           }
         ]
