@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795124971052,
+  "lastUpdate": 1795125001714,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -717495,6 +717495,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.69,
             "range": "0.44",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "610201f269b1ef500d16cb49efeead5b9aa44546",
+          "message": "Replace updateIdx with the WasmResources wrapper\n\nA reseed changes the bridge's database in place, so updateIdx marked\nthe change for memos and effects. The two search panels listed it in\ntheir dependency arrays without reading it, each needing an\nexhaustive-deps suppression.\n\nA reseed also replaces the WasmResources wrapper, whose identity\ncarries the same signal. The search-panel memos now read the bridge\nthrough it and depend on it, so the lint checks them again, and\nrecipe.tsx's refresh effect depends on it too. updateIdx goes from\nthe type, the provider, and the tests, and the WasmResources doc\nstates the rule.\n\nTests that built embedded-data resources by hand now call\nmakeWasmResourcesFromEmbeddedData.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T14:02:38-05:00",
+          "tree_id": "1995b03b06b1873fa7e7d115ac96c5c8b38faf7e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/610201f269b1ef500d16cb49efeead5b9aa44546"
+        },
+        "date": 1795124932737,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 57.68,
+            "range": "4.54",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 17.47,
+            "range": "4.30",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 17.45,
+            "range": "4.32",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 146.5,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 146.5,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 54.42,
+            "range": "4.52",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.65,
+            "range": "0.40",
             "unit": "ms"
           }
         ]
