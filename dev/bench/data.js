@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795132788417,
+  "lastUpdate": 1795132877029,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -107338,6 +107338,204 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 7,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "86e3f7fbd5524d0562cf28005b8f874d196a340d",
+          "message": "Require serving sizes and molar masses above zero\n\nChocolateLabelSpec and DairyLabelSpec divide their figures by the\nserving size, and SweetenerSpec its PAC by a molar mass, so a zero\nturned them to NaN, or to an infinite PAC that validation accepted.\nThe new verify_are_above_zero rejects zero and negative divisors with\nCompositionNotAboveZero, taking values within COMPOSITION_EPSILON of\nzero as zero, as verify_are_positive does.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-19T18:35:59-05:00",
+          "tree_id": "951d60c89126fd306484d80f310f675a259470ca",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/86e3f7fbd5524d0562cf28005b8f874d196a340d"
+        },
+        "date": 1795132789824,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4086,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 150339,
+            "range": "± 953",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2449,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 148212,
+            "range": "± 798",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4444,
+            "range": "± 75",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4128,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4172,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4211,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4177,
+            "range": "± 107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4344,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 4414,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 4408,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 100107,
+            "range": "± 1013",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 102665,
+            "range": "± 630",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 227763267,
+            "range": "± 7061481",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 617842,
+            "range": "± 4936",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6017,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 57,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 5758,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 91784,
+            "range": "± 686",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 87903,
+            "range": "± 299",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 144755,
+            "range": "± 481",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 142793,
+            "range": "± 634",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 329091,
+            "range": "± 1699",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14370,
+            "range": "± 137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 633,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
             "range": "± 0",
             "unit": "ns/iter"
           }
