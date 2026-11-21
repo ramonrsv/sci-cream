@@ -11,7 +11,7 @@ use crate::{
             ChocolateFat, ChocolateSpec, CocoaPowderSpec,
             util::{
                 actual_or, derive_dark_chocolate_solids, derive_milk_chocolate_solids, derive_white_chocolate_solids,
-                milk_fat_from_milk_solids, verify_declared_minimum,
+                milk_fat_from_milk_solids, verify_cocoa_sugars_are_intrinsic, verify_declared_minimum,
             },
         },
         units::Unit,
@@ -163,10 +163,11 @@ pub struct LabelCarbohydrates {
 /// - [`DarkChocolate`](ChocolateKind::DarkChocolate): a dark chocolate, where all the fat is cocoa
 ///   butter, and the cacao solids are `100 - sugars`, unless an actual content is declared, which
 ///   is taken as given. A declared minimum sets a floor for that estimate, the sugars taking the
-///   rest, if the sugars' rounding can account for the gap, and it's an error otherwise.
+///   rest, if their rounding and the cocoa's own sugars cover the gap, and it's an error otherwise.
 /// - [`CocoaPowder`](ChocolateKind::CocoaPowder): a pure cocoa powder, where all but the water, at
 ///   [`cacao::STD_WATER_IN_COCOA_POWDER`], is cacao solids. All the fat is cocoa butter, and any
-///   sugars are taken as intrinsic to the cocoa, so they are counted as part of its cocoa solids.
+///   sugars are taken as intrinsic to the cocoa, so they are counted as part of its cocoa solids;
+///   the label's sugars must not exceed the cocoa's own; see [`cacao::STD_SUGARS_IN_COCOA_SOLIDS`].
 /// - [`MilkChocolate`](ChocolateKind::MilkChocolate): a milk chocolate that contains both cacao and
 ///   milk solids. The protein is shared between the cocoa solids non-fat and the milk solids
 ///   non-fat (MSNF), at [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`] and [`milk::STD_PROTEIN_IN_MSNF`],
@@ -190,7 +191,8 @@ pub struct LabelCarbohydrates {
 /// # Errors
 ///
 /// It is an error if the label gives what its kind can't have, such as a dark chocolate's milk
-/// solids, if the parts exceed 100 g, or if the solids fall short of a declared minimum.
+/// solids or a cocoa powder's added sugars, if the parts exceed 100 g, or if the solids fall short
+/// of a declared minimum.
 ///
 /// # Examples
 ///
@@ -358,15 +360,16 @@ impl ToComposition for ChocolateLabelSpec {
 
         match kind {
             ChocolateKind::DarkChocolate => {
-                let (cacao, sugars) = derive_dark_chocolate_solids(sugars, cacao_solids, serving_size)?;
-                verify_is_subset(cacao + sugars, 100.0, "cacao_solids + sugars <= 100")?;
+                let (cacao, added_sugars) = derive_dark_chocolate_solids(sugars, cacao_solids);
+                verify_is_subset(cacao + added_sugars, 100.0, "cacao_solids + sugars <= 100")?;
+                verify_cocoa_sugars_are_intrinsic(sugars - added_sugars, cacao - fat, serving_size)?;
 
                 ChocolateSpec {
                     cacao_solids: cacao,
                     milk_solids: None,
                     fat: Some(ChocolateFat::Total(fat)),
-                    sugars: Some(sugars),
-                    other_solids: Some(100.0 - cacao - sugars),
+                    sugars: Some(added_sugars),
+                    other_solids: Some(100.0 - cacao - added_sugars),
                 }
                 .to_composition()
             }
@@ -375,6 +378,7 @@ impl ToComposition for ChocolateLabelSpec {
                 let cacao = actual_or(cacao_solids, 100.0 - water);
                 verify_declared_minimum(cacao_solids, cacao, "cacao_solids")?;
                 verify_is_subset(water + cacao, 100.0, "water + cacao_solids <= 100")?;
+                verify_cocoa_sugars_are_intrinsic(sugars, cacao - fat, serving_size)?;
 
                 CocoaPowderSpec {
                     cacao_solids: Some(cacao),
@@ -1402,6 +1406,26 @@ pub(crate) mod tests {
             ..lindt_70_label()
         };
         assert!(matches!(label.to_composition(), Err(Error::InvalidSpec(_))));
+    }
+
+    #[test]
+    fn to_composition_err_when_a_cocoa_powder_has_added_sugars() {
+        // A drinking chocolate's 18 g of sugars per 25 g, far beyond a cocoa powder's own
+        let label = ChocolateLabelSpec {
+            kind: ChocolateKind::CocoaPowder,
+            serving_size: Unit::Grams(25.0),
+            total_fat: 2.5,
+            carbohydrates: LabelCarbohydrates {
+                amount: CarbohydrateAmount::Total(20.0),
+                fiber: Some(2.0),
+                sugars: 18.0,
+            },
+            protein: 1.5,
+            cacao_solids: None,
+            milk_solids: None,
+            dutch_processed: None,
+        };
+        assert!(matches!(label.to_composition(), Err(Error::InvalidComposition(_))));
     }
 
     #[test]

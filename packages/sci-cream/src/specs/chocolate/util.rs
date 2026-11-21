@@ -9,7 +9,7 @@ use crate::{
                 STD_ASH_IN_DUTCHED_COCOA_SOLIDS, STD_ASH_IN_NATURAL_COCOA_SOLIDS,
                 STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS, STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS,
                 STD_COCOA_BUTTER_IN_CACAO_SOLIDS, STD_FIBER_IN_COCOA_SOLIDS, STD_PROTEIN_IN_COCOA_SOLIDS,
-                STD_SATURATED_FAT_IN_COCOA_BUTTER,
+                STD_SATURATED_FAT_IN_COCOA_BUTTER, STD_SUGARS_IN_COCOA_SOLIDS,
             },
             dairy::{
                 STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
@@ -24,7 +24,7 @@ use crate::{
         chocolate::{ChocolateFat, DeclaredSolids},
         dairy::make_milk_proteins,
     },
-    validate::{Validate, verify_is_subset},
+    validate::{Validate, is_subset, verify_is_subset},
 };
 
 #[cfg(doc)]
@@ -228,34 +228,37 @@ pub(super) fn verify_declared_minimum(declared: Option<DeclaredSolids>, value: f
 #[doc = include_str!("../../../docs/references/index/123.md")]
 const MAX_SUGARS_ROUNDING_EXCESS: f64 = 0.5;
 
+/// Verifies that a label's `sugars` counted in its `cocoa_solids`, per 100 g, are the cocoa's own
+///
+/// Cocoa's intrinsic sugars are [`cacao::STD_SUGARS_IN_COCOA_SOLIDS`] of the cocoa solids, which
+/// the label can exceed by [`MAX_SUGARS_ROUNDING_EXCESS`] per `serving_size` in grams.
+pub(super) fn verify_cocoa_sugars_are_intrinsic(sugars: f64, cocoa_solids: f64, serving_size: f64) -> Result<()> {
+    let intrinsic = cocoa_solids * STD_SUGARS_IN_COCOA_SOLIDS;
+    let rounding = MAX_SUGARS_ROUNDING_EXCESS * 100.0 / serving_size;
+
+    if is_subset(sugars, intrinsic + rounding) {
+        Ok(())
+    } else {
+        Err(Error::InvalidComposition(format!(
+            "Sugars counted in the cocoa solids cannot exceed the cocoa's own: \
+            {sugars} g per 100 g > {intrinsic} g, plus {rounding} g of rounding"
+        )))
+    }
+}
+
 /// Derives a dark chocolate's cacao solids and sugars, per 100 g, from its label's `sugars` and
 /// declared `cacao_solids`, see [`ChocolateLabelSpec`]
 ///
 /// They are returned as `(cacao_solids, sugars)`. The label's sugars are total sugars, including
 /// both added sucrose and those intrinsic to the cocoa. An [`Actual`](DeclaredSolids::Actual)
 /// declaration for `cacao_solids` is taken as given, otherwise it's estimated as `100 - sugars`. A
-/// [`Min`](DeclaredSolids::Min) declaration is taken as a floor for the estimate, the sugars taking
-/// the rest, if the shortfall is within the rounding allowance, given by
-/// [`MAX_SUGARS_ROUNDING_EXCESS`] per the `serving_size` in grams.
-///
-/// # Errors
-///
-/// Returns [`Error::InvalidComposition`] if the estimate for cacao solids falls short of a
-/// declared minimum, beyond the rounding allowance; see [`MAX_SUGARS_ROUNDING_EXCESS`].
-pub(super) fn derive_dark_chocolate_solids(
-    sugars: f64,
-    cacao_solids: Option<DeclaredSolids>,
-    serving_size: f64,
-) -> Result<(f64, f64)> {
+/// [`Min`](DeclaredSolids::Min) declaration floors the estimate, the sugars taking the rest.
+pub(super) const fn derive_dark_chocolate_solids(sugars: f64, cacao_solids: Option<DeclaredSolids>) -> (f64, f64) {
     let cacao = actual_or(cacao_solids, 100.0 - sugars);
 
     match declared_minimum(cacao_solids) {
-        Some(min) if cacao < min => {
-            let rounding = MAX_SUGARS_ROUNDING_EXCESS * 100.0 / serving_size;
-            verify_is_subset(min, cacao + rounding, "declared minimum cacao_solids <= cacao_solids + rounding")?;
-            Ok((min, 100.0 - min))
-        }
-        _ => Ok((cacao, sugars)),
+        Some(min) if cacao < min => (min, 100.0 - min),
+        _ => (cacao, sugars),
     }
 }
 
@@ -436,28 +439,67 @@ mod tests {
     }
 
     #[test]
+    fn verify_cocoa_sugars_are_intrinsic_allows_what_rounding_adds() {
+        // USDA's natural cocoa as a 100 g label: 1.75 g of sugars over 83.3 g of cocoa solids
+        let own = 83.3 * STD_SUGARS_IN_COCOA_SOLIDS;
+
+        assert!(verify_cocoa_sugars_are_intrinsic(1.75, 83.3, 100.0).is_ok());
+        assert!(verify_cocoa_sugars_are_intrinsic(own + 0.5, 83.3, 100.0).is_ok());
+
+        let result = verify_cocoa_sugars_are_intrinsic(own + 0.6, 83.3, 100.0);
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn verify_cocoa_sugars_are_intrinsic_err_on_a_sweetened_cocoa() {
+        // A 5 g serving printing 1 g of sugars carries at least 10%, against its cocoa's own 1.6%
+        let result = verify_cocoa_sugars_are_intrinsic(20.0, 75.0, 5.0);
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn verify_cocoa_sugars_are_intrinsic_allows_a_dark_minimum_within_the_sugars_rounding() {
+        // A 13 g serving's 4 g of sugars may be as little as 3.5 g, so a 70% minimum still holds
+        let sugars = 400.0 / 13.0;
+        let (cacao, added_sugars) = derive_dark_chocolate_solids(sugars, Some(DeclaredSolids::Min(70.0)));
+        assert!(verify_cocoa_sugars_are_intrinsic(sugars - added_sugars, cacao - 40.0, 13.0).is_ok());
+    }
+
+    #[test]
+    fn verify_cocoa_sugars_are_intrinsic_allows_a_dark_minimum_within_the_cocoas_own_sugars() {
+        // 30.9 g of sugars per 100 g may be as little as 30.4 g, of which the cocoa's own 0.63 g
+        // belong to the cacao solids at 40% fat, up to 70.23%, so a 70% minimum still holds
+        let (cacao, added_sugars) = derive_dark_chocolate_solids(30.9, Some(DeclaredSolids::Min(70.0)));
+        assert!(verify_cocoa_sugars_are_intrinsic(30.9 - added_sugars, cacao - 40.0, 100.0).is_ok());
+    }
+
+    #[test]
+    fn verify_cocoa_sugars_are_intrinsic_err_on_a_dark_minimum_beyond_the_allowance() {
+        // 12 g of sugars per 40 g may be as little as 11.5 g, 28.75%, and the cocoa's own 0.735 g
+        // belong to the cacao solids at 40% fat, up to 71.985%, still short of a 75% minimum
+        let (cacao, added_sugars) = derive_dark_chocolate_solids(30.0, Some(DeclaredSolids::Min(75.0)));
+        let result = verify_cocoa_sugars_are_intrinsic(30.0 - added_sugars, cacao - 40.0, 40.0);
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
     fn derive_dark_chocolate_solids_takes_all_but_the_sugars_as_cacao_solids() {
         // Lindt 70%'s label, whose 12 g of sugars per 40 g, 30%, meet its declared minimum
         let min = Some(DeclaredSolids::Min(70.0));
-        assert_eq!(derive_dark_chocolate_solids(30.0, min, 40.0).unwrap(), (70.0, 30.0));
-        assert_eq!(derive_dark_chocolate_solids(30.0, None, 40.0).unwrap(), (70.0, 30.0));
+        assert_eq!(derive_dark_chocolate_solids(30.0, min), (70.0, 30.0));
+        assert_eq!(derive_dark_chocolate_solids(30.0, None), (70.0, 30.0));
 
         let actual = Some(DeclaredSolids::Actual(68.0));
-        assert_eq!(derive_dark_chocolate_solids(30.0, actual, 40.0).unwrap(), (68.0, 30.0));
+        assert_eq!(derive_dark_chocolate_solids(30.0, actual), (68.0, 30.0));
     }
 
     #[test]
-    fn derive_dark_chocolate_solids_minimum_floors_within_the_sugars_rounding() {
-        // A 13 g serving's 4 g of sugars may be as little as 3.5 g, so a 70% minimum still holds
+    fn derive_dark_chocolate_solids_minimum_floors_the_estimate() {
+        // The estimates, 69.23% and 69.1%, fall short of a 70% minimum, as 70% does of a 75% one
         let min = Some(DeclaredSolids::Min(70.0));
-        assert_eq!(derive_dark_chocolate_solids(400.0 / 13.0, min, 13.0).unwrap(), (70.0, 30.0));
-    }
-
-    #[test]
-    fn derive_dark_chocolate_solids_err_short_of_the_minimum_beyond_rounding() {
-        // 12 g of sugars per 40 g may be as little as 11.5 g, 28.75%, still short of a 75% minimum
-        let result = derive_dark_chocolate_solids(30.0, Some(DeclaredSolids::Min(75.0)), 40.0);
-        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+        assert_eq!(derive_dark_chocolate_solids(400.0 / 13.0, min), (70.0, 30.0));
+        assert_eq!(derive_dark_chocolate_solids(30.9, min), (70.0, 30.0));
+        assert_eq!(derive_dark_chocolate_solids(30.0, Some(DeclaredSolids::Min(75.0))), (75.0, 25.0));
     }
 
     #[test]
