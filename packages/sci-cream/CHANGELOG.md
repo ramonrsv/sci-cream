@@ -11,6 +11,84 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Significant expansion of chocolate and cocoa modeling, from spec sheets and nutrition labels:
+  - `CocoaPowderSpec`, split from `ChocolateSpec`, adding `water` and `dutch_processed` fields.
+  - `ChocolateSpec::milk_solids`, composed as dairy milk solids, with lactose, casein, and whey.
+  - `ChocolateLabelSpec`, from a per-serving label by `ChocolateKind`, with any `DeclaredSolids`.
+  - Rejects figures past the serving, unmet solids minima, sweetened cocoa, mismatched protein.
+  - Public `derive_*_chocolate_solids`, `estimate_chocolate_*`, and `resolve_chocolate_fats`.
+- Dairy modeling from spec sheets, and of concentrates and isolates by their protein grade:
+  - `DairySheetSpec`, for sheets and databases that list water, with `Sugars`, `casein`, and `ash`.
+  - Concentrates set by protein grade, along lines like `lactose_in_snf` and `minerals_in_snf`.
+  - `SolidsSource::Caseinate`, and sourced isolate anchors for milk, whey, and casein solids.
+- `SolidsBreakdown::minerals` (ash), read via the new `CompKey::MilkMinerals` and `TotalMinerals`.
+- `GumArabic`, `MonoAndDiglycerides`, `DistilledMonoglycerides`, and `Polysorbate80` `CompKey`s.
+- `EmulsifierSpec::other_solids`, for a product's non-emulsifier part, e.g. lecithin carrier oil.
+- `sci_cream::asserts` float assertions, `assert_eq_flt!` and `assert_eq_{8,6,4}dp!`.
+- `constants::tolerances`, with each assertion's tolerance, e.g. `EPSILON_6DP`.
+- `constants::units`, with exact NIST US customary measures and the rounded ones labels use.
+- Many new ingredients, now 361 specs and 64 aliases, up from 220 and 40:
+  - Dairy defaults: 3.6% and 4% Milk, 6% Cream, whey powder, MPC/MPI, WPC/WPI, MCC/MCI, caseinate.
+  - Dairy references: USDA milk powders and whey, USDEC sheets, Lactantia, Neilson, Fairlife labels.
+  - Chocolate: 50/55% dark, Callebaut, Mona Lisa, Valrhona, Corvitto, Lindt, Green & Black's, USDA.
+  - Cocoa powder: 10/12, 20/22, and 22/24 fat grades, USDA alkalized, Callebaut, Valrhona, Purest.
+  - Sweeteners: maltodextrin and glucose syrup DE ranges, glucose powder 37 DE, HFCS 55 and 90.
+  - Emulsifiers: lecithin grades, gum arabic, mono- and diglycerides, DMG, GMS, polysorbate 80.
+  - Stabilizers: generic LBG-GG-LC and CMC-GG-LC blends, Louis Francois blends, carrageenan.
+  - Others: pistachios, cocoa butter, palm and vegetable oils, bananas, basil, nutmeg, vanilla pod.
+- Corvitto and Dana Cree reference recipes, and seven more Ice Cream Science recipes.
+- `docs::ingredients` and `docs::recipes` rustdoc pages, rendering the embedded data and sources.
+- Docs on dairy crude protein, Dutch processing, glucose syrups, and strength values' as-is basis.
+- Reconciliation tests of embedded entries against measured USDA proximates and literature data.
+- Size benchmarks for the WASM binary, npm bundle, wasm-bindgen glue, and tarball, raw and gzip.
+
+### Changed
+
+- Author built-in data in `data/**/*.md`, embedding generated comment-free JSON, shrinking WASM.
+- TS data `comments` are markdown, with `[^N]` definitions inlined and crate links to docs.rs.
+- Dairy model sourced and extended, shifting the composition of most dairy ingredients:
+  - `STD_MINERALS_IN_MSNF` sourced at 8%, leaving `STD_PROTEIN_IN_MSNF` 37.5%, from 10.5% and 35%.
+  - Whey solids sourced on sweet whey, at 13% protein and 8.5% minerals, from 12% and 11.5%.
+  - Minerals modeled first, apart from other solids, capped at what sugars and protein leave.
+  - `DairyLabelSpec` reads sugars as measured, and estimates SNF per solids source in closed form.
+  - Rename `SolidsSource::Casein` to `MicellarCasein`, whose protein must be at least milk's.
+- Move dairy constants into `constants::composition::dairy::{milk,whey,casein}` submodules.
+- Move `specs::SolidsSource` to `constants::composition::dairy::SolidsSource`.
+- USDA dairy entries are `DairySheetSpec`s, mostly from Foundation and SR Legacy records.
+- Replace `ChocolateSpec::cocoa_butter` with `fat`, a `ChocolateFat` of `total_fat` or `split_fats`.
+- Embedded cocoa powders are `CocoaPowderSpec`s, modeling 3% water by default, not bone dry.
+- Lindt EXCELLENCE, Baker's, Ghirardelli, and Hershey's entries are now `ChocolateLabelSpec`s.
+- Refit cacao constants on USDA listings, with ash and carbohydrates split natural/dutched.
+- Rename `hf::CACAO_BUTTER` to `hf::COCOA_BUTTER`.
+- Drop the `_OF_CHOCOLATE_NON_POWDER` suffix from `STD_COCOA_BUTTER_IN_CACAO_SOLIDS`.
+- Rename 'HFCS 42' to 'High Fructose Corn Syrup 42', kept as an alias, now with maltose, 77% solids.
+- Rename 'Soy Lecithin' to 'Soy Lecithin Powder', now at 95% lecithin and 5% fat.
+- Point the 'Ice Cream Stabilizer Blend' alias at the general purpose blend, not easy-to-find.
+- Mass-fraction balancing targets must be in [0, 100], per the new `CompKey::target_domain`.
+- Remove `FpdKey::FPD` from `get_typical_balancing_keys`, as it competes with `ServingTemp`.
+- Split `ethanol_solution_density` into `ethanol_solution_density_by_abw` and `_by_abv`.
+- Move `constants::COMPOSITION_EPSILON` into `constants::tolerances`.
+- Derived composition constants are literals, with doctests checking their stated relations.
+- Bibliography in APA style, linking titles; ingredient references are renumbered from 500.
+- Upgrade Cargo and pnpm dependencies, incl. `nnls` 0.5 and `ndarray` 0.17; except `getrandom`.
+
+### Fixed
+
+- `EmulsifierSpec` modeled gum arabic, glycerides, and polysorbate 80 as water, not solids.
+- `DairyLabelSpec`'s 2% water floor ignored sucrose, so sweetened powders could fall below it.
+- A zero serving size or molar mass gave NaN or infinite PAC; now `CompositionNotAboveZero`.
+- Broken link to the automatic recipe balancing section in the crate docs.
+
+### Removed
+
+- `assert_eq_float!`, replaced by the `sci_cream::asserts` macros with stated tolerances.
+- `STD_WATER_CONTENT_IN_CACAO_PRODUCTS`, replaced by `STD_WATER_IN_{COCOA_POWDER,CHOCOLATE}`.
+- `STD_MINERALS_IN_CASEIN`, replaced by the micellar casein and caseinate constants.
+- 'Casein', 'Whey Isolate', and 'Eggless Ice Cream Stabilizer Blend' aliases to named products.
+- Redundant `homepage` and `readme` in `Cargo.toml`; crates.io showed duplicate links.
+
 ## [0.0.7] - 2026-07-16
 
 ### Added
