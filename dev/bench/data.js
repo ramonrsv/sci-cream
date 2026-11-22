@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795135377044,
+  "lastUpdate": 1795335726435,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -747289,6 +747289,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2195.33,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3b14de81dc7eaa90ab98569ebebd6da8711db73c",
+          "message": "Reject cocoa powder labels with added sugars\n\nA ChocolateLabelSpec cocoa powder counts its sugars as part of its\ncocoa solids, so they can't exceed what the cocoa carries, at\nSTD_SUGARS_IN_COCOA_SOLIDS, plus the label's rounding; more marks a\nsweetened cocoa, now an InvalidComposition.\n\nA dark chocolate's declared cacao minimum now also allows for the\ncocoa's own sugars, which its 100 - sugars estimate leaves out: the\nsugars it has no room for count as cacao solids, so the same check\ncovers them. derive_dark_chocolate_solids just floors the estimate.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-21T00:34:52-05:00",
+          "tree_id": "24009dcab44fd10c5d98f7665e53f330c8094f39",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3b14de81dc7eaa90ab98569ebebd6da8711db73c"
+        },
+        "date": 1795335666941,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1232.24,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 369.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1984.52,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 603.99,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.77,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 652.67,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2193.99,
             "unit": "KB"
           }
         ]
