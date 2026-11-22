@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795335752921,
+  "lastUpdate": 1795335757130,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -732272,6 +732272,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/86e3f7fbd5524d0562cf28005b8f874d196a340d"
         },
         "date": 1795132427883,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3b14de81dc7eaa90ab98569ebebd6da8711db73c",
+          "message": "Reject cocoa powder labels with added sugars\n\nA ChocolateLabelSpec cocoa powder counts its sugars as part of its\ncocoa solids, so they can't exceed what the cocoa carries, at\nSTD_SUGARS_IN_COCOA_SOLIDS, plus the label's rounding; more marks a\nsweetened cocoa, now an InvalidComposition.\n\nA dark chocolate's declared cacao minimum now also allows for the\ncocoa's own sugars, which its 100 - sugars estimate leaves out: the\nsugars it has no room for count as cacao solids, so the same check\ncovers them. derive_dark_chocolate_solids just floors the estimate.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-21T00:34:52-05:00",
+          "tree_id": "24009dcab44fd10c5d98f7665e53f330c8094f39",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3b14de81dc7eaa90ab98569ebebd6da8711db73c"
+        },
+        "date": 1795335756302,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
