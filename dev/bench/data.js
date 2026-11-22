@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795336091005,
+  "lastUpdate": 1795336095351,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -732990,6 +732990,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/3b14de81dc7eaa90ab98569ebebd6da8711db73c"
         },
         "date": 1795335756302,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "59049fb2e262d2ba1e3bd2682657974d251399dd",
+          "message": "Check composed protein against chocolate labels\n\nA ChocolateLabelSpec milk or white chocolate's declared solids, actual\nones or a white chocolate's milk solids floor, could compose a protein\nits label's figure doesn't round to. That's now an InvalidComposition,\nallowing half a gram per serving, as US labels round protein to the\nnearest gram (21 CFR 101.9(c)(7)).\n\nA snapshot tables the composed protein of the Callebaut and Mona Lisa\nmilk and white variants in each case of declared solids.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-22T03:16:40-05:00",
+          "tree_id": "14caa296a4a48449e8150ce3d0b481b007769b53",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/59049fb2e262d2ba1e3bd2682657974d251399dd"
+        },
+        "date": 1795336094313,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
