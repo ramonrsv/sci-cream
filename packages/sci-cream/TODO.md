@@ -61,8 +61,6 @@
       as `constants::composition::cacao` and the FDA's Part 163, "Cacao Products", already use it.
       It would reach `Category::Chocolate`, mirrored by the app's database enum, `specs::chocolate`,
       `ChocolateLabelSpec`, `ChocolateKind`, the docs' chocolate chapter, and `chocolates.md`.
-- [ ] Consider checking that a `ChocolateLabelSpec`'s composed protein is within a tolerance of the
-      label's, which actual declarations leave unchecked; see the `@todo` in its `to_composition`.
 - [ ] Review the 'Lindt Classic Milk Chocolate' entry, which counts its added lactose as sucrose and
       so overstates its POD, though `specs::chocolate` says added lactose needs a `CompositeSpec`.
 - [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
@@ -166,6 +164,8 @@
 
 ## Completed
 
+- [x] Consider checking that a `ChocolateLabelSpec`'s composed protein is within a tolerance of the
+      label's, which actual declarations leave unchecked; see the `@todo` in its `to_composition`.
 - [x] Consider adding `compare_specs_*` tests for simple and label lactose-free dairy products.
 - [x] `assert_eq_flt_test`, with epsilon `TESTS_EPSILON = 0.0001`, is too loose for many use cases.
       Consider tightening to `COMPOSITION_EPSILON` and/or adding a tighter/loser assert variant.

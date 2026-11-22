@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Composition, ToComposition},
+    composition::{CompKey, Composition, ToComposition},
     constants::composition::{cacao::STD_WATER_IN_COCOA_POWDER, dairy::milk::STD_LACTOSE_IN_MSNF},
     error::{Error, Result},
     specs::{
@@ -12,6 +12,7 @@ use crate::{
             util::{
                 actual_or, derive_dark_chocolate_solids, derive_milk_chocolate_solids, derive_white_chocolate_solids,
                 milk_fat_from_milk_solids, verify_cocoa_sugars_are_intrinsic, verify_declared_minimum,
+                verify_protein_is_within_rounding,
             },
         },
         units::Unit,
@@ -192,7 +193,8 @@ pub struct LabelCarbohydrates {
 ///
 /// It is an error if the label gives what its kind can't have, such as a dark chocolate's milk
 /// solids or a cocoa powder's added sugars, if the parts exceed 100 g, or if the solids fall short
-/// of a declared minimum.
+/// of a declared minimum. A milk or white chocolate's solids must also compose the label's protein,
+/// to within its rounding.
 ///
 /// # Examples
 ///
@@ -342,20 +344,21 @@ impl ToComposition for ChocolateLabelSpec {
         let (fat, sugars, protein) = (total_fat * per_100g, sugars * per_100g, protein * per_100g);
         let fiber = fiber.map(|fiber| fiber * per_100g);
 
-        // @todo Actual declarations go unchecked against the protein, replacing its estimates.
-        // Should the solids' composed protein be checked to within a tolerance of the label's?
-        let with_milk = |cacao: f64, milk: f64, milk_fat: f64| {
+        let with_milk = |cacao: f64, milk: f64, milk_fat: f64| -> Result<Composition> {
             let (cocoa_butter, sugars) = (fat - milk_fat, sugars - (milk - milk_fat) * STD_LACTOSE_IN_MSNF);
             verify_is_subset(cacao + milk + sugars, 100.0, "cacao_solids + milk_solids + sugars <= 100")?;
 
-            ChocolateSpec {
+            let comp = ChocolateSpec {
                 cacao_solids: cacao,
                 milk_solids: Some(milk),
                 fat: Some(ChocolateFat::Split { cocoa_butter, milk_fat }),
                 sugars: Some(sugars),
                 other_solids: Some(100.0 - cacao - milk - sugars),
             }
-            .to_composition()
+            .to_composition()?;
+
+            verify_protein_is_within_rounding(comp.get(CompKey::TotalProteins), protein, serving_size)?;
+            Ok(comp)
         };
 
         match kind {
@@ -1385,6 +1388,52 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::CocoaSolids), 0.0);
         assert_eq!(comp.get(CompKey::MilkFat), 8.0);
         assert_eq_flt!(comp.get(CompKey::TotalProteins), 7.9);
+    }
+
+    #[test]
+    fn to_composition_declared_solids_compose_the_protein_within_rounding() {
+        // Lindt Classic Milk at its 30% cacao solids minimum and 21% milk solids, taken as actual,
+        // composes 6.6406 g of protein, within the 6.5-7.5 g that its printed 7 g may be
+        let comp = ChocolateLabelSpec {
+            cacao_solids: Some(DeclaredSolids::Actual(30.0)),
+            milk_solids: Some(DeclaredSolids::Actual(21.0)),
+            ..ING_SPEC_CHOCOLATE_LABEL_LINDT_CLASSIC_MILK_CHOCOLATE
+                .spec
+                .clone()
+                .into_chocolate_label_spec()
+                .unwrap()
+        }
+        .to_composition()
+        .unwrap();
+
+        assert_eq_6dp!(comp.get(CompKey::TotalProteins), 6.6406);
+    }
+
+    #[test]
+    fn to_composition_err_when_declared_solids_compose_a_protein_beyond_rounding() {
+        // Taken as actual, Lindt Classic Milk's minima compose 6.302 g of protein against its 7 g,
+        // and Green & Black's White's milk solids minimum 7.215 g against its 7.9 g
+        let lindt = ChocolateLabelSpec {
+            cacao_solids: Some(DeclaredSolids::Actual(30.0)),
+            milk_solids: Some(DeclaredSolids::Actual(20.0)),
+            ..ING_SPEC_CHOCOLATE_LABEL_LINDT_CLASSIC_MILK_CHOCOLATE
+                .spec
+                .clone()
+                .into_chocolate_label_spec()
+                .unwrap()
+        };
+        let green_and_blacks = ChocolateLabelSpec {
+            milk_solids: Some(DeclaredSolids::Actual(26.0)),
+            ..ING_SPEC_CHOCOLATE_LABEL_GREEN_AND_BLACKS_WHITE_CHOCOLATE
+                .spec
+                .clone()
+                .into_chocolate_label_spec()
+                .unwrap()
+        };
+
+        for label in [lindt, green_and_blacks] {
+            assert!(matches!(label.to_composition(), Err(Error::InvalidComposition(_))));
+        }
     }
 
     #[test]

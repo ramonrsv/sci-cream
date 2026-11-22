@@ -19,7 +19,8 @@
 //! Each label entry is reconciled against the figures its label prints, within the label's
 //! rounding, see [`LabelRounding`]. The Callebaut and Mona Lisa `… (Label)` variants, which leave
 //! out the solids their sources declare, are reconciled against their entries with them declared:
-//! their product page's minima, or their sheet's actual cacao and milk solids.
+//! their product page's minima, or their sheet's actual cacao and milk solids. The milk and white
+//! ones, so declared, must still compose their label's protein, to within its rounding.
 //!
 //! Cocoa powders whose sources omit their water default to [`STD_WATER_IN_COCOA_POWDER`], which the
 //! USDA and Callebaut powders, whose sources give it, check against known answers.
@@ -42,7 +43,7 @@ use crate::tests::{
 
 use super::util::{EXACT_MATCH, LabelRounding, Proximates, reconcile_proximates};
 use crate::{
-    composition::{CompKey, ToComposition},
+    composition::{CompKey, Composition, ToComposition},
     constants::composition::{
         cacao::STD_WATER_IN_COCOA_POWDER,
         dairy::{STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, milk::STD_LACTOSE_IN_MSNF},
@@ -668,6 +669,34 @@ const CALLEBAUT_DECLARED_CEILINGS: &[(CompKey, f64)] = &[
     (CompKey::MilkFat, 36.5),
 ];
 
+/// The declarations a [`CALLEBAUT_PAGE_MINIMA`] variant of `kind` is composed with, as its kind
+/// takes them: none, its page's minima if it has any, or its `entry`'s actual cacao and milk
+/// solids; `(case, cacao_solids, milk_solids)`
+fn declared_solids_cases(
+    kind: ChocolateKind,
+    min_cacao: Option<f64>,
+    min_milk: Option<f64>,
+    entry: &Composition,
+) -> Vec<(&'static str, Option<DeclaredSolids>, Option<DeclaredSolids>)> {
+    let cacao = Some(DeclaredSolids::Actual(entry.get(CompKey::CacaoSolids)));
+    let milk = Some(DeclaredSolids::Actual(entry.get(CompKey::MilkSolids)));
+
+    let mut cases = vec![("none", None, None)];
+    if min_cacao.is_some() || min_milk.is_some() {
+        cases.push(("minima", min_cacao.map(DeclaredSolids::Min), min_milk.map(DeclaredSolids::Min)));
+    }
+    match kind {
+        ChocolateKind::DarkChocolate => cases.push(("actual cacao", cacao, None)),
+        ChocolateKind::MilkChocolate | ChocolateKind::WhiteChocolate => cases.extend([
+            ("actual cacao", cacao, None),
+            ("actual milk", None, milk),
+            ("actual both", cacao, milk),
+        ]),
+        ChocolateKind::CocoaPowder => {}
+    }
+    cases
+}
+
 /// Each [`CALLEBAUT_PAGE_MINIMA`] variant recovers its entry's solids and fat split within the
 /// [`CALLEBAUT_DECLARED_CEILINGS`], declaring nothing, its page's minima, or its sheet's actual
 /// solids, as its kind takes them; the snapshot tables each case's errors. A solid its entry lacks,
@@ -690,22 +719,6 @@ fn callebaut_labels_recover_their_entries_with_declared_solids() {
             panic!("{variant} is not a ChocolateLabelSpec");
         };
         let entry = get_embedded_or_variant_comp_by_name(name);
-        let cacao = Some(DeclaredSolids::Actual(entry.get(CompKey::CacaoSolids)));
-        let milk = Some(DeclaredSolids::Actual(entry.get(CompKey::MilkSolids)));
-
-        let mut cases = vec![("none", None, None)];
-        if min_cacao.is_some() || min_milk.is_some() {
-            cases.push(("minima", min_cacao.map(DeclaredSolids::Min), min_milk.map(DeclaredSolids::Min)));
-        }
-        match label.kind {
-            ChocolateKind::DarkChocolate => cases.push(("actual cacao", cacao, None)),
-            ChocolateKind::MilkChocolate | ChocolateKind::WhiteChocolate => cases.extend([
-                ("actual cacao", cacao, None),
-                ("actual milk", None, milk),
-                ("actual both", cacao, milk),
-            ]),
-            ChocolateKind::CocoaPowder => {}
-        }
 
         let values = CALLEBAUT_DECLARED_CEILINGS
             .iter()
@@ -716,7 +729,7 @@ fn callebaut_labels_recover_their_entries_with_declared_solids() {
         lines.push(format!("  {:<14}{header}", "case"));
         lines.push(format!("  {:<14}{values}", "entry (g)"));
 
-        for (case, cacao_solids, milk_solids) in cases {
+        for (case, cacao_solids, milk_solids) in declared_solids_cases(label.kind, min_cacao, min_milk, &entry) {
             let comp = ChocolateLabelSpec {
                 cacao_solids,
                 milk_solids,
@@ -745,6 +758,51 @@ fn callebaut_labels_recover_their_entries_with_declared_solids() {
                 }
             }
             lines.push(format!("  {case:<14}{}", cells.concat()));
+        }
+
+        lines.push(String::new());
+    }
+
+    insta::assert_snapshot!(lines.join("\n"));
+}
+
+/// Each [`CALLEBAUT_PAGE_MINIMA`] milk and white chocolate variant composes its label's protein to
+/// within rounding, as [`ChocolateLabelSpec`] requires, in each of its [`declared_solids_cases`];
+/// the snapshot tables each case's composed protein against the label's.
+#[test]
+fn callebaut_labels_compose_their_protein_with_declared_solids() {
+    let mut lines = Vec::new();
+
+    for &(name, min_cacao, min_milk) in CALLEBAUT_PAGE_MINIMA {
+        let variant = format!("{name} (Label)");
+        let TaggedSpec::ChocolateLabelSpec(label) = get_embedded_or_variant_spec_by_name(&variant).spec else {
+            panic!("{variant} is not a ChocolateLabelSpec");
+        };
+        if !matches!(label.kind, ChocolateKind::MilkChocolate | ChocolateKind::WhiteChocolate) {
+            continue;
+        }
+        let Unit::Grams(serving) = label.serving_size else {
+            panic!("{variant}'s serving is not in grams");
+        };
+        let protein = label.protein * 100.0 / serving;
+        let entry = get_embedded_or_variant_comp_by_name(name);
+
+        lines.push(format!("{variant}, {protein:.2} g of protein per 100 g"));
+        lines.push(format!("  {:<14}{:>10}{:>16}", "case", "composed", "diff"));
+
+        for (case, cacao_solids, milk_solids) in declared_solids_cases(label.kind, min_cacao, min_milk, &entry) {
+            let comp = ChocolateLabelSpec {
+                cacao_solids,
+                milk_solids,
+                ..label
+            }
+            .to_composition()
+            .unwrap_or_else(|e| panic!("{variant}, {case}: {e}"));
+
+            let composed = comp.get(CompKey::TotalProteins);
+            let error = relative_error_percent(composed, protein);
+            let diff = format!("{:+.2} ({error:+.1}%)", composed - protein);
+            lines.push(format!("  {case:<14}{composed:>10.2}{diff:>16}"));
         }
 
         lines.push(String::new());

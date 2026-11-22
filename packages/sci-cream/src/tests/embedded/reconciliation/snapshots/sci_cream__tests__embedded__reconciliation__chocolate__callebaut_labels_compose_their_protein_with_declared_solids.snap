@@ -1,0 +1,51 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/chocolate.rs
+expression: "lines.join(\"\\n\")"
+---
+Callebaut 823 Milk Chocolate (Label), 7.00 g of protein per 100 g
+  case            composed            diff
+  none                7.00   +0.00 (+0.0%)
+  minima              7.00   +0.00 (+0.0%)
+  actual cacao        7.00   +0.00 (+0.0%)
+  actual milk         7.00   +0.00 (+0.0%)
+  actual both         7.12   +0.12 (+1.8%)
+
+Callebaut 665 Milk Chocolate (Label), 8.10 g of protein per 100 g
+  case            composed            diff
+  none                8.10   +0.00 (+0.0%)
+  minima              8.10   +0.00 (+0.0%)
+  actual cacao        8.10   +0.00 (+0.0%)
+  actual milk         8.10   +0.00 (+0.0%)
+  actual both         8.51   +0.41 (+5.0%)
+
+Callebaut Power 41 Milk Chocolate (Label), 8.50 g of protein per 100 g
+  case            composed            diff
+  none                8.50   +0.00 (+0.0%)
+  minima              8.50   +0.00 (+0.0%)
+  actual cacao        8.50   +0.00 (+0.0%)
+  actual milk         8.50   +0.00 (+0.0%)
+  actual both         8.29   -0.21 (-2.4%)
+
+Callebaut Arriba Milk Chocolate (Label), 9.10 g of protein per 100 g
+  case            composed            diff
+  none                9.10   +0.00 (+0.0%)
+  minima              9.10   +0.00 (+0.0%)
+  actual cacao        9.10   +0.00 (+0.0%)
+  actual milk         9.10   +0.00 (+0.0%)
+  actual both         8.99   -0.11 (-1.2%)
+
+Callebaut W2 White Chocolate (Label), 6.00 g of protein per 100 g
+  case            composed            diff
+  none                6.00   +0.00 (+0.0%)
+  minima              6.11   +0.11 (+1.8%)
+  actual cacao        6.00   +0.00 (+0.0%)
+  actual milk         6.38   +0.38 (+6.4%)
+  actual both         6.26   +0.26 (+4.4%)
+
+Mona Lisa Milk Chocolate Blossoms (Label), 6.50 g of protein per 100 g
+  case            composed            diff
+  none                6.50   +0.00 (+0.0%)
+  minima              6.50   +0.00 (+0.0%)
+  actual cacao        6.50   +0.00 (+0.0%)
+  actual milk         6.50   +0.00 (+0.0%)
+  actual both         6.36   -0.14 (-2.2%)

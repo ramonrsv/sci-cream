@@ -24,7 +24,7 @@ use crate::{
         chocolate::{ChocolateFat, DeclaredSolids},
         dairy::make_milk_proteins,
     },
-    validate::{Validate, is_subset, verify_is_subset},
+    validate::{Validate, is_subset, is_within_range, verify_is_subset},
 };
 
 #[cfg(doc)]
@@ -242,6 +242,28 @@ pub(super) fn verify_cocoa_sugars_are_intrinsic(sugars: f64, cocoa_solids: f64, 
         Err(Error::InvalidComposition(format!(
             "Sugars counted in the cocoa solids cannot exceed the cocoa's own: \
             {sugars} g per 100 g > {intrinsic} g, plus {rounding} g of rounding"
+        )))
+    }
+}
+
+/// How far rounding can move a label's printed protein from the actual, in grams per serving
+///
+/// It is half the gram that US labels round protein to (U.S. FDA, CFR 21, 101.9(c)(7))[^123].
+#[doc = include_str!("../../../docs/references/index/123.md")]
+const MAX_PROTEIN_ROUNDING_ERROR: f64 = 0.5;
+
+/// Verifies that a label's `protein`, per 100 g, is the `composed` protein, to within rounding
+///
+/// The label rounds it to within [`MAX_PROTEIN_ROUNDING_ERROR`] per `serving_size` in grams.
+pub(super) fn verify_protein_is_within_rounding(composed: f64, protein: f64, serving_size: f64) -> Result<()> {
+    let rounding = MAX_PROTEIN_ROUNDING_ERROR * 100.0 / serving_size;
+
+    if is_within_range(composed, protein - rounding, protein + rounding) {
+        Ok(())
+    } else {
+        Err(Error::InvalidComposition(format!(
+            "Composed protein must match the label's to within rounding: \
+            {composed} g per 100 g against {protein} g, give or take {rounding} g"
         )))
     }
 }
@@ -480,6 +502,26 @@ mod tests {
         let (cacao, added_sugars) = derive_dark_chocolate_solids(30.0, Some(DeclaredSolids::Min(75.0)));
         let result = verify_cocoa_sugars_are_intrinsic(30.0 - added_sugars, cacao - 40.0, 40.0);
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn verify_protein_is_within_rounding_allows_half_a_gram_per_serving_either_way() {
+        // 7 g per 100 g may be 6.5-7.5 g, and 3 g per 40 g, 7.5 g per 100 g, 6.25-8.75 g
+        for composed in [6.5, 7.5] {
+            assert!(verify_protein_is_within_rounding(composed, 7.0, 100.0).is_ok());
+        }
+        for composed in [6.25, 8.75] {
+            assert!(verify_protein_is_within_rounding(composed, 7.5, 40.0).is_ok());
+        }
+    }
+
+    #[test]
+    fn verify_protein_is_within_rounding_err_beyond_the_rounding() {
+        // 7 g per 100 g may be no less than 6.5 g and no more than 7.5 g
+        for composed in [6.4, 7.6] {
+            let result = verify_protein_is_within_rounding(composed, 7.0, 100.0);
+            assert!(matches!(result, Err(Error::InvalidComposition(_))));
+        }
     }
 
     #[test]
