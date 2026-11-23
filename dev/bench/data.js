@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795468524837,
+  "lastUpdate": 1795468864801,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -602059,6 +602059,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 588.25,
             "range": "27.73",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5b562c731f61b67ca0742a6934cca048fc0bc1b9",
+          "message": "Adopt the cocoa terminology in the docs\n\nThe chapter becomes \"Cocoa\", in docs/cocoa.md, and defines the parts\nas the standards, specification sheets, and literature name them:\ncocoa solids, the total; cocoa butter; and cocoa solids non-fat. It\ncites Codex CXS 87, Canada's compositional standards, and Wikipedia's\n\"Cocoa solids\", new to the references, and the links to it follow.\n\nThe comments, docs, and messages around the chocolate specs follow:\n\"cacao solids\" become cocoa solids, the non-fat \"cocoa solids\" cocoa\nsolids non-fat or cocoa SNF, and other \"cacao\" cocoa, but for quotes,\nnames, and Theobroma cacao.\n\nTODO.md's \"cacao\" umbrella item, answered with cocoa, is complete.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T15:59:53-05:00",
+          "tree_id": "6950ab6d9104cfd4516ff01f7146b3bb36c38968",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5b562c731f61b67ca0742a6934cca048fc0bc1b9"
+        },
+        "date": 1795468774782,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.13,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 48.25,
+            "range": "4.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 54.38,
+            "range": "3.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2343.88,
+            "range": "70.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 397.38,
+            "range": "5.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 398.88,
+            "range": "4.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 425,
+            "range": "11.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19855.38,
+            "range": "37.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 23.37,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 834.75,
+            "range": "10.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 63,
+            "range": "2.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 49.13,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 136.63,
+            "range": "6.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 81.63,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 51.68,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.23,
+            "range": "0.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 627.38,
+            "range": "17.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 716.38,
+            "range": "29.80",
             "unit": "ms"
           }
         ]
