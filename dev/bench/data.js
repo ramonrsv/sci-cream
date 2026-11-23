@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795475217279,
+  "lastUpdate": 1795475225499,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -701059,6 +701059,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1037.84,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "db376c6c7f4e5fd3af9ba216aec6cb37153364bb",
+          "message": "Add Cadbury Dairy Milk labels, scaling overfills\n\nA milk or white ChocolateLabelSpec rejected any label whose rounded\nfigures composed more than 100 g, as Canada's Cadbury Dairy Milk does\nby 1.3%. Those parts now scale into 100 g, as far as that keeps the\nlabel's fat and sugars within half a gram per serving of what it\nprints, leaving no other solids.\n\nCadbury Dairy Milk Chocolate (UK) declares its actual milk solids and\ncounts its palm and shea, cocoa butter equivalents, as cocoa butter;\n(Canada) is the 90 g bar's label, with no vegetable fats. Test-only\nfixtures add the UK label's minima, two more Canadian sizes, and\nDarkmilk, and the tests compare them and refuse the US label, which\nnothing on it can split.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T17:52:07-05:00",
+          "tree_id": "cdd663cfcb464b9bcad156f9c346afb372d61964",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/db376c6c7f4e5fd3af9ba216aec6cb37153364bb"
+        },
+        "date": 1795475134158,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 778.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 945.84,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 722.47,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 890.19,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 732.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 900.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 705.88,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 873.6,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 707.41,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 875.13,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1037.87,
             "unit": "KB"
           },
           {
