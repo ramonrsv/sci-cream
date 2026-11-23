@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795470288095,
+  "lastUpdate": 1795470294451,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -649332,6 +649332,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.17%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0718038e7c4ff184c57011708093b57c15aa59fc",
+          "message": "Stop benchmark alerts from failing CI\n\nShared-runner noise trips github-action-benchmark's single-point alert\nrule on about a quarter of recent pushes, and each failed bench job\nalso blocks that commit's deploy, since deploy.yml requires App CI and\nCrate CI to succeed. Keep pushing results to gh-pages and commenting\non alerts, but never fail the job on one, until CodSpeed and Bencher\nsupersede these jobs.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T16:38:58-05:00",
+          "tree_id": "babdfd3bf1a4b3373a434f1cccbf373a2e731715",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0718038e7c4ff184c57011708093b57c15aa59fc"
+        },
+        "date": 1795470227325,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 66568,
+            "range": "±0.64%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 607890,
+            "range": "±0.31%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 48533,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "99 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 527611,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
