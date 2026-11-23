@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795470111227,
+  "lastUpdate": 1795470194683,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -758666,6 +758666,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/49950bea547dc8306602ab901e1f4ff7f99fac18"
         },
         "date": 1795469600409,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1231.93,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 371.45,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1984.19,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 606.46,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 655.12,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2193.77,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0718038e7c4ff184c57011708093b57c15aa59fc",
+          "message": "Stop benchmark alerts from failing CI\n\nShared-runner noise trips github-action-benchmark's single-point alert\nrule on about a quarter of recent pushes, and each failed bench job\nalso blocks that commit's deploy, since deploy.yml requires App CI and\nCrate CI to succeed. Keep pushing results to gh-pages and commenting\non alerts, but never fail the job on one, until CodSpeed and Bencher\nsupersede these jobs.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T16:38:58-05:00",
+          "tree_id": "babdfd3bf1a4b3373a434f1cccbf373a2e731715",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0718038e7c4ff184c57011708093b57c15aa59fc"
+        },
+        "date": 1795470103487,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
