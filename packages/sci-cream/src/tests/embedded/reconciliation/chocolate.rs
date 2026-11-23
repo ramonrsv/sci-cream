@@ -19,7 +19,7 @@
 //! Each label entry is reconciled against the figures its label prints, within the label's
 //! rounding, see [`LabelRounding`]. The Callebaut and Mona Lisa `… (Label)` variants, which leave
 //! out the solids their sources declare, are reconciled against their entries with them declared:
-//! their product page's minima, or their sheet's actual cacao and milk solids. The milk and white
+//! their product page's minima, or their sheet's actual cocoa and milk solids. The milk and white
 //! ones, so declared, must still compose their label's protein, to within its rounding.
 //!
 //! Cocoa powders whose sources omit their water default to [`STD_WATER_IN_COCOA_POWDER`], which the
@@ -197,11 +197,11 @@ const FULL_MISS: f64 = 100.0;
 /// Fat and sugars are transcribed from the listing rather than predicted, so both must match
 /// exactly. [`ChocolateSpec`](crate::specs::ChocolateSpec) has no water field, so water reads as a
 /// full miss, a ceiling that records the gap rather than tolerates drift. That same water stays
-/// inside `cocoa_solids` and inflates the cocoa solids, while the sugars intrinsic to cocoa deflate
+/// inside `cocoa_solids` and inflates the cocoa SNF, while the sugars intrinsic to cocoa deflate
 /// them by leaving with the declared `sugars` ([`cocoa::STD_SUGARS_IN_COCOA_SNF`]); the rest
 /// bound that net overstatement plus the scatter of each constant, fiber being the loosest.
 ///
-/// The `… (Label)` variants model the same compositions, a dark chocolate label's cacao solids
+/// The `… (Label)` variants model the same compositions, a dark chocolate label's cocoa solids
 /// being `100 - sugars` too, with its protein and fiber left to the standard fractions.
 const CHOCOLATE_CEILING: Proximates = Proximates {
     water: FULL_MISS,
@@ -429,8 +429,8 @@ const AS_PRINTED: FigureCeilings = FigureCeilings {
 ///   100% put 44% and 35% fiber in it, against [`cocoa::STD_FIBER_IN_COCOA_SNF`]'s 37.8%.
 /// - Purest's figures account for only 9.5 g of its 12 g serving, leaving more than its water and
 ///   ash take, so its carbohydrate reads 16.4% high.
-/// - Green & Black's Milk's cacao minimum raises its cocoa solids non-fat past what its fiber
-///   gives, so its fiber and carbohydrate read high.
+/// - Green & Black's Milk's cocoa solids minimum raises its cocoa solids non-fat past what its
+///   fiber gives, so its fiber and carbohydrate read high.
 const LABEL_ENTRIES: &[(&str, LabelRounding, FigureCeilings)] = &[
     (
         "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
@@ -635,7 +635,7 @@ fn estimate_chocolate_snf_split_from_protein_by_fiber_recovers_callebaut_entries
     insta::assert_snapshot!(lines.join("\n"));
 }
 
-/// Minimum cacao and milk solids that the product page of each Callebaut and Mona Lisa entry with a
+/// Minimum cocoa and milk solids that the product page of each Callebaut and Mona Lisa entry with a
 /// `… (Label)` variant declares, which the variant leaves out; `(name, cocoa_solids, milk_solids)`
 const CALLEBAUT_PAGE_MINIMA: &[(&str, Option<f64>, Option<f64>)] = &[
     ("Callebaut 811 Dark Chocolate", Some(54.5), None),
@@ -659,7 +659,7 @@ const CALLEBAUT_PAGE_MINIMA: &[(&str, Option<f64>, Option<f64>)] = &[
 /// The milk fat, at [`STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`] of the milk solids, misses widest
 /// however the solids are declared: the sheets' milk solids carry 20-28% milk fat, so the milk fat
 /// misses by up to 36%, and the cocoa butter by the same grams the other way. The cocoa solids
-/// non-fat, the cacao solids less the cocoa butter, take on the errors of both, and in 665 come to
+/// non-fat, the cocoa solids less the cocoa butter, take on the errors of both, and in 665 come to
 /// only 3.2 g, so they miss by up to 35%.
 const CALLEBAUT_DECLARED_CEILINGS: &[(CompKey, f64)] = &[
     (CompKey::CocoaSolids, 5.5),
@@ -670,7 +670,7 @@ const CALLEBAUT_DECLARED_CEILINGS: &[(CompKey, f64)] = &[
 ];
 
 /// The declarations a [`CALLEBAUT_PAGE_MINIMA`] variant of `kind` is composed with, as its kind
-/// takes them: none, its page's minima if it has any, or its `entry`'s actual cacao and milk
+/// takes them: none, its page's minima if it has any, or its `entry`'s actual cocoa and milk
 /// solids; `(case, cocoa_solids, milk_solids)`
 fn declared_solids_cases(
     kind: ChocolateKind,
@@ -686,9 +686,9 @@ fn declared_solids_cases(
         cases.push(("minima", min_cocoa.map(DeclaredSolids::Min), min_milk.map(DeclaredSolids::Min)));
     }
     match kind {
-        ChocolateKind::DarkChocolate => cases.push(("actual cacao", cocoa, None)),
+        ChocolateKind::DarkChocolate => cases.push(("actual cocoa", cocoa, None)),
         ChocolateKind::MilkChocolate | ChocolateKind::WhiteChocolate => cases.extend([
-            ("actual cacao", cocoa, None),
+            ("actual cocoa", cocoa, None),
             ("actual milk", None, milk),
             ("actual both", cocoa, milk),
         ]),

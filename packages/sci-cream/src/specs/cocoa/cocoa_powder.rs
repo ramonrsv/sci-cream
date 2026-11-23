@@ -18,11 +18,11 @@ use crate::{
 
 /// Spec for cocoa powder ingredients, with cocoa butter and optional other solids
 ///
-/// See the [chocolate documentation](crate::docs#chocolate) for more details on chocolate
-/// ingredients and the terminology used to define its various constituent components, e.g. _cacao_
-/// solids, cocoa butter, _cocoa_ solids, etc.
+/// See the [cocoa documentation](crate::docs#cocoa) for more details on chocolate ingredients and
+/// the terminology used to define its various constituent components, e.g. cocoa solids, cocoa
+/// butter, cocoa solids non-fat (SNF), etc.
 ///
-/// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The
+/// The relation of the above components is `cocoa solids = cocoa butter + cocoa SNF`. The
 /// [`cocoa_solids`](Self::cocoa_solids) content is optional, calculated as `100 - water -
 /// other_solids` if not specified. It must be a superset of [`cocoa_butter`](Self::cocoa_butter),
 /// which must be specified, typically ranging from ~10-24%. The
@@ -32,14 +32,14 @@ use crate::{
 /// [`CompKey::OtherSNFS`]. [`cocoa_solids`](Self::cocoa_solids),
 /// [`other_solids`](Self::other_solids), and [`water`](Self::water) must add up to 100%.
 ///
-/// The cocoa solids content is further broken down into proteins, carbohydrates - including fiber,
-/// and ash based on standard values for cocoa solids, specified in
+/// The cocoa SNF content is further broken down into proteins, carbohydrates - including fiber,
+/// and ash based on standard values for cocoa SNF, specified in
 /// [`constants::composition::cocoa`], e.g. [`cocoa::STD_PROTEIN_IN_COCOA_SNF`],
 /// [`cocoa::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF`], [`cocoa::STD_FIBER_IN_COCOA_SNF`], etc.
 ///
 /// **Note:** This spec does not model intrinsic sugars in cocoa solids, i.e. those naturally
-/// occurring in the cacao nuts - see [`cocoa::STD_SUGARS_IN_COCOA_SNF`]. They are included as
-/// cacao and cocoa solids, which is correct, but are not tracked as sugars and are not included
+/// occurring in the cocoa beans - see [`cocoa::STD_SUGARS_IN_COCOA_SNF`]. They are included as
+/// cocoa solids and cocoa SNF, which is correct, but are not tracked as sugars and are not included
 /// in [`CompKey::TotalSugars`], nor do they contribute to sweetness or freezing point depression.
 ///
 /// # Examples
@@ -47,7 +47,7 @@ use crate::{
 /// A generic cocoa powder of the 10/12% grade:
 /// - Cocoa butter: the grade's midpoint => 11%
 /// - Water: by default [`cocoa::STD_WATER_IN_COCOA_POWDER`] => 3%
-/// - Cacao solids: 100% less the water => 97% (calculated internally)
+/// - Cocoa solids: 100% less the water => 97% (calculated internally)
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -81,7 +81,7 @@ use crate::{
 /// (Callebaut 10/12 Natural Cocoa Powder, 2018)[^545], per 100 g:
 /// - Cocoa butter: _"TOTAL FAT 11.0 g"_ => 11%
 /// - Water: 100 g less the 96.5 g its nutritional data accounts for => 3.5%
-/// - Cacao solids: 100% less the water => 96.5% (calculated internally)
+/// - Cocoa solids: 100% less the water => 96.5% (calculated internally)
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -112,7 +112,7 @@ use crate::{
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct CocoaPowderSpec {
-    /// Total cacao solids content, optional, `100 - water - other_solids` if not specified
+    /// Total cocoa solids content, optional, `100 - water - other_solids` if not specified
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cocoa_solids: Option<f64>,
     /// Cocoa butter content as a percentage of the product as a whole, usually from nutrition facts
@@ -401,7 +401,7 @@ pub(crate) mod tests {
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 341.352),
-            // The declared 93% cacao solids leaves 7% unaccounted for, modeled as `other_solids`
+            // The declared 93% cocoa solids leaves 7% unaccounted for, modeled as `other_solids`
             (CompKey::CocoaSolids, 93.0),
             (CompKey::CocoaButter, 21.0),
             (CompKey::CocoaSNF, 72.0),
@@ -428,7 +428,7 @@ pub(crate) mod tests {
         assert_eq!(comp.solids.other.others, 4.0);
     }
 
-    /// Omitting cacao solids derives `100 - water - other_solids`, matching Valrhona's declared 93
+    /// Omitting cocoa solids derives `100 - water - other_solids`, matching Valrhona's declared 93
     #[test]
     fn to_composition_cocoa_powder_spec_derives_cocoa_solids_from_other_solids() {
         let comp = CocoaPowderSpec {
@@ -478,7 +478,7 @@ pub(crate) mod tests {
     #[test]
     fn to_composition_cocoa_powder_err_when_components_do_not_sum_to_100() {
         let bad_specs = [
-            // A full 100% of cacao solids leaves no room for the default water
+            // A full 100% of cocoa solids leaves no room for the default water
             CocoaPowderSpec {
                 cocoa_solids: Some(100.0),
                 cocoa_butter: 16.67,

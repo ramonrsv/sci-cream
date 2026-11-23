@@ -4,13 +4,13 @@
 //! hardness of mixes containing chocolate and nut ingredients (Corvitto, 2005, p. 243, 274)[^3].
 #![doc = include_str!("../../docs/references/index/3.md")]
 
-/// Hardness Factor for cacao butter; see the [chocolate documentation](crate::docs#chocolate).
+/// Hardness Factor for cocoa butter; see the [cocoa documentation](crate::docs#cocoa).
 ///
 /// (Corvitto, 2005, p. 243)[^3]
 #[doc = include_str!("../../docs/references/index/3.md")]
 pub const COCOA_BUTTER: f64 = 0.9;
 
-/// Hardness Factor for cocoa solids; see the [chocolate documentation](crate::docs#chocolate).
+/// Hardness Factor for cocoa solids non-fat; see the [cocoa documentation](crate::docs#cocoa).
 ///
 /// (Corvitto, 2005, p. 243)[^3]
 #[doc = include_str!("../../docs/references/index/3.md")]

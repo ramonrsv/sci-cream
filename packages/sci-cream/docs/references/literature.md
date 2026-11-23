@@ -269,3 +269,9 @@
 [^133]: The European Commission. (2012, December). [_Guidance document for competent authorities for the control of compliance with EU legislation with regard to the setting of tolerances for nutrient values declared on a label_](https://food.ec.europa.eu/system/files/2016-10/labelling_nutrition-vitamins_minerals-guidance_tolerances_1212_en.pdf). Health and Consumers Directorate-General.
 
 [^134]: Department of Health. (2003, June). [_The Cocoa and Chocolate Products (England) Regulations 2003_](https://www.legislation.gov.uk/uksi/2003/1659/contents). The National Archives.
+
+[^135]: Codex Alimentarius Commission. (2003). [_Standard for Chocolate and Chocolate Products (CXS 87-1981)_](https://www.fao.org/input/download/standards/67/CXS_087e.pdf). FAO/WHO.
+
+[^136]: Canadian Food Inspection Agency. (2025, May). [_Canadian Food Compositional Standards_](https://inspection.canada.ca/en/about-cfia/acts-and-regulations/list-acts-and-regulations/documents-incorporated-reference/canadian-food-compositional-standards-0).
+
+[^137]: [_Cocoa solids_](https://en.wikipedia.org/w/index.php?title=Cocoa_solids&oldid=1354667877). (2026, May). In Wikipedia.

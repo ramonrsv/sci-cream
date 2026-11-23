@@ -180,7 +180,7 @@ fn compare_specs_chocolate_95() {
     ]
     .map(source_str_to_comp);
 
-    // Lindt's sugars leave 97.5% cacao solids, whose extra fat carries its energy past the default.
+    // Lindt's sugars leave 97.5% cocoa solids, whose extra fat carries its energy past the default.
     let ceiling = KeyCeiling::new(3.5)
         .with(CompKey::Energy, 4.0)
         .with(CompKey::TotalCarbohydrates, 4.5);

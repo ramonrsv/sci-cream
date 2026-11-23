@@ -46,13 +46,13 @@ pub enum ChocolateFat {
     },
 }
 
-/// Spec for chocolate ingredients, with cacao solids, cocoa butter, and optional sugar and others
+/// Spec for chocolate ingredients, with cocoa solids, cocoa butter, and optional sugar and others
 ///
-/// See the [chocolate documentation](crate::docs#chocolate) for more details on chocolate
-/// ingredients and the terminology used to define its various constituent components, e.g. _cacao_
-/// solids, cocoa butter, _cocoa_ solids, etc.
+/// See the [cocoa documentation](crate::docs#cocoa) for more details on chocolate ingredients and
+/// the terminology used to define its various constituent components, e.g. cocoa solids, cocoa
+/// butter, cocoa solids non-fat (SNF), etc.
 ///
-/// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The
+/// The relation of the above components is `cocoa solids = cocoa butter + cocoa SNF`. The
 /// [`sugars`](Self::sugars) content of chocolate ingredients is optional, assumed to be zero if not
 /// specified, as some chocolates (e.g. Unsweetened Chocolate, 100% Dark Chocolate) do not contain
 /// any added sugars. Any non-zero sugar content is specified in [`Composition`] accessible via
@@ -62,21 +62,21 @@ pub enum ChocolateFat {
 /// via [`CompKey::OtherSNFS`]. [`cocoa_solids`](Self::cocoa_solids), [`sugars`](Self::sugars), and
 /// [`other_solids`](Self::other_solids) together must add up to 100%.
 ///
-/// The cocoa solids content is further broken down into proteins, carbohydrates - including fiber,
-/// and ash based on standard values for cocoa solids, specified in
+/// The cocoa SNF content is further broken down into proteins, carbohydrates - including fiber,
+/// and ash based on standard values for cocoa SNF, specified in
 /// [`constants::composition::cocoa`], e.g. [`cocoa::STD_PROTEIN_IN_COCOA_SNF`],
 /// [`cocoa::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF`], [`cocoa::STD_FIBER_IN_COCOA_SNF`], etc.
 ///
 /// **Note:** This spec does not model intrinsic sugars in cocoa solids, i.e. those naturally
-/// occurring in the cacao nuts - see [`cocoa::STD_SUGARS_IN_COCOA_SNF`]. Listings typically only
+/// occurring in the cocoa beans - see [`cocoa::STD_SUGARS_IN_COCOA_SNF`]. Listings typically only
 /// declare total sugars, which include both intrinsic and added. This spec treats all of them as
 /// added sugars, stored in [`Solids::other`], accessible via [`CompKey::TotalSugars`].
 ///
 /// # Examples
 ///
-/// A generic 70% dark chocolate, with the cacao solids its name advertises:
-/// - Cacao solids: 70%
-/// - Cocoa butter: by default [`cocoa::STD_COCOA_BUTTER_IN_COCOA_SOLIDS`] of the cacao solids
+/// A generic 70% dark chocolate, with the cocoa solids its name advertises:
+/// - Cocoa solids: 70%
+/// - Cocoa butter: by default [`cocoa::STD_COCOA_BUTTER_IN_COCOA_SOLIDS`] of the cocoa solids
 /// - Sugars: the remaining 30%
 ///
 /// ```
@@ -108,7 +108,7 @@ pub enum ChocolateFat {
 /// ```
 ///
 /// (Callebaut 811 Dark Chocolate, 2024)[^542]:
-/// - Cacao solids: _"Dry cocoa solids 56.0%"_
+/// - Cocoa solids: _"Dry cocoa solids 56.0%"_
 /// - Cocoa butter: _"TOTAL FAT CONTENT 36.6%"_, as it has no milk fat
 /// - Sugars: _"sugar 43.0%"_
 /// - Other solids: the remaining 1%
@@ -140,7 +140,7 @@ pub enum ChocolateFat {
 /// ```
 ///
 /// (Callebaut 823 Milk Chocolate, 2023)[^543]:
-/// - Cacao solids: _"Dry cocoa solids 35,1%"_
+/// - Cocoa solids: _"Dry cocoa solids 35,1%"_
 /// - Cocoa butter: _"TOTAL FAT CONTENT 36,2%"_ less the milk fat => 30.2%
 /// - Milk solids: _"Dry milk solids 21,8%"_
 /// - Milk fat: _"Milkfat 6,0%"_
@@ -183,7 +183,7 @@ pub enum ChocolateFat {
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct ChocolateSpec {
-    /// Total cacao solids content, usually advertised on packaging, e.g. 70% for 70% dark chocolate
+    /// Total cocoa solids content, usually advertised on packaging, e.g. 70% for 70% dark chocolate
     pub cocoa_solids: f64,
     /// Total milk solids content, including milk fat; usually zero for dark chocolates
     ///
@@ -370,7 +370,7 @@ pub(crate) mod tests {
             (CompKey::TransFat, 0.0),
         ]);
 
-        // Added sugars in chocolates is considered part of total sweeteners, not of Cacao Solids
+        // Added sugars in chocolates is considered part of total sweeteners, not of Cocoa Solids
         assert_eq!(comp.get(CompKey::CocoaSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
 
         assert_eq_flt!(comp.solids.cocoa.minerals, 2.2876);
@@ -973,7 +973,7 @@ pub(crate) mod tests {
         assert_eq_flt!(comp.get(CompKey::MilkProteins), msnf * STD_PROTEIN_IN_MSNF);
         assert_eq_flt!(comp.get(CompKey::MilkMinerals), msnf * STD_MINERALS_IN_MSNF);
 
-        // The declared split is taken as-is, and the cacao side is untouched by the milk
+        // The declared split is taken as-is, and the cocoa side is untouched by the milk
         assert_eq_flt!(comp.get(CompKey::CocoaSolids), 40.0);
         assert_eq_flt!(comp.get(CompKey::CocoaButter), 22.0);
         assert_eq_flt!(comp.get(CompKey::TotalFats), 27.0);

@@ -37,9 +37,9 @@ describe("specDocLinks", () => {
   });
 
   test("kind rules add their chapters", () => {
-    expect(labelsFor("70% Dark Chocolate")).toContain("Chocolate");
-    expect(labelsFor("Cocoa Powder, 10/12% Fat")).toContain("Chocolate");
-    expect(labelsFor("Lindt EXCELLENCE 70% Cacao Dark Chocolate")).toContain("Chocolate");
+    expect(labelsFor("70% Dark Chocolate")).toContain("Cocoa");
+    expect(labelsFor("Cocoa Powder, 10/12% Fat")).toContain("Cocoa");
+    expect(labelsFor("Lindt EXCELLENCE 70% Cacao Dark Chocolate")).toContain("Cocoa");
     expect(labelsFor("Sucrose")).toContain("Sweeteners");
     expect(labelsFor("Sucrose")).toContain("PAC, AFP, FPDF, SE");
     expect(labelsFor("3.25% Milk")).toContain("Dairy");
@@ -65,8 +65,8 @@ describe("specDocLinks", () => {
 
   test("chapter links target the guide's anchors", () => {
     const chocolate = specDocLinks(getSpecEntryByName("70% Dark Chocolate"));
-    expect(chocolate.find((l) => l.label === "Chocolate")?.href).toBe(
-      "https://docs.rs/sci-cream/latest/sci_cream/docs/index.html#chocolate",
+    expect(chocolate.find((l) => l.label === "Cocoa")?.href).toBe(
+      "https://docs.rs/sci-cream/latest/sci_cream/docs/index.html#cocoa",
     );
   });
 

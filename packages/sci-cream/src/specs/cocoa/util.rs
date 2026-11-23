@@ -229,7 +229,7 @@ const MAX_SUGARS_ROUNDING_EXCESS: f64 = 0.5;
 
 /// Verifies that a label's `sugars` counted in its `cocoa_snf`, per 100 g, are the cocoa's own
 ///
-/// Cocoa's intrinsic sugars are [`cocoa::STD_SUGARS_IN_COCOA_SNF`] of the cocoa solids, which
+/// Cocoa's intrinsic sugars are [`cocoa::STD_SUGARS_IN_COCOA_SNF`] of the cocoa SNF, which
 /// the label can exceed by [`MAX_SUGARS_ROUNDING_EXCESS`] per `serving_size` in grams.
 pub(super) fn verify_cocoa_sugars_are_intrinsic(sugars: f64, cocoa_snf: f64, serving_size: f64) -> Result<()> {
     let intrinsic = cocoa_snf * STD_SUGARS_IN_COCOA_SNF;
@@ -267,7 +267,7 @@ pub(super) fn verify_protein_is_within_rounding(composed: f64, protein: f64, ser
     }
 }
 
-/// Derives a dark chocolate's cacao solids and sugars, per 100 g, from its label's `sugars` and
+/// Derives a dark chocolate's cocoa solids and sugars, per 100 g, from its label's `sugars` and
 /// declared `cocoa_solids`, see [`ChocolateLabelSpec`]
 ///
 /// They are returned as `(cocoa_solids, sugars)`. The label's sugars are total sugars, including
@@ -283,7 +283,7 @@ pub(super) const fn derive_dark_chocolate_solids(sugars: f64, cocoa_solids: Opti
     }
 }
 
-/// Derives a milk chocolate's cacao and milk solids, per 100 g, from its label's `protein`, `fat`,
+/// Derives a milk chocolate's cocoa and milk solids, per 100 g, from its label's `protein`, `fat`,
 /// `fiber`, and declared `cocoa_solids` and `milk_solids`, see [`ChocolateLabelSpec`]
 ///
 /// The solids are returned as `(cocoa_solids, milk_solids)`.
@@ -347,7 +347,7 @@ pub fn derive_milk_chocolate_solids(
                 (None, None, Some(milk)) => (cocoa_from_milk(milk), milk),
                 (None, None, None) => {
                     return Err(Error::InvalidSpec(
-                        "Milk chocolate labels need a nonzero fiber, or declared cacao or milk solids".to_string(),
+                        "Milk chocolate labels need a nonzero fiber, or declared cocoa or milk solids".to_string(),
                     ));
                 }
             };
@@ -365,23 +365,23 @@ pub fn derive_milk_chocolate_solids(
     Ok((cocoa, milk))
 }
 
-/// Derives a white chocolate's cacao and milk solids, per 100 g, from its label's `protein`, `fat`,
+/// Derives a white chocolate's cocoa and milk solids, per 100 g, from its label's `protein`, `fat`,
 /// and declared `cocoa_solids` and `milk_solids`, see [`ChocolateLabelSpec`]
 ///
 /// The solids are returned as `(cocoa_solids, milk_solids)`.
 ///
-/// White chocolate is assumed to contain no cocoa solids non-fat, so all the cacao solids are
+/// White chocolate is assumed to contain no cocoa solids non-fat, so all the cocoa solids are
 /// cocoa butter, the remainder of `fat` after subtracting the milk fat. All the `protein` is
 /// likewise assumed to be entirely from the milk solids non-fat (MSNF).
 ///
 /// - [`Actual`](DeclaredSolids::Actual) declarations for both solids are taken as given.
 /// - An [`Actual`](DeclaredSolids::Actual) declaration for one is taken as given, and the other is
-///   derived from it: cacao solids from milk solids as the `fat` less their milk fat, at
-///   [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`], or milk solids from cacao solids as the MSNF
-///   plus the `fat` the cacao solids leave. A [`Min`](DeclaredSolids::Min) declaration for the
+///   derived from it: cocoa solids from milk solids as the `fat` less their milk fat, at
+///   [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`], or milk solids from cocoa solids as the MSNF
+///   plus the `fat` the cocoa solids leave. A [`Min`](DeclaredSolids::Min) declaration for the
 ///   other only validates the derived value.
 /// - Otherwise, the milk solids are estimated from the MSNF, with milk fat at
-///   [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`], and the cacao solids from them as above.
+///   [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`], and the cocoa solids from them as above.
 ///   [`Min`](DeclaredSolids::Min) declarations are used as floors for these estimates. If a floor
 ///   is applied, then the other value is re-derived from it.
 ///
@@ -391,7 +391,7 @@ pub fn derive_milk_chocolate_solids(
 ///
 /// # Errors
 ///
-/// Returns [`Error::InvalidComposition`] if the cacao solids exceed the `fat`, or if the estimated
+/// Returns [`Error::InvalidComposition`] if the cocoa solids exceed the `fat`, or if the estimated
 /// solids can't meet the declared minimums.
 pub fn derive_white_chocolate_solids(
     protein: f64,
@@ -461,7 +461,7 @@ mod tests {
 
     #[test]
     fn verify_cocoa_sugars_are_intrinsic_allows_what_rounding_adds() {
-        // USDA's natural cocoa as a 100 g label: 1.75 g of sugars over 83.3 g of cocoa solids
+        // USDA's natural cocoa as a 100 g label: 1.75 g of sugars over 83.3 g of cocoa SNF
         let own = 83.3 * STD_SUGARS_IN_COCOA_SNF;
 
         assert!(verify_cocoa_sugars_are_intrinsic(1.75, 83.3, 100.0).is_ok());
@@ -489,7 +489,7 @@ mod tests {
     #[test]
     fn verify_cocoa_sugars_are_intrinsic_allows_a_dark_minimum_within_the_cocoas_own_sugars() {
         // 30.9 g of sugars per 100 g may be as little as 30.4 g, of which the cocoa's own 0.63 g
-        // belong to the cacao solids at 40% fat, up to 70.23%, so a 70% minimum still holds
+        // belong to the cocoa solids at 40% fat, up to 70.23%, so a 70% minimum still holds
         let (cocoa, added_sugars) = derive_dark_chocolate_solids(30.9, Some(DeclaredSolids::Min(70.0)));
         assert!(verify_cocoa_sugars_are_intrinsic(30.9 - added_sugars, cocoa - 40.0, 100.0).is_ok());
     }
@@ -497,7 +497,7 @@ mod tests {
     #[test]
     fn verify_cocoa_sugars_are_intrinsic_err_on_a_dark_minimum_beyond_the_allowance() {
         // 12 g of sugars per 40 g may be as little as 11.5 g, 28.75%, and the cocoa's own 0.735 g
-        // belong to the cacao solids at 40% fat, up to 71.985%, still short of a 75% minimum
+        // belong to the cocoa solids at 40% fat, up to 71.985%, still short of a 75% minimum
         let (cocoa, added_sugars) = derive_dark_chocolate_solids(30.0, Some(DeclaredSolids::Min(75.0)));
         let result = verify_cocoa_sugars_are_intrinsic(30.0 - added_sugars, cocoa - 40.0, 40.0);
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
@@ -579,7 +579,7 @@ mod tests {
 
     #[test]
     fn derive_milk_chocolate_solids_minimum_floors_the_fiber_estimate() {
-        // Green & Black's Organic Milk, whose fiber puts the cacao solids at 35.9%
+        // Green & Black's Organic Milk, whose fiber puts the cocoa solids at 35.9%
         let (cocoa_min, milk_min) = (Some(DeclaredSolids::Min(37.0)), Some(DeclaredSolids::Min(24.0)));
         let (cocoa, milk) = derive_milk_chocolate_solids(9.8, 36.0, Some(2.8), cocoa_min, milk_min).unwrap();
 
@@ -639,7 +639,7 @@ mod tests {
 
     #[test]
     fn derive_white_chocolate_solids_minimum_floors_the_estimate() {
-        // Green & Black's Organic White, whose protein gives 30.6% cacao and 28.5% milk solids
+        // Green & Black's Organic White, whose protein gives 30.6% cocoa and 28.5% milk solids
         let cocoa_min = Some(DeclaredSolids::Min(31.0));
         let (cocoa, milk) = derive_white_chocolate_solids(7.9, 38.0, cocoa_min, None).unwrap();
 

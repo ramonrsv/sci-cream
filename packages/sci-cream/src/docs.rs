@@ -14,10 +14,13 @@
 #![doc = include_str!("../docs/freezing-point-depression.md")]
 #![doc = include_str!("../docs/stabilizers.md")]
 #![doc = include_str!("../docs/emulsifiers.md")]
-#![doc = include_str!("../docs/chocolate.md")]
+#![doc = include_str!("../docs/cocoa.md")]
 // References
 #![doc = include_str!("../docs/references/literature.md")]
+#![doc = include_str!("../docs/references/index/507.md")]
 #![doc = include_str!("../docs/references/index/516.md")]
+#![doc = include_str!("../docs/references/index/543.md")]
+#![doc = include_str!("../docs/references/index/544.md")]
 
 #[cfg(doc)]
 use crate::{

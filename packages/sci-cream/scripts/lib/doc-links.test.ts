@@ -162,7 +162,7 @@ describe("the generated link map", () => {
       "absolute-pac",
       "stabilizers",
       "emulsifiers",
-      "chocolate",
+      "cocoa",
     ];
     const missing = chapters.filter((a) => resolveTarget(`crate::docs#${a}`, map) === undefined);
     expect(missing).toEqual([]);

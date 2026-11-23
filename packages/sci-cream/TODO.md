@@ -53,14 +53,10 @@
 - [ ] Consider modeling water in `ChocolateSpec`, which `STD_WATER_IN_CHOCOLATE` awaits. Declared
       figures are wet-basis and `cocoa_solids + sugars` already closes at 100, so an additive field
       double-counts, while carving it out decouples `CompKey::CocoaSolids` from the declared value.
-- [ ] Revisit splitting the cacao constants per product kind as listings are added. The per-kind gap
+- [ ] Revisit splitting the cocoa constants per product kind as listings are added. The per-kind gap
       is smaller than the scatter within each kind: 1.7 points for protein against 2.0 for powders.
 - [ ] Consider modeling the sugars `STD_SUGARS_IN_COCOA_SNF` measures, today only a derivation
       basis. `ChocolateSpec`'s `sugars` must read as added-only; `Sugars::other` blocks POD/PAC.
-- [ ] Explore "cacao" as the umbrella term for chocolates and cocoa powders, instead of "chocolate",
-      as `constants::composition::cacao` and the FDA's Part 163, "Cacao Products", already use it.
-      It would reach `Category::Chocolate`, mirrored by the app's database enum, `specs::chocolate`,
-      `ChocolateLabelSpec`, `ChocolateKind`, the docs' chocolate chapter, and `chocolates.md`.
 - [ ] Review the 'Lindt Classic Milk Chocolate' entry, which counts its added lactose as sucrose and
       so overstates its POD, though `specs::cocoa` says added lactose needs a `CompositeSpec`.
 - [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
@@ -164,6 +160,10 @@
 
 ## Completed
 
+- [x] Explore "cacao" as the umbrella term for chocolates and cocoa powders, instead of "chocolate",
+      as `constants::composition::cacao` and the FDA's Part 163, "Cacao Products", already use it.
+      It would reach `Category::Chocolate`, mirrored by the app's database enum, `specs::chocolate`,
+      `ChocolateLabelSpec`, `ChocolateKind`, the docs' chocolate chapter, and `chocolates.md`.
 - [x] Consider checking that a `ChocolateLabelSpec`'s composed protein is within a tolerance of the
       label's, which actual declarations leave unchecked; see the `@todo` in its `to_composition`.
 - [x] Consider adding `compare_specs_*` tests for simple and label lactose-free dairy products.

@@ -29,28 +29,28 @@ use crate::constants::composition::{
 /// Kind of chocolate or cocoa product, which fixes composition details not provided by the label
 #[derive(PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum ChocolateKind {
-    /// Dark chocolates, with only cacao solids and sugars, all the fat being cocoa butter
+    /// Dark chocolates, with only cocoa solids and sugars, all the fat being cocoa butter
     ///
-    /// Products can include cacao solids from various sources, e.g. cocoa mass, cocoa powder, or
+    /// Products can include cocoa solids from various sources, e.g. cocoa mass, cocoa powder, or
     /// cocoa butter. Minor ingredients like emulsifiers or flavorings may be present in traces.
     DarkChocolate,
-    /// Milk chocolates, with cacao and milk solids and sugars, fat being cocoa butter and milk fat
+    /// Milk chocolates, with cocoa and milk solids and sugars, fat being cocoa butter and milk fat
     ///
-    /// Products can include cacao solids from various sources, e.g. cocoa mass, cocoa powder, or
+    /// Products can include cocoa solids from various sources, e.g. cocoa mass, cocoa powder, or
     /// cocoa butter. Milk solids should come primarily from whole milk powder, see
     /// [standard fractions](super#standard-fractions) for the blends that don't fit. Minor
     /// ingredients like emulsifiers or flavorings may be present in traces.
     MilkChocolate,
     /// White chocolates, with cocoa butter, milk solids, and sugars, and no cocoa solids non-fat
     ///
-    /// Cocoa butter should be the only cacao ingredient present. Milk solids should come primarily
+    /// Cocoa butter should be the only cocoa ingredient present. Milk solids should come primarily
     /// from whole milk powder, see [standard fractions](super#standard-fractions) for the blends
     /// that don't fit. Minor ingredients like emulsifiers or flavorings may be present in traces.
     WhiteChocolate,
     /// Cocoa powders, without added sugars
     ///
-    /// The only ingredient should be cocoa, the composition being only cocoa solids and cocoa
-    /// butter, with water at [`cocoa::STD_WATER_IN_COCOA_POWDER`].
+    /// The only ingredient should be cocoa, the composition being only cocoa solids non-fat and
+    /// cocoa butter, with water at [`cocoa::STD_WATER_IN_COCOA_POWDER`].
     CocoaPowder,
 }
 
@@ -147,9 +147,9 @@ pub struct LabelCarbohydrates {
 
 /// Spec for chocolates and cocoa powders from nutrition labels, with the solids they may declare
 ///
-/// See the [chocolate documentation](crate::docs#chocolate) for more details on chocolate
-/// ingredients and the terminology used to define its various constituent components, e.g. _cacao_
-/// solids, cocoa butter, _cocoa_ solids, etc.
+/// See the [cocoa documentation](crate::docs#cocoa) for more details on chocolate ingredients and
+/// the terminology used to define its various constituent components, e.g. cocoa solids, cocoa
+/// butter, cocoa solids non-fat (SNF), etc.
 ///
 /// **Note:** This spec is a last resort for estimating composition details from nutrition labels
 /// when no detailed composition information is available, e.g. from specification sheets. If such
@@ -162,29 +162,29 @@ pub struct LabelCarbohydrates {
 /// solids non-fat, etc. Each kind interprets the figures, scaled to 100 g of product, as follows:
 ///
 /// - [`DarkChocolate`](ChocolateKind::DarkChocolate): a dark chocolate, where all the fat is cocoa
-///   butter, and the cacao solids are `100 - sugars`, unless an actual content is declared, which
+///   butter, and the cocoa solids are `100 - sugars`, unless an actual content is declared, which
 ///   is taken as given. A declared minimum sets a floor for that estimate, the sugars taking the
 ///   rest, if their rounding and the cocoa's own sugars cover the gap, and it's an error otherwise.
 /// - [`CocoaPowder`](ChocolateKind::CocoaPowder): a pure cocoa powder, where all but the water, at
-///   [`cocoa::STD_WATER_IN_COCOA_POWDER`], is cacao solids. All the fat is cocoa butter, and any
+///   [`cocoa::STD_WATER_IN_COCOA_POWDER`], is cocoa solids. All the fat is cocoa butter, and any
 ///   sugars are taken as intrinsic to the cocoa, so they are counted as part of its cocoa solids;
 ///   the label's sugars must not exceed the cocoa's own; see [`cocoa::STD_SUGARS_IN_COCOA_SNF`].
-/// - [`MilkChocolate`](ChocolateKind::MilkChocolate): a milk chocolate that contains both cacao and
+/// - [`MilkChocolate`](ChocolateKind::MilkChocolate): a milk chocolate that contains both cocoa and
 ///   milk solids. The protein is shared between the cocoa solids non-fat and the milk solids
 ///   non-fat (MSNF), at [`cocoa::STD_PROTEIN_IN_COCOA_SNF`] and [`milk::STD_PROTEIN_IN_MSNF`],
 ///   and [`derive_milk_chocolate_solids`] splits it by the declared contents, or else by the fiber.
-/// - [`WhiteChocolate`](ChocolateKind::WhiteChocolate): a white chocolate that contains both cacao
-///   and milk solids, but where the cacao solids are all cocoa butter, and so all the protein is
+/// - [`WhiteChocolate`](ChocolateKind::WhiteChocolate): a white chocolate that contains both cocoa
+///   and milk solids, but where the cocoa solids are all cocoa butter, and so all the protein is
 ///   from milk solids. Actual declared contents are taken as given, else the solids are estimated
 ///   from the protein and fat, floored by declared minimums; see [`derive_white_chocolate_solids`].
 ///
 /// In milk and white chocolates, the milk fat is [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`] of
 /// the milk solids, the rest of the fat being cocoa butter, unless a white chocolate's declared
-/// cacao solids set the cocoa butter. The label's sugars, less the lactose that the MSNF carry at
+/// cocoa solids set the cocoa butter. The label's sugars, less the lactose that the MSNF carry at
 /// [`milk::STD_LACTOSE_IN_MSNF`], are taken as sucrose, and the rest of 100 g is other solids.
 ///
 /// **Note:** This spec is a forwarder to the [`ChocolateSpec`] and [`CocoaPowderSpec`] specs. It
-/// attempts to interpret the label's figures and declared contents to derive the cacao and milk
+/// attempts to interpret the label's figures and declared contents to derive the cocoa and milk
 /// solids content, but ultimately the composition is determined by the underlying specs via the
 /// [standard fractions](super#standard-fractions), so the resulting nutritional composition may
 /// differ somewhat from the label's printed figures.
@@ -286,7 +286,7 @@ pub struct ChocolateLabelSpec {
     /// Only milk and white chocolates use it, to estimate their milk solids. Dark chocolates and
     /// cocoa powders take theirs from the [standard fractions](super#standard-fractions).
     pub protein: f64,
-    /// Cacao solids content that the label declares, as a percentage of the product as a whole
+    /// Cocoa solids content that the label declares, as a percentage of the product as a whole
     ///
     /// They include the cocoa butter, as in [`ChocolateSpec::cocoa_solids`], and a white
     /// chocolate's are all cocoa butter.
@@ -579,7 +579,7 @@ pub(crate) mod tests {
     fn to_composition_chocolate_label_spec_lindt_95_dark_chocolate() {
         let comp = asset_composition(&ING_SPEC_CHOCOLATE_LABEL_LINDT_95_DARK_CHOCOLATE);
 
-        // 1 g of sugars per 40 g leaves 97.5% cacao solids, above the declared 95% minimum, rather
+        // 1 g of sugars per 40 g leaves 97.5% cocoa solids, above the declared 95% minimum, rather
         // than 95% with the rest as other solids
         comp.assert_all_keys(&[
             (CompKey::Energy, 614.86),
@@ -795,7 +795,7 @@ pub(crate) mod tests {
     fn to_composition_chocolate_label_spec_lindt_classic_milk_chocolate() {
         let comp = asset_composition(&ING_SPEC_CHOCOLATE_LABEL_LINDT_CLASSIC_MILK_CHOCOLATE);
 
-        // Without a fiber, the cacao minimum stands in for the cacao solids
+        // Without a fiber, the cocoa solids minimum stands in for the cocoa solids
         comp.assert_keys(&[
             (CompKey::MilkSolids, 22.061_429),
             (CompKey::MilkFat, 5.735_972),
@@ -853,7 +853,7 @@ pub(crate) mod tests {
     fn to_composition_chocolate_label_spec_green_and_blacks_milk_chocolate() {
         let comp = asset_composition(&ING_SPEC_CHOCOLATE_LABEL_GREEN_AND_BLACKS_MILK_CHOCOLATE);
 
-        // The fiber's 35.9% cacao solids fall short of the declared 37%, which floors them, so the
+        // The fiber's 35.9% cocoa solids fall short of the declared 37%, which floors them, so the
         // protein comes back and the fiber doesn't
         comp.assert_keys(&[
             (CompKey::MilkSolids, 28.248_671),
@@ -970,7 +970,7 @@ pub(crate) mod tests {
     fn to_composition_chocolate_label_spec_green_and_blacks_white_chocolate() {
         let comp = asset_composition(&ING_SPEC_CHOCOLATE_LABEL_GREEN_AND_BLACKS_WHITE_CHOCOLATE);
 
-        // All the protein is milk's, and all the cacao solids cocoa butter
+        // All the protein is milk's, and all the cocoa solids cocoa butter
         comp.assert_keys(&[
             (CompKey::MilkSolids, 28.468_468),
             (CompKey::MilkFat, 7.401_802),
@@ -1027,7 +1027,7 @@ pub(crate) mod tests {
     fn to_composition_chocolate_label_spec_usda_cocoa_powder() {
         let comp = asset_composition(&ING_SPEC_CHOCOLATE_LABEL_USDA_COCOA_POWDER);
 
-        // The standard water leaves the cacao solids, and the intrinsic sugars stay inside them
+        // The standard water leaves the cocoa solids, and the intrinsic sugars stay inside them
         comp.assert_keys(&[
             (CompKey::CocoaSolids, 97.0),
             (CompKey::CocoaButter, 13.7),
@@ -1316,7 +1316,7 @@ pub(crate) mod tests {
     #[test]
     fn to_composition_cocoa_solids_minimum_allows_for_rounded_up_sugars() {
         // Lindt 70%'s label on a 13 g serving, whose 3.9 g of sugars print as 4 g. Alone, those
-        // 30.8% would leave 69.2% cacao solids, short of the declared 70% only by the rounding.
+        // 30.8% would leave 69.2% cocoa solids, short of the declared 70% only by the rounding.
         let label = ChocolateLabelSpec {
             serving_size: Unit::Grams(13.0),
             total_fat: 5.0,
@@ -1392,7 +1392,7 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_declared_solids_compose_the_protein_within_rounding() {
-        // Lindt Classic Milk at its 30% cacao solids minimum and 21% milk solids, taken as actual,
+        // Lindt Classic Milk at its 30% cocoa solids minimum and 21% milk solids, taken as actual,
         // composes 6.6406 g of protein, within the 6.5-7.5 g that its printed 7 g may be
         let comp = ChocolateLabelSpec {
             cocoa_solids: Some(DeclaredSolids::Actual(30.0)),

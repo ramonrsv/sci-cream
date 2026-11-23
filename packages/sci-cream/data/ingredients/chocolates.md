@@ -13,25 +13,25 @@ For real products, which spec is used depends on the available information, pref
 detailed source a product has. In descending order of preference:
 
 - **Specification sheets** are the preferred source, whenever one is available - they are usually
-  hosted by distributors. EU sheets state the cacao solids, milk solids, fat, and sugar directly,
+  hosted by distributors. EU sheets state the cocoa solids, milk solids, fat, and sugar directly,
   while US sheets give only a cocoa content and a nutrition panel. Product pages often quote minima,
   the sheet's value less its tolerance. These values translate to the spec fields relatively
   trivially, using [`ChocolateSpec`] or [`CocoaPowderSpec`], e.g. "Callebaut 811 Dark Chocolate",
   "Callebaut 823 Milk Chocolate", "Callebaut 10/12 Natural Cocoa Powder", etc.
 - **Nutrient databases**, such as [USDA FoodData Central](https://fdc.nal.usda.gov/), are not as
-  useful as specification sheets, since they don't provide a breakdown of cacao and milk solids.
+  useful as specification sheets, since they don't provide a breakdown of cocoa and milk solids.
   However, they provide detailed and mostly _measured_ nutrition information, which allows them to
   be the source of the standard cocoa fractions used in the internal model. Dark chocolate and cocoa
-  powder listings carry over their fat, and their sugars or water respectively, where the cacao
+  powder listings carry over their fat, and their sugars or water respectively, where the cocoa
   solids are all that isn't sugars or water; chocolates don't model water. Milk and white chocolate
-  entries estimate their cacao and milk solids, which the listings don't provide, via
+  entries estimate their cocoa and milk solids, which the listings don't provide, via
   [`estimate_chocolate_snf_split_from_protein_by_fiber`], and their sugars exclude the lactose those
   milk solids carry. They use either [`ChocolateSpec`] or [`CocoaPowderSpec`], e.g. "USDA Dark
   Chocolate, 70-85% Cacao Solids", "USDA Milk Chocolate", etc.
 - **Nutrition labels** are the most widely available information, but also the least detailed and
   precise. They can be used, via [`ChocolateLabelSpec`], when no better source is available. Dark
-  chocolate labels often declare a cacao solids content, usually as a minimum, and milk and white
-  chocolate ones less often. EU labels must declare a dark or milk chocolate's minimum cacao solids
+  chocolate labels often declare a cocoa solids content, usually as a minimum, and milk and white
+  chocolate ones less often. EU labels must declare a dark or milk chocolate's minimum cocoa solids
   (Directive 2000/36/EC, 2000, Article 3(3))[^84], and UK ones a milk chocolate's minimum milk
   solids as well (SI 2003/1659, 2003, regulation 6(1)(c)-(d))[^134]. Labels in some jurisdictions
   round coarsely, which can be a significant source of inaccuracy: in the US, fat between 0.5 and 5
@@ -43,7 +43,7 @@ A few notes and clarifications about the entries in this list:
 - Corvitto entries are generic ingredients, like the simple specs, but with the compositions stated
   in _I Segreti del Gelato (Secrets of Ice-Cream)_ (Corvitto, 2005)[^3].
 - Callebaut entries take fat from the sheet's total, and cocoa butter as the total less the milk fat
-  rather than the cacao solids less the cocoa solids non-fat, which can differ by rounding.
+  rather than the cocoa solids less the cocoa solids non-fat, which can differ by rounding.
 - Callebaut's nutritional data is _"by calculation based on literature data"_ rather than measured,
   so entries leave it out, as it would only swap the standard fractions for the vendor's own.
 - A cocoa powder's _"100%"_ means pure cocoa, i.e. no other ingredients, rather than a declared
@@ -435,7 +435,7 @@ milk solids, which need to be estimated. This SR Legacy listing does not report 
 split between cocoa and milk is instead derived from the reported fiber and protein; see
 [`estimate_chocolate_snf_split_from_protein_by_fiber`].
 
-The listing's 0.2 g of fiber puts the cocoa solids non-fat at 0.5%, so nearly all the cacao solids
+The listing's 0.2 g of fiber puts the cocoa solids non-fat at 0.5%, so nearly all the cocoa solids
 are cocoa butter, and nearly all the protein is milk's, as expected of white chocolate.
 
 - `cocoa_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via
@@ -553,7 +553,7 @@ lists matching ingredients, which add lactose and barley malt extract to the mil
 UK [product page](https://www.lindt.co.uk/lindt-classic-recipe-milk-chocolate-100g), per 100 g,
 with _"Cocoa : 30% minimum. Milk solids : 20% minimum"_.
 
-The UK label gives no fiber, so the cacao minimum stands in for the cacao solids. The Canadian
+The UK label gives no fiber, so the cocoa minimum stands in for the cocoa solids. The Canadian
 label's 1 g of fiber per 30 g covers 1.7-5.0 g per 100 g once rounded, too coarse to estimate them
 from. The added lactose counts as sucrose.
 
@@ -627,7 +627,7 @@ page](https://www.callebaut.com/en-CA/products/callebaut/2815/2815-2B-U76), stat
 solids of minimum 57.9% and fat 38.7%. No specification sheet was found for it, so `cocoa_solids`
 and `sugars` are both derived.
 
-Across the siblings that do have sheets, the product page's minimum cacao solids is almost always
+Across the siblings that do have sheets, the product page's minimum cocoa solids is almost always
 the sheet's value less its stated tolerance, 1.5 in almost all of them. As such, the minimum 57.9%
 plus 1.5 is likely what would be on a spec sheet, and a better estimate of typical values. `sugars`
 is taken as a remainder, including `other_solids` of 1%, the low end of the 1.0-1.5% range of its
@@ -741,7 +741,7 @@ The values are taken from the spec sheet:
 - `milk_solids` from _"Dry milk solids 27.0%"_, corroborated by _"whole milk powder 21.0%"_ plus
   _"skimmed milk powder 6.0%"_
 - `milk_fat` from _"Milkfat 5.9%"_
-- `cocoa_butter` as _"TOTAL FAT CONTENT 35.7%"_ less the milkfat, leaving 3.2% fatfree cocoa solids
+- `cocoa_butter` as _"TOTAL FAT CONTENT 35.7%"_ less the milkfat, leaving 3.2% cocoa solids non-fat
   against the sheet's _"Dry fatfree cocoa solids min 2.5%"_
 - `sugars` from _"sugar 38.5%"_
 - `other_solids` the remainder from the above, covering _"caramelized glucose syrup 1.5%"_ and the
@@ -843,8 +843,8 @@ The values are taken from the spec sheet:
   recipe's only cocoa ingredient
 - `milk_solids` from _"Dry milk solids 23.0%"_, corroborated by _"whole milk powder 23.5%"_
 - `milk_fat` from _"Milkfat 6.3%"_
-- `cocoa_butter` equal to cacao solids - it's the only cocoa ingredient and the sheet does not list
-  fatfree cocoa solids, corroborated by _"TOTAL FAT CONTENT 35.8%"_ less milkfat
+- `cocoa_butter` equal to cocoa solids - it's the only cocoa ingredient and the sheet does not list
+  cocoa solids non-fat, corroborated by _"TOTAL FAT CONTENT 35.8%"_ less milkfat
 - `sugars` from _"sugar 46.5%"_
 - `other_solids` the remainder from the above
 

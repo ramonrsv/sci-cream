@@ -192,7 +192,7 @@ pub enum CompKey {
     /// Cocoa Solids, the total dry matter content of cocoa ingredients, including cocoa butter
     ///
     /// It is the sum of [`CompKey::CocoaButter`] and [`CompKey::CocoaSNF`], and the percentage
-    /// a chocolate's label declares; see the [chocolate documentation](crate::docs#chocolate).
+    /// a chocolate's label declares; see the [cocoa documentation](crate::docs#cocoa).
     ///
     /// **Note**: This does not include any added sugar content that may be present in chocolate
     /// ingredients; that is accounted for separately via [`CompKey::TotalSugars`].
@@ -200,14 +200,14 @@ pub enum CompKey {
     /// Cocoa Butter, the fat content of cocoa ingredients
     ///
     /// This component affects the texture of ice creams by hardening the frozen product, and
-    /// adds to the perceived richness of chocolate ice creams; see the [chocolate
-    /// documentation](crate::docs#chocolate) for more details.
+    /// adds to the perceived richness of chocolate ice creams; see the [cocoa
+    /// documentation](crate::docs#cocoa) for more details.
     CocoaButter,
     /// Cocoa Solids Non-Fat (SNF), the non-fat solid content of cocoa ingredients
     ///
     /// This includes proteins, carbohydrates (fiber among them), and minerals, and is
     /// [`CompKey::CocoaSolids`] less [`CompKey::CocoaButter`]. It generally determines the
-    /// intensity of the chocolate flavor; see the [chocolate documentation](crate::docs#chocolate).
+    /// intensity of the chocolate flavor; see the [cocoa documentation](crate::docs#cocoa).
     CocoaSNF,
 
     // Nuts

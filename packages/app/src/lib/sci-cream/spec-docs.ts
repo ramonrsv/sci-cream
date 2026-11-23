@@ -52,7 +52,7 @@ const GUIDE_CHAPTERS = {
   "absolute-pac": "Absolute PAC",
   stabilizers: "Stabilizers",
   emulsifiers: "Emulsifiers",
-  chocolate: "Chocolate",
+  cocoa: "Cocoa",
 } as const satisfies Record<string, string>;
 
 /** Anchor of a chapter in {@link GUIDE_CHAPTERS} */
@@ -95,10 +95,7 @@ function nameMatches(pattern: RegExp): SpecDocRule["when"] {
  * additive — every match contributes — so a new heuristic is one more entry in this list.
  */
 const SPEC_DOC_RULES: readonly SpecDocRule[] = [
-  {
-    when: ofKind("ChocolateSpec", "CocoaPowderSpec", "ChocolateLabelSpec"),
-    chapters: ["chocolate"],
-  },
+  { when: ofKind("ChocolateSpec", "CocoaPowderSpec", "ChocolateLabelSpec"), chapters: ["cocoa"] },
   { when: ofKind("SweetenerSpec"), chapters: ["sweeteners", "pac-afp-fpdf-se"] },
   { when: ofKind("DairySimpleSpec", "DairyLabelSpec", "DairySheetSpec"), chapters: ["dairy"] },
   { when: ofKind("StabilizerSpec"), chapters: ["stabilizers"] },
