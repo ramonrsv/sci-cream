@@ -66,6 +66,22 @@ Green & Black's Organic White Chocolate, per 100 g (EU)
   sugars            51.00     51.00     51.00    +0.00     +0.0%
   protein            7.90      7.90      7.90    +0.00     +0.0%
 
+Cadbury Dairy Milk Chocolate (UK), per 100 g (EU)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               30.00     30.00     30.00    +0.00     +0.0%
+  carbohydrate      57.00     57.21     57.00    +0.21     +0.4%
+  fiber              2.10      1.48      1.50    -0.62    -29.7%
+  sugars            56.00     56.00     56.00    +0.00     +0.0%
+  protein            7.30      7.30      7.30    +0.00     +0.0%
+
+Cadbury Dairy Milk Chocolate (Canada), per 40 g (Canada)
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               13.00     12.83     13.00    -0.17     -1.3%
+  carbohydrate      23.00     23.51     24.00    +0.51     +2.2%
+  fiber              1.00      0.99      1.00    -0.01     -1.3%
+  sugars            22.00     21.71     22.00    -0.29     -1.3%
+  protein            3.00      2.96      3.00    -0.04     -1.3%
+
 Ghirardelli 100% Unsweetened Cocoa Powder, per 6 g (US)
   [    figure    | printed | modeled | rounded |  diff  | error ]
   fat                1.00      1.00      1.00    +0.00     +0.0%

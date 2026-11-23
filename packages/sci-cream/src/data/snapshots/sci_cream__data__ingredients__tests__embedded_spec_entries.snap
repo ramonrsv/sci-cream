@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 425  (non-alias: 361, independent: 347)
+total: 427  (non-alias: 363, independent: 349)
 
             0% Milk
             1% Milk
@@ -45,6 +45,8 @@ total: 425  (non-alias: 361, independent: 347)
             Bourbon Whiskey
             Bulk Barn Whey Protein Isolate 90%
 [alias]     CMC
+            Cadbury Dairy Milk Chocolate (Canada)
+            Cadbury Dairy Milk Chocolate (UK)
             California Gold Nutrition, Sport, Micellar Casein
             Callebaut 10/12 Natural Cocoa Powder
             Callebaut 2815 Dark Chocolate

@@ -1,0 +1,11 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/chocolate.rs
+expression: "lines.join(\"\\n\")"
+---
+label, per serving                                 serving     fat  composed  sugars  composed   scale   other
+Cadbury Dairy Milk Chocolate (UK)                      100   30.00     30.00   56.00     56.00  1.0000    2.35
+Cadbury Dairy Milk Chocolate (Canada)                   40   13.00     12.83   22.00     21.71  0.9869    0.00
+Cadbury Dairy Milk Chocolate (UK, Minima)              100   30.00     30.00   56.00     56.00  1.0000    1.17
+Cadbury Dairy Milk Chocolate (Canada, 42 g Bar)         42   13.00     13.00   23.00     23.00  1.0000    1.12
+Cadbury Dairy Milk Chocolate (Canada, Mini Bars)        36   11.00     10.84   20.00     19.71  0.9855    0.00
+Cadbury Darkmilk Chocolate                             100   33.00     32.71   49.00     48.57  0.9913    0.00

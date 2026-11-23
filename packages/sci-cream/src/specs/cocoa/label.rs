@@ -11,8 +11,8 @@ use crate::{
             ChocolateFat, ChocolateSpec, CocoaPowderSpec,
             util::{
                 actual_or, derive_dark_chocolate_solids, derive_milk_chocolate_solids, derive_white_chocolate_solids,
-                milk_fat_from_milk_solids, verify_cocoa_sugars_are_intrinsic, verify_declared_minimum,
-                verify_protein_is_within_rounding,
+                milk_fat_from_milk_solids, scale_into_100_g, verify_cocoa_sugars_are_intrinsic,
+                verify_declared_minimum, verify_protein_is_within_rounding,
             },
         },
         units::Unit,
@@ -181,7 +181,9 @@ pub struct LabelCarbohydrates {
 /// In milk and white chocolates, the milk fat is [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`] of
 /// the milk solids, the rest of the fat being cocoa butter, unless a white chocolate's declared
 /// cocoa solids set the cocoa butter. The label's sugars, less the lactose that the MSNF carry at
-/// [`milk::STD_LACTOSE_IN_MSNF`], are taken as sucrose, and the rest of 100 g is other solids.
+/// [`milk::STD_LACTOSE_IN_MSNF`], are taken as sucrose, and the rest of 100 g is other solids. If
+/// the label's rounding leaves these parts over 100 g, they're scaled down into it, as far as the
+/// rounding of its fat and sugars allows.
 ///
 /// **Note:** This spec is a forwarder to the [`ChocolateSpec`] and [`CocoaPowderSpec`] specs. It
 /// attempts to interpret the label's figures and declared contents to derive the cocoa and milk
@@ -192,9 +194,9 @@ pub struct LabelCarbohydrates {
 /// # Errors
 ///
 /// It is an error if the label gives what its kind can't have, such as a dark chocolate's milk
-/// solids or a cocoa powder's added sugars, if the parts exceed 100 g, or if the solids fall short
-/// of a declared minimum. A milk or white chocolate's solids must also compose the label's protein,
-/// to within its rounding.
+/// solids or a cocoa powder's added sugars, if the parts exceed 100 g, by more than a milk or white
+/// chocolate's rounding allows, or if the solids fall short of a declared minimum. A milk or white
+/// chocolate's solids must also compose the label's protein, to within its rounding.
 ///
 /// # Examples
 ///
@@ -345,15 +347,20 @@ impl ToComposition for ChocolateLabelSpec {
         let fiber = fiber.map(|fiber| fiber * per_100g);
 
         let with_milk = |cocoa: f64, milk: f64, milk_fat: f64| -> Result<Composition> {
-            let (cocoa_butter, sugars) = (fat - milk_fat, sugars - (milk - milk_fat) * STD_LACTOSE_IN_MSNF);
-            verify_is_subset(cocoa + milk + sugars, 100.0, "cocoa_solids + milk_solids + sugars <= 100")?;
+            let (cocoa_butter, sucrose) = (fat - milk_fat, sugars - (milk - milk_fat) * STD_LACTOSE_IN_MSNF);
+            let composed_total = cocoa + milk + sucrose;
+            let scale =
+                scale_into_100_g(composed_total, fat, sugars, serving_size, "cocoa_solids + milk_solids + sugars")?;
 
             let comp = ChocolateSpec {
-                cocoa_solids: cocoa,
-                milk_solids: Some(milk),
-                fat: Some(ChocolateFat::Split { cocoa_butter, milk_fat }),
-                sugars: Some(sugars),
-                other_solids: Some(100.0 - cocoa - milk - sugars),
+                cocoa_solids: cocoa * scale,
+                milk_solids: Some(milk * scale),
+                fat: Some(ChocolateFat::Split {
+                    cocoa_butter: cocoa_butter * scale,
+                    milk_fat: milk_fat * scale,
+                }),
+                sugars: Some(sucrose * scale),
+                other_solids: Some(100.0 - composed_total * scale),
             }
             .to_composition()?;
 
@@ -872,6 +879,122 @@ pub(crate) mod tests {
         ]);
     }
 
+    // https://www.cadbury.co.uk/products/cadbury-dairy-milk-chocolate-bar-95g
+    pub(crate) const ING_SPEC_CHOCOLATE_LABEL_CADBURY_DAIRY_MILK_UK_STR: &str = r#"{
+      "name": "Cadbury Dairy Milk Chocolate (UK)",
+      "category": "Chocolate",
+      "ChocolateLabelSpec": {
+        "kind": "MilkChocolate",
+        "serving_size": { "grams": 100 },
+        "total_fat": 30,
+        "carbohydrates": { "available": 57, "fiber": 2.1, "sugars": 56 },
+        "protein": 7.3,
+        "cocoa_solids": { "min": 20 },
+        "milk_solids": { "actual": 23 }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_CHOCOLATE_LABEL_CADBURY_DAIRY_MILK_UK: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Cadbury Dairy Milk Chocolate (UK)".to_string(),
+            category: Category::Chocolate,
+            spec: ChocolateLabelSpec {
+                kind: ChocolateKind::MilkChocolate,
+                serving_size: Unit::Grams(100.0),
+                total_fat: 30.0,
+                carbohydrates: LabelCarbohydrates {
+                    amount: CarbohydrateAmount::Available(57.0),
+                    fiber: Some(2.1),
+                    sugars: 56.0,
+                },
+                protein: 7.3,
+                cocoa_solids: Some(DeclaredSolids::Min(20.0)),
+                milk_solids: Some(DeclaredSolids::Actual(23.0)),
+                dutch_processed: None,
+            }
+            .into(),
+        });
+
+    #[test]
+    fn to_composition_chocolate_label_spec_cadbury_dairy_milk_uk() {
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_LABEL_CADBURY_DAIRY_MILK_UK);
+
+        // The actual milk solids carry all but 0.92 g of the protein,
+        // which leaves the cocoa solids non-fat less than the fiber gives
+        comp.assert_keys(&[
+            (CompKey::MilkSolids, 23.0),
+            (CompKey::MilkFat, 5.98),
+            (CompKey::MSNF, 17.02),
+            (CompKey::CocoaSolids, 27.924_255),
+            (CompKey::CocoaButter, 24.02),
+            (CompKey::CocoaSNF, 3.904_255),
+            (CompKey::OtherSNFS, 2.351_645),
+            (CompKey::TotalFats, 30.0),
+            (CompKey::TotalProteins, 7.3),
+            (CompKey::TotalFiber, 1.475_809),
+            (CompKey::TotalSugars, 56.0),
+            (CompKey::Sucrose, 46.724_1),
+            (CompKey::Lactose, 9.275_9),
+        ]);
+    }
+
+    // https://www.walmart.ca/en/ip/28HWNCSUCTSU
+    pub(crate) const ING_SPEC_CHOCOLATE_LABEL_CADBURY_DAIRY_MILK_CANADA_STR: &str = r#"{
+      "name": "Cadbury Dairy Milk Chocolate (Canada)",
+      "category": "Chocolate",
+      "ChocolateLabelSpec": {
+        "kind": "MilkChocolate",
+        "serving_size": { "grams": 40 },
+        "total_fat": 13,
+        "carbohydrates": { "total": 23, "fiber": 1, "sugars": 22 },
+        "protein": 3
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_CHOCOLATE_LABEL_CADBURY_DAIRY_MILK_CANADA: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Cadbury Dairy Milk Chocolate (Canada)".to_string(),
+            category: Category::Chocolate,
+            spec: ChocolateLabelSpec {
+                kind: ChocolateKind::MilkChocolate,
+                serving_size: Unit::Grams(40.0),
+                total_fat: 13.0,
+                carbohydrates: LabelCarbohydrates {
+                    amount: CarbohydrateAmount::Total(23.0),
+                    fiber: Some(1.0),
+                    sugars: 22.0,
+                },
+                protein: 3.0,
+                cocoa_solids: None,
+                milk_solids: None,
+                dutch_processed: None,
+            }
+            .into(),
+        });
+
+    #[test]
+    fn to_composition_chocolate_label_spec_cadbury_dairy_milk_canada() {
+        let comp = asset_composition(&ING_SPEC_CHOCOLATE_LABEL_CADBURY_DAIRY_MILK_CANADA);
+
+        // The fiber's split composes 101.33 g per 100 g, scaled into
+        // 100 g within the label's rounding, which leaves no other solids
+        comp.assert_keys(&[
+            (CompKey::MilkSolids, 21.145_387),
+            (CompKey::MilkFat, 5.497_801),
+            (CompKey::MSNF, 15.647_586),
+            (CompKey::CocoaSolids, 33.103_35),
+            (CompKey::CocoaButter, 26.576_27),
+            (CompKey::CocoaSNF, 6.527_08),
+            (CompKey::OtherSNFS, 0.0),
+            (CompKey::TotalFats, 32.074_071),
+            (CompKey::TotalProteins, 7.401_709),
+            (CompKey::TotalFiber, 2.467_236),
+            (CompKey::TotalSugars, 54.279_197),
+            (CompKey::Sucrose, 45.751_263),
+            (CompKey::Lactose, 8.527_935),
+        ]);
+    }
+
     // https://fdc.nal.usda.gov/food-details/167571/nutrients
     pub(crate) const ING_SPEC_CHOCOLATE_LABEL_USDA_WHITE_CHOCOLATE_STR: &str = r#"{
       "name": "USDA White Chocolate (Label)",
@@ -1160,6 +1283,16 @@ pub(crate) mod tests {
                 None,
             ),
             (
+                ING_SPEC_CHOCOLATE_LABEL_CADBURY_DAIRY_MILK_UK_STR,
+                ING_SPEC_CHOCOLATE_LABEL_CADBURY_DAIRY_MILK_UK.clone(),
+                None,
+            ),
+            (
+                ING_SPEC_CHOCOLATE_LABEL_CADBURY_DAIRY_MILK_CANADA_STR,
+                ING_SPEC_CHOCOLATE_LABEL_CADBURY_DAIRY_MILK_CANADA.clone(),
+                None,
+            ),
+            (
                 ING_SPEC_CHOCOLATE_LABEL_USDA_WHITE_CHOCOLATE_STR,
                 ING_SPEC_CHOCOLATE_LABEL_USDA_WHITE_CHOCOLATE.clone(),
                 None,
@@ -1358,8 +1491,8 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_err_when_the_milk_chocolate_solids_exceed_100_g() {
-        // Lindt Classic Milk with a mistaken 15% actual milk solids, too few for its protein: the
-        // protein left gives more cocoa solids non-fat than 100 g has room for
+        // Lindt Classic Milk with a mistaken 15% actual milk solids, too few for its protein, which
+        // leaves so much to the cocoa that it composes 104.12 g per 100 g, beyond its rounding
         let label = ChocolateLabelSpec {
             milk_solids: Some(DeclaredSolids::Actual(15.0)),
             ..ING_SPEC_CHOCOLATE_LABEL_LINDT_CLASSIC_MILK_CHOCOLATE
@@ -1369,6 +1502,30 @@ pub(crate) mod tests {
                 .unwrap()
         };
         assert!(matches!(label.to_composition(), Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn to_composition_err_when_a_milk_chocolate_label_cannot_split_its_solids() {
+        // Hershey's US Cadbury Dairy Milk label, per 28 g, has no fiber line or declared solids,
+        // and its sugars equal its carbohydrate, leaving no room for any fiber its rounding allows
+        // https://www.hersheyland.com/products/cadbury-dairy-milk-milk-chocolate-candy-bar-3-5-oz.html
+        let label = |fiber| ChocolateLabelSpec {
+            kind: ChocolateKind::MilkChocolate,
+            serving_size: Unit::Grams(28.0),
+            total_fat: 8.0,
+            carbohydrates: LabelCarbohydrates {
+                amount: CarbohydrateAmount::Total(16.0),
+                fiber,
+                sugars: 16.0,
+            },
+            protein: 2.0,
+            cocoa_solids: None,
+            milk_solids: None,
+            dutch_processed: None,
+        };
+
+        assert!(matches!(label(None).to_composition(), Err(Error::InvalidSpec(_))));
+        assert!(matches!(label(Some(0.4)).to_composition(), Err(Error::InvalidComposition(_))));
     }
 
     #[test]

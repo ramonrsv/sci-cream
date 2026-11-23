@@ -1,7 +1,8 @@
 //! Cross-source consistency checks for chocolate ingredients, spanning dark, milk, white and
 //! cocoa powder, lining up each entry against labelled references from other sources. Each USDA
 //! listing and each Callebaut and Mona Lisa sheet is compared both as its embedded entry and as its
-//! test-only `… (Label)` variant.
+//! test-only `… (Label)` variant. The Cadbury Dairy Milk entries are also compared with each other,
+//! and with the test-only labels that vary their size or declarations.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -211,11 +212,36 @@ fn compare_specs_milk_chocolate_30() {
         ("Mona Lisa", "Mona Lisa Milk Chocolate Blossoms"),
         ("Mona Lisa (Label)", "Mona Lisa Milk Chocolate Blossoms (Label)"),
         ("Lindt", "Lindt Classic Milk Chocolate"),
+        ("Cadbury UK", "Cadbury Dairy Milk Chocolate (UK)"),
+        ("Cadbury Canada", "Cadbury Dairy Milk Chocolate (Canada)"),
     ]
     .map(source_str_to_comp);
 
     // USDA carries markedly less sugar than the Callebaut-made blossoms, driving the largest gaps.
-    let ceiling = KeyCeiling::new(9.0);
+    // Cadbury UK's actual milk solids leave it under half of USDA's cocoa solids non-fat, beside
+    // about as much cocoa butter, so their HF differs the most
+    let ceiling = KeyCeiling::new(9.0).with_source("Cadbury UK", CompKey::HF, 10.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_cadbury_dairy_milk() {
+    let sources = [
+        ("UK", "Cadbury Dairy Milk Chocolate (UK)"),
+        ("UK, Minima", "Cadbury Dairy Milk Chocolate (UK, Minima)"),
+        ("Canada", "Cadbury Dairy Milk Chocolate (Canada)"),
+        ("Canada, 42 g Bar", "Cadbury Dairy Milk Chocolate (Canada, 42 g Bar)"),
+        ("Canada, Mini Bars", "Cadbury Dairy Milk Chocolate (Canada, Mini Bars)"),
+    ]
+    .map(source_str_to_comp);
+
+    // The UK bar has less fat than the Canadian one, and its actual milk solids leave it less cocoa
+    // solids non-fat than the Canadian fiber gives, so its cocoa solids and HF read the lowest
+    let ceiling = KeyCeiling::new(3.5)
+        .with(CompKey::CocoaSolids, 5.5)
+        .with(CompKey::HF, 7.5);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));

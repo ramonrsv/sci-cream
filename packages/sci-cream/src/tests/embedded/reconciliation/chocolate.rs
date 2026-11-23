@@ -22,6 +22,9 @@
 //! their product page's minima, or their sheet's actual cocoa and milk solids. The milk and white
 //! ones, so declared, must still compose their label's protein, to within its rounding.
 //!
+//! The Cadbury labels compose the fat and sugars they print, to within their rounding, those whose
+//! rounding leaves their parts over 100 g being scaled into it.
+//!
 //! Cocoa powders whose sources omit their water default to [`STD_WATER_IN_COCOA_POWDER`], which the
 //! USDA and Callebaut powders, whose sources give it, check against known answers.
 //!
@@ -37,16 +40,21 @@ use crate::tests::asserts::shadow_asserts::assert_eq;
 use crate::tests::asserts::*;
 
 use crate::tests::{
-    embedded::variants::{get_embedded_or_variant_comp_by_name, get_embedded_or_variant_spec_by_name},
+    embedded::variants::{
+        CHOCOLATE_LABEL_FIXTURES, get_embedded_or_variant_comp_by_name, get_embedded_or_variant_spec_by_name,
+    },
     util::relative_error_percent,
 };
 
 use super::util::{EXACT_MATCH, LabelRounding, Proximates, reconcile_proximates};
 use crate::{
     composition::{CompKey, Composition, ToComposition},
-    constants::composition::{
-        cocoa::STD_WATER_IN_COCOA_POWDER,
-        dairy::{STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, milk::STD_LACTOSE_IN_MSNF},
+    constants::{
+        composition::{
+            cocoa::STD_WATER_IN_COCOA_POWDER,
+            dairy::{STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, milk::STD_LACTOSE_IN_MSNF},
+        },
+        tolerances::COMPOSITION_EPSILON,
     },
     data::{get_all_spec_entries, get_spec_entry_by_name},
     specs::{
@@ -55,6 +63,7 @@ use crate::{
         estimate_chocolate_snf_split_from_protein_by_fiber, units::Unit,
     },
     util::round_to_decimals,
+    validate::{are_equal, is_within_range},
 };
 
 #[cfg(doc)]
@@ -419,9 +428,10 @@ const AS_PRINTED: FigureCeilings = FigureCeilings {
 /// Each embedded [`ChocolateLabelSpec`] entry, with the rounding its label follows and the ceilings
 /// its figures need; see [`LabelRounding`].
 ///
-/// Fat and sugars are transcribed, and the milk and white labels split their protein, so those
-/// round to what the labels print. The dark chocolates and cocoa powders take their protein, fiber,
-/// and carbohydrate from the [`cocoa`] fractions of their cocoa solids non-fat:
+/// Fat and sugars are transcribed, or scaled within their rounding, and the milk and white labels
+/// split their protein, so those round to what the labels print. The dark chocolates and cocoa
+/// powders instead take their protein, fiber, and carbohydrate from the [`cocoa`] fractions of
+/// their cocoa solids non-fat:
 ///
 /// - Lindt's dark labels put 30-33% protein in the cocoa solids non-fat, against
 ///   [`cocoa::STD_PROTEIN_IN_COCOA_SNF`]'s 23.5%, and correspondingly less carbohydrate, so
@@ -431,6 +441,10 @@ const AS_PRINTED: FigureCeilings = FigureCeilings {
 ///   ash take, so its carbohydrate reads 16.4% high.
 /// - Green & Black's Milk's cocoa solids minimum raises its cocoa solids non-fat past what its
 ///   fiber gives, so its fiber and carbohydrate read high.
+/// - Cadbury's UK actual milk solids carry all but 0.92 g of its protein, which leaves less cocoa
+///   solids non-fat than its fiber gives, so its fiber reads 29.7% low.
+/// - Cadbury's Canadian carbohydrate is just its sugars and fiber, leaving none for the cocoa's
+///   other carbohydrate, so it reads 2.2% high.
 const LABEL_ENTRIES: &[(&str, LabelRounding, FigureCeilings)] = &[
     (
         "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
@@ -482,6 +496,22 @@ const LABEL_ENTRIES: &[(&str, LabelRounding, FigureCeilings)] = &[
         },
     ),
     ("Green & Black's Organic White Chocolate", LabelRounding::EU, AS_PRINTED),
+    (
+        "Cadbury Dairy Milk Chocolate (UK)",
+        LabelRounding::EU,
+        FigureCeilings {
+            fiber: 30.0,
+            ..AS_PRINTED
+        },
+    ),
+    (
+        "Cadbury Dairy Milk Chocolate (Canada)",
+        LabelRounding::Canada,
+        FigureCeilings {
+            carbohydrate: 2.5,
+            ..AS_PRINTED
+        },
+    ),
     ("Ghirardelli 100% Unsweetened Cocoa Powder", LabelRounding::US, AS_PRINTED),
     ("Baker's Unsweetened Chocolate", LabelRounding::Canada, AS_PRINTED),
     ("Hershey's 100% Natural Unsweetened Cocoa Powder", LabelRounding::Canada, AS_PRINTED),
@@ -585,6 +615,51 @@ fn chocolate_labels_reproduce_their_printed_figures() {
         }
 
         lines.push(String::new());
+    }
+
+    insta::assert_snapshot!(lines.join("\n"));
+}
+
+/// Each Cadbury label, an entry or one of the [`CHOCOLATE_LABEL_FIXTURES`], composes the fat and
+/// sugars it prints, less half a gram per serving at most: those whose rounding leaves their parts
+/// over 100 g scale into it, keeping no other solids. The snapshot tables each label's scale.
+#[test]
+fn cadbury_labels_scale_into_100_g_within_their_rounding() {
+    let mut lines = vec![format!(
+        "{:<50}{:>8}{:>8}{:>10}{:>8}{:>10}{:>8}{:>8}",
+        "label, per serving", "serving", "fat", "composed", "sugars", "composed", "scale", "other"
+    )];
+
+    let entries = [
+        "Cadbury Dairy Milk Chocolate (UK)",
+        "Cadbury Dairy Milk Chocolate (Canada)",
+    ];
+    for name in entries.into_iter().chain(CHOCOLATE_LABEL_FIXTURES.iter().copied()) {
+        let TaggedSpec::ChocolateLabelSpec(label) = get_embedded_or_variant_spec_by_name(name).spec else {
+            panic!("{name} is not a ChocolateLabelSpec");
+        };
+        let Unit::Grams(serving) = label.serving_size else {
+            panic!("{name}'s serving is not in grams");
+        };
+
+        let comp = get_embedded_or_variant_comp_by_name(name);
+        let per_serving = |key| comp.get(key) * serving / 100.0;
+        let (fat, sugars) = (per_serving(CompKey::TotalFats), per_serving(CompKey::TotalSugars));
+        let (printed_fat, printed_sugars) = (label.total_fat, label.carbohydrates.sugars);
+        let (scale, other) = (fat / printed_fat, comp.get(CompKey::OtherSNFS));
+
+        for (figure, printed, composed) in [("fat", printed_fat, fat), ("sugars", printed_sugars, sugars)] {
+            assert!(
+                is_within_range(printed - composed, 0.0, 0.5),
+                "{name}: composes {composed:.4} g of {figure} against the {printed} g it prints"
+            );
+        }
+        if !are_equal(scale, 1.0) {
+            assert_eq_flt!(other, 0.0, epsilon = COMPOSITION_EPSILON);
+        }
+
+        let figures = format!("{printed_fat:>8.2}{fat:>10.2}{printed_sugars:>8.2}{sugars:>10.2}");
+        lines.push(format!("{name:<50}{serving:>8}{figures}{scale:>8.4}{other:>8.2}"));
     }
 
     insta::assert_snapshot!(lines.join("\n"));

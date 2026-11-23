@@ -951,6 +951,54 @@ From the [Ocado
 listing](https://www.ocado.com/products/green-black-s-organic-white-chocolate-bar/13811011) of the
 UK bar, with _"minimum Cocoa Solids 30 %, minimum Milk Solids 26 %"_.
 
+## Cadbury Dairy Milk Chocolate (UK)
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "MilkChocolate",
+    "serving_size": { "grams": 100 },
+    "total_fat": 30,
+    "carbohydrates": { "available": 57, "fiber": 2.1, "sugars": 56 },
+    "protein": 7.3,
+    "cocoa_solids": { "min": 20 },
+    "milk_solids": { "actual": 23 }
+  }
+}
+```
+
+From the [product page](https://www.cadbury.co.uk/products/cadbury-dairy-milk-chocolate-bar-95g)
+of the UK bar, with _"MILK SOLIDS 20 % MINIMUM, ACTUAL 23 %. COCOA SOLIDS 20 % MINIMUM"_, as the
+[Irish bar's](https://www.cadbury.ie/products/cadbury-dairy-milk-chocolate-bar-95g/) label also
+gives. It _"CONTAINS VEGETABLE FATS IN ADDITION TO COCOA BUTTER"_, palm and shea, which count as
+cocoa butter here. As cocoa butter equivalents, they must mix with it in any proportion and share
+its physical properties, and make up at most 5% of the bar (Directive 2000/36/EC, 2000, Article
+2(1), Annex II)[^84], so its cocoa solids may read up to 5 points high.
+
+## Cadbury Dairy Milk Chocolate (Canada)
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateLabelSpec": {
+    "kind": "MilkChocolate",
+    "serving_size": { "grams": 40 },
+    "total_fat": 13,
+    "carbohydrates": { "total": 23, "fiber": 1, "sugars": 22 },
+    "protein": 3
+  }
+}
+```
+
+From the label of the Canadian 90 g bar, per 8 pieces (40 g), as pictured on its
+[Walmart.ca listing](https://www.walmart.ca/en/ip/28HWNCSUCTSU). Unlike the UK bar, it contains no
+vegetable fats, but it declares no solids either, so they're estimated from its fiber and protein.
+[Older labels](https://world.openfoodfacts.org/product/0061200084450) of the same bar name its
+_"milk ingredients"_ as milk, skim milk, whole milk powder, and butter oil, so its milk fat likely
+exceeds the whole milk powder default. Its rounded figures compose 1.3% more than 100 g, so
+they're scaled down into it.
+
 ## USDA Unsweetened Cocoa Powder
 
 ```json

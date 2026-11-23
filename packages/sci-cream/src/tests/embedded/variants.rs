@@ -11,7 +11,8 @@
 //! `chocolates.json` has a [`ChocolateLabelSpec`] variant of each `USDA …` entry, named
 //! `… (Label)`: its listing as a 100 g label would give it. It also has one of each Callebaut and
 //! Mona Lisa entry with a specification sheet: the sheet's nutritional data as a 100 g label would
-//! give it, without the solids it declares.
+//! give it, without the solids it declares. Its [`CHOCOLATE_LABEL_FIXTURES`] are other labels,
+//! which no entry holds.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -35,6 +36,15 @@ use crate::specs::{ChocolateLabelSpec, ChocolateSpec, CocoaPowderSpec, DairyLabe
 const VARIANT_FILES: &[(&str, &str)] = &[
     ("chocolates.json", include_str!("variants/chocolates.json")),
     ("dairy.json", include_str!("variants/dairy.json")),
+];
+
+/// The `chocolates.json` variants that are labels in their own right, not an entry's `… (Label)`:
+/// the Cadbury Dairy Milk entries' in other sizes or declarations, and Cadbury Darkmilk's.
+pub(crate) const CHOCOLATE_LABEL_FIXTURES: &[&str] = &[
+    "Cadbury Dairy Milk Chocolate (UK, Minima)",
+    "Cadbury Dairy Milk Chocolate (Canada, 42 g Bar)",
+    "Cadbury Dairy Milk Chocolate (Canada, Mini Bars)",
+    "Cadbury Darkmilk Chocolate",
 ];
 
 /// The ingredient specs of every [`VARIANT_FILES`] entry.
@@ -108,15 +118,18 @@ fn dairy_label_variants_match_their_sheets() {
     }
 }
 
-/// Each [`ChocolateLabelSpec`] variant transcribes the listing or sheet of the [`ChocolateSpec`] or
-/// [`CocoaPowderSpec`] it's named after, so their fat agrees: the entry's, split or not, adds up to
-/// the label's total.
+/// Each [`ChocolateLabelSpec`] variant but the [`CHOCOLATE_LABEL_FIXTURES`] transcribes the listing
+/// or sheet of the [`ChocolateSpec`] or [`CocoaPowderSpec`] it's named after, so their fat agrees:
+/// the entry's, split or not, adds up to the label's total.
 #[test]
 fn chocolate_label_variants_match_their_entries() {
     for variant in VARIANT_SPECS.iter() {
         let TaggedSpec::ChocolateLabelSpec(label) = variant.spec else {
             continue;
         };
+        if CHOCOLATE_LABEL_FIXTURES.contains(&variant.name.as_str()) {
+            continue;
+        }
         let Some(name) = variant.name.strip_suffix(" (Label)") else {
             panic!("{} is a ChocolateLabelSpec variant not named '… (Label)'", variant.name);
         };

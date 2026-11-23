@@ -267,6 +267,44 @@ pub(super) fn verify_protein_is_within_rounding(composed: f64, protein: f64, ser
     }
 }
 
+/// How far rounding can raise a label's printed fat above the actual, in grams per serving
+///
+/// It is half the gram that US labels round fat above 5 g to (U.S. FDA, CFR 21, 101.9(c)(2))[^123].
+#[doc = include_str!("../../../docs/references/index/123.md")]
+const MAX_FAT_ROUNDING_EXCESS: f64 = 0.5;
+
+/// The factor that scales a label's `composed_total` grams per 100 g into 100 g, or 1 if it fits
+///
+/// A label's rounded figures can compose more than 100 g. Scaling them down is allowed as far as it
+/// keeps the label's `fat` and `sugars`, per 100 g, within [`MAX_FAT_ROUNDING_EXCESS`] and
+/// [`MAX_SUGARS_ROUNDING_EXCESS`] per `serving_size` in grams of what the label prints.
+pub(super) fn scale_into_100_g(
+    composed_total: f64,
+    fat: f64,
+    sugars: f64,
+    serving_size: f64,
+    description: &str,
+) -> Result<f64> {
+    if is_subset(composed_total, 100.0) {
+        return Ok(1.0);
+    }
+
+    let scale = 100.0 / composed_total;
+    let (fat_cut, sugars_cut) = (fat * (1.0 - scale), sugars * (1.0 - scale));
+    let per_100g = 100.0 / serving_size;
+
+    if is_subset(fat_cut, MAX_FAT_ROUNDING_EXCESS * per_100g)
+        && is_subset(sugars_cut, MAX_SUGARS_ROUNDING_EXCESS * per_100g)
+    {
+        Ok(scale)
+    } else {
+        Err(Error::InvalidComposition(format!(
+            "{description} <= 100, to within the label's rounding: {composed_total} > 100, \
+            cutting {fat_cut} g of fat and {sugars_cut} g of sugars per 100 g"
+        )))
+    }
+}
+
 /// Derives a dark chocolate's cocoa solids and sugars, per 100 g, from its label's `sugars` and
 /// declared `cocoa_solids`, see [`ChocolateLabelSpec`]
 ///
@@ -521,6 +559,33 @@ mod tests {
             let result = verify_protein_is_within_rounding(composed, 7.0, 100.0);
             assert!(matches!(result, Err(Error::InvalidComposition(_))));
         }
+    }
+
+    #[test]
+    fn scale_into_100_g_leaves_up_to_100_g_unscaled() {
+        for composed_total in [99.0, 100.0] {
+            assert_eq!(scale_into_100_g(composed_total, 32.5, 55.0, 40.0, "composed_total").unwrap(), 1.0);
+        }
+    }
+
+    #[test]
+    fn scale_into_100_g_scales_within_the_sugars_rounding() {
+        // 22 g of sugars per 40 g, 55 g per 100 g, may be as little as 53.75 g, so what the label
+        // composes may be scaled down by up to 1.25 g in 55 g
+        let scale = 1.0 - 1.25 / 55.0;
+        assert_eq_flt!(scale_into_100_g(100.0 / scale, 32.5, 55.0, 40.0, "composed_total").unwrap(), scale);
+
+        let result = scale_into_100_g(100.0 / scale + 0.01, 32.5, 55.0, 40.0, "composed_total");
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn scale_into_100_g_scales_within_the_fat_rounding() {
+        // A label low in sugars, with 35 g of fat per 100 g, which may be as little as 34.5 g
+        assert!(scale_into_100_g(101.4, 35.0, 5.0, 100.0, "composed_total").is_ok());
+
+        let result = scale_into_100_g(101.5, 35.0, 5.0, 100.0, "composed_total");
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
     }
 
     #[test]
