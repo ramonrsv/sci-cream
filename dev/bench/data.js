@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795455321443,
+  "lastUpdate": 1795455325637,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -727673,6 +727673,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.28,
             "range": "0.74",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "353c2f05730af20a82539fb6b9a5a85bd5fc10a3",
+          "message": "Rename the chocolate specs' cacao_solids field\n\nChocolateSpec, CocoaPowderSpec, and ChocolateLabelSpec take\ncocoa_solids, the total cocoa solids, in place of cacao_solids, as do\nestimate_chocolate_snf_split_from_protein_by_cocoa_solids and the\nentries; the code's cacao locals become cocoa.\n\nMigration 0005 renames the key in stored ingredient specs, keeping\nthe rest of each row's JSON text as it is; its rollback renames it\nback. Share links go to version 2, and a v1 link's chocolate specs are\nupgraded on decode, as comparePayloadVersion now reports a lesser\nversion as older.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T11:23:55-05:00",
+          "tree_id": "13abc8d870009a3257ea87d1e923a629796b0355",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/353c2f05730af20a82539fb6b9a5a85bd5fc10a3"
+        },
+        "date": 1795455259927,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 51.19,
+            "range": "1.37",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.61,
+            "range": "0.50",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.56,
+            "range": "0.49",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 133,
+            "range": "3.32",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 133,
+            "range": "3.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 48.32,
+            "range": "1.08",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.94,
+            "range": "0.33",
             "unit": "ms"
           }
         ]
