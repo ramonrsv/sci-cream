@@ -141,13 +141,15 @@ export async function decodeUrlPayload<T>(
 
 /**
  * Compare an untrusted `v` field against `expected`. A greater integer is `"newer"` — a link from
- * a newer app build; anything else is `"invalid"`. Callers pick the error, as policy is theirs.
+ * a newer app build — and a lesser positive one `"older"`, from an older build; anything else is
+ * `"invalid"`. Callers pick the error, or an upgrade, as policy is theirs.
  */
 export function comparePayloadVersion(
   value: unknown,
   expected: number,
-): "match" | "newer" | "invalid" {
+): "match" | "newer" | "older" | "invalid" {
   if (value === expected) return "match";
-  if (typeof value === "number" && Number.isInteger(value) && value > expected) return "newer";
-  return "invalid";
+  if (typeof value !== "number" || !Number.isInteger(value)) return "invalid";
+  if (value > expected) return "newer";
+  return value >= 1 ? "older" : "invalid";
 }

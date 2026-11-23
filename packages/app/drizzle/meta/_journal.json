@@ -36,6 +36,13 @@
       "when": 1787108581454,
       "tag": "0004_add_comment_deleted_by",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795416614602,
+      "tag": "0005_rename_cacao_solids",
+      "breakpoints": true
     }
   ]
 }

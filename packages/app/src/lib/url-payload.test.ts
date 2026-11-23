@@ -106,9 +106,15 @@ describe("comparePayloadVersion", () => {
     expect(comparePayloadVersion(99, 1)).toBe("newer");
   });
 
-  it("reports lower, non-integer, and non-numeric versions as invalid", () => {
+  it("reports a lesser positive integer version as older", () => {
+    expect(comparePayloadVersion(1, 2)).toBe("older");
+    expect(comparePayloadVersion(2, 5)).toBe("older");
+  });
+
+  it("reports non-positive, non-integer, and non-numeric versions as invalid", () => {
     for (const value of [0, -1, 1.5, "1", undefined, null, {}]) {
       expect(comparePayloadVersion(value, 1)).toBe("invalid");
+      expect(comparePayloadVersion(value, 2)).toBe("invalid");
     }
   });
 });

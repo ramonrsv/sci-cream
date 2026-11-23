@@ -56,67 +56,67 @@ A few notes and clarifications about the entries in this list:
 ## 50% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 50, "sugars": 50 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 50, "sugars": 50 } }
 ```
 
 ## 55% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 55, "sugars": 45 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 55, "sugars": 45 } }
 ```
 
 ## 60% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 60, "sugars": 40 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 60, "sugars": 40 } }
 ```
 
 ## 65% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 65, "sugars": 35 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 65, "sugars": 35 } }
 ```
 
 ## 70% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 70, "sugars": 30 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 70, "sugars": 30 } }
 ```
 
 ## 75% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 75, "sugars": 25 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 75, "sugars": 25 } }
 ```
 
 ## 80% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 80, "sugars": 20 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 80, "sugars": 20 } }
 ```
 
 ## 85% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 85, "sugars": 15 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 85, "sugars": 15 } }
 ```
 
 ## 90% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 90, "sugars": 10 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 90, "sugars": 10 } }
 ```
 
 ## 95% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 95, "sugars": 5 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 95, "sugars": 5 } }
 ```
 
 ## 100% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 100 } }
 ```
 
 ## Cocoa Powder, 10% Fat
@@ -227,7 +227,7 @@ Arôme](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Cal
 ## Cocoa Butter
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 100, "total_fat": 100 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 100, "total_fat": 100 } }
 ```
 
 Cocoa butter is _"the fat obtained from cocoa beans or parts of cocoa beans"_, whose free fatty
@@ -246,41 +246,41 @@ Butter][belcolade_cocoa_butter], and [GFWA Cacao Butter][gfwa_cacao_butter].
 ## Corvitto 55% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 55, "total_fat": 35, "sugars": 45 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 55, "total_fat": 35, "sugars": 45 } }
 ```
 
 Corvitto's 55% dark coating, a couverture, with 35% cocoa butter and 20% _"pure cocoa"_, for a
-_"total cocoa paste"_ (`cacao_solids`) of 55%, plus 45% sugar (Corvitto, 2005, p. 254)[^3].
+_"total cocoa paste"_ (`cocoa_solids`) of 55%, plus 45% sugar (Corvitto, 2005, p. 254)[^3].
 
 ## Corvitto 60% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 60, "total_fat": 38, "sugars": 40 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 60, "total_fat": 38, "sugars": 40 } }
 ```
 
 Corvitto's 60% dark coating, a couverture, with 38% cocoa butter and 22% _"pure cocoa"_, for a
-_"total cocoa paste"_ (`cacao_solids`) of 60%, plus 40% sugar (Corvitto, 2005, p. 254)[^3].
+_"total cocoa paste"_ (`cocoa_solids`) of 60%, plus 40% sugar (Corvitto, 2005, p. 254)[^3].
 
 ## Corvitto 65% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 65, "total_fat": 40, "sugars": 35 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 65, "total_fat": 40, "sugars": 35 } }
 ```
 
 Corvitto's 65% dark coating, a couverture, with 40% cocoa butter and 25% _"pure cocoa"_, for a
-_"total cocoa paste"_ (`cacao_solids`) of 65%, plus 35% sugar (Corvitto, 2005, p. 254)[^3].
+_"total cocoa paste"_ (`cocoa_solids`) of 65%, plus 35% sugar (Corvitto, 2005, p. 254)[^3].
 
 ## Corvitto 70% Dark Chocolate
 
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 70, "total_fat": 42.5, "sugars": 30 }
+  "ChocolateSpec": { "cocoa_solids": 70, "total_fat": 42.5, "sugars": 30 }
 }
 ```
 
 Corvitto's 70% dark coating, a couverture, with 42.5% cocoa butter and 27.5% _"pure cocoa"_, for a
-_"total cocoa paste"_ (`cacao_solids`) of 70%, plus 30% sugar (Corvitto, 2005, p. 254)[^3].
+_"total cocoa paste"_ (`cocoa_solids`) of 70%, plus 30% sugar (Corvitto, 2005, p. 254)[^3].
 
 ## Corvitto Cocoa Powder, 10/12% Fat
 
@@ -308,7 +308,7 @@ p. 249)[^3]. Water is 0, since the book's calculations count the powder's full w
 {
   "category": "Chocolate",
   "ChocolateSpec": {
-    "cacao_solids": 40,
+    "cocoa_solids": 40,
     "milk_solids": 25,
     "split_fats": { "cocoa_butter": 35, "milk_fat": 5 },
     "sugars": 35
@@ -325,7 +325,7 @@ Corvitto's 40% milk coating, a couverture, with 35% cocoa butter, 5% _"pure coco
 {
   "category": "Chocolate",
   "ChocolateSpec": {
-    "cacao_solids": 30,
+    "cocoa_solids": 30,
     "milk_solids": 30,
     "split_fats": { "cocoa_butter": 30, "milk_fat": 10 },
     "sugars": 40
@@ -342,42 +342,42 @@ counts 40g of skimmed powdered milk in 200g of white chocolate (Corvitto, 2005, 
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 52.1, "total_fat": 31.3, "sugars": 47.9 }
+  "ChocolateSpec": { "cocoa_solids": 52.1, "total_fat": 31.3, "sugars": 47.9 }
 }
 ```
 
 USDA FoodData Central - SR Legacy - [Chocolate, dark, 45-59% cacao
 solids](https://fdc.nal.usda.gov/food-details/170271/nutrients)
 
-`cacao_solids` is calculated as `100 - sugars`, which falls within the 45-59% in the listing's name.
+`cocoa_solids` is calculated as `100 - sugars`, which falls within the 45-59% in the listing's name.
 
 ## USDA Dark Chocolate, 60-69% Cacao Solids
 
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 63.3, "total_fat": 38.3, "sugars": 36.7 }
+  "ChocolateSpec": { "cocoa_solids": 63.3, "total_fat": 38.3, "sugars": 36.7 }
 }
 ```
 
 USDA FoodData Central - SR Legacy - [Chocolate, dark, 60-69% cacao
 solids](https://fdc.nal.usda.gov/food-details/170272/nutrients)
 
-`cacao_solids` is calculated as `100 - sugars`, which falls within the 60-69% in the listing's name.
+`cocoa_solids` is calculated as `100 - sugars`, which falls within the 60-69% in the listing's name.
 
 ## USDA Dark Chocolate, 70-85% Cacao Solids
 
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 76, "total_fat": 42.6, "sugars": 24 }
+  "ChocolateSpec": { "cocoa_solids": 76, "total_fat": 42.6, "sugars": 24 }
 }
 ```
 
 USDA FoodData Central - SR Legacy - [Chocolate, dark, 70-85% cacao
 solids](https://fdc.nal.usda.gov/food-details/170273/nutrients)
 
-`cacao_solids` is calculated as `100 - sugars`, which falls within the 70-85% in the listing's name.
+`cocoa_solids` is calculated as `100 - sugars`, which falls within the 70-85% in the listing's name.
 
 ## USDA Milk Chocolate
 
@@ -385,7 +385,7 @@ solids](https://fdc.nal.usda.gov/food-details/170273/nutrients)
 {
   "category": "Chocolate",
   "ChocolateSpec": {
-    "cacao_solids": 33.5,
+    "cocoa_solids": 33.5,
     "milk_solids": 20,
     "total_fat": 29.7,
     "sugars": 43.4,
@@ -397,12 +397,12 @@ solids](https://fdc.nal.usda.gov/food-details/170273/nutrients)
 USDA FoodData Central - SR Legacy - [Candies, milk
 chocolate](https://fdc.nal.usda.gov/food-details/167587/nutrients)
 
-The dark chocolate entries take `cacao_solids` as `100 - sugars`, but this listing also contains
+The dark chocolate entries take `cocoa_solids` as `100 - sugars`, but this listing also contains
 milk solids, which need to be estimated. This SR Legacy listing does not report lactose, so the
 split between cocoa and milk is instead derived from the reported fiber and protein; see
 [`estimate_chocolate_snf_split_from_protein_by_fiber`].
 
-- `cacao_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via
+- `cocoa_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via
   [`estimate_chocolate_cocoa_snf_from_fiber`] and the 3.4 g of fiber. `milk_fat` is
   <code>milk_solids \* [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER]</code>
 - `milk_solids` as <code>MSNF / (1 - [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER])</code>, where
@@ -418,7 +418,7 @@ split between cocoa and milk is instead derived from the reported fiber and prot
 {
   "category": "Chocolate",
   "ChocolateSpec": {
-    "cacao_solids": 27.2,
+    "cocoa_solids": 27.2,
     "milk_solids": 20.7,
     "total_fat": 32.1,
     "sugars": 50.7,
@@ -430,7 +430,7 @@ split between cocoa and milk is instead derived from the reported fiber and prot
 USDA FoodData Central - SR Legacy - [Candies, white
 chocolate](https://fdc.nal.usda.gov/food-details/167571/nutrients)
 
-The dark chocolate entries take `cacao_solids` as `100 - sugars`, but this listing also contains
+The dark chocolate entries take `cocoa_solids` as `100 - sugars`, but this listing also contains
 milk solids, which need to be estimated. This SR Legacy listing does not report lactose, so the
 split between cocoa and milk is instead derived from the reported fiber and protein; see
 [`estimate_chocolate_snf_split_from_protein_by_fiber`].
@@ -438,7 +438,7 @@ split between cocoa and milk is instead derived from the reported fiber and prot
 The listing's 0.2 g of fiber puts the cocoa solids non-fat at 0.5%, so nearly all the cacao solids
 are cocoa butter, and nearly all the protein is milk's, as expected of white chocolate.
 
-- `cacao_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via
+- `cocoa_solids` as `total_fat - milk_fat` plus cocoa solids non-fat, via
   [`estimate_chocolate_cocoa_snf_from_fiber`] and the 0.2 g of fiber. `milk_fat` is
   <code>milk_solids \* [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER]</code>
 - `milk_solids` as <code>MSNF / (1 - [STD_BUTTERFAT_IN_WHOLE_MILK_POWDER])</code>, where
@@ -459,7 +459,7 @@ are cocoa butter, and nearly all the protein is milk's, as expected of white cho
     "total_fat": 16,
     "carbohydrates": { "total": 19, "fiber": 5, "sugars": 12 },
     "protein": 4,
-    "cacao_solids": { "min": 70 }
+    "cocoa_solids": { "min": 70 }
   }
 }
 ```
@@ -479,7 +479,7 @@ _"CACAO SOLIDS: 70% MINIMUM"_.
     "total_fat": 18,
     "carbohydrates": { "total": 15, "fiber": 6, "sugars": 6 },
     "protein": 5,
-    "cacao_solids": { "min": 85 }
+    "cocoa_solids": { "min": 85 }
   }
 }
 ```
@@ -501,7 +501,7 @@ a product photo, not the listing's typed table, which appears to have an incorre
     "total_fat": 23,
     "carbohydrates": { "total": 10, "fiber": 7, "sugars": 1 },
     "protein": 5,
-    "cacao_solids": { "min": 95 }
+    "cocoa_solids": { "min": 95 }
   }
 }
 ```
@@ -521,7 +521,7 @@ _"CACAO SOLIDS: 95% MINIMUM"_.
     "total_fat": 27,
     "carbohydrates": { "total": 14, "fiber": 8, "sugars": 0 },
     "protein": 7,
-    "cacao_solids": { "actual": 100 }
+    "cocoa_solids": { "actual": 100 }
   }
 }
 ```
@@ -540,7 +540,7 @@ declares _"CACAO SOLIDS: 100%"_.
     "total_fat": 32,
     "carbohydrates": { "available": 56, "sugars": 55 },
     "protein": 7,
-    "cacao_solids": { "min": 30 },
+    "cocoa_solids": { "min": 30 },
     "milk_solids": { "min": 20 }
   }
 }
@@ -578,7 +578,7 @@ page](https://www.lindt.ca/en/lindt-swiss-classic-white-chocolate-bar-100g)'s la
 ## Valrhona Guanaja 70% Dark Chocolate
 
 ```json
-{ "category": "Chocolate", "ChocolateSpec": { "cacao_solids": 70, "sugars": 30 } }
+{ "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 70, "sugars": 30 } }
 ```
 
 From the
@@ -594,7 +594,7 @@ ingredient is modeled as a simple 70% dark chocolate.
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 56, "total_fat": 36.6, "sugars": 43, "other_solids": 1 }
+  "ChocolateSpec": { "cocoa_solids": 56, "total_fat": 36.6, "sugars": 43, "other_solids": 1 }
 }
 ```
 
@@ -604,7 +604,7 @@ page](https://www.callebaut.com/en-CA/products/callebaut/darkchocolaterecipe811/
 sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Dark-Callets-1kg-%28811-E1-U68%29.pdf).
 The values are taken from the spec sheet:
 
-- `cacao_solids` from _"Dry cocoa solids 56.0%"_, corroborated by _"cocoa mass 43.0%"_ plus
+- `cocoa_solids` from _"Dry cocoa solids 56.0%"_, corroborated by _"cocoa mass 43.0%"_ plus
   _"cocoa butter 13.0%"_
 - `total_fat` from _"TOTAL FAT CONTENT 36.6%"_, corroborated by 56.0% less _"Dry fatfree cocoa
   solids 19.4%"_
@@ -618,13 +618,13 @@ These are in agreement with the product page's _"54.5% Min. % Dry cocoa solids"_
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 59.4, "total_fat": 38.7, "sugars": 39.6, "other_solids": 1 }
+  "ChocolateSpec": { "cocoa_solids": 59.4, "total_fat": 38.7, "sugars": 39.6, "other_solids": 1 }
 }
 ```
 
 Dark chocolate, from the [product
 page](https://www.callebaut.com/en-CA/products/callebaut/2815/2815-2B-U76), stating dry cocoa
-solids of minimum 57.9% and fat 38.7%. No specification sheet was found for it, so `cacao_solids`
+solids of minimum 57.9% and fat 38.7%. No specification sheet was found for it, so `cocoa_solids`
 and `sugars` are both derived.
 
 Across the siblings that do have sheets, the product page's minimum cacao solids is almost always
@@ -638,7 +638,7 @@ siblings.
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 62.1, "total_fat": 38.8, "sugars": 37, "other_solids": 0.9 }
+  "ChocolateSpec": { "cocoa_solids": 62.1, "total_fat": 38.8, "sugars": 37, "other_solids": 0.9 }
 }
 ```
 
@@ -648,7 +648,7 @@ page](https://www.callebaut.com/en-CA/products/callebaut/60-40-38/60-40-38NV-595
 sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Dark-604038-%2860-40-38NV-01B%29.pdf).
 The values are taken from the spec sheet:
 
-- `cacao_solids` from _"Dry cocoa solids 62.1%"_, corroborated by _"cocoa mass 52.0%"_ plus
+- `cocoa_solids` from _"Dry cocoa solids 62.1%"_, corroborated by _"cocoa mass 52.0%"_ plus
   _"cocoa butter 10.5%"_
 - `total_fat` from _"TOTAL FAT CONTENT 38.8%"_, corroborated by 62.1% less _"Dry fatfree cocoa
   solids 23.3%"_
@@ -663,7 +663,7 @@ _"39.4% Fat %"_ (off by 0.6%).
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 72.5, "total_fat": 38.9, "sugars": 26, "other_solids": 1.5 }
+  "ChocolateSpec": { "cocoa_solids": 72.5, "total_fat": 38.9, "sugars": 26, "other_solids": 1.5 }
 }
 ```
 
@@ -673,7 +673,7 @@ and [specification
 sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Extra-Bitter-Callets-10kg-%2870-30-38NV-01B%29.pdf).
 The values are taken from the spec sheet:
 
-- `cacao_solids` from _"Dry cocoa solids 72.5%"_, corroborated by _"cocoa mass 71.0%"_ plus
+- `cocoa_solids` from _"Dry cocoa solids 72.5%"_, corroborated by _"cocoa mass 71.0%"_ plus
   _"fat-reduced cocoa powder 2.0%"_
 - `total_fat` from _"TOTAL FAT CONTENT 38.9%"_, corroborated by 72.5% less _"Dry fatfree cocoa
   solids 33.6%"_
@@ -688,7 +688,7 @@ These are in agreement with the product page's _"70.5% Min. % Dry cocoa solids"_
 {
   "category": "Chocolate",
   "ChocolateSpec": {
-    "cacao_solids": 35.1,
+    "cocoa_solids": 35.1,
     "milk_solids": 21.8,
     "split_fats": { "cocoa_butter": 30.2, "milk_fat": 6 },
     "sugars": 42,
@@ -703,7 +703,7 @@ page](https://www.callebaut.com/en/products/callebaut/milkchocolaterecipe823/823
 sheet](https://slrsupplies.com/wp-content/uploads/2021/02/Choco-BLOCK-823-Callebaut-823NV.pdf).
 The values are taken from the spec sheet, which writes its decimals with commas:
 
-- `cacao_solids` from _"Dry cocoa solids 35,1%"_, corroborated by _"cocoa butter 24,0%"_ plus
+- `cocoa_solids` from _"Dry cocoa solids 35,1%"_, corroborated by _"cocoa butter 24,0%"_ plus
   _"cocoa mass 11,0%"_
 - `milk_solids` from _"Dry milk solids 21,8%"_, corroborated by _"whole milk powder 22,5%"_
 - `milk_fat` from _"Milkfat 6,0%"_
@@ -721,7 +721,7 @@ Dry milk solids"_, _"36.2% Fat %"_.
 {
   "category": "Chocolate",
   "ChocolateSpec": {
-    "cacao_solids": 33,
+    "cocoa_solids": 33,
     "milk_solids": 27,
     "split_fats": { "cocoa_butter": 29.8, "milk_fat": 5.9 },
     "sugars": 38.5,
@@ -736,7 +736,7 @@ page](https://www.callebaut.com/en/products/callebaut/milkchocolaterecipe665/665
 sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Milk-665-%28665NV-01B%29.pdf).
 The values are taken from the spec sheet:
 
-- `cacao_solids` from _"Dry cocoa solids 33.0%"_, corroborated by _"cocoa butter 27.0%"_ plus
+- `cocoa_solids` from _"Dry cocoa solids 33.0%"_, corroborated by _"cocoa butter 27.0%"_ plus
   _"cocoa mass 5.5%"_
 - `milk_solids` from _"Dry milk solids 27.0%"_, corroborated by _"whole milk powder 21.0%"_ plus
   _"skimmed milk powder 6.0%"_
@@ -756,7 +756,7 @@ milk solids"_, _"35.5% Fat %"_ (off by 0.2%).
 {
   "category": "Chocolate",
   "ChocolateSpec": {
-    "cacao_solids": 42.2,
+    "cocoa_solids": 42.2,
     "milk_solids": 20.4,
     "split_fats": { "cocoa_butter": 32.2, "milk_fat": 4.1 },
     "sugars": 36,
@@ -771,7 +771,7 @@ page](https://www.callebaut.com/en/chocolate-cocoa-nuts/841-RT-U71/milkchocolate
 sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Power-41-%28841-E4-U71%29.pdf).
 The values are taken from the spec sheet:
 
-- `cacao_solids` from _"Dry cocoa solids 42.2%"_, corroborated by _"cocoa mass 22.0%"_ plus
+- `cocoa_solids` from _"Dry cocoa solids 42.2%"_, corroborated by _"cocoa mass 22.0%"_ plus
   _"cocoa butter 20.0%"_
 - `milk_solids` from _"Dry milk solids 20.4%"_, corroborated by _"whole milk powder 14.5%"_ plus
   _"skimmed milk powder 6.0%"_
@@ -790,7 +790,7 @@ Dry milk solids"_, _"36.3% Fat %"_.
 {
   "category": "Chocolate",
   "ChocolateSpec": {
-    "cacao_solids": 40.5,
+    "cocoa_solids": 40.5,
     "milk_solids": 25.5,
     "split_fats": { "cocoa_butter": 33.8, "milk_fat": 5.2 },
     "sugars": 33,
@@ -805,7 +805,7 @@ page](https://www.callebaut.com/en-US/chocolate-cocoa-nuts/CHM-Q415AR-2B-U75/arr
 sheet](https://www.sephra.com/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-Arriba-%28CHM-Q415AR-E4-U70%29.pdf).
 The values are taken from the spec sheet:
 
-- `cacao_solids` from _"Dry cocoa solids 40.5%"_, corroborated by _"cocoa butter 26.0%"_ plus
+- `cocoa_solids` from _"Dry cocoa solids 40.5%"_, corroborated by _"cocoa butter 26.0%"_ plus
   _"cocoa mass Ecuador 14.5%"_
 - `milk_solids` from _"Dry milk solids 25.5%"_, corroborated by _"whole milk powder 19.0%"_ plus
   _"skimmed milk powder 7.5%"_
@@ -824,7 +824,7 @@ milk solids"_, _"39.1% Fat %"_ (off by 0.1%).
 {
   "category": "Chocolate",
   "ChocolateSpec": {
-    "cacao_solids": 29.5,
+    "cocoa_solids": 29.5,
     "milk_solids": 23,
     "split_fats": { "cocoa_butter": 29.5, "milk_fat": 6.3 },
     "sugars": 46.5,
@@ -839,7 +839,7 @@ page](https://www.callebaut.com/en-CA/products/callebaut/whitechocolaterecipew2/
 sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Callebaut-White-Callets-1kg-%28W2-E1-U68%20%29.pdf).
 The values are taken from the spec sheet:
 
-- `cacao_solids` from _"Dry cocoa solids 29.5%"_, corroborated by _"cocoa butter 29.5%"_, the
+- `cocoa_solids` from _"Dry cocoa solids 29.5%"_, corroborated by _"cocoa butter 29.5%"_, the
   recipe's only cocoa ingredient
 - `milk_solids` from _"Dry milk solids 23.0%"_, corroborated by _"whole milk powder 23.5%"_
 - `milk_fat` from _"Milkfat 6.3%"_
@@ -856,7 +856,7 @@ milk solids"_, _"35.8% Fat %"_.
 ```json
 {
   "category": "Chocolate",
-  "ChocolateSpec": { "cacao_solids": 49.4, "total_fat": 30.3, "sugars": 49.5, "other_solids": 1.1 }
+  "ChocolateSpec": { "cocoa_solids": 49.4, "total_fat": 30.3, "sugars": 49.5, "other_solids": 1.1 }
 }
 ```
 
@@ -866,7 +866,7 @@ sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Call
 Its _"Legal denomination"_ is _"Chocolate"_, the plain EU denomination rather than a couverture.
 The values are taken from the spec sheet:
 
-- `cacao_solids` from _"Dry cocoa solids 49.4%"_, corroborated by _"cocoa mass 43.0%"_ plus
+- `cocoa_solids` from _"Dry cocoa solids 49.4%"_, corroborated by _"cocoa mass 43.0%"_ plus
   _"cocoa butter 7.0%"_
 - `total_fat` from _"TOTAL FAT 30.3 g"_, corroborated by 49.4% less _"Dry fatfree cocoa solids
   19.2%"_ (off by 0.1%)
@@ -882,7 +882,7 @@ corroborates only the recipe.
 {
   "category": "Chocolate",
   "ChocolateSpec": {
-    "cacao_solids": 29.6,
+    "cocoa_solids": 29.6,
     "milk_solids": 16.9,
     "split_fats": { "cocoa_butter": 23, "milk_fat": 3.9 },
     "sugars": 52.5,
@@ -897,7 +897,7 @@ sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Callebaut/Spec-Sheet-Call
 Its _"Legal denomination"_ is _"Milk chocolate"_, the plain EU denomination rather than a
 couverture. The values are taken from the spec sheet:
 
-- `cacao_solids` from _"Dry cocoa solids 29.6%"_, corroborated by _"cocoa mass 15.0%"_ plus
+- `cocoa_solids` from _"Dry cocoa solids 29.6%"_, corroborated by _"cocoa mass 15.0%"_ plus
   _"cocoa butter 15.0%"_
 - `milk_solids` from _"Dry milk solids 16.9%"_, corroborated by _"whole milk powder 13.5%"_ plus
   _"skimmed milk powder 3.5%"_
@@ -920,7 +920,7 @@ These are in agreement with the product page's _"Min Cocoa Solids: 28%"_.
     "total_fat": 36,
     "carbohydrates": { "available": 48, "fiber": 2.8, "sugars": 46 },
     "protein": 9.8,
-    "cacao_solids": { "min": 37 },
+    "cocoa_solids": { "min": 37 },
     "milk_solids": { "min": 24 }
   }
 }
@@ -941,7 +941,7 @@ bar, with _"COCOA SOLIDS 37% MINIMUM, MILK SOLIDS 24% MINIMUM"_.
     "total_fat": 38,
     "carbohydrates": { "available": 51, "fiber": 0, "sugars": 51 },
     "protein": 7.9,
-    "cacao_solids": { "min": 30 },
+    "cocoa_solids": { "min": 30 },
     "milk_solids": { "min": 26 }
   }
 }
@@ -1048,7 +1048,7 @@ gives the same figures without the fiber, and the protein as _"<1g"_.
 {
   "category": "Chocolate",
   "CocoaPowderSpec": {
-    "cacao_solids": 93,
+    "cocoa_solids": 93,
     "cocoa_butter": 21,
     "other_solids": 4,
     "water": 3,

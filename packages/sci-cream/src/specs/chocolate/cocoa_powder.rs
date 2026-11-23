@@ -23,13 +23,13 @@ use crate::{
 /// solids, cocoa butter, _cocoa_ solids, etc.
 ///
 /// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The
-/// [`cacao_solids`](Self::cacao_solids) content is optional, calculated as `100 - water -
+/// [`cocoa_solids`](Self::cocoa_solids) content is optional, calculated as `100 - water -
 /// other_solids` if not specified. It must be a superset of [`cocoa_butter`](Self::cocoa_butter),
 /// which must be specified, typically ranging from ~10-24%. The
 /// [`other_solids`](Self::other_solids) content is optional, assumed to be zero if unspecified, and
 /// represents other non-sugar, non-fats solids, e.g. emulsifiers, demerara sugar impurities,
 /// alkalization ash, etc. If non-zero, it is specified in [`Composition`] accessible via
-/// [`CompKey::OtherSNFS`]. [`cacao_solids`](Self::cacao_solids),
+/// [`CompKey::OtherSNFS`]. [`cocoa_solids`](Self::cocoa_solids),
 /// [`other_solids`](Self::other_solids), and [`water`](Self::water) must add up to 100%.
 ///
 /// The cocoa solids content is further broken down into proteins, carbohydrates - including fiber,
@@ -58,7 +58,7 @@ use crate::{
 /// };
 ///
 /// let comp = CocoaPowderSpec {
-///     cacao_solids: None,
+///     cocoa_solids: None,
 ///     cocoa_butter: 11.0,
 ///     other_solids: None,
 ///     water: None,
@@ -89,7 +89,7 @@ use crate::{
 /// # use sci_cream::{composition::{CompKey, ToComposition}, specs::CocoaPowderSpec};
 /// #
 /// let comp = CocoaPowderSpec {
-///     cacao_solids: None,
+///     cocoa_solids: None,
 ///     cocoa_butter: 11.0,
 ///     other_solids: None,
 ///     water: Some(3.5),
@@ -114,10 +114,10 @@ use crate::{
 pub struct CocoaPowderSpec {
     /// Total cacao solids content, optional, `100 - water - other_solids` if not specified
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cacao_solids: Option<f64>,
+    pub cocoa_solids: Option<f64>,
     /// Cocoa butter content as a percentage of the product as a whole, usually from nutrition facts
     ///
-    /// It must be specified, and must be a subset of [`cacao_solids`](Self::cacao_solids)
+    /// It must be specified, and must be a subset of [`cocoa_solids`](Self::cocoa_solids)
     pub cocoa_butter: f64,
     /// Other solids content as a percentage of the product as a whole, usually from nutrition facts
     ///
@@ -151,7 +151,7 @@ pub struct CocoaPowderSpec {
 impl ToComposition for CocoaPowderSpec {
     fn to_composition(&self) -> Result<Composition> {
         let Self {
-            cacao_solids,
+            cocoa_solids,
             cocoa_butter,
             other_solids,
             water,
@@ -160,19 +160,19 @@ impl ToComposition for CocoaPowderSpec {
 
         let other_solids = other_solids.unwrap_or(0.0);
         let water = water.unwrap_or(STD_WATER_IN_COCOA_POWDER * 100.0);
-        let cacao_solids = cacao_solids.unwrap_or(100.0 - water - other_solids);
+        let cocoa_solids = cocoa_solids.unwrap_or(100.0 - water - other_solids);
 
-        verify_are_positive(&[cacao_solids, cocoa_butter, other_solids, water])?;
-        verify_is_subset(cocoa_butter, cacao_solids, "cocoa_butter <= cacao_solids")?;
-        verify_is_100_percent(cacao_solids + other_solids + water)?;
+        verify_are_positive(&[cocoa_solids, cocoa_butter, other_solids, water])?;
+        verify_is_subset(cocoa_butter, cocoa_solids, "cocoa_butter <= cocoa_solids")?;
+        verify_is_100_percent(cocoa_solids + other_solids + water)?;
 
-        let cocoa_solids = make_cocoa_solids(cacao_solids, cocoa_butter, dutch_processed.unwrap_or(false))?;
+        let cocoa = make_cocoa_solids(cocoa_solids, cocoa_butter, dutch_processed.unwrap_or(false))?;
         let other_solids = SimpleSolids::new().others(other_solids);
 
         Composition::new()
-            .energy(cocoa_solids.energy()? + other_solids.energy()?)
-            .solids(Solids::new().cocoa(cocoa_solids).other(other_solids))
-            .pac(PAC::new().hardness_factor(calculate_cocoa_hardness(cacao_solids, cocoa_butter)))
+            .energy(cocoa.energy()? + other_solids.energy()?)
+            .solids(Solids::new().cocoa(cocoa).other(other_solids))
+            .pac(PAC::new().hardness_factor(calculate_cocoa_hardness(cocoa_solids, cocoa_butter)))
             .validate_into()
     }
 }
@@ -208,7 +208,7 @@ pub(crate) mod tests {
         name: "Cocoa Powder, 10/12% Fat".to_string(),
         category: Category::Chocolate,
         spec: CocoaPowderSpec {
-            cacao_solids: None,
+            cocoa_solids: None,
             cocoa_butter: 11.0,
             other_solids: None,
             water: None,
@@ -285,7 +285,7 @@ pub(crate) mod tests {
             name: "Callebaut 10/12 Natural Cocoa Powder".to_string(),
             category: Category::Chocolate,
             spec: CocoaPowderSpec {
-                cacao_solids: None,
+                cocoa_solids: None,
                 cocoa_butter: 11.0,
                 other_solids: None,
                 water: Some(3.5),
@@ -350,7 +350,7 @@ pub(crate) mod tests {
       "name": "Valrhona Unsweetened Cocoa Powder",
       "category": "Chocolate",
       "CocoaPowderSpec": {
-        "cacao_solids": 93,
+        "cocoa_solids": 93,
         "cocoa_butter": 21,
         "other_solids": 4,
         "water": 3,
@@ -363,7 +363,7 @@ pub(crate) mod tests {
             name: "Valrhona Unsweetened Cocoa Powder".to_string(),
             category: Category::Chocolate,
             spec: CocoaPowderSpec {
-                cacao_solids: Some(93.0),
+                cocoa_solids: Some(93.0),
                 cocoa_butter: 21.0,
                 other_solids: Some(4.0),
                 water: Some(3.0),
@@ -430,9 +430,9 @@ pub(crate) mod tests {
 
     /// Omitting cacao solids derives `100 - water - other_solids`, matching Valrhona's declared 93
     #[test]
-    fn to_composition_cocoa_powder_spec_derives_cacao_solids_from_other_solids() {
+    fn to_composition_cocoa_powder_spec_derives_cocoa_solids_from_other_solids() {
         let comp = CocoaPowderSpec {
-            cacao_solids: None,
+            cocoa_solids: None,
             cocoa_butter: 21.0,
             other_solids: Some(4.0),
             water: None,
@@ -467,7 +467,7 @@ pub(crate) mod tests {
 
     fn empty_cocoa_powder_spec() -> CocoaPowderSpec {
         CocoaPowderSpec {
-            cacao_solids: None,
+            cocoa_solids: None,
             cocoa_butter: 0.0,
             other_solids: None,
             water: None,
@@ -480,18 +480,18 @@ pub(crate) mod tests {
         let bad_specs = [
             // A full 100% of cacao solids leaves no room for the default water
             CocoaPowderSpec {
-                cacao_solids: Some(100.0),
+                cocoa_solids: Some(100.0),
                 cocoa_butter: 16.67,
                 ..empty_cocoa_powder_spec()
             },
             CocoaPowderSpec {
-                cacao_solids: Some(93.0),
+                cocoa_solids: Some(93.0),
                 cocoa_butter: 21.0,
                 water: Some(10.0),
                 ..empty_cocoa_powder_spec()
             },
             CocoaPowderSpec {
-                cacao_solids: Some(90.0),
+                cocoa_solids: Some(90.0),
                 cocoa_butter: 21.0,
                 ..empty_cocoa_powder_spec()
             },
@@ -507,7 +507,7 @@ pub(crate) mod tests {
     fn to_composition_cocoa_powder_err_on_negative_water() {
         // Sums to 100, so the sign check is the only one that can fire
         let result = CocoaPowderSpec {
-            cacao_solids: Some(103.0),
+            cocoa_solids: Some(103.0),
             cocoa_butter: 21.0,
             water: Some(-3.0),
             ..empty_cocoa_powder_spec()
@@ -520,7 +520,7 @@ pub(crate) mod tests {
     #[test]
     fn to_composition_cocoa_powder_spec_uses_explicit_water() {
         // The EU ceiling and a fully dried powder, both far from the 3% default
-        for (water, exp_cacao_solids) in [(9.0, 91.0), (0.0, 100.0)] {
+        for (water, exp_cocoa_solids) in [(9.0, 91.0), (0.0, 100.0)] {
             let comp = CocoaPowderSpec {
                 cocoa_butter: 10.0,
                 water: Some(water),
@@ -530,9 +530,9 @@ pub(crate) mod tests {
             .unwrap();
 
             assert_eq_flt!(comp.get(CompKey::Water), water);
-            assert_eq_flt!(comp.get(CompKey::CocoaSolids), exp_cacao_solids);
-            assert_eq_flt!(comp.get(CompKey::TotalSolids), exp_cacao_solids);
-            assert_eq_flt!(comp.get(CompKey::CocoaSNF), exp_cacao_solids - 10.0);
+            assert_eq_flt!(comp.get(CompKey::CocoaSolids), exp_cocoa_solids);
+            assert_eq_flt!(comp.get(CompKey::TotalSolids), exp_cocoa_solids);
+            assert_eq_flt!(comp.get(CompKey::CocoaSNF), exp_cocoa_solids - 10.0);
         }
     }
 }

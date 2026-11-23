@@ -8,7 +8,7 @@ import type { LightRecipe } from "@workspace/sci-cream";
 import { ShareRecipeAction } from "./recipe-share-dialog";
 import { useSessionResources, type SessionResources } from "@/lib/resources/session";
 import { USER_DEFINED_FRUCTOSE_SPEC } from "@/__tests__/seed-assets";
-import { decodeSharePayload, type SharePayload } from "@/lib/recipe/share";
+import { SHARE_PAYLOAD_VERSION, decodeSharePayload, type SharePayload } from "@/lib/recipe/share";
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -75,7 +75,12 @@ describe("ShareRecipeAction", () => {
     render(<ShareRecipeAction name="Base" rows={ROWS} evaporation={25} />);
     const link = await openDialog();
 
-    await expect(decodeLink(link)).resolves.toEqual({ v: 1, n: "Base", r: ROWS, e: 25 });
+    await expect(decodeLink(link)).resolves.toEqual({
+      v: SHARE_PAYLOAD_VERSION,
+      n: "Base",
+      r: ROWS,
+      e: 25,
+    });
     const embed = (await screen.findByTestId("share-embed")) as HTMLInputElement;
     expect(embed.value).toMatch(/^<iframe src=".*\/share\/embed#.+" width=/);
   });

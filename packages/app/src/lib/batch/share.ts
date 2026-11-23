@@ -192,10 +192,12 @@ function validateBatchPayload(parsed: unknown): BatchPayload {
   }
   const obj = parsed as Record<string, unknown>;
 
-  // A greater integer version means the link comes from a newer app; anything else is garbage.
+  // A greater integer version means the link comes from a newer app; anything else is garbage,
+  // an older version included, as batch links have no upgrade from one to the current version.
   switch (comparePayloadVersion(obj.v, BATCH_PAYLOAD_VERSION)) {
     case "newer":
       throw new BatchError(BatchErrorKind.UnknownVersion);
+    case "older":
     case "invalid":
       throw new BatchError(BatchErrorKind.Invalid);
     case "match":

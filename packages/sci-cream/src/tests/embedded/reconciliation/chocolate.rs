@@ -197,7 +197,7 @@ const FULL_MISS: f64 = 100.0;
 /// Fat and sugars are transcribed from the listing rather than predicted, so both must match
 /// exactly. [`ChocolateSpec`](crate::specs::ChocolateSpec) has no water field, so water reads as a
 /// full miss, a ceiling that records the gap rather than tolerates drift. That same water stays
-/// inside `cacao_solids` and inflates the cocoa solids, while the sugars intrinsic to cocoa deflate
+/// inside `cocoa_solids` and inflates the cocoa solids, while the sugars intrinsic to cocoa deflate
 /// them by leaving with the declared `sugars` ([`cocoa::STD_SUGARS_IN_COCOA_SNF`]); the rest
 /// bound that net overstatement plus the scatter of each constant, fiber being the loosest.
 ///
@@ -339,10 +339,10 @@ fn usda_chocolate_labels_transcribe_their_listings() {
 }
 
 /// Derives a USDA dark chocolate entry from its listing, as its prose describes: `total_fat` and
-/// `sugars` from the listing, and `cacao_solids` as `100 - sugars`.
+/// `sugars` from the listing, and `cocoa_solids` as `100 - sugars`.
 fn derive_usda_dark_chocolate(listing: &Proximates) -> ChocolateSpec {
     ChocolateSpec {
-        cacao_solids: round_1dp(100.0 - listing.sugars),
+        cocoa_solids: round_1dp(100.0 - listing.sugars),
         milk_solids: None,
         fat: Some(ChocolateFat::Total(listing.fat)),
         sugars: Some(listing.sugars),
@@ -355,15 +355,15 @@ fn derive_usda_milk_chocolate(listing: &Proximates) -> ChocolateSpec {
     let (cocoa_snf, msnf) = estimate_chocolate_snf_split_from_protein_by_fiber(listing.protein, listing.fiber);
     let milk_solids = round_1dp(msnf / (1.0 - STD_BUTTERFAT_IN_WHOLE_MILK_POWDER));
     let milk_fat = milk_solids * STD_BUTTERFAT_IN_WHOLE_MILK_POWDER;
-    let cacao_solids = round_1dp(listing.fat - milk_fat + cocoa_snf);
+    let cocoa_solids = round_1dp(listing.fat - milk_fat + cocoa_snf);
     let sugars = round_1dp(listing.sugars - (milk_solids - milk_fat) * STD_LACTOSE_IN_MSNF);
 
     ChocolateSpec {
-        cacao_solids,
+        cocoa_solids,
         milk_solids: Some(milk_solids),
         fat: Some(ChocolateFat::Total(listing.fat)),
         sugars: Some(sugars),
-        other_solids: Some(round_1dp(100.0 - cacao_solids - milk_solids - sugars)),
+        other_solids: Some(round_1dp(100.0 - cocoa_solids - milk_solids - sugars)),
     }
 }
 
@@ -636,7 +636,7 @@ fn estimate_chocolate_snf_split_from_protein_by_fiber_recovers_callebaut_entries
 }
 
 /// Minimum cacao and milk solids that the product page of each Callebaut and Mona Lisa entry with a
-/// `… (Label)` variant declares, which the variant leaves out; `(name, cacao_solids, milk_solids)`
+/// `… (Label)` variant declares, which the variant leaves out; `(name, cocoa_solids, milk_solids)`
 const CALLEBAUT_PAGE_MINIMA: &[(&str, Option<f64>, Option<f64>)] = &[
     ("Callebaut 811 Dark Chocolate", Some(54.5), None),
     ("Callebaut 60-40-38 Dark Chocolate", Some(60.1), None),
@@ -671,26 +671,26 @@ const CALLEBAUT_DECLARED_CEILINGS: &[(CompKey, f64)] = &[
 
 /// The declarations a [`CALLEBAUT_PAGE_MINIMA`] variant of `kind` is composed with, as its kind
 /// takes them: none, its page's minima if it has any, or its `entry`'s actual cacao and milk
-/// solids; `(case, cacao_solids, milk_solids)`
+/// solids; `(case, cocoa_solids, milk_solids)`
 fn declared_solids_cases(
     kind: ChocolateKind,
-    min_cacao: Option<f64>,
+    min_cocoa: Option<f64>,
     min_milk: Option<f64>,
     entry: &Composition,
 ) -> Vec<(&'static str, Option<DeclaredSolids>, Option<DeclaredSolids>)> {
-    let cacao = Some(DeclaredSolids::Actual(entry.get(CompKey::CocoaSolids)));
+    let cocoa = Some(DeclaredSolids::Actual(entry.get(CompKey::CocoaSolids)));
     let milk = Some(DeclaredSolids::Actual(entry.get(CompKey::MilkSolids)));
 
     let mut cases = vec![("none", None, None)];
-    if min_cacao.is_some() || min_milk.is_some() {
-        cases.push(("minima", min_cacao.map(DeclaredSolids::Min), min_milk.map(DeclaredSolids::Min)));
+    if min_cocoa.is_some() || min_milk.is_some() {
+        cases.push(("minima", min_cocoa.map(DeclaredSolids::Min), min_milk.map(DeclaredSolids::Min)));
     }
     match kind {
-        ChocolateKind::DarkChocolate => cases.push(("actual cacao", cacao, None)),
+        ChocolateKind::DarkChocolate => cases.push(("actual cacao", cocoa, None)),
         ChocolateKind::MilkChocolate | ChocolateKind::WhiteChocolate => cases.extend([
-            ("actual cacao", cacao, None),
+            ("actual cacao", cocoa, None),
             ("actual milk", None, milk),
-            ("actual both", cacao, milk),
+            ("actual both", cocoa, milk),
         ]),
         ChocolateKind::CocoaPowder => {}
     }
@@ -713,7 +713,7 @@ fn callebaut_labels_recover_their_entries_with_declared_solids() {
         .concat();
     let mut lines = Vec::new();
 
-    for &(name, min_cacao, min_milk) in CALLEBAUT_PAGE_MINIMA {
+    for &(name, min_cocoa, min_milk) in CALLEBAUT_PAGE_MINIMA {
         let variant = format!("{name} (Label)");
         let TaggedSpec::ChocolateLabelSpec(label) = get_embedded_or_variant_spec_by_name(&variant).spec else {
             panic!("{variant} is not a ChocolateLabelSpec");
@@ -729,9 +729,9 @@ fn callebaut_labels_recover_their_entries_with_declared_solids() {
         lines.push(format!("  {:<14}{header}", "case"));
         lines.push(format!("  {:<14}{values}", "entry (g)"));
 
-        for (case, cacao_solids, milk_solids) in declared_solids_cases(label.kind, min_cacao, min_milk, &entry) {
+        for (case, cocoa_solids, milk_solids) in declared_solids_cases(label.kind, min_cocoa, min_milk, &entry) {
             let comp = ChocolateLabelSpec {
-                cacao_solids,
+                cocoa_solids,
                 milk_solids,
                 ..label
             }
@@ -773,7 +773,7 @@ fn callebaut_labels_recover_their_entries_with_declared_solids() {
 fn callebaut_labels_compose_their_protein_with_declared_solids() {
     let mut lines = Vec::new();
 
-    for &(name, min_cacao, min_milk) in CALLEBAUT_PAGE_MINIMA {
+    for &(name, min_cocoa, min_milk) in CALLEBAUT_PAGE_MINIMA {
         let variant = format!("{name} (Label)");
         let TaggedSpec::ChocolateLabelSpec(label) = get_embedded_or_variant_spec_by_name(&variant).spec else {
             panic!("{variant} is not a ChocolateLabelSpec");
@@ -790,9 +790,9 @@ fn callebaut_labels_compose_their_protein_with_declared_solids() {
         lines.push(format!("{variant}, {protein:.2} g of protein per 100 g"));
         lines.push(format!("  {:<14}{:>10}{:>16}", "case", "composed", "diff"));
 
-        for (case, cacao_solids, milk_solids) in declared_solids_cases(label.kind, min_cacao, min_milk, &entry) {
+        for (case, cocoa_solids, milk_solids) in declared_solids_cases(label.kind, min_cocoa, min_milk, &entry) {
             let comp = ChocolateLabelSpec {
-                cacao_solids,
+                cocoa_solids,
                 milk_solids,
                 ..label
             }

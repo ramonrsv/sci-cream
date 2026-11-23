@@ -7,6 +7,7 @@ import {
 } from "@workspace/sci-cream";
 
 import type { Recipe } from "@/lib/recipe/recipe";
+import { upgradeSpecs } from "@/lib/recipe/share-upgrades";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import {
   PayloadErrorKind,
@@ -21,8 +22,11 @@ import {
  * `/share#<payload>`, which is never sent to the server. Viewer routes live in `app/share/`.
  */
 
-/** Current share payload format version; bump when the payload shape changes incompatibly. */
-export const SHARE_PAYLOAD_VERSION = 1;
+/**
+ * Current share payload format version. Bump it when the payload, or the specs it inlines, change
+ * incompatibly, adding an upgrade from the older version to {@link upgradeSpecs}.
+ */
+export const SHARE_PAYLOAD_VERSION = 2;
 
 /** Maximum accepted length of the encoded payload string, checked before any decoding work. */
 export const MAX_ENCODED_CHARS = 32 * 1024;
@@ -133,12 +137,14 @@ function validateSharePayload(parsed: unknown): SharePayload {
   }
   const obj = parsed as Record<string, unknown>;
 
-  // A greater integer version means the link comes from a newer app; anything else is garbage.
+  // A greater integer version means the link comes from a newer app, and a lesser one from an
+  // older app, whose payload is upgraded below; anything else is garbage.
   switch (comparePayloadVersion(obj.v, SHARE_PAYLOAD_VERSION)) {
     case "newer":
       throw new ShareError(ShareErrorKind.UnknownVersion);
     case "invalid":
       throw new ShareError(ShareErrorKind.Invalid);
+    case "older":
     case "match":
       break;
   }
@@ -186,8 +192,10 @@ function validateSharePayload(parsed: unknown): SharePayload {
     throw new ShareError(ShareErrorKind.Invalid);
   }
 
+  const upgraded = specs !== undefined ? upgradeSpecs(obj.v, specs) : specs;
+
   // Rebuild the object so unknown extra fields are dropped rather than carried along.
-  return makeSharePayload(name, rows as LightRecipe, evaporation, comments, specs, versionName);
+  return makeSharePayload(name, rows as LightRecipe, evaporation, comments, upgraded, versionName);
 }
 
 /**

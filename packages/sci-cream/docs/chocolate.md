@@ -9,7 +9,7 @@ different industries and stages of processing. For clarity, within this library 
   chocolate has 70% cacao solids.
 
   This value is specified in [`Composition`], accessible via [`CompKey::CocoaSolids`], and
-  corresponds to [`ChocolateSpec::cacao_solids`].
+  corresponds to [`ChocolateSpec::cocoa_solids`].
 
 - **Cocoa butter**: the fat component extracted from cacao solids (sometimes referred to as "cocoa
   fat"). This component affects the texture of ice creams by hardening the frozen product, and

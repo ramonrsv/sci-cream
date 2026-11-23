@@ -220,7 +220,7 @@ pub struct LabelCarbohydrates {
 ///         sugars: 12.0,
 ///     },
 ///     protein: 4.0,
-///     cacao_solids: Some(DeclaredSolids::Min(70.0)),
+///     cocoa_solids: Some(DeclaredSolids::Min(70.0)),
 ///     milk_solids: None,
 ///     dutch_processed: None,
 /// }.to_composition()?;
@@ -254,7 +254,7 @@ pub struct LabelCarbohydrates {
 ///         sugars: 46.0,
 ///     },
 ///     protein: 9.8,
-///     cacao_solids: Some(DeclaredSolids::Min(37.0)),
+///     cocoa_solids: Some(DeclaredSolids::Min(37.0)),
 ///     milk_solids: Some(DeclaredSolids::Min(24.0)),
 ///     dutch_processed: None,
 /// }.to_composition()?;
@@ -288,10 +288,10 @@ pub struct ChocolateLabelSpec {
     pub protein: f64,
     /// Cacao solids content that the label declares, as a percentage of the product as a whole
     ///
-    /// They include the cocoa butter, as in [`ChocolateSpec::cacao_solids`], and a white
+    /// They include the cocoa butter, as in [`ChocolateSpec::cocoa_solids`], and a white
     /// chocolate's are all cocoa butter.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cacao_solids: Option<DeclaredSolids>,
+    pub cocoa_solids: Option<DeclaredSolids>,
     /// Milk solids content that the label declares, as a percentage of the product as a whole
     ///
     /// They include the milk fat, as in [`ChocolateSpec::milk_solids`], and only milk and white
@@ -311,7 +311,7 @@ impl ToComposition for ChocolateLabelSpec {
             total_fat,
             carbohydrates,
             protein,
-            cacao_solids,
+            cocoa_solids,
             milk_solids,
             dutch_processed,
         } = *self;
@@ -344,16 +344,16 @@ impl ToComposition for ChocolateLabelSpec {
         let (fat, sugars, protein) = (total_fat * per_100g, sugars * per_100g, protein * per_100g);
         let fiber = fiber.map(|fiber| fiber * per_100g);
 
-        let with_milk = |cacao: f64, milk: f64, milk_fat: f64| -> Result<Composition> {
+        let with_milk = |cocoa: f64, milk: f64, milk_fat: f64| -> Result<Composition> {
             let (cocoa_butter, sugars) = (fat - milk_fat, sugars - (milk - milk_fat) * STD_LACTOSE_IN_MSNF);
-            verify_is_subset(cacao + milk + sugars, 100.0, "cacao_solids + milk_solids + sugars <= 100")?;
+            verify_is_subset(cocoa + milk + sugars, 100.0, "cocoa_solids + milk_solids + sugars <= 100")?;
 
             let comp = ChocolateSpec {
-                cacao_solids: cacao,
+                cocoa_solids: cocoa,
                 milk_solids: Some(milk),
                 fat: Some(ChocolateFat::Split { cocoa_butter, milk_fat }),
                 sugars: Some(sugars),
-                other_solids: Some(100.0 - cacao - milk - sugars),
+                other_solids: Some(100.0 - cocoa - milk - sugars),
             }
             .to_composition()?;
 
@@ -363,42 +363,42 @@ impl ToComposition for ChocolateLabelSpec {
 
         match kind {
             ChocolateKind::DarkChocolate => {
-                let (cacao, added_sugars) = derive_dark_chocolate_solids(sugars, cacao_solids);
-                verify_is_subset(cacao + added_sugars, 100.0, "cacao_solids + sugars <= 100")?;
-                verify_cocoa_sugars_are_intrinsic(sugars - added_sugars, cacao - fat, serving_size)?;
+                let (cocoa, added_sugars) = derive_dark_chocolate_solids(sugars, cocoa_solids);
+                verify_is_subset(cocoa + added_sugars, 100.0, "cocoa_solids + sugars <= 100")?;
+                verify_cocoa_sugars_are_intrinsic(sugars - added_sugars, cocoa - fat, serving_size)?;
 
                 ChocolateSpec {
-                    cacao_solids: cacao,
+                    cocoa_solids: cocoa,
                     milk_solids: None,
                     fat: Some(ChocolateFat::Total(fat)),
                     sugars: Some(added_sugars),
-                    other_solids: Some(100.0 - cacao - added_sugars),
+                    other_solids: Some(100.0 - cocoa - added_sugars),
                 }
                 .to_composition()
             }
             ChocolateKind::CocoaPowder => {
                 let water = STD_WATER_IN_COCOA_POWDER * 100.0;
-                let cacao = actual_or(cacao_solids, 100.0 - water);
-                verify_declared_minimum(cacao_solids, cacao, "cacao_solids")?;
-                verify_is_subset(water + cacao, 100.0, "water + cacao_solids <= 100")?;
-                verify_cocoa_sugars_are_intrinsic(sugars, cacao - fat, serving_size)?;
+                let cocoa = actual_or(cocoa_solids, 100.0 - water);
+                verify_declared_minimum(cocoa_solids, cocoa, "cocoa_solids")?;
+                verify_is_subset(water + cocoa, 100.0, "water + cocoa_solids <= 100")?;
+                verify_cocoa_sugars_are_intrinsic(sugars, cocoa - fat, serving_size)?;
 
                 CocoaPowderSpec {
-                    cacao_solids: Some(cacao),
+                    cocoa_solids: Some(cocoa),
                     cocoa_butter: fat,
-                    other_solids: Some(100.0 - water - cacao),
+                    other_solids: Some(100.0 - water - cocoa),
                     water: Some(water),
                     dutch_processed,
                 }
                 .to_composition()
             }
             ChocolateKind::MilkChocolate => {
-                let (cacao, milk) = derive_milk_chocolate_solids(protein, fat, fiber, cacao_solids, milk_solids)?;
-                with_milk(cacao, milk, milk_fat_from_milk_solids(milk))
+                let (cocoa, milk) = derive_milk_chocolate_solids(protein, fat, fiber, cocoa_solids, milk_solids)?;
+                with_milk(cocoa, milk, milk_fat_from_milk_solids(milk))
             }
             ChocolateKind::WhiteChocolate => {
-                let (cacao, milk) = derive_white_chocolate_solids(protein, fat, cacao_solids, milk_solids)?;
-                with_milk(cacao, milk, fat - cacao)
+                let (cocoa, milk) = derive_white_chocolate_solids(protein, fat, cocoa_solids, milk_solids)?;
+                with_milk(cocoa, milk, fat - cocoa)
             }
         }
     }
@@ -432,7 +432,7 @@ pub(crate) mod tests {
         "total_fat": 16,
         "carbohydrates": { "total": 19, "fiber": 5, "sugars": 12 },
         "protein": 4,
-        "cacao_solids": { "min": 70 }
+        "cocoa_solids": { "min": 70 }
       }
     }"#;
 
@@ -450,7 +450,7 @@ pub(crate) mod tests {
                     sugars: 12.0,
                 },
                 protein: 4.0,
-                cacao_solids: Some(DeclaredSolids::Min(70.0)),
+                cocoa_solids: Some(DeclaredSolids::Min(70.0)),
                 milk_solids: None,
                 dutch_processed: None,
             }
@@ -525,7 +525,7 @@ pub(crate) mod tests {
         "total_fat": 23,
         "carbohydrates": { "total": 10, "fiber": 7, "sugars": 1 },
         "protein": 5,
-        "cacao_solids": { "min": 95 }
+        "cocoa_solids": { "min": 95 }
       }
     }"#;
 
@@ -543,7 +543,7 @@ pub(crate) mod tests {
                     sugars: 1.0,
                 },
                 protein: 5.0,
-                cacao_solids: Some(DeclaredSolids::Min(95.0)),
+                cocoa_solids: Some(DeclaredSolids::Min(95.0)),
                 milk_solids: None,
                 dutch_processed: None,
             }
@@ -622,7 +622,7 @@ pub(crate) mod tests {
         "total_fat": 27,
         "carbohydrates": { "total": 14, "fiber": 8, "sugars": 0 },
         "protein": 7,
-        "cacao_solids": { "actual": 100 }
+        "cocoa_solids": { "actual": 100 }
       }
     }"#;
 
@@ -640,7 +640,7 @@ pub(crate) mod tests {
                     sugars: 0.0,
                 },
                 protein: 7.0,
-                cacao_solids: Some(DeclaredSolids::Actual(100.0)),
+                cocoa_solids: Some(DeclaredSolids::Actual(100.0)),
                 milk_solids: None,
                 dutch_processed: None,
             }
@@ -725,7 +725,7 @@ pub(crate) mod tests {
                     sugars: 51.5,
                 },
                 protein: 7.65,
-                cacao_solids: None,
+                cocoa_solids: None,
                 milk_solids: None,
                 dutch_processed: None,
             }
@@ -765,7 +765,7 @@ pub(crate) mod tests {
         "total_fat": 32,
         "carbohydrates": { "available": 56, "sugars": 55 },
         "protein": 7,
-        "cacao_solids": { "min": 30 },
+        "cocoa_solids": { "min": 30 },
         "milk_solids": { "min": 20 }
       }
     }"#;
@@ -784,7 +784,7 @@ pub(crate) mod tests {
                     sugars: 55.0,
                 },
                 protein: 7.0,
-                cacao_solids: Some(DeclaredSolids::Min(30.0)),
+                cocoa_solids: Some(DeclaredSolids::Min(30.0)),
                 milk_solids: Some(DeclaredSolids::Min(20.0)),
                 dutch_processed: None,
             }
@@ -823,7 +823,7 @@ pub(crate) mod tests {
         "total_fat": 36,
         "carbohydrates": { "available": 48, "fiber": 2.8, "sugars": 46 },
         "protein": 9.8,
-        "cacao_solids": { "min": 37 },
+        "cocoa_solids": { "min": 37 },
         "milk_solids": { "min": 24 }
       }
     }"#;
@@ -842,7 +842,7 @@ pub(crate) mod tests {
                     sugars: 46.0,
                 },
                 protein: 9.8,
-                cacao_solids: Some(DeclaredSolids::Min(37.0)),
+                cocoa_solids: Some(DeclaredSolids::Min(37.0)),
                 milk_solids: Some(DeclaredSolids::Min(24.0)),
                 dutch_processed: None,
             }
@@ -899,7 +899,7 @@ pub(crate) mod tests {
                     sugars: 59.0,
                 },
                 protein: 5.87,
-                cacao_solids: None,
+                cocoa_solids: None,
                 milk_solids: None,
                 dutch_processed: None,
             }
@@ -940,7 +940,7 @@ pub(crate) mod tests {
         "total_fat": 38,
         "carbohydrates": { "available": 51, "fiber": 0, "sugars": 51 },
         "protein": 7.9,
-        "cacao_solids": { "min": 30 },
+        "cocoa_solids": { "min": 30 },
         "milk_solids": { "min": 26 }
       }
     }"#;
@@ -959,7 +959,7 @@ pub(crate) mod tests {
                     sugars: 51.0,
                 },
                 protein: 7.9,
-                cacao_solids: Some(DeclaredSolids::Min(30.0)),
+                cocoa_solids: Some(DeclaredSolids::Min(30.0)),
                 milk_solids: Some(DeclaredSolids::Min(26.0)),
                 dutch_processed: None,
             }
@@ -1016,7 +1016,7 @@ pub(crate) mod tests {
                     sugars: 1.75,
                 },
                 protein: 19.6,
-                cacao_solids: None,
+                cocoa_solids: None,
                 milk_solids: None,
                 dutch_processed: None,
             }
@@ -1065,7 +1065,7 @@ pub(crate) mod tests {
                     sugars: 0.0,
                 },
                 protein: 1.0,
-                cacao_solids: None,
+                cocoa_solids: None,
                 milk_solids: None,
                 dutch_processed: None,
             }
@@ -1305,16 +1305,16 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn to_composition_err_below_the_declared_cacao_solids_minimum() {
+    fn to_composition_err_below_the_declared_cocoa_solids_minimum() {
         let label = ChocolateLabelSpec {
-            cacao_solids: Some(DeclaredSolids::Min(75.0)),
+            cocoa_solids: Some(DeclaredSolids::Min(75.0)),
             ..lindt_70_label()
         };
         assert!(matches!(label.to_composition(), Err(Error::InvalidComposition(_))));
     }
 
     #[test]
-    fn to_composition_cacao_solids_minimum_allows_for_rounded_up_sugars() {
+    fn to_composition_cocoa_solids_minimum_allows_for_rounded_up_sugars() {
         // Lindt 70%'s label on a 13 g serving, whose 3.9 g of sugars print as 4 g. Alone, those
         // 30.8% would leave 69.2% cacao solids, short of the declared 70% only by the rounding.
         let label = ChocolateLabelSpec {
@@ -1335,9 +1335,9 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn to_composition_actual_cacao_solids_leave_the_rest_as_other_solids() {
+    fn to_composition_actual_cocoa_solids_leave_the_rest_as_other_solids() {
         let comp = ChocolateLabelSpec {
-            cacao_solids: Some(DeclaredSolids::Actual(68.0)),
+            cocoa_solids: Some(DeclaredSolids::Actual(68.0)),
             ..lindt_70_label()
         }
         .to_composition()
@@ -1348,9 +1348,9 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn to_composition_err_when_actual_cacao_solids_leave_no_room_for_the_sugars() {
+    fn to_composition_err_when_actual_cocoa_solids_leave_no_room_for_the_sugars() {
         let label = ChocolateLabelSpec {
-            cacao_solids: Some(DeclaredSolids::Actual(75.0)),
+            cocoa_solids: Some(DeclaredSolids::Actual(75.0)),
             ..lindt_70_label()
         };
         assert!(matches!(label.to_composition(), Err(Error::InvalidComposition(_))));
@@ -1372,9 +1372,9 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn to_composition_actual_white_cacao_solids_set_the_fat_split() {
+    fn to_composition_actual_white_cocoa_solids_set_the_fat_split() {
         let comp = ChocolateLabelSpec {
-            cacao_solids: Some(DeclaredSolids::Actual(30.0)),
+            cocoa_solids: Some(DeclaredSolids::Actual(30.0)),
             ..ING_SPEC_CHOCOLATE_LABEL_GREEN_AND_BLACKS_WHITE_CHOCOLATE
                 .spec
                 .clone()
@@ -1395,7 +1395,7 @@ pub(crate) mod tests {
         // Lindt Classic Milk at its 30% cacao solids minimum and 21% milk solids, taken as actual,
         // composes 6.6406 g of protein, within the 6.5-7.5 g that its printed 7 g may be
         let comp = ChocolateLabelSpec {
-            cacao_solids: Some(DeclaredSolids::Actual(30.0)),
+            cocoa_solids: Some(DeclaredSolids::Actual(30.0)),
             milk_solids: Some(DeclaredSolids::Actual(21.0)),
             ..ING_SPEC_CHOCOLATE_LABEL_LINDT_CLASSIC_MILK_CHOCOLATE
                 .spec
@@ -1414,7 +1414,7 @@ pub(crate) mod tests {
         // Taken as actual, Lindt Classic Milk's minima compose 6.302 g of protein against its 7 g,
         // and Green & Black's White's milk solids minimum 7.215 g against its 7.9 g
         let lindt = ChocolateLabelSpec {
-            cacao_solids: Some(DeclaredSolids::Actual(30.0)),
+            cocoa_solids: Some(DeclaredSolids::Actual(30.0)),
             milk_solids: Some(DeclaredSolids::Actual(20.0)),
             ..ING_SPEC_CHOCOLATE_LABEL_LINDT_CLASSIC_MILK_CHOCOLATE
                 .spec
@@ -1470,7 +1470,7 @@ pub(crate) mod tests {
                 sugars: 18.0,
             },
             protein: 1.5,
-            cacao_solids: None,
+            cocoa_solids: None,
             milk_solids: None,
             dutch_processed: None,
         };

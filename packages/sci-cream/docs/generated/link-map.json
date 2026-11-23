@@ -84,7 +84,7 @@
     "docs::recipes": "docs/recipes/index.html",
     "specs::chocolate::chocolate::ChocolateFat::Split::cocoa_butter": "specs/chocolate/chocolate/enum.ChocolateFat.html#variant.Split.field.cocoa_butter",
     "specs::chocolate::chocolate::ChocolateSpec": "specs/chocolate/chocolate/struct.ChocolateSpec.html",
-    "specs::chocolate::chocolate::ChocolateSpec::cacao_solids": "specs/chocolate/chocolate/struct.ChocolateSpec.html#structfield.cacao_solids",
+    "specs::chocolate::chocolate::ChocolateSpec::cocoa_solids": "specs/chocolate/chocolate/struct.ChocolateSpec.html#structfield.cocoa_solids",
     "specs::chocolate::chocolate::ChocolateSpec::fat": "specs/chocolate/chocolate/struct.ChocolateSpec.html#structfield.fat",
     "specs::chocolate::chocolate::ChocolateSpec::other_solids": "specs/chocolate/chocolate/struct.ChocolateSpec.html#structfield.other_solids",
     "specs::chocolate::chocolate::ChocolateSpec::sugars": "specs/chocolate/chocolate/struct.ChocolateSpec.html#structfield.sugars",

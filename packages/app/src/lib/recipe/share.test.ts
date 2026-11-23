@@ -19,6 +19,7 @@ import {
   findUserDefinedShareNames,
   makeEmbedSnippet,
   makeSharePayload,
+  makeSharedRecipe,
   makeShareUrl,
   type SharePayload,
 } from "./share";
@@ -35,14 +36,18 @@ const ROWS: LightRecipe = [
 
 describe("makeSharePayload", () => {
   it("omits zero evaporation, empty comments, and empty spec lists", () => {
-    expect(makeSharePayload("A", ROWS)).toEqual({ v: 1, n: "A", r: ROWS });
-    expect(makeSharePayload("A", ROWS, 0, "", [])).toEqual({ v: 1, n: "A", r: ROWS });
+    expect(makeSharePayload("A", ROWS)).toEqual({ v: SHARE_PAYLOAD_VERSION, n: "A", r: ROWS });
+    expect(makeSharePayload("A", ROWS, 0, "", [])).toEqual({
+      v: SHARE_PAYLOAD_VERSION,
+      n: "A",
+      r: ROWS,
+    });
   });
 
   it("keeps evaporation, comments, and specs when present", () => {
     const spec = { name: "X" };
     expect(makeSharePayload("A", ROWS, 25, "Ripen overnight.", [spec])).toEqual({
-      v: 1,
+      v: SHARE_PAYLOAD_VERSION,
       n: "A",
       r: ROWS,
       e: 25,
@@ -53,7 +58,7 @@ describe("makeSharePayload", () => {
 
   it("omits the version label unless explicitly passed", () => {
     expect(makeSharePayload("A", ROWS, undefined, undefined, undefined, "")).toEqual({
-      v: 1,
+      v: SHARE_PAYLOAD_VERSION,
       n: "A",
       r: ROWS,
     });
@@ -61,7 +66,7 @@ describe("makeSharePayload", () => {
 
   it("keeps the version label when present", () => {
     expect(makeSharePayload("A", ROWS, undefined, undefined, undefined, "3.1")).toEqual({
-      v: 1,
+      v: SHARE_PAYLOAD_VERSION,
       n: "A",
       r: ROWS,
       vn: "3.1",
@@ -98,8 +103,42 @@ describe("encodeSharePayload / decodeSharePayload", () => {
   });
 
   it("drops unknown extra fields on decode", async () => {
-    const encoded = await encodeRaw({ v: 1, n: "A", r: ROWS, x: "extra" });
-    await expect(decodeSharePayload(encoded)).resolves.toEqual({ v: 1, n: "A", r: ROWS });
+    const encoded = await encodeRaw({ v: SHARE_PAYLOAD_VERSION, n: "A", r: ROWS, x: "extra" });
+    await expect(decodeSharePayload(encoded)).resolves.toEqual({
+      v: SHARE_PAYLOAD_VERSION,
+      n: "A",
+      r: ROWS,
+    });
+  });
+
+  it("upgrades a v1 payload to the current version", async () => {
+    const encoded = await encodeRaw({ v: 1, n: "A", r: ROWS, e: 25 });
+    await expect(decodeSharePayload(encoded)).resolves.toEqual(makeSharePayload("A", ROWS, 25));
+  });
+
+  it("renames the cacao_solids of a v1 payload's chocolate specs to cocoa_solids", async () => {
+    const dairy = { name: "My Milk", category: "Dairy", DairySimpleSpec: { fat: 3.8 } };
+    const v1Specs = [
+      { name: "D", category: "Chocolate", ChocolateSpec: { cacao_solids: 70, sugars: 30 } },
+      { name: "P", category: "Chocolate", CocoaPowderSpec: { cacao_solids: 97, cocoa_butter: 20 } },
+      { name: "L", category: "Chocolate", ChocolateLabelSpec: { cacao_solids: { min: 70 } } },
+      { name: "C", category: "Chocolate", CocoaPowderSpec: { cocoa_butter: 10 } },
+      dairy,
+    ];
+    const { s } = await decodeSharePayload(await encodeRaw({ v: 1, n: "A", r: ROWS, s: v1Specs }));
+    expect(s).toEqual([
+      { name: "D", category: "Chocolate", ChocolateSpec: { cocoa_solids: 70, sugars: 30 } },
+      { name: "P", category: "Chocolate", CocoaPowderSpec: { cocoa_solids: 97, cocoa_butter: 20 } },
+      { name: "L", category: "Chocolate", ChocolateLabelSpec: { cocoa_solids: { min: 70 } } },
+      { name: "C", category: "Chocolate", CocoaPowderSpec: { cocoa_butter: 10 } },
+      dairy,
+    ]);
+  });
+
+  it("leaves the specs of a current payload as they are", async () => {
+    const spec = { name: "D", category: "Chocolate", ChocolateSpec: { cacao_solids: 70 } };
+    const payload = makeSharePayload("A", ROWS, undefined, undefined, [spec]);
+    await expect(decodeSharePayload(await encodeSharePayload(payload))).resolves.toEqual(payload);
   });
 
   it("rejects truncated and corrupted payloads as Invalid", async () => {
@@ -177,6 +216,21 @@ describe("encodeSharePayload / decodeSharePayload", () => {
     expect(encoded.length).toBeLessThan(MAX_ENCODED_CHARS);
     await expect(decodeSharePayload(encoded)).rejects.toMatchObject({
       kind: ShareErrorKind.TooLarge,
+    });
+  });
+});
+
+describe("makeSharedRecipe", () => {
+  it("seeds the upgraded chocolate specs of a v1 payload", async () => {
+    const spec = {
+      name: "My Dark Chocolate",
+      category: "Chocolate",
+      ChocolateSpec: { cacao_solids: 70, sugars: 30 },
+    };
+    const encoded = await encodeRaw({ v: 1, n: "A", r: [["My Dark Chocolate", 100]], s: [spec] });
+    expect(makeSharedRecipe(await decodeSharePayload(encoded))).toMatchObject({
+      status: "ready",
+      allResolved: true,
     });
   });
 });
