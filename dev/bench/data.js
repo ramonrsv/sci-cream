@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795469747787,
+  "lastUpdate": 1795469752039,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -741935,6 +741935,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/3003fbf0ffc33bc8d8307894f56a4ea7a681c149"
         },
         "date": 1795469423011,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "49950bea547dc8306602ab901e1f4ff7f99fac18",
+          "message": "Exclude app benches from code coverage\n\nThe bench helpers' unit test loads `__benches__/util.ts`, which\nVitest then counts toward coverage like application code.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T16:28:16-05:00",
+          "tree_id": "7c269c6058cd3f2601e14086d1f4858ab70f1857",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/49950bea547dc8306602ab901e1f4ff7f99fac18"
+        },
+        "date": 1795469751247,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
