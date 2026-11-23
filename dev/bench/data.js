@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795454753092,
+  "lastUpdate": 1795454763578,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -643857,6 +643857,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.40%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "df2fad40a5bb8214ec7176bb6fabdf5225ce571a",
+          "message": "Rename the cocoa composition constants\n\nconstants::composition::cacao becomes cocoa. The seven fractions of\nthe non-fat part, STD_*_IN_COCOA_SOLIDS, become STD_*_IN_COCOA_SNF, as\nCompKey::CocoaSNF, and hf::COCOA_SOLIDS becomes hf::COCOA_SNF.\nSTD_COCOA_BUTTER_IN_CACAO_SOLIDS, a fraction of the total, becomes\nSTD_COCOA_BUTTER_IN_COCOA_SOLIDS.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T01:41:15-05:00",
+          "tree_id": "177c05db10ff339b1c84423698b6c272875063e6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/df2fad40a5bb8214ec7176bb6fabdf5225ce571a"
+        },
+        "date": 1795454675377,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 50099,
+            "range": "±1.37%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 437852,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33276,
+            "range": "±1.42%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 338043,
+            "range": "±1.22%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
