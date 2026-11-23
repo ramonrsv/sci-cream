@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795453754438,
+  "lastUpdate": 1795453758546,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -735452,6 +735452,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/f45d97458af1d6a13f439caf829ab2afc82130ba"
         },
         "date": 1795338067124,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e4f0878551a447cc832e4675c1fcf938087701fd",
+          "message": "Rename the cocoa composition keys\n\nCompKey::CacaoSolids becomes CocoaSolids, the total, as regulations,\nspecification sheets, and labels use \"cocoa solids\", and CocoaSolids,\nthe non-fat part, becomes CocoaSNF, as MSNF, NutSNF, and EggSNF. Its\ndisplay strings are \"Cocoa SNF\" and \"Cocoa Solids Non-Fat\".\n\nSaved property selections, watcher targets, and priorities name\nPropKeys, so an old \"CocoaSolids\" would now read as the total. Every\nroot that saves keys, composition selections' CompKey numbers too,\ntakes a shared SCI_CREAM_KEYS_VERSION and starts over.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T01:10:32-05:00",
+          "tree_id": "4bec2f9f2f316ac27ddf9b1bd2fb32f950693e77",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e4f0878551a447cc832e4675c1fcf938087701fd"
+        },
+        "date": 1795453757723,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
