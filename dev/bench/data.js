@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795475184670,
+  "lastUpdate": 1795475202814,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -650335,6 +650335,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.75%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "db376c6c7f4e5fd3af9ba216aec6cb37153364bb",
+          "message": "Add Cadbury Dairy Milk labels, scaling overfills\n\nA milk or white ChocolateLabelSpec rejected any label whose rounded\nfigures composed more than 100 g, as Canada's Cadbury Dairy Milk does\nby 1.3%. Those parts now scale into 100 g, as far as that keeps the\nlabel's fat and sugars within half a gram per serving of what it\nprints, leaving no other solids.\n\nCadbury Dairy Milk Chocolate (UK) declares its actual milk solids and\ncounts its palm and shea, cocoa butter equivalents, as cocoa butter;\n(Canada) is the 90 g bar's label, with no vegetable fats. Test-only\nfixtures add the UK label's minima, two more Canadian sizes, and\nDarkmilk, and the tests compare them and refuse the US label, which\nnothing on it can split.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T17:52:07-05:00",
+          "tree_id": "cdd663cfcb464b9bcad156f9c346afb372d61964",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/db376c6c7f4e5fd3af9ba216aec6cb37153364bb"
+        },
+        "date": 1795475139129,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 67015,
+            "range": "±0.51%",
+            "unit": "ops/sec",
+            "extra": "100 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 597887,
+            "range": "±0.62%",
+            "unit": "ops/sec",
+            "extra": "99 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 49312,
+            "range": "±0.68%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 534177,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
           }
         ]
       }
