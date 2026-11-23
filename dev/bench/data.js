@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795456111234,
+  "lastUpdate": 1795468085500,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -755622,6 +755622,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2193.81,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5b562c731f61b67ca0742a6934cca048fc0bc1b9",
+          "message": "Adopt the cocoa terminology in the docs\n\nThe chapter becomes \"Cocoa\", in docs/cocoa.md, and defines the parts\nas the standards, specification sheets, and literature name them:\ncocoa solids, the total; cocoa butter; and cocoa solids non-fat. It\ncites Codex CXS 87, Canada's compositional standards, and Wikipedia's\n\"Cocoa solids\", new to the references, and the links to it follow.\n\nThe comments, docs, and messages around the chocolate specs follow:\n\"cacao solids\" become cocoa solids, the non-fat \"cocoa solids\" cocoa\nsolids non-fat or cocoa SNF, and other \"cacao\" cocoa, but for quotes,\nnames, and Theobroma cacao.\n\nTODO.md's \"cacao\" umbrella item, answered with cocoa, is complete.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T15:59:53-05:00",
+          "tree_id": "6950ab6d9104cfd4516ff01f7146b3bb36c38968",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5b562c731f61b67ca0742a6934cca048fc0bc1b9"
+        },
+        "date": 1795467996283,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1231.93,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 371.45,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1984.19,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 606.46,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 655.12,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2193.77,
             "unit": "KB"
           }
         ]
