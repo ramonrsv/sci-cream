@@ -13,7 +13,7 @@ import {
 } from "@workspace/sci-cream";
 
 import { Metric } from "@/app/_elements/web-vitals";
-import { HYDRATION_MARK } from "@/lib/app-shell";
+import { APP_CONTENT_ID, HYDRATION_MARK } from "@/lib/app-shell";
 import { formatCompositionValue, applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
@@ -673,7 +673,9 @@ export enum LoadState {
  * By default, it navigates to the root URL and waits for `LoadState::NetworkIdle = "networkidle"`.
  *
  * It then parks the cursor: a browser may hover whatever loads beneath it, and on the sidebar's
- * hover zone that opens the peek drawer, which overlays the content until the cursor moves.
+ * hover zone that opens the peek drawer, which overlays the content until it finishes closing,
+ * shortly after the cursor leaves. A click beneath it meanwhile retries, scrolling its target into
+ * view at a new alignment each time, so this waits for the drawer to clear the content.
  */
 export async function goToPageAndWaitFor(
   page: Page,
@@ -683,6 +685,12 @@ export async function goToPageAndWaitFor(
   await page.goto(url);
   await page.waitForLoadState(loadState);
   await parkCursor(page);
+  await page.waitForFunction((contentId) => {
+    const sidebar = document.getElementById("sidebar");
+    if (!sidebar) return true; // No drawer: a chromeless route, or a shell not yet mounted
+    const content = document.getElementById(contentId)!;
+    return sidebar.getBoundingClientRect().right <= content.getBoundingClientRect().left;
+  }, APP_CONTENT_ID);
 }
 
 /**
