@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795469404661,
+  "lastUpdate": 1795469419723,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -698195,6 +698195,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/docs/[...slug] first-load JS (gzip)",
             "value": 875.08,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1037.83,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3003fbf0ffc33bc8d8307894f56a4ea7a681c149",
+          "message": "Wait for the peek drawer to clear the content\n\ngoToPageAndWaitFor parks the cursor off the sidebar's hover zone, but\na peek drawer the page load opened doesn't close at once: it closes\nafter a short delay, then animates shut, covering the content's left\nedge meanwhile. Playwright retries a click beneath it, scrolling the\ntarget into view at a new alignment on each attempt: centred if\nneeded, then end, center, and start.\n\nAt the 1080p half-screen viewport the ingredients list sits under the\ndrawer, so the selected item ended up centred or at the top of the\ncolumn depending on which retry landed, and the layout test flaked.\n\nIt now waits, after parking, until the sidebar's right edge no longer\npasses the content's left edge.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T16:15:53-05:00",
+          "tree_id": "e610a90986347bf8e229183fc744c4e9996dce6f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3003fbf0ffc33bc8d8307894f56a4ea7a681c149"
+        },
+        "date": 1795469336920,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 778.08,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 945.8,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 722.43,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 890.15,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 732.28,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 900,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 705.83,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 873.55,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 707.36,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 875.09,
             "unit": "KB"
           },
           {
