@@ -246,7 +246,7 @@ pub fn get_typical_balancing_keys() -> Vec<BalanceKey> {
         CompKey::MilkFat.into(),
         CompKey::MSNF.into(),
         CompKey::CocoaButter.into(),
-        CompKey::CocoaSolids.into(),
+        CompKey::CocoaSNF.into(),
         CompKey::NutSNF.into(),
         CompKey::EggSNF.into(),
         CompKey::POD.into(),

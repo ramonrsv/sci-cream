@@ -130,9 +130,9 @@ pub(crate) mod subtrees {
         )
     }
 
-    // --- Cacao --------------------------------
-    pub(crate) fn cacao_solids() -> N<CompKey> {
-        N::br(CacaoSolids, leaves(&[CocoaButter, CocoaSolids]))
+    // --- Cocoa --------------------------------
+    pub(crate) fn cocoa_solids() -> N<CompKey> {
+        N::br(CocoaSolids, leaves(&[CocoaButter, CocoaSNF]))
     }
 
     // --- Nuts ---------------------------------
@@ -281,7 +281,7 @@ mod forests {
         vec![
             // Ingredient-source axis
             milk_solids(),
-            cacao_solids(),
+            cocoa_solids(),
             nut_solids(),
             egg_solids(),
             // Macronutrient axis
@@ -302,7 +302,7 @@ mod forests {
             N::lf(Comp(Energy)),
             // Ingredient-source axis
             milk_solids().into(),
-            cacao_solids().into(),
+            cocoa_solids().into(),
             nut_solids().into(),
             egg_solids().into(),
             // Macronutrient axis, with visual-only groupings for ratios and FPDs
@@ -457,7 +457,7 @@ impl CompKey {
                 | Self::MilkSolids
                 | Self::MSNF
                 | Self::MilkProteins
-                | Self::CacaoSolids
+                | Self::CocoaSolids
                 | Self::NutSolids
                 | Self::EggSolids
                 | Self::EggProteins
@@ -576,7 +576,7 @@ mod tests {
         // Transitive: MilkFat -> TotalFats -> TotalSolids.
         assert!(MilkFat.is_part_of(TotalSolids));
         // Siblings are not in a part/whole relationship.
-        assert!(!CocoaButter.is_part_of(CocoaSolids));
+        assert!(!CocoaButter.is_part_of(CocoaSNF));
         // A key is not a part of itself, and an ancestor is not a part of its descendant.
         assert!(!MilkFat.is_part_of(MilkFat));
         assert!(!TotalSolids.is_part_of(MilkFat));

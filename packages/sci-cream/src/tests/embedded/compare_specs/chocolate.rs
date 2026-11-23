@@ -19,9 +19,9 @@ use crate::composition::CompKey;
 const COMPARABLE_CHOCOLATE_KEYS: &[CompKey] = &[
     CompKey::Energy,
     CompKey::TotalFats,
-    CompKey::CacaoSolids,
-    CompKey::CocoaButter,
     CompKey::CocoaSolids,
+    CompKey::CocoaButter,
+    CompKey::CocoaSNF,
     CompKey::MilkFat,
     CompKey::MilkSolids,
     CompKey::MSNF,
@@ -133,10 +133,10 @@ fn compare_specs_chocolate_70() {
     // The label variant counts other solids as cocoa solids, hardening it further from Corvitto's.
     let ceiling = KeyCeiling::new(4.5)
         .with(CompKey::Energy, 7.5)
-        .with(CompKey::CocoaSolids, 6.5)
+        .with(CompKey::CocoaSNF, 6.5)
         .with(CompKey::TotalSNFS, 8.0)
         .with(CompKey::HF, 8.0)
-        .with_source("Callebaut (Label)", CompKey::CocoaSolids, 7.5)
+        .with_source("Callebaut (Label)", CompKey::CocoaSNF, 7.5)
         .with_source("Callebaut (Label)", CompKey::HF, 10.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
@@ -263,7 +263,7 @@ fn compare_specs_milk_chocolate_40() {
     let ceiling = KeyCeiling::new(5.5)
         .with(CompKey::HF, 6.5)
         .with(CompKey::Energy, 6.5)
-        .with_source("Callebaut Power 41 (Label)", CompKey::CocoaSolids, 6.0)
+        .with_source("Callebaut Power 41 (Label)", CompKey::CocoaSNF, 6.0)
         .with_source("Callebaut Power 41 (Label)", CompKey::HF, 7.0)
         .with_source("Callebaut Arriba (Label)", CompKey::MilkSolids, 6.5);
 

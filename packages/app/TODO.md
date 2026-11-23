@@ -32,6 +32,8 @@
 - [ ] Add visual regression tests for the chart tooltips; only their callbacks are unit-tested.
 - [ ] Add visual regression coverage for the `/blog` index, the way `docs.spec.ts` covers `/docs`.
 - [ ] Increase the navbar logo size; it is `HEADER_ICON_SIZE + 2`, so give it its own constant.
+- [ ] Consider saving `CompKey` in `localStorage` by name, so that only renames, not reorderings,
+      require a `SCI_CREAM_KEYS_VERSION` bump; alternatively, detect changes to the key enums.
 
 ## Up Next
 

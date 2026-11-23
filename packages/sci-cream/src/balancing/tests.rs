@@ -471,7 +471,7 @@ const DAIRY_STABILIZER_ING: &[&str] = &["3.25% Milk", "40% Cream", "Skimmed Milk
 const DAIRY_SUGAR_ING: &[&str] = &["3.25% Milk", "40% Cream", "Skimmed Milk Powder", "Sucrose"];
 
 /// Dairy plus cocoa powder and sucrose, a minimal chocolate-base palette. The single cocoa
-/// source couples [`CompKey::CocoaSolids`] and [`CompKey::CocoaButter`] at a fixed ratio.
+/// source couples [`CompKey::CocoaSNF`] and [`CompKey::CocoaButter`] at a fixed ratio.
 const DAIRY_COCOA_ING: &[&str] = &[
     "3.25% Milk",
     "40% Cream",
@@ -561,12 +561,12 @@ static LIGHT_PREMIUM_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|
     ]
 });
 
-/// Chocolate intensity vs. lean: high [`CompKey::CocoaSolids`] and low [`CompKey::CocoaButter`]
+/// Chocolate intensity vs. lean: high [`CompKey::CocoaSNF`] and low [`CompKey::CocoaButter`]
 /// targets, which the single cocoa source cannot satisfy independently (the two are coupled by
 /// its fixed solids:butter ratio).
 static CHOCOLATE_COUPLED_COCOA_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|| {
     vec![
-        (CompKey::CocoaSolids.into(), 6.0),
+        (CompKey::CocoaSNF.into(), 6.0),
         (CompKey::CocoaButter.into(), 1.0),
         (CompKey::TotalSugars.into(), 20.0),
     ]
@@ -1163,7 +1163,7 @@ fn balancing_issues_report_multiple_warnings() {
                 (CompKey::MilkFat.into(), 50.0),
                 (CompKey::Sucrose.into(), 20.0),
                 (CompKey::TotalSugars.into(), 15.0),
-                (CompKey::CocoaSolids.into(), 5.0),
+                (CompKey::CocoaSNF.into(), 5.0),
             ],
             &[],
         ),
@@ -1246,7 +1246,7 @@ fn balancing_issues_report_real_setup_with_ref_recipes_chocolate_no_ing() {
         .iter()
         .map(|&(key, value)| match key {
             BalanceKey::Comp(comp_key) => match comp_key {
-                CompKey::CocoaSolids => (CompKey::CocoaSolids.into(), 6.0),
+                CompKey::CocoaSNF => (CompKey::CocoaSNF.into(), 6.0),
                 CompKey::CocoaButter => (CompKey::CocoaButter.into(), 2.0),
                 _ => (key, value),
             },
@@ -1268,7 +1268,7 @@ fn balancing_issues_report_real_setup_with_ref_recipes_chocolate_powder_only() {
         .iter()
         .map(|&(key, value)| match key {
             BalanceKey::Comp(comp_key) => match comp_key {
-                CompKey::CocoaSolids => (CompKey::CocoaSolids.into(), 6.0),
+                CompKey::CocoaSNF => (CompKey::CocoaSNF.into(), 6.0),
                 CompKey::CocoaButter => (CompKey::CocoaButter.into(), 2.0),
                 _ => (key, value),
             },
@@ -2131,17 +2131,17 @@ fn validate_flags_unreachable_target_as_warning() {
 
 #[test]
 fn ratio_tolerance_suppresses_pinned_ratio_off_by_rounding() {
-    // Cocoa is the sole source of both CocoaButter and CocoaSolids, so their ratio is pinned; a
+    // Cocoa is the sole source of both CocoaButter and CocoaSNF, so their ratio is pinned; a
     // feasible target rounded to its shown precision drifts just off that single value.
     let comps = comps_from_names(DAIRY_COCOA_ING);
-    let (pin, pin_max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
+    let (pin, pin_max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSNF]).unwrap();
     assert_eq_flt!(pin, pin_max); // pinned: the band is a single point
 
     // A feasible point, with CocoaButter rounded to 2 dp as shown.
-    let cocoa_solids = 4.0;
-    let cocoa_butter = (cocoa_solids * pin * 100.0).round() / 100.0;
+    let cocoa_snf = 4.0;
+    let cocoa_butter = (cocoa_snf * pin * 100.0).round() / 100.0;
     let targets = [
-        (CompKey::CocoaSolids.into(), cocoa_solids),
+        (CompKey::CocoaSNF.into(), cocoa_snf),
         (CompKey::CocoaButter.into(), cocoa_butter),
     ];
 
@@ -2361,12 +2361,12 @@ fn validate_flags_structural_violation_for_sugar_group_over_total_sugars() {
 fn validate_does_not_flag_unaffectable_for_zero_target() {
     // A zero target for a key no ingredient supplies is trivially satisfied
     let report =
-        validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::CocoaSolids.into(), 0.0)], &[], None);
+        validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::CocoaSNF.into(), 0.0)], &[], None);
 
     assert_false!(report.warnings().any(|issue| matches!(
         issue,
         BalancingIssue::UnaffectableTarget {
-            key: BalanceKey::Comp(CompKey::CocoaSolids)
+            key: BalanceKey::Comp(CompKey::CocoaSNF)
         }
     )));
 }
@@ -2395,10 +2395,10 @@ fn validate_clean_targets_yield_empty_report() {
 
 #[test]
 fn validate_flags_ratio_infeasibility_for_pinned_cocoa_ratio() {
-    // The only cocoa source pins CocoaButter : CocoaSolids ≈ 0.2. A 2 : 5 (0.4) target is off
-    // that pin yet keeps CocoaButter <= CocoaSolids, so only the ratio-band check catches it.
+    // The only cocoa source pins CocoaButter : CocoaSNF ≈ 0.2. A 2 : 5 (0.4) target is off
+    // that pin yet keeps CocoaButter <= CocoaSNF, so only the ratio-band check catches it.
     let comps = comps_from_names(DAIRY_COCOA_ING);
-    let targets = [(CompKey::CocoaButter.into(), 2.0), (CompKey::CocoaSolids.into(), 5.0)];
+    let targets = [(CompKey::CocoaButter.into(), 2.0), (CompKey::CocoaSNF.into(), 5.0)];
     let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_false!(report.has_errors());
@@ -2406,14 +2406,14 @@ fn validate_flags_ratio_infeasibility_for_pinned_cocoa_ratio() {
         issue,
         BalancingIssue::RatioInfeasibility {
             numerator,
-            denominator: BalanceKey::Comp(CompKey::CocoaSolids),
+            denominator: BalanceKey::Comp(CompKey::CocoaSNF),
             target_ratio,
             ..
         } if numerator.as_slice() == [BalanceKey::Comp(CompKey::CocoaButter)]
             && eq_flt(*target_ratio, 0.4)
     )));
 
-    // It is an off-band ratio, not a dominance violation (CocoaButter <= CocoaSolids holds).
+    // It is an off-band ratio, not a dominance violation (CocoaButter <= CocoaSNF holds).
     assert_false!(
         report
             .warnings()
@@ -2577,10 +2577,10 @@ fn validate_no_multi_ratio_issue_when_combined_within_band() {
 
 #[test]
 fn validate_flags_palette_dominance_for_non_structural_pair() {
-    // CocoaButter and CocoaSolids are siblings, and the lone cocoa source pins CocoaButter <=
-    // CocoaSolids, so a higher CocoaButter target is a palette dominance violation.
+    // CocoaButter and CocoaSNF are siblings, and the lone cocoa source pins CocoaButter <=
+    // CocoaSNF, so a higher CocoaButter target is a palette dominance violation.
     let comps = comps_from_names(DAIRY_COCOA_ING);
-    let targets = [(CompKey::CocoaButter.into(), 10.0), (CompKey::CocoaSolids.into(), 5.0)];
+    let targets = [(CompKey::CocoaButter.into(), 10.0), (CompKey::CocoaSNF.into(), 5.0)];
 
     // Raw generators: a sibling pair is not a part/whole relation, so structural stays silent
     // and only the unified palette search flags the dominance — nothing to deduplicate against.
@@ -2598,7 +2598,7 @@ fn validate_flags_palette_dominance_for_non_structural_pair() {
     assert_true!(report.warnings().any(|issue| matches!(
         issue,
         BalancingIssue::DominanceViolation {
-            greater: BalanceKey::Comp(CompKey::CocoaSolids),
+            greater: BalanceKey::Comp(CompKey::CocoaSNF),
             lesser,
             lesser_target_sum,
             greater_target,
@@ -2759,7 +2759,7 @@ fn affected_keys_grouped_dominance_names_greater_then_parts() {
 
 #[test]
 fn affected_keys_ratio_infeasibility_names_denominator_then_numerator() {
-    let denominator = BalanceKey::Comp(CompKey::CocoaSolids);
+    let denominator = BalanceKey::Comp(CompKey::CocoaSNF);
     let numerator = vec![BalanceKey::Comp(CompKey::CocoaButter)];
     let issue = BalancingIssue::RatioInfeasibility {
         numerator: numerator.clone(),
@@ -2903,10 +2903,10 @@ fn ratio_band_with_empty_denominator_is_the_value_range() {
 
 #[test]
 fn ratio_band_pins_a_single_source_ratio() {
-    // Only cocoa has CocoaSolids > 0, so CocoaButter : CocoaSolids is pinned to its 16.7 : 80.3,
+    // Only cocoa has CocoaSNF > 0, so CocoaButter : CocoaSNF is pinned to its 16.7 : 80.3,
     // from its label's 1 g of fat per 6 g and the standard 3% water
     let comps = comps_from_names(DAIRY_COCOA_ING);
-    let (min, max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
+    let (min, max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSNF]).unwrap();
     assert_eq_flt!(min, max);
     assert_eq_flt!(min, (100.0 / 6.0) / (97.0 - 100.0 / 6.0));
 }
@@ -2921,9 +2921,9 @@ fn ratio_band_is_unbounded_above_with_zero_denominator_source() {
 
 #[test]
 fn ratio_band_is_none_when_denominator_never_positive() {
-    // No cocoa source → CocoaSolids is zero everywhere, so the ratio is undefined.
+    // No cocoa source → CocoaSNF is zero everywhere, so the ratio is undefined.
     let comps = comps_from_names(DAIRY_ING);
-    assert!(ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).is_none());
+    assert!(ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSNF]).is_none());
 }
 
 // --- Locked-composition balancing ---------------------------------------------------------------

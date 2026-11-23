@@ -1,6 +1,6 @@
 ---
 source: packages/sci-cream/src/balancing/tests.rs
-expression: "report_balancing_issues(&comps_from_names(DAIRY_SUGAR_ING),\n&[(CompKey::MilkFat.into(), 50.0), (CompKey::Sucrose.into(), 20.0),\n(CompKey::TotalSugars.into(), 15.0), (CompKey::CocoaSolids.into(), 5.0),],\n&[], Some(DAIRY_SUGAR_ING),)"
+expression: "report_balancing_issues(&comps_from_names(DAIRY_SUGAR_ING),\n&fuse_targets(&[(CompKey::MilkFat.into(), 50.0),\n(CompKey::Sucrose.into(), 20.0), (CompKey::TotalSugars.into(), 15.0),\n(CompKey::CocoaSNF.into(), 5.0),], &[],), Some(DAIRY_SUGAR_ING),)"
 ---
 palette:
   3.25% Milk
@@ -11,8 +11,8 @@ targets:
   MilkFat                50.00
   Sucrose                20.00
   TotalSugars            15.00
-  CocoaSolids             5.00
+  CocoaSNF                5.00
 
-[warning] No ingredient contributes to 'Cocoa Solids', so its target cannot be affected
+[warning] No ingredient contributes to 'Cocoa SNF', so its target cannot be affected
 [warning] Target for 'Milk Fat' (50) is outside the reachable range [0, 40]
 [warning] Target for 'Sucrose' (20) exceeds target for 'Sugars' (15), but 'Sucrose' is part of 'Sugars', so it can never be larger

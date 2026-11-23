@@ -662,9 +662,9 @@ const CALLEBAUT_PAGE_MINIMA: &[(&str, Option<f64>, Option<f64>)] = &[
 /// non-fat, the cacao solids less the cocoa butter, take on the errors of both, and in 665 come to
 /// only 3.2 g, so they miss by up to 35%.
 const CALLEBAUT_DECLARED_CEILINGS: &[(CompKey, f64)] = &[
-    (CompKey::CacaoSolids, 5.5),
+    (CompKey::CocoaSolids, 5.5),
     (CompKey::CocoaButter, 5.5),
-    (CompKey::CocoaSolids, 35.5),
+    (CompKey::CocoaSNF, 35.5),
     (CompKey::MilkSolids, 6.5),
     (CompKey::MilkFat, 36.5),
 ];
@@ -678,7 +678,7 @@ fn declared_solids_cases(
     min_milk: Option<f64>,
     entry: &Composition,
 ) -> Vec<(&'static str, Option<DeclaredSolids>, Option<DeclaredSolids>)> {
-    let cacao = Some(DeclaredSolids::Actual(entry.get(CompKey::CacaoSolids)));
+    let cacao = Some(DeclaredSolids::Actual(entry.get(CompKey::CocoaSolids)));
     let milk = Some(DeclaredSolids::Actual(entry.get(CompKey::MilkSolids)));
 
     let mut cases = vec![("none", None, None)];

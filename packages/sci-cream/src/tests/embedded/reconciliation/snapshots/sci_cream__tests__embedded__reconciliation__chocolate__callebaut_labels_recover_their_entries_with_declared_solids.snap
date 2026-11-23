@@ -3,28 +3,28 @@ source: packages/sci-cream/src/tests/embedded/reconciliation/chocolate.rs
 expression: "lines.join(\"\\n\")"
 ---
 Callebaut 811 Dark Chocolate (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                56.00           36.60           19.40            0.00            0.00
   none             +0.90 (+1.6%)   +0.00 (+0.0%)   +0.90 (+4.6%)               -               -
   minima           +0.90 (+1.6%)   +0.00 (+0.0%)   +0.90 (+4.6%)               -               -
   actual cacao     +0.00 (+0.0%)   +0.00 (+0.0%)   +0.00 (+0.0%)               -               -
 
 Callebaut 60-40-38 Dark Chocolate (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                62.10           38.80           23.30            0.00            0.00
   none             +0.90 (+1.4%)   +0.00 (+0.0%)   +0.90 (+3.9%)               -               -
   minima           +0.90 (+1.4%)   +0.00 (+0.0%)   +0.90 (+3.9%)               -               -
   actual cacao     +0.00 (+0.0%)   +0.00 (+0.0%)   +0.00 (+0.0%)               -               -
 
 Callebaut 70-30-38 Dark Chocolate (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                72.50           38.90           33.60            0.00            0.00
   none             +1.20 (+1.7%)   +0.00 (+0.0%)   +1.20 (+3.6%)               -               -
   minima           +1.20 (+1.7%)   +0.00 (+0.0%)   +1.20 (+3.6%)               -               -
   actual cacao     +0.00 (+0.0%)   +0.00 (+0.0%)   +0.00 (+0.0%)               -               -
 
 Callebaut 823 Milk Chocolate (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                35.10           30.20            4.90           21.80            6.00
   none             +1.32 (+3.8%)   +0.66 (+2.2%)  +0.66 (+13.4%)   -1.28 (-5.9%)  -0.66 (-11.1%)
   minima           +0.92 (+2.6%)   +0.59 (+2.0%)   +0.33 (+6.6%)   -1.00 (-4.6%)   -0.59 (-9.9%)
@@ -33,7 +33,7 @@ Callebaut 823 Milk Chocolate (Label)
   actual both      -0.00 (-0.0%)   +0.33 (+1.1%)   -0.33 (-6.8%)   +0.00 (+0.0%)   -0.33 (-5.5%)
 
 Callebaut 665 Milk Chocolate (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                33.00           29.80            3.20           27.00            5.90
   none             -1.34 (-4.1%)   -1.05 (-3.5%)   -0.29 (-9.1%)   -0.28 (-1.0%)  +1.05 (+17.8%)
   minima           -1.34 (-4.1%)   -1.05 (-3.5%)   -0.29 (-9.1%)   -0.28 (-1.0%)  +1.05 (+17.8%)
@@ -42,7 +42,7 @@ Callebaut 665 Milk Chocolate (Label)
   actual both      +0.00 (+0.0%)   -1.12 (-3.8%)  +1.12 (+35.0%)   +0.00 (+0.0%)  +1.12 (+19.0%)
 
 Callebaut Power 41 Milk Chocolate (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                42.20           32.20           10.00           20.40            4.10
   none             -0.63 (-1.5%)   -1.48 (-4.6%)   +0.85 (+8.5%)   +1.05 (+5.1%)  +1.48 (+36.0%)
   minima           -0.63 (-1.5%)   -1.48 (-4.6%)   +0.85 (+8.5%)   +1.05 (+5.1%)  +1.48 (+36.0%)
@@ -51,7 +51,7 @@ Callebaut Power 41 Milk Chocolate (Label)
   actual both      -0.00 (-0.0%)   -1.20 (-3.7%)  +1.20 (+12.0%)   +0.00 (+0.0%)  +1.20 (+29.4%)
 
 Callebaut Arriba Milk Chocolate (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                40.50           33.80            6.70           25.50            5.20
   none             -0.99 (-2.4%)   -1.70 (-5.0%)  +0.71 (+10.6%)   +1.02 (+4.0%)  +1.70 (+32.6%)
   minima           -0.99 (-2.4%)   -1.70 (-5.0%)  +0.71 (+10.6%)   +1.02 (+4.0%)  +1.70 (+32.6%)
@@ -60,7 +60,7 @@ Callebaut Arriba Milk Chocolate (Label)
   actual both      +0.00 (+0.0%)   -1.43 (-4.2%)  +1.43 (+21.3%)   +0.00 (+0.0%)  +1.43 (+27.5%)
 
 Callebaut W2 White Chocolate (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                29.50           29.50            0.00           23.00            6.30
   none             +0.68 (+2.3%)   +0.68 (+2.3%)               -   -1.38 (-6.0%)  -0.68 (-10.8%)
   minima           +0.58 (+2.0%)   +0.58 (+2.0%)               -   -1.00 (-4.3%)   -0.58 (-9.2%)
@@ -69,13 +69,13 @@ Callebaut W2 White Chocolate (Label)
   actual both      +0.00 (+0.0%)   +0.00 (+0.0%)               -   -0.00 (-0.0%)   -0.00 (-0.0%)
 
 Mona Lisa Dark Chocolate Curved Shavings (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                49.40           30.30           19.10            0.00            0.00
   none             +0.90 (+1.8%)   +0.00 (+0.0%)   +0.90 (+4.7%)               -               -
   actual cacao     +0.00 (+0.0%)   +0.00 (+0.0%)   +0.00 (+0.0%)               -               -
 
 Mona Lisa Milk Chocolate Blossoms (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                29.60           23.00            6.60           16.90            3.90
   none             -0.07 (-0.3%)   -0.62 (-2.7%)   +0.54 (+8.2%)   +0.47 (+2.8%)  +0.62 (+15.8%)
   minima           -0.07 (-0.3%)   -0.62 (-2.7%)   +0.54 (+8.2%)   +0.47 (+2.8%)  +0.62 (+15.8%)
@@ -84,16 +84,16 @@ Mona Lisa Milk Chocolate Blossoms (Label)
   actual both      +0.00 (+0.0%)   -0.49 (-2.1%)   +0.49 (+7.5%)   +0.00 (+0.0%)  +0.49 (+12.7%)
 
 Callebaut Botanical Extra Brute Cocoa Powder (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                96.50           23.00           73.50            0.00            0.00
   none             +0.50 (+0.5%)   +0.00 (+0.0%)   +0.50 (+0.7%)               -               -
 
 Callebaut Zestina Plein Arome Cocoa Powder (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                96.50           23.00           73.50            0.00            0.00
   none             +0.50 (+0.5%)   +0.00 (+0.0%)   +0.50 (+0.7%)               -               -
 
 Callebaut 10/12 Natural Cocoa Powder (Label)
-  case               CacaoSolids     CocoaButter     CocoaSolids      MilkSolids         MilkFat
+  case               CocoaSolids     CocoaButter        CocoaSNF      MilkSolids         MilkFat
   entry (g)                96.50           11.00           85.50            0.00            0.00
   none             +0.50 (+0.5%)   +0.00 (+0.0%)   +0.50 (+0.6%)               -               -

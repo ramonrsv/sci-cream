@@ -6,9 +6,9 @@ sources: Simple, Ghirardelli
 
 Energy               0.47 pp  (Simple vs Ghirardelli)
 TotalFats            0.34 pp  (Simple vs Ghirardelli)
-CacaoSolids          0.00 pp  (Simple vs Ghirardelli)
+CocoaSolids          0.00 pp  (Simple vs Ghirardelli)
 CocoaButter          0.34 pp  (Simple vs Ghirardelli)
-CocoaSolids          0.34 pp  (Simple vs Ghirardelli)
+CocoaSNF             0.34 pp  (Simple vs Ghirardelli)
 MilkFat              0.00 pp  (Simple vs Ghirardelli)
 MilkSolids           0.00 pp  (Simple vs Ghirardelli)
 MSNF                 0.00 pp  (Simple vs Ghirardelli)

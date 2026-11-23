@@ -49,7 +49,7 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   compToPropKey(CompKey.TotalFats),
   compToPropKey(CompKey.MSNF),
   compToPropKey(CompKey.EggSNF),
-  compToPropKey(CompKey.CocoaSolids),
+  compToPropKey(CompKey.CocoaSNF),
   compToPropKey(CompKey.NutSNF),
   compToPropKey(CompKey.TotalSNF),
   compToPropKey(CompKey.TotalSNFS),

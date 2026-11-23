@@ -8,7 +8,7 @@ different industries and stages of processing. For clarity, within this library 
   (non-fat solids). This is the percentage advertised on chocolate packaging, e.g. 70% dark
   chocolate has 70% cacao solids.
 
-  This value is specified in [`Composition`], accessible via [`CompKey::CacaoSolids`], and
+  This value is specified in [`Composition`], accessible via [`CompKey::CocoaSolids`], and
   corresponds to [`ChocolateSpec::cacao_solids`].
 
 - **Cocoa butter**: the fat component extracted from cacao solids (sometimes referred to as "cocoa
@@ -26,7 +26,7 @@ different industries and stages of processing. For clarity, within this library 
   or "cocoa fiber"), i.e. cacao solids minus cocoa butter. In ice cream mixes, this generally
   determines the intensity of the chocolate flavor, and contributes to the texture and body.
 
-  This value is specified in [`Composition`], accessible via [`CompKey::CocoaSolids`].
+  This value is specified in [`Composition`], accessible via [`CompKey::CocoaSNF`].
 
 [`ChocolateSpec`] and [`CocoaPowderSpec`] can be used to define chocolate and cocoa powder
 ingredients, which have fields for the above terms as well as for [`sugars`](ChocolateSpec::sugars)

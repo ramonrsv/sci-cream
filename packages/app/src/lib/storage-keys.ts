@@ -1,4 +1,11 @@
 /**
+ * Version of the sci-cream keys in saved selections, watcher targets, and priorities: `PropKey`
+ * names, and `CompKey` numbers in the composition views. This should be bumped, which resets that
+ * saved state, whenever the variants of `CompKey`, `RatioKey`, or `FpdKey` change in name or order.
+ */
+const SCI_CREAM_KEYS_VERSION = 2;
+
+/**
  * All keys of state that outlives a component: in `localStorage` (`usePersistedState`), or in
  * memory across client-side navigation but not a reload (`useRetainedState`).
  *
@@ -14,23 +21,23 @@ export const STORAGE_KEYS = {
   groupBy: "group-by",
 
   // ---- Watchers: targets, priorities, total, show toggles; keys via useKeyFilterState -----------
-  watcherTargets: "watcher-targets",
-  watcherPriorities: "watcher-priorities",
+  watcherTargets: `watcher-targets@${SCI_CREAM_KEYS_VERSION}`,
+  watcherPriorities: `watcher-priorities@${SCI_CREAM_KEYS_VERSION}`,
   watcherTotal: "watcher-total",
   watcherShowRange: "watcher-show-range",
   watcherShowTarget: "watcher-show-target",
   watcherShowRefs: "watcher-show-refs",
 
   // ---- Per-view roots: ${root}:qty | :filter | :selected; retained :recipeIdx | :slot -----------
-  propertiesPanelView: "properties-panel-view",
-  compositionBreakdownPanelView: "composition-breakdown-panel-view",
-  propertiesChartPanelView: "properties-chart-panel-view",
-  watchersPanelView: "watchers-panel-view",
+  propertiesPanelView: `properties-panel-view@${SCI_CREAM_KEYS_VERSION}`,
+  compositionBreakdownPanelView: `composition-breakdown-panel-view@${SCI_CREAM_KEYS_VERSION}`,
+  propertiesChartPanelView: `properties-chart-panel-view@${SCI_CREAM_KEYS_VERSION}`,
+  watchersPanelView: `watchers-panel-view@${SCI_CREAM_KEYS_VERSION}`,
   recipeEditorPanel: "recipe-editor-panel",
-  recipeSearchPropertiesView: "recipe-search-properties-view",
-  recipeSharePropertiesView: "share-properties-view",
+  recipeSearchPropertiesView: `recipe-search-properties-view@${SCI_CREAM_KEYS_VERSION}`,
+  recipeSharePropertiesView: `share-properties-view@${SCI_CREAM_KEYS_VERSION}`,
   recipeShareLoadAction: "share-load-action",
-  ingredientSearchCompositionView: "ingredient-search-composition-view",
+  ingredientSearchCompositionView: `ingredient-search-composition-view@${SCI_CREAM_KEYS_VERSION}`,
 
   // ---- Markdown-field roots, one per render site: ${root}:tab -----------------------------------
   recipeSearchComments: "recipe-search-comments",

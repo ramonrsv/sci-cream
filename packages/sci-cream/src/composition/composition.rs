@@ -186,28 +186,29 @@ pub enum CompKey {
     /// depression of ice cream mixes, see [`CompKey::PACmlk`].
     MilkMinerals,
 
-    // Cacao
+    // Cocoa
     // -----
     //
-    /// _Cacao_ solids, the total dry matter content derived from the cacao bean
+    /// Cocoa Solids, the total dry matter content of cocoa ingredients, including cocoa butter
     ///
-    /// This includes both cocoa butter (fat) [`CompKey::CocoaButter`] and cocoa solids (non-fat
-    /// solids) [`CompKey::CocoaSolids`]. See the [chocolate documentation](crate::docs#chocolate)
-    /// for more details.
+    /// It is the sum of [`CompKey::CocoaButter`] and [`CompKey::CocoaSNF`], and the percentage
+    /// a chocolate's label declares; see the [chocolate documentation](crate::docs#chocolate).
     ///
     /// **Note**: This does not include any added sugar content that may be present in chocolate
     /// ingredients; that is accounted for separately via [`CompKey::TotalSugars`].
-    CacaoSolids,
-    /// Cocoa butter, the fat component extracted from cacao solids [`CompKey::CacaoSolids`].
+    CocoaSolids,
+    /// Cocoa Butter, the fat content of cocoa ingredients
     ///
-    /// Sometimes referred to as "cocoa fat"; see the [chocolate
+    /// This component affects the texture of ice creams by hardening the frozen product, and
+    /// adds to the perceived richness of chocolate ice creams; see the [chocolate
     /// documentation](crate::docs#chocolate) for more details.
     CocoaButter,
-    /// _Cocoa_ solids, the non-fat component of cacao solids [`CompKey::CacaoSolids`]
+    /// Cocoa Solids Non-Fat (SNF), the non-fat solid content of cocoa ingredients
     ///
-    /// Sometimes referred to as "cocoa powder" or "cocoa fiber", i.e. cacao solids minus cocoa
-    /// butter; see the [chocolate documentation](crate::docs#chocolate) for more details.
-    CocoaSolids,
+    /// This includes proteins, carbohydrates (fiber among them), and minerals, and is
+    /// [`CompKey::CocoaSolids`] less [`CompKey::CocoaButter`]. It generally determines the
+    /// intensity of the chocolate flavor; see the [chocolate documentation](crate::docs#chocolate).
+    CocoaSNF,
 
     // Nuts
     // ----
@@ -216,20 +217,20 @@ pub enum CompKey {
     ///
     /// This generally includes fats, proteins, fibers, minerals, and small amounts of sugars
     /// naturally present in nuts. It includes both [`CompKey::NutFat`] and [`CompKey::NutSNF`],
-    /// and is roughly equivalent to [`CompKey::CacaoSolids`] if cacao were treated as a nut.
+    /// and is roughly equivalent to [`CompKey::CocoaSolids`] if cocoa were treated as a nut.
     ///
     /// **Note**: This does not include any added sugar content that may be present in nut
     /// ingredients; that is accounted for separately via [`CompKey::TotalSugars`].
     NutSolids,
     /// Nut Fats, the fat content of nut ingredients
     ///
-    /// It is roughly equivalent to [`CompKey::CocoaButter`] if cacao were treated as a nut.
+    /// It is roughly equivalent to [`CompKey::CocoaButter`] if cocoa were treated as a nut.
     /// This component affects the texture of ice creams by hardening the frozen product.
     NutFat,
     /// Nut Solids Non-Fat (SNF), the non-fat solid content of nut ingredients
     ///
     /// This generally includes proteins, fibers, minerals, and small amounts of sugars naturally
-    /// present in nuts. It is roughly equivalent to [`CompKey::CocoaSolids`] if cacao were treated
+    /// present in nuts. It is roughly equivalent to [`CompKey::CocoaSNF`] if cocoa were treated
     /// as a nut. For nut flavored ice cream recipes, this value directly correlates with the
     /// perceived intensity of the nut flavor.
     NutSNF,
@@ -628,9 +629,9 @@ impl Composition {
             CompKey::Whey => self.solids.milk.proteins.whey,
             CompKey::MilkMinerals => self.solids.milk.minerals,
 
-            CompKey::CacaoSolids => self.solids.cocoa.total(),
+            CompKey::CocoaSolids => self.solids.cocoa.total(),
             CompKey::CocoaButter => self.solids.cocoa.fats.total,
-            CompKey::CocoaSolids => self.solids.cocoa.snf(),
+            CompKey::CocoaSNF => self.solids.cocoa.snf(),
 
             CompKey::NutSolids => self.solids.nut.total(),
             CompKey::NutFat => self.solids.nut.fats.total,
@@ -1157,8 +1158,8 @@ mod tests {
             (CompKey::MilkSolids,          13.0),
             // Cocoa
             (CompKey::CocoaButter,          3.0),
-            (CompKey::CocoaSolids,          4.0),   // cocoa.snf() = 7-3
-            (CompKey::CacaoSolids,          7.0),   // cocoa.total()
+            (CompKey::CocoaSNF,             4.0),   // cocoa.snf() = 7-3
+            (CompKey::CocoaSolids,          7.0),   // cocoa.total()
             // Nut
             (CompKey::NutFat,               2.0),
             (CompKey::NutSNF,               2.0),   // nut.snf() = 4-2

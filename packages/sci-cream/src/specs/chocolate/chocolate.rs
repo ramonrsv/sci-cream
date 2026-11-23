@@ -96,9 +96,9 @@ pub enum ChocolateFat {
 /// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Sucrose), 30.0);
-/// assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
+/// assert_eq!(comp.get(CompKey::CocoaSolids), 70.0);
 /// assert_eq_flt!(comp.get(CompKey::CocoaButter), 39.9);
-/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 30.1);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSNF), 30.1);
 ///
 /// assert_eq_flt!(comp.get(CompKey::Energy), 544.8384);
 /// assert_eq_flt!(comp.get(CompKey::TotalFats), 39.9);
@@ -127,9 +127,9 @@ pub enum ChocolateFat {
 /// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Sucrose), 43.0);
-/// assert_eq!(comp.get(CompKey::CacaoSolids), 56.0);
+/// assert_eq!(comp.get(CompKey::CocoaSolids), 56.0);
 /// assert_eq!(comp.get(CompKey::CocoaButter), 36.6);
-/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 19.4);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSNF), 19.4);
 /// assert_eq!(comp.get(CompKey::OtherSNFS), 1.0);
 ///
 /// assert_eq_flt!(comp.get(CompKey::Energy), 543.7696);
@@ -161,9 +161,9 @@ pub enum ChocolateFat {
 /// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Sucrose), 42.0);
-/// assert_eq_flt!(comp.get(CompKey::CacaoSolids), 35.1);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 35.1);
 /// assert_eq!(comp.get(CompKey::CocoaButter), 30.2);
-/// assert_eq_4dp!(comp.get(CompKey::CocoaSolids), 4.9);
+/// assert_eq_4dp!(comp.get(CompKey::CocoaSNF), 4.9);
 /// assert_eq_4dp!(comp.get(CompKey::OtherSNFS), 1.1);
 ///
 /// assert_eq!(comp.get(CompKey::MilkSolids), 21.8);
@@ -346,9 +346,9 @@ pub(crate) mod tests {
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 544.8384),
-            (CompKey::CacaoSolids, 70.0),
+            (CompKey::CocoaSolids, 70.0),
             (CompKey::CocoaButter, 39.9),
-            (CompKey::CocoaSolids, 30.1),
+            (CompKey::CocoaSNF, 30.1),
             (CompKey::OtherSNFS, 0.0),
             (CompKey::TotalSolids, 100.0),
             (CompKey::TotalFats, 39.9),
@@ -371,7 +371,7 @@ pub(crate) mod tests {
         ]);
 
         // Added sugars in chocolates is considered part of total sweeteners, not of Cacao Solids
-        assert_eq!(comp.get(CompKey::CacaoSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
+        assert_eq!(comp.get(CompKey::CocoaSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
 
         assert_eq_flt!(comp.solids.cocoa.minerals, 2.2876);
     }
@@ -430,9 +430,9 @@ pub(crate) mod tests {
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 596.5664),
-            (CompKey::CacaoSolids, 95.0),
+            (CompKey::CocoaSolids, 95.0),
             (CompKey::CocoaButter, 54.15),
-            (CompKey::CocoaSolids, 40.85),
+            (CompKey::CocoaSNF, 40.85),
             (CompKey::OtherSNFS, 0.0),
             (CompKey::TotalSolids, 100.0),
             (CompKey::TotalFats, 54.15),
@@ -506,9 +506,9 @@ pub(crate) mod tests {
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 606.912),
-            (CompKey::CacaoSolids, 100.0),
+            (CompKey::CocoaSolids, 100.0),
             (CompKey::CocoaButter, 57.0),
-            (CompKey::CocoaSolids, 43.0),
+            (CompKey::CocoaSNF, 43.0),
             (CompKey::OtherSNFS, 0.0),
             (CompKey::TotalSolids, 100.0),
             (CompKey::TotalFats, 57.0),
@@ -590,9 +590,9 @@ pub(crate) mod tests {
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 543.7696),
-            (CompKey::CacaoSolids, 56.0),
+            (CompKey::CocoaSolids, 56.0),
             (CompKey::CocoaButter, 36.6),
-            (CompKey::CocoaSolids, 19.4),
+            (CompKey::CocoaSNF, 19.4),
             (CompKey::OtherSNFS, 1.0),
             (CompKey::TotalSolids, 100.0),
             (CompKey::TotalFats, 36.6),
@@ -698,9 +698,9 @@ pub(crate) mod tests {
             (CompKey::Casein, 4.74),
             (CompKey::Whey, 1.185),
             (CompKey::MilkMinerals, 1.264),
-            (CompKey::CacaoSolids, 35.1),
+            (CompKey::CocoaSolids, 35.1),
             (CompKey::CocoaButter, 30.2),
-            (CompKey::CocoaSolids, 4.9),
+            (CompKey::CocoaSNF, 4.9),
             (CompKey::OtherSNFS, 1.1),
             (CompKey::TotalSolids, 100.0),
             (CompKey::TotalFats, 36.2),
@@ -802,10 +802,10 @@ pub(crate) mod tests {
             (CompKey::Casein, 5.01),
             (CompKey::Whey, 1.2525),
             (CompKey::MilkMinerals, 1.336),
-            (CompKey::CacaoSolids, 29.5),
+            (CompKey::CocoaSolids, 29.5),
             (CompKey::CocoaButter, 29.5),
             // Cocoa butter is its only cocoa ingredient, leaving no cocoa solids non-fat
-            (CompKey::CocoaSolids, 0.0),
+            (CompKey::CocoaSNF, 0.0),
             (CompKey::OtherSNFS, 1.0),
             (CompKey::TotalSolids, 100.0),
             (CompKey::TotalFats, 35.8),
@@ -974,7 +974,7 @@ pub(crate) mod tests {
         assert_eq_flt!(comp.get(CompKey::MilkMinerals), msnf * STD_MINERALS_IN_MSNF);
 
         // The declared split is taken as-is, and the cacao side is untouched by the milk
-        assert_eq_flt!(comp.get(CompKey::CacaoSolids), 40.0);
+        assert_eq_flt!(comp.get(CompKey::CocoaSolids), 40.0);
         assert_eq_flt!(comp.get(CompKey::CocoaButter), 22.0);
         assert_eq_flt!(comp.get(CompKey::TotalFats), 27.0);
     }

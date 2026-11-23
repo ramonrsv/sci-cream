@@ -61,9 +61,9 @@ impl KeyAsStrings for CompKey {
             Self::Whey => "Whey",
             Self::MilkMinerals => "Milk Minerals",
 
-            Self::CacaoSolids => "Cacao Solids",
-            Self::CocoaButter => "Cocoa Butter",
             Self::CocoaSolids => "Cocoa Solids",
+            Self::CocoaButter => "Cocoa Butter",
+            Self::CocoaSNF => "Cocoa SNF",
 
             Self::NutSolids => "Nut Solids",
             Self::NutFat => "Nut Fat",
@@ -164,6 +164,7 @@ impl KeyAsStrings for CompKey {
         match self {
             Self::MSNF => "Milk Solids Non-Fat",
             Self::MilkSNFS => "Milk Solids Non-Fat Non-Sugar",
+            Self::CocoaSNF => "Cocoa Solids Non-Fat",
             Self::NutSNF => "Nut Solids Non-Fat",
             Self::EggSNF => "Egg Solids Non-Fat",
             Self::OtherSNFS => "Other Solids Non-Fat Non-Sugar",
@@ -588,6 +589,7 @@ mod tests {
             // SNF / SNFS expansions
             ("Milk Solids Non-Fat", CompKey::MSNF),
             ("Milk Solids Non-Fat Non-Sugar", CompKey::MilkSNFS),
+            ("Cocoa Solids Non-Fat", CompKey::CocoaSNF),
             // Total* prefix restored on aggregate keys
             ("Total Carbohydrates", CompKey::TotalCarbohydrates),
             // PAC sub-keys and other expanded acronyms
@@ -715,7 +717,7 @@ mod tests {
     fn balancing_issue_display_message_ratio_infeasibility() {
         let ratio = BalancingIssue::RatioInfeasibility {
             numerator: vec![CompKey::CocoaButter.into()],
-            denominator: CompKey::CocoaSolids.into(),
+            denominator: CompKey::CocoaSNF.into(),
             target_ratio: 0.5,
             min_ratio: 0.2,
             max_ratio: 0.2,
@@ -730,7 +732,7 @@ mod tests {
         // An unbounded-above band renders the upper bound as ∞ rather than a number.
         let ratio = BalancingIssue::RatioInfeasibility {
             numerator: vec![CompKey::CocoaButter.into()],
-            denominator: CompKey::CocoaSolids.into(),
+            denominator: CompKey::CocoaSNF.into(),
             target_ratio: 0.0,
             min_ratio: 1.0,
             max_ratio: f64::INFINITY,

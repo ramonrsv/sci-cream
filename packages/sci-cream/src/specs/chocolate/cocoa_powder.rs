@@ -67,9 +67,9 @@ use crate::{
 ///
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 /// assert_eq_4dp!(comp.get(CompKey::Water), 3.0);
-/// assert_eq_flt!(comp.get(CompKey::CacaoSolids), 97.0);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 97.0);
 /// assert_eq!(comp.get(CompKey::CocoaButter), 11.0);
-/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 86.0);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSNF), 86.0);
 ///
 /// assert_eq_flt!(comp.get(CompKey::Energy), 286.824);
 /// assert_eq!(comp.get(CompKey::TotalFats), 11.0);
@@ -98,9 +98,9 @@ use crate::{
 ///
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 /// assert_eq!(comp.get(CompKey::Water), 3.5);
-/// assert_eq_flt!(comp.get(CompKey::CacaoSolids), 96.5);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 96.5);
 /// assert_eq!(comp.get(CompKey::CocoaButter), 11.0);
-/// assert_eq_flt!(comp.get(CompKey::CocoaSolids), 85.5);
+/// assert_eq_flt!(comp.get(CompKey::CocoaSNF), 85.5);
 ///
 /// assert_eq_flt!(comp.get(CompKey::Energy), 285.732);
 /// assert_eq!(comp.get(CompKey::TotalFats), 11.0);
@@ -244,9 +244,9 @@ pub(crate) mod tests {
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 286.824),
-            (CompKey::CacaoSolids, 97.0),
+            (CompKey::CocoaSolids, 97.0),
             (CompKey::CocoaButter, 11.0),
-            (CompKey::CocoaSolids, 86.0),
+            (CompKey::CocoaSNF, 86.0),
             (CompKey::OtherSNFS, 0.0),
             (CompKey::TotalSolids, 97.0),
             (CompKey::TotalFats, 11.0),
@@ -321,9 +321,9 @@ pub(crate) mod tests {
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 285.732),
-            (CompKey::CacaoSolids, 96.5),
+            (CompKey::CocoaSolids, 96.5),
             (CompKey::CocoaButter, 11.0),
-            (CompKey::CocoaSolids, 85.5),
+            (CompKey::CocoaSNF, 85.5),
             (CompKey::OtherSNFS, 0.0),
             (CompKey::TotalSolids, 96.5),
             (CompKey::TotalFats, 11.0),
@@ -402,9 +402,9 @@ pub(crate) mod tests {
         comp.assert_all_keys(&[
             (CompKey::Energy, 341.352),
             // The declared 93% cacao solids leaves 7% unaccounted for, modeled as `other_solids`
-            (CompKey::CacaoSolids, 93.0),
+            (CompKey::CocoaSolids, 93.0),
             (CompKey::CocoaButter, 21.0),
-            (CompKey::CocoaSolids, 72.0),
+            (CompKey::CocoaSNF, 72.0),
             (CompKey::OtherSNFS, 4.0),
             (CompKey::TotalSolids, 97.0),
             (CompKey::TotalFats, 21.0),
@@ -530,9 +530,9 @@ pub(crate) mod tests {
             .unwrap();
 
             assert_eq_flt!(comp.get(CompKey::Water), water);
-            assert_eq_flt!(comp.get(CompKey::CacaoSolids), exp_cacao_solids);
+            assert_eq_flt!(comp.get(CompKey::CocoaSolids), exp_cacao_solids);
             assert_eq_flt!(comp.get(CompKey::TotalSolids), exp_cacao_solids);
-            assert_eq_flt!(comp.get(CompKey::CocoaSolids), exp_cacao_solids - 10.0);
+            assert_eq_flt!(comp.get(CompKey::CocoaSNF), exp_cacao_solids - 10.0);
         }
     }
 }

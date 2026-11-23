@@ -85,7 +85,7 @@ for (key, value) in [
     (MilkProteins.into(), 3.3145),
     (MilkSolids.into(), 22.4754),
     (CocoaButter.into(), 0.7781),
-    (CocoaSolids.into(), 3.6616),
+    (CocoaSNF.into(), 3.6616),
     (Glucose.into(), 6.7675),
     (Fructose.into(), 5.2309),
     (TotalSugars.into(), 16.8155),
@@ -428,7 +428,7 @@ typically a tricky recipe to balance and requires careful tradeoffs to meet comm
 let targets: Vec<(BalanceKey, f64, Option<Priority>)> = vec![
     (MSNF.into(), 7.0, None),
     (CocoaButter.into(), 2.0, Some(High)),
-    (CocoaSolids.into(), 6.0, Some(Critical)),
+    (CocoaSNF.into(), 6.0, Some(Critical)),
     (ABV.into(), 0.4, None),
     (Salt.into(), 0.08, None),
     (TotalFats.into(), 16.0, None),

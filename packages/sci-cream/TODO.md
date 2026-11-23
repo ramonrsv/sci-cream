@@ -52,7 +52,7 @@
 - [ ] Consider adding an a `RatioKey::StabilizersPerEmulsifiers`; I saw Underbelly mention it.
 - [ ] Consider modeling water in `ChocolateSpec`, which `STD_WATER_IN_CHOCOLATE` awaits. Declared
       figures are wet-basis and `cacao_solids + sugars` already closes at 100, so an additive field
-      double-counts, while carving it out decouples `CompKey::CacaoSolids` from the declared value.
+      double-counts, while carving it out decouples `CompKey::CocoaSolids` from the declared value.
 - [ ] Revisit splitting the cacao constants per product kind as listings are added. The per-kind gap
       is smaller than the scatter within each kind: 1.7 points for protein against 2.0 for powders.
 - [ ] Consider modeling the sugars `STD_SUGARS_IN_COCOA_SOLIDS` measures, today only a derivation

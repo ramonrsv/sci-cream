@@ -225,7 +225,7 @@ pub struct LabelCarbohydrates {
 ///     dutch_processed: None,
 /// }.to_composition()?;
 ///
-/// assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
+/// assert_eq!(comp.get(CompKey::CocoaSolids), 70.0);
 /// assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
 /// assert_eq!(comp.get(CompKey::Sucrose), 30.0);
 /// # Ok(()) }
@@ -259,7 +259,7 @@ pub struct LabelCarbohydrates {
 ///     dutch_processed: None,
 /// }.to_composition()?;
 ///
-/// assert_eq_4dp!(comp.get(CompKey::CacaoSolids), 37.0);
+/// assert_eq_4dp!(comp.get(CompKey::CocoaSolids), 37.0);
 /// assert_eq_4dp!(comp.get(CompKey::MilkSolids), 28.2487);
 /// assert_eq_4dp!(comp.get(CompKey::TotalProteins), 9.8);
 /// assert_eq_4dp!(comp.get(CompKey::TotalSugars), 46.0);
@@ -488,9 +488,9 @@ pub(crate) mod tests {
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 545.52),
-            (CompKey::CacaoSolids, 70.0),
+            (CompKey::CocoaSolids, 70.0),
             (CompKey::CocoaButter, 40.0),
-            (CompKey::CocoaSolids, 30.0),
+            (CompKey::CocoaSNF, 30.0),
             (CompKey::OtherSNFS, 0.0),
             (CompKey::TotalSolids, 100.0),
             (CompKey::TotalFats, 40.0),
@@ -583,9 +583,9 @@ pub(crate) mod tests {
         // than 95% with the rest as other solids
         comp.assert_all_keys(&[
             (CompKey::Energy, 614.86),
-            (CompKey::CacaoSolids, 97.5),
+            (CompKey::CocoaSolids, 97.5),
             (CompKey::CocoaButter, 57.5),
-            (CompKey::CocoaSolids, 40.0),
+            (CompKey::CocoaSNF, 40.0),
             (CompKey::OtherSNFS, 0.0),
             (CompKey::TotalSolids, 100.0),
             (CompKey::TotalFats, 57.5),
@@ -674,9 +674,9 @@ pub(crate) mod tests {
 
         comp.assert_all_keys(&[
             (CompKey::Energy, 586.464),
-            (CompKey::CacaoSolids, 100.0),
+            (CompKey::CocoaSolids, 100.0),
             (CompKey::CocoaButter, 54.0),
-            (CompKey::CocoaSolids, 46.0),
+            (CompKey::CocoaSNF, 46.0),
             (CompKey::OtherSNFS, 0.0),
             (CompKey::TotalSolids, 100.0),
             (CompKey::TotalFats, 54.0),
@@ -742,9 +742,9 @@ pub(crate) mod tests {
             (CompKey::MilkSolids, 19.950_427),
             (CompKey::MilkFat, 5.187_111),
             (CompKey::MSNF, 14.763_316),
-            (CompKey::CacaoSolids, 33.507_598),
+            (CompKey::CocoaSolids, 33.507_598),
             (CompKey::CocoaButter, 24.512_889),
-            (CompKey::CocoaSolids, 8.994_709),
+            (CompKey::CocoaSNF, 8.994_709),
             (CompKey::OtherSNFS, 3.087_982),
             (CompKey::TotalFats, 29.7),
             (CompKey::TotalProteins, 7.65),
@@ -800,9 +800,9 @@ pub(crate) mod tests {
             (CompKey::MilkSolids, 22.061_429),
             (CompKey::MilkFat, 5.735_972),
             (CompKey::MSNF, 16.325_458),
-            (CompKey::CacaoSolids, 30.0),
+            (CompKey::CocoaSolids, 30.0),
             (CompKey::CocoaButter, 26.264_028),
-            (CompKey::CocoaSolids, 3.735_972),
+            (CompKey::CocoaSNF, 3.735_972),
             (CompKey::OtherSNFS, 1.835_945),
             (CompKey::TotalFats, 32.0),
             (CompKey::TotalProteins, 7.0),
@@ -859,9 +859,9 @@ pub(crate) mod tests {
             (CompKey::MilkSolids, 28.248_671),
             (CompKey::MilkFat, 7.344_654),
             (CompKey::MSNF, 20.904_017),
-            (CompKey::CacaoSolids, 37.0),
+            (CompKey::CocoaSolids, 37.0),
             (CompKey::CocoaButter, 28.655_346),
-            (CompKey::CocoaSolids, 8.344_654),
+            (CompKey::CocoaSNF, 8.344_654),
             (CompKey::OtherSNFS, 0.144_018),
             (CompKey::TotalFats, 36.0),
             (CompKey::TotalProteins, 9.8),
@@ -917,9 +917,9 @@ pub(crate) mod tests {
             (CompKey::MilkFat, 5.499_820),
             (CompKey::MSNF, 15.653_333),
             (CompKey::MilkProteins, 5.87),
-            (CompKey::CacaoSolids, 26.600_180),
+            (CompKey::CocoaSolids, 26.600_180),
             (CompKey::CocoaButter, 26.600_180),
-            (CompKey::CocoaSolids, 0.0),
+            (CompKey::CocoaSNF, 0.0),
             (CompKey::OtherSNFS, 1.777_733),
             (CompKey::TotalFats, 32.1),
             (CompKey::TotalProteins, 5.87),
@@ -976,9 +976,9 @@ pub(crate) mod tests {
             (CompKey::MilkFat, 7.401_802),
             (CompKey::MSNF, 21.066_667),
             (CompKey::MilkProteins, 7.9),
-            (CompKey::CacaoSolids, 30.598_198),
+            (CompKey::CocoaSolids, 30.598_198),
             (CompKey::CocoaButter, 30.598_198),
-            (CompKey::CocoaSolids, 0.0),
+            (CompKey::CocoaSNF, 0.0),
             (CompKey::OtherSNFS, 1.414_667),
             (CompKey::TotalFats, 38.0),
             (CompKey::TotalProteins, 7.9),
@@ -1029,9 +1029,9 @@ pub(crate) mod tests {
 
         // The standard water leaves the cacao solids, and the intrinsic sugars stay inside them
         comp.assert_keys(&[
-            (CompKey::CacaoSolids, 97.0),
+            (CompKey::CocoaSolids, 97.0),
             (CompKey::CocoaButter, 13.7),
-            (CompKey::CocoaSolids, 83.3),
+            (CompKey::CocoaSNF, 83.3),
             (CompKey::TotalFats, 13.7),
             (CompKey::Water, 3.0),
             (CompKey::TotalSugars, 0.0),
@@ -1100,9 +1100,9 @@ pub(crate) mod tests {
         comp.assert_all_keys(&[
             // Different similar products list the energy from 250 to 325
             (CompKey::Energy, 325.448),
-            (CompKey::CacaoSolids, 97.0),
+            (CompKey::CocoaSolids, 97.0),
             (CompKey::CocoaButter, 16.666_667),
-            (CompKey::CocoaSolids, 80.333_333),
+            (CompKey::CocoaSNF, 80.333_333),
             (CompKey::OtherSNFS, 0.0),
             (CompKey::TotalSolids, 97.0),
             (CompKey::TotalFats, 16.666_667),
@@ -1330,7 +1330,7 @@ pub(crate) mod tests {
         };
         let comp = label.to_composition().unwrap();
 
-        assert_eq_flt!(comp.get(CompKey::CacaoSolids), 70.0);
+        assert_eq_flt!(comp.get(CompKey::CocoaSolids), 70.0);
         assert_eq_flt!(comp.get(CompKey::TotalSugars), 30.0);
     }
 
@@ -1343,7 +1343,7 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq!(comp.get(CompKey::CacaoSolids), 68.0);
+        assert_eq!(comp.get(CompKey::CocoaSolids), 68.0);
         assert_eq_flt!(comp.get(CompKey::OtherSNFS), 2.0);
     }
 
@@ -1385,7 +1385,7 @@ pub(crate) mod tests {
         .unwrap();
 
         assert_eq!(comp.get(CompKey::CocoaButter), 30.0);
-        assert_eq!(comp.get(CompKey::CocoaSolids), 0.0);
+        assert_eq!(comp.get(CompKey::CocoaSNF), 0.0);
         assert_eq!(comp.get(CompKey::MilkFat), 8.0);
         assert_eq_flt!(comp.get(CompKey::TotalProteins), 7.9);
     }
