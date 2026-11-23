@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795454763578,
+  "lastUpdate": 1795454841880,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -726243,6 +726243,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.74,
             "range": "0.49",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "df2fad40a5bb8214ec7176bb6fabdf5225ce571a",
+          "message": "Rename the cocoa composition constants\n\nconstants::composition::cacao becomes cocoa. The seven fractions of\nthe non-fat part, STD_*_IN_COCOA_SOLIDS, become STD_*_IN_COCOA_SNF, as\nCompKey::CocoaSNF, and hf::COCOA_SOLIDS becomes hf::COCOA_SNF.\nSTD_COCOA_BUTTER_IN_CACAO_SOLIDS, a fraction of the total, becomes\nSTD_COCOA_BUTTER_IN_COCOA_SOLIDS.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T01:41:15-05:00",
+          "tree_id": "177c05db10ff339b1c84423698b6c272875063e6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/df2fad40a5bb8214ec7176bb6fabdf5225ce571a"
+        },
+        "date": 1795454752819,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 72.23,
+            "range": "8.62",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 19,
+            "range": "3.14",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 18.95,
+            "range": "3.12",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 193,
+            "range": "13.08",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 193,
+            "range": "13.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 67.91,
+            "range": "8.37",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.19,
+            "range": "0.53",
             "unit": "ms"
           }
         ]
