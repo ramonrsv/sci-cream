@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795454974064,
+  "lastUpdate": 1795455074084,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -694017,6 +694017,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1037.81,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "353c2f05730af20a82539fb6b9a5a85bd5fc10a3",
+          "message": "Rename the chocolate specs' cacao_solids field\n\nChocolateSpec, CocoaPowderSpec, and ChocolateLabelSpec take\ncocoa_solids, the total cocoa solids, in place of cacao_solids, as do\nestimate_chocolate_snf_split_from_protein_by_cocoa_solids and the\nentries; the code's cacao locals become cocoa.\n\nMigration 0005 renames the key in stored ingredient specs, keeping\nthe rest of each row's JSON text as it is; its rollback renames it\nback. Share links go to version 2, and a v1 link's chocolate specs are\nupgraded on decode, as comparePayloadVersion now reports a lesser\nversion as older.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T11:23:55-05:00",
+          "tree_id": "13abc8d870009a3257ea87d1e923a629796b0355",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/353c2f05730af20a82539fb6b9a5a85bd5fc10a3"
+        },
+        "date": 1795455025264,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 778.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 945.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 722.39,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 890.11,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 732.24,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 899.96,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 705.79,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 873.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 707.32,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 875.04,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1037.79,
             "unit": "KB"
           },
           {
