@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795470633149,
+  "lastUpdate": 1795471041261,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -604480,6 +604480,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 670.25,
             "range": "26.36",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0718038e7c4ff184c57011708093b57c15aa59fc",
+          "message": "Stop benchmark alerts from failing CI\n\nShared-runner noise trips github-action-benchmark's single-point alert\nrule on about a quarter of recent pushes, and each failed bench job\nalso blocks that commit's deploy, since deploy.yml requires App CI and\nCrate CI to succeed. Keep pushing results to gh-pages and commenting\non alerts, but never fail the job on one, until CodSpeed and Bencher\nsupersede these jobs.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T16:38:58-05:00",
+          "tree_id": "babdfd3bf1a4b3373a434f1cccbf373a2e731715",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0718038e7c4ff184c57011708093b57c15aa59fc"
+        },
+        "date": 1795470950661,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.75,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 50.25,
+            "range": "5.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 75,
+            "range": "12.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2344.63,
+            "range": "67.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 371.63,
+            "range": "4.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 389.63,
+            "range": "6.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 400.63,
+            "range": "4.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19361.75,
+            "range": "144.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 830.63,
+            "range": "21.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 63.63,
+            "range": "3.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 63,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 51.25,
+            "range": "1.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43.5,
+            "range": "2.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 146.13,
+            "range": "10.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 82,
+            "range": "4.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.92,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.79,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 651,
+            "range": "13.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 727.5,
+            "range": "38.45",
             "unit": "ms"
           }
         ]
