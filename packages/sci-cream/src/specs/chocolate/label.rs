@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     composition::{CompKey, Composition, ToComposition},
-    constants::composition::{cacao::STD_WATER_IN_COCOA_POWDER, dairy::milk::STD_LACTOSE_IN_MSNF},
+    constants::composition::{cocoa::STD_WATER_IN_COCOA_POWDER, dairy::milk::STD_LACTOSE_IN_MSNF},
     error::{Error, Result},
     specs::{
         chocolate::{
@@ -22,7 +22,7 @@ use crate::{
 
 #[cfg(doc)]
 use crate::constants::composition::{
-    cacao,
+    cocoa,
     dairy::{self, milk},
 };
 
@@ -50,7 +50,7 @@ pub enum ChocolateKind {
     /// Cocoa powders, without added sugars
     ///
     /// The only ingredient should be cocoa, the composition being only cocoa solids and cocoa
-    /// butter, with water at [`cacao::STD_WATER_IN_COCOA_POWDER`].
+    /// butter, with water at [`cocoa::STD_WATER_IN_COCOA_POWDER`].
     CocoaPowder,
 }
 
@@ -141,7 +141,7 @@ pub struct LabelCarbohydrates {
     /// Sugars content, as given on the label, i.e. total sugars
     ///
     /// This includes added sugars, such as sucrose, as well as lactose naturally present in milk
-    /// solids, and sugars intrinsic to the cocoa solids; see [`cacao::STD_SUGARS_IN_COCOA_SOLIDS`].
+    /// solids, and sugars intrinsic to the cocoa solids; see [`cocoa::STD_SUGARS_IN_COCOA_SNF`].
     pub sugars: f64,
 }
 
@@ -166,12 +166,12 @@ pub struct LabelCarbohydrates {
 ///   is taken as given. A declared minimum sets a floor for that estimate, the sugars taking the
 ///   rest, if their rounding and the cocoa's own sugars cover the gap, and it's an error otherwise.
 /// - [`CocoaPowder`](ChocolateKind::CocoaPowder): a pure cocoa powder, where all but the water, at
-///   [`cacao::STD_WATER_IN_COCOA_POWDER`], is cacao solids. All the fat is cocoa butter, and any
+///   [`cocoa::STD_WATER_IN_COCOA_POWDER`], is cacao solids. All the fat is cocoa butter, and any
 ///   sugars are taken as intrinsic to the cocoa, so they are counted as part of its cocoa solids;
-///   the label's sugars must not exceed the cocoa's own; see [`cacao::STD_SUGARS_IN_COCOA_SOLIDS`].
+///   the label's sugars must not exceed the cocoa's own; see [`cocoa::STD_SUGARS_IN_COCOA_SNF`].
 /// - [`MilkChocolate`](ChocolateKind::MilkChocolate): a milk chocolate that contains both cacao and
 ///   milk solids. The protein is shared between the cocoa solids non-fat and the milk solids
-///   non-fat (MSNF), at [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`] and [`milk::STD_PROTEIN_IN_MSNF`],
+///   non-fat (MSNF), at [`cocoa::STD_PROTEIN_IN_COCOA_SNF`] and [`milk::STD_PROTEIN_IN_MSNF`],
 ///   and [`derive_milk_chocolate_solids`] splits it by the declared contents, or else by the fiber.
 /// - [`WhiteChocolate`](ChocolateKind::WhiteChocolate): a white chocolate that contains both cacao
 ///   and milk solids, but where the cacao solids are all cocoa butter, and so all the protein is

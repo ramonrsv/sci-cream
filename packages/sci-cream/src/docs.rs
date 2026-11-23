@@ -107,7 +107,7 @@ pub mod ingredients {
     #[cfg(doc)]
     use crate::{
         constants::composition::{
-            cacao::STD_WATER_IN_COCOA_POWDER,
+            cocoa::STD_WATER_IN_COCOA_POWDER,
             dairy::{
                 STD_BUTTERFAT_IN_WHOLE_MILK_POWDER,
                 milk::{STD_LACTOSE_IN_MSNF, STD_PROTEIN_IN_MPI, STD_PROTEIN_IN_MSNF},

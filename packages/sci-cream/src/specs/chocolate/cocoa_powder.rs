@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     composition::{Composition, PAC, SimpleSolids, Solids, ToComposition},
-    constants::composition::cacao::STD_WATER_IN_COCOA_POWDER,
+    constants::composition::cocoa::STD_WATER_IN_COCOA_POWDER,
     error::Result,
     specs::chocolate::util::{calculate_cocoa_hardness, make_cocoa_solids},
     validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_subset},
@@ -13,7 +13,7 @@ use crate::{
 #[cfg(doc)]
 use crate::{
     composition::CompKey,
-    constants::{self, composition::cacao},
+    constants::{self, composition::cocoa},
 };
 
 /// Spec for cocoa powder ingredients, with cocoa butter and optional other solids
@@ -34,11 +34,11 @@ use crate::{
 ///
 /// The cocoa solids content is further broken down into proteins, carbohydrates - including fiber,
 /// and ash based on standard values for cocoa solids, specified in
-/// [`constants::composition::cacao`], e.g. [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`],
-/// [`cacao::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS`], [`cacao::STD_FIBER_IN_COCOA_SOLIDS`], etc.
+/// [`constants::composition::cocoa`], e.g. [`cocoa::STD_PROTEIN_IN_COCOA_SNF`],
+/// [`cocoa::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF`], [`cocoa::STD_FIBER_IN_COCOA_SNF`], etc.
 ///
 /// **Note:** This spec does not model intrinsic sugars in cocoa solids, i.e. those naturally
-/// occurring in the cacao nuts - see [`cacao::STD_SUGARS_IN_COCOA_SOLIDS`]. They are included as
+/// occurring in the cacao nuts - see [`cocoa::STD_SUGARS_IN_COCOA_SNF`]. They are included as
 /// cacao and cocoa solids, which is correct, but are not tracked as sugars and are not included
 /// in [`CompKey::TotalSugars`], nor do they contribute to sweetness or freezing point depression.
 ///
@@ -46,7 +46,7 @@ use crate::{
 ///
 /// A generic cocoa powder of the 10/12% grade:
 /// - Cocoa butter: the grade's midpoint => 11%
-/// - Water: by default [`cacao::STD_WATER_IN_COCOA_POWDER`] => 3%
+/// - Water: by default [`cocoa::STD_WATER_IN_COCOA_POWDER`] => 3%
 /// - Cacao solids: 100% less the water => 97% (calculated internally)
 ///
 /// ```
@@ -127,7 +127,7 @@ pub struct CocoaPowderSpec {
     pub other_solids: Option<f64>,
     /// Water content as a percentage of the product as a whole
     ///
-    /// Defaults to [`cacao::STD_WATER_IN_COCOA_POWDER`] if not specified, which is usually the case
+    /// Defaults to [`cocoa::STD_WATER_IN_COCOA_POWDER`] if not specified, which is usually the case
     /// for most commercial products. A ceiling can sometimes be inferred from regulatory standards,
     /// e.g. EU caps water in cocoa powder to 9% (Directive 2000/36/EC, 2000, Annex I 2.(a))[^84].
     #[doc = include_str!("../../../docs/references/index/84.md")]
@@ -137,7 +137,7 @@ pub struct CocoaPowderSpec {
     ///
     /// Alkalized cocoa powder has been treated with an alkalizing agent. This affects the
     /// composition of the cocoa solids, namely the distribution of ash and carbohydrates; see
-    /// [`cacao::STD_ASH_IN_NATURAL_COCOA_SOLIDS`] and [`cacao::STD_ASH_IN_DUTCHED_COCOA_SOLIDS`].
+    /// [`cocoa::STD_ASH_IN_NATURAL_COCOA_SNF`] and [`cocoa::STD_ASH_IN_DUTCHED_COCOA_SNF`].
     /// See the [dutch processed](crate::docs#dutch-processed) documentation for more details.
     ///
     /// **Note:** Dutch processing is a graded scale and there are degrees of alkalization, ranging
@@ -516,7 +516,7 @@ pub(crate) mod tests {
         assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
     }
 
-    /// An explicit water content is honoured in place of [`cacao::STD_WATER_IN_COCOA_POWDER`]
+    /// An explicit water content is honoured in place of [`cocoa::STD_WATER_IN_COCOA_POWDER`]
     #[test]
     fn to_composition_cocoa_powder_spec_uses_explicit_water() {
         // The EU ceiling and a fully dried powder, both far from the 3% default

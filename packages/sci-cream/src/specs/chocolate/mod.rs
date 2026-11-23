@@ -10,7 +10,7 @@
 //!
 //! - The cocoa butter content of cacao solids in products varies significantly by formulation,
 //!   since many products include different cacao ingredients with varying cocoa butter contents. As
-//!   such, [`cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS`] is used only as a fallback, and an explicit
+//!   such, [`cocoa::STD_COCOA_BUTTER_IN_COCOA_SOLIDS`] is used only as a fallback, and an explicit
 //!   [`ChocolateFat::Total`] or [`ChocolateFat::Split`] is preferred whenever one is available.
 //! - When only total fat is specified, milk fat anchors the total fat split instead of cocoa
 //!   butter, because the milk fat content of milk solids is more consistent, usually from a single
@@ -23,7 +23,7 @@
 //!   that contain any such ingredients, or added lactose, cannot be accurately estimated by the
 //!   specs or estimators in this module, and should use [`CompositeSpec`] instead.
 //! - For [`ChocolateKind::MilkChocolate`], when no [`DeclaredSolids::Actual`] are provided, the
-//!   solids are estimated from [`cacao::STD_FIBER_IN_COCOA_SOLIDS`]. Reconciliation tests of
+//!   solids are estimated from [`cocoa::STD_FIBER_IN_COCOA_SNF`]. Reconciliation tests of
 //!   products with known milk solids content have shown this to be a decent estimator, but the
 //!   fiber content of cocoa solids in product listings can vary significantly, so explicit
 //!   [`DeclaredSolids::Actual`] are preferred. A [`DeclaredSolids::Min`] behaves similarly, except
@@ -33,12 +33,12 @@
 //! The aforementioned fractions are derived chiefly from literature, such as Goff & Hartel
 //! (2025)[^20], and USDA listings of representative dairy and cacao ingredients, and so their
 //! applicability and accuracy rest on how well the products match the literature compositions and
-//! that of the set of USDA listings; see [`cacao`] and [`dairy`] for more details.
+//! that of the set of USDA listings; see [`cocoa`] and [`dairy`] for more details.
 #![doc = include_str!("../../../docs/references/index/20.md")]
 
 #[cfg(doc)]
 use crate::{
-    constants::composition::{cacao, dairy},
+    constants::composition::{cocoa, dairy},
     specs::CompositeSpec,
 };
 

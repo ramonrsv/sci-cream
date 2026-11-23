@@ -55,7 +55,7 @@
       double-counts, while carving it out decouples `CompKey::CocoaSolids` from the declared value.
 - [ ] Revisit splitting the cacao constants per product kind as listings are added. The per-kind gap
       is smaller than the scatter within each kind: 1.7 points for protein against 2.0 for powders.
-- [ ] Consider modeling the sugars `STD_SUGARS_IN_COCOA_SOLIDS` measures, today only a derivation
+- [ ] Consider modeling the sugars `STD_SUGARS_IN_COCOA_SNF` measures, today only a derivation
       basis. `ChocolateSpec`'s `sugars` must read as added-only; `Sugars::other` blocks POD/PAC.
 - [ ] Explore "cacao" as the umbrella term for chocolates and cocoa powders, instead of "chocolate",
       as `constants::composition::cacao` and the FDA's Part 163, "Cacao Products", already use it.

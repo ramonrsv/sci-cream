@@ -16,7 +16,7 @@ use crate::{
     constants::{
         self,
         composition::{
-            cacao,
+            cocoa,
             dairy::{self, milk},
         },
     },
@@ -64,11 +64,11 @@ pub enum ChocolateFat {
 ///
 /// The cocoa solids content is further broken down into proteins, carbohydrates - including fiber,
 /// and ash based on standard values for cocoa solids, specified in
-/// [`constants::composition::cacao`], e.g. [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`],
-/// [`cacao::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS`], [`cacao::STD_FIBER_IN_COCOA_SOLIDS`], etc.
+/// [`constants::composition::cocoa`], e.g. [`cocoa::STD_PROTEIN_IN_COCOA_SNF`],
+/// [`cocoa::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF`], [`cocoa::STD_FIBER_IN_COCOA_SNF`], etc.
 ///
 /// **Note:** This spec does not model intrinsic sugars in cocoa solids, i.e. those naturally
-/// occurring in the cacao nuts - see [`cacao::STD_SUGARS_IN_COCOA_SOLIDS`]. Listings typically only
+/// occurring in the cacao nuts - see [`cocoa::STD_SUGARS_IN_COCOA_SNF`]. Listings typically only
 /// declare total sugars, which include both intrinsic and added. This spec treats all of them as
 /// added sugars, stored in [`Solids::other`], accessible via [`CompKey::TotalSugars`].
 ///
@@ -76,7 +76,7 @@ pub enum ChocolateFat {
 ///
 /// A generic 70% dark chocolate, with the cacao solids its name advertises:
 /// - Cacao solids: 70%
-/// - Cocoa butter: by default [`cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS`] of the cacao solids
+/// - Cocoa butter: by default [`cocoa::STD_COCOA_BUTTER_IN_COCOA_SOLIDS`] of the cacao solids
 /// - Sugars: the remaining 30%
 ///
 /// ```
@@ -197,7 +197,7 @@ pub struct ChocolateSpec {
     /// Fat content as a percentage of the product as a whole, usually from nutrition facts
     ///
     /// If not specified, cocoa butter and milk fat are independently calculated. Cocoa butter from
-    /// [`cacao_solids`](Self::cacao_solids) and [`cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS`], and
+    /// [`cacao_solids`](Self::cacao_solids) and [`cocoa::STD_COCOA_BUTTER_IN_COCOA_SOLIDS`], and
     /// milk fat from [`milk_solids`](Self::milk_solids) and
     /// [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`].
     ///
@@ -281,7 +281,7 @@ pub(crate) mod tests {
     use crate::{
         composition::{CompKey, Fats, Fibers, MilkProteins, SimpleProteins, SolidsBreakdown},
         constants::composition::{
-            cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS,
+            cocoa::STD_COCOA_BUTTER_IN_COCOA_SOLIDS,
             dairy::{
                 STD_BUTTERFAT_IN_WHOLE_MILK_POWDER,
                 milk::{STD_MINERALS_IN_MSNF, STD_PROTEIN_IN_MSNF},
@@ -1049,7 +1049,7 @@ pub(crate) mod tests {
         .to_composition()
         .unwrap();
 
-        assert_eq_flt!(comp.get(CompKey::CocoaButter), 40.0 * STD_COCOA_BUTTER_IN_CACAO_SOLIDS);
+        assert_eq_flt!(comp.get(CompKey::CocoaButter), 40.0 * STD_COCOA_BUTTER_IN_COCOA_SOLIDS);
         assert_eq_flt!(comp.get(CompKey::MilkFat), 20.0 * STD_BUTTERFAT_IN_WHOLE_MILK_POWDER);
     }
 

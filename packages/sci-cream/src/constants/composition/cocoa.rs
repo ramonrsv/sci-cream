@@ -22,12 +22,12 @@
 //! - (Lindt 100% Cacao Dark Chocolate, 2025)[^510]
 //! - (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^511]
 //!
-//! **Note:** The `_IN_COCOA_SOLIDS` constants are calculated as fractions of the dry, fat-free
+//! **Note:** The `_IN_COCOA_SNF` constants are calculated as fractions of the dry, fat-free
 //! cacao solids of each listing, including sugars intrinsic to the cacao nuts. For cocoa powders,
 //! that is calculated as `100 - fat - water`. For chocolate listings, `sugars` includes both
 //! intrinsic and added sugars, so cocoa solids is calculated as `100 - fat - water - added_sugars`.
 //! Added sugars are calculated as `added_sugars = sugars - intrinsic_sugars`, where intrinsic
-//! sugars are estimated by [`cacao::STD_SUGARS_IN_COCOA_SOLIDS`], denoted `k`. Then the cocoa
+//! sugars are estimated by [`cocoa::STD_SUGARS_IN_COCOA_SNF`], denoted `k`. Then the cocoa
 //! solids, the denominator, are calculated as `(100 - fat - water - sugars) / (1 - k)`.
 //!
 //! **Note:** The composition of cocoa solids is taken to be entirely proteins, carbohydrates, and
@@ -35,15 +35,15 @@
 //!
 //! For chocolates and natural cocoa powders:
 //!
-//! - [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`]
-//! - [`cacao::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS`]
-//! - [`cacao::STD_ASH_IN_NATURAL_COCOA_SOLIDS`]
+//! - [`cocoa::STD_PROTEIN_IN_COCOA_SNF`]
+//! - [`cocoa::STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF`]
+//! - [`cocoa::STD_ASH_IN_NATURAL_COCOA_SNF`]
 //!
 //! For alkalized (dutched) cocoa powders:
 //!
-//! - [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`]
-//! - [`cacao::STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS`]
-//! - [`cacao::STD_ASH_IN_DUTCHED_COCOA_SOLIDS`]
+//! - [`cocoa::STD_PROTEIN_IN_COCOA_SNF`]
+//! - [`cocoa::STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SNF`]
+//! - [`cocoa::STD_ASH_IN_DUTCHED_COCOA_SNF`]
 #![doc = include_str!("../../../docs/references/index/504.md")]
 #![doc = include_str!("../../../docs/references/index/505.md")]
 #![doc = include_str!("../../../docs/references/index/506.md")]
@@ -57,7 +57,7 @@
 #![doc = include_str!("../../../docs/references/index/529.md")]
 
 #[cfg(doc)]
-use super::cacao;
+use super::cocoa;
 
 #[cfg(doc)]
 use crate::{
@@ -105,7 +105,7 @@ pub const STD_WATER_IN_CHOCOLATE: f64 = 0.01;
 /// in cocoa solids, which is more correct, but does not correctly track them as sugars.
 ///
 /// The cost of these inaccuracies is quantified by the reconciliation tests.
-pub const STD_SUGARS_IN_COCOA_SOLIDS: f64 = 0.021;
+pub const STD_SUGARS_IN_COCOA_SNF: f64 = 0.021;
 
 // Calculated cocoa solids content for each entry (%):
 //
@@ -119,7 +119,7 @@ pub const STD_SUGARS_IN_COCOA_SOLIDS: f64 = 0.021;
 /// Percentage of proteins typically found in cocoa solids
 ///
 /// Calculated values are (%): 24.04, 25.19, 23.82, 23.53, 21.50, 22.92
-pub const STD_PROTEIN_IN_COCOA_SOLIDS: f64 = 0.235;
+pub const STD_PROTEIN_IN_COCOA_SNF: f64 = 0.235;
 
 /// Percentage of fiber typically found in cocoa solids; it's a subset of carbohydrates
 ///
@@ -128,23 +128,23 @@ pub const STD_PROTEIN_IN_COCOA_SOLIDS: f64 = 0.235;
 /// These are the least consistent values among the cacao products, by a wide margin, spanning
 /// 33% to 46% across the listings, with no clear pattern between natural and alkalized cocoa.
 ///
-/// Fiber and the [intrinsic sugars](STD_SUGARS_IN_COCOA_SOLIDS) are both drawn from the
+/// Fiber and the [intrinsic sugars](STD_SUGARS_IN_COCOA_SNF) are both drawn from the
 /// carbohydrates, so together they fit inside the smaller of the two carbohydrate fractions:
 ///
 /// ```
-/// # use sci_cream::constants::composition::cacao::*;
-/// let smaller = STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS
-///     .min(STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS);
-/// assert!(STD_FIBER_IN_COCOA_SOLIDS + STD_SUGARS_IN_COCOA_SOLIDS < smaller);
+/// # use sci_cream::constants::composition::cocoa::*;
+/// let smaller = STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SNF
+///     .min(STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF);
+/// assert!(STD_FIBER_IN_COCOA_SNF + STD_SUGARS_IN_COCOA_SNF < smaller);
 /// ```
-pub const STD_FIBER_IN_COCOA_SOLIDS: f64 = 0.378;
+pub const STD_FIBER_IN_COCOA_SNF: f64 = 0.378;
 
 /// Percentage of ash (tracked as other SNFS) typically found in natural cocoa solids.
 ///
 /// This only averages the non-alkali entries. Calculated values are (%): 8.4, 7.8, 7.1, 7.0
 ///
-/// See [`STD_ASH_IN_DUTCHED_COCOA_SOLIDS`] for the ash content in alkalized cocoa solids.
-pub const STD_ASH_IN_NATURAL_COCOA_SOLIDS: f64 = 0.076;
+/// See [`STD_ASH_IN_DUTCHED_COCOA_SNF`] for the ash content in alkalized cocoa solids.
+pub const STD_ASH_IN_NATURAL_COCOA_SNF: f64 = 0.076;
 
 /// Percentage of ash typically found in the cocoa solids of alkalized, or dutched, cocoa
 ///
@@ -162,15 +162,15 @@ pub const STD_ASH_IN_NATURAL_COCOA_SOLIDS: f64 = 0.076;
 ///
 /// This only averages the alkalized entries. Calculated values are (%): 9.3, 9.3
 ///
-/// See [`STD_ASH_IN_NATURAL_COCOA_SOLIDS`] for the ash content of natural cocoa solids.
+/// See [`STD_ASH_IN_NATURAL_COCOA_SNF`] for the ash content of natural cocoa solids.
 ///
 /// Alkalization only moves mass from carbohydrates into ash:
 ///
 /// ```
-/// # use sci_cream::constants::composition::cacao::*;
-/// assert!(STD_ASH_IN_DUTCHED_COCOA_SOLIDS > STD_ASH_IN_NATURAL_COCOA_SOLIDS);
+/// # use sci_cream::constants::composition::cocoa::*;
+/// assert!(STD_ASH_IN_DUTCHED_COCOA_SNF > STD_ASH_IN_NATURAL_COCOA_SNF);
 /// assert!(
-///     STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS < STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS
+///     STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SNF < STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF
 /// );
 /// ```
 #[doc = include_str!("../../../docs/references/index/20.md")]
@@ -178,51 +178,51 @@ pub const STD_ASH_IN_NATURAL_COCOA_SOLIDS: f64 = 0.076;
 #[doc = include_str!("../../../docs/references/index/86.md")]
 #[doc = include_str!("../../../docs/references/index/506.md")]
 #[doc = include_str!("../../../docs/references/index/528.md")]
-pub const STD_ASH_IN_DUTCHED_COCOA_SOLIDS: f64 = 0.093;
+pub const STD_ASH_IN_DUTCHED_COCOA_SNF: f64 = 0.093;
 
 /// Percentage of carbohydrates typically found in natural cocoa solids
 ///
-/// Calculated as 68.9%, the remainder of 100% - [`STD_PROTEIN_IN_COCOA_SOLIDS`] -
-/// [`STD_ASH_IN_NATURAL_COCOA_SOLIDS`], so the three add up to 1:
+/// Calculated as 68.9%, the remainder of 100% - [`STD_PROTEIN_IN_COCOA_SNF`] -
+/// [`STD_ASH_IN_NATURAL_COCOA_SNF`], so the three add up to 1:
 ///
 /// ```
-/// # use sci_cream::constants::composition::cacao::*;
+/// # use sci_cream::constants::composition::cocoa::*;
 /// assert_eq!(
-///     STD_PROTEIN_IN_COCOA_SOLIDS
-///         + STD_ASH_IN_NATURAL_COCOA_SOLIDS
-///         + STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS,
+///     STD_PROTEIN_IN_COCOA_SNF
+///         + STD_ASH_IN_NATURAL_COCOA_SNF
+///         + STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF,
 ///     1.0
 /// );
 /// ```
 ///
 /// The composition of cocoa solids is taken to be entirely proteins, carbohydrates, and ash,
 /// the carbohydrates derived _"by difference"_ the same way as the USDA listings.
-pub const STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS: f64 = 0.689;
+pub const STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF: f64 = 0.689;
 
 /// Percentage of carbohydrates typically found in alkalized cocoa solids
 ///
-/// Calculated as 67.2%, the remainder of 100% - [`STD_PROTEIN_IN_COCOA_SOLIDS`] -
-/// [`STD_ASH_IN_DUTCHED_COCOA_SOLIDS`], so the three add up to 1:
+/// Calculated as 67.2%, the remainder of 100% - [`STD_PROTEIN_IN_COCOA_SNF`] -
+/// [`STD_ASH_IN_DUTCHED_COCOA_SNF`], so the three add up to 1:
 ///
 /// ```
-/// # use sci_cream::constants::composition::cacao::*;
+/// # use sci_cream::constants::composition::cocoa::*;
 /// assert_eq!(
-///     STD_PROTEIN_IN_COCOA_SOLIDS
-///         + STD_ASH_IN_DUTCHED_COCOA_SOLIDS
-///         + STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS,
+///     STD_PROTEIN_IN_COCOA_SNF
+///         + STD_ASH_IN_DUTCHED_COCOA_SNF
+///         + STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SNF,
 ///     1.0
 /// );
 /// ```
 ///
 /// The composition of cocoa solids is taken to be entirely proteins, carbohydrates, and ash,
 /// the carbohydrates derived _"by difference"_ the same way as the USDA listings.
-pub const STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS: f64 = 0.672;
+pub const STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SNF: f64 = 0.672;
 
 /// Percentage of saturated fats typically found in cocoa butter
 pub const STD_SATURATED_FAT_IN_COCOA_BUTTER: f64 = 0.60;
 
 /// Percentage of cocoa butter typically found in cacao solids of non-powder chocolate
 ///
-/// This value is an average of all the chocolate products listed in [`composition::cacao`].
+/// This value is an average of all the chocolate products listed in [`composition::cocoa`].
 /// Note that this excludes cocoa powders, which contain much lesser amounts of cocoa butter.
-pub const STD_COCOA_BUTTER_IN_CACAO_SOLIDS: f64 = 0.57;
+pub const STD_COCOA_BUTTER_IN_COCOA_SOLIDS: f64 = 0.57;

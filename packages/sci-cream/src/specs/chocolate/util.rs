@@ -5,11 +5,10 @@ use crate::{
     composition::{Carbohydrates, Fats, Fibers, MilkSolids, SimpleProteins, SimpleSolids, Sugars},
     constants::{
         composition::{
-            cacao::{
-                STD_ASH_IN_DUTCHED_COCOA_SOLIDS, STD_ASH_IN_NATURAL_COCOA_SOLIDS,
-                STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS, STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS,
-                STD_COCOA_BUTTER_IN_CACAO_SOLIDS, STD_FIBER_IN_COCOA_SOLIDS, STD_PROTEIN_IN_COCOA_SOLIDS,
-                STD_SATURATED_FAT_IN_COCOA_BUTTER, STD_SUGARS_IN_COCOA_SOLIDS,
+            cocoa::{
+                STD_ASH_IN_DUTCHED_COCOA_SNF, STD_ASH_IN_NATURAL_COCOA_SNF, STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SNF,
+                STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF, STD_COCOA_BUTTER_IN_COCOA_SOLIDS, STD_FIBER_IN_COCOA_SNF,
+                STD_PROTEIN_IN_COCOA_SNF, STD_SATURATED_FAT_IN_COCOA_BUTTER, STD_SUGARS_IN_COCOA_SNF,
             },
             dairy::{
                 STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
@@ -29,7 +28,7 @@ use crate::{
 
 #[cfg(doc)]
 use crate::{
-    constants::composition::{cacao, dairy},
+    constants::composition::{cocoa, dairy},
     specs::ChocolateLabelSpec,
 };
 
@@ -39,7 +38,7 @@ use crate::{
 /// `milk_solids` and [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`]. The remainder is cocoa butter,
 /// equivalent to total fat if there are no milk solids. If `fat` is [None], then cocoa butter and
 /// milk fat are independently calculated. Cocoa butter from `cacao_solids` and
-/// [`cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS`], and milk fat from `milk_solids` and
+/// [`cocoa::STD_COCOA_BUTTER_IN_COCOA_SOLIDS`], and milk fat from `milk_solids` and
 /// [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`].
 ///
 /// Milk fat anchors a total fat's split, see [standard fractions](super#standard-fractions).
@@ -48,7 +47,7 @@ pub fn resolve_chocolate_fats(cacao_solids: f64, milk_solids: f64, fat: Option<C
     let std_milk_fat = milk_fat_from_milk_solids(milk_solids);
 
     match fat {
-        None => (cacao_solids * STD_COCOA_BUTTER_IN_CACAO_SOLIDS, std_milk_fat),
+        None => (cacao_solids * STD_COCOA_BUTTER_IN_COCOA_SOLIDS, std_milk_fat),
         Some(ChocolateFat::Total(total)) => (total - std_milk_fat, std_milk_fat),
         Some(ChocolateFat::Split { cocoa_butter, milk_fat }) => (cocoa_butter, milk_fat),
     }
@@ -80,10 +79,10 @@ pub(super) fn make_milk_solids(milk_solids: f64, milk_fat: f64, lactose: &Sugars
 pub(super) fn make_cocoa_solids(cacao_solids: f64, cocoa_butter: f64, dutch_processed: bool) -> Result<SimpleSolids> {
     let cocoa_snf = cacao_solids - cocoa_butter;
 
-    let (std_carbohydrates_in_cocoa_solids, std_ash_in_cocoa_solids) = if dutch_processed {
-        (STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SOLIDS, STD_ASH_IN_DUTCHED_COCOA_SOLIDS)
+    let (std_carbohydrates_in_cocoa_snf, std_ash_in_cocoa_snf) = if dutch_processed {
+        (STD_CARBOHYDRATES_IN_DUTCHED_COCOA_SNF, STD_ASH_IN_DUTCHED_COCOA_SNF)
     } else {
-        (STD_CARBOHYDRATES_IN_NATURAL_COCOA_SOLIDS, STD_ASH_IN_NATURAL_COCOA_SOLIDS)
+        (STD_CARBOHYDRATES_IN_NATURAL_COCOA_SNF, STD_ASH_IN_NATURAL_COCOA_SNF)
     };
 
     SimpleSolids::new()
@@ -92,38 +91,38 @@ pub(super) fn make_cocoa_solids(cacao_solids: f64, cocoa_butter: f64, dutch_proc
                 .total(cocoa_butter)
                 .saturated(cocoa_butter * STD_SATURATED_FAT_IN_COCOA_BUTTER),
         )
-        .proteins(SimpleProteins::from_total(cocoa_snf * STD_PROTEIN_IN_COCOA_SOLIDS))
+        .proteins(SimpleProteins::from_total(cocoa_snf * STD_PROTEIN_IN_COCOA_SNF))
         .carbohydrates(
             Carbohydrates::new()
-                .fiber(Fibers::new().other(cocoa_snf * STD_FIBER_IN_COCOA_SOLIDS))
-                .others_from_total(cocoa_snf * std_carbohydrates_in_cocoa_solids)?,
+                .fiber(Fibers::new().other(cocoa_snf * STD_FIBER_IN_COCOA_SNF))
+                .others_from_total(cocoa_snf * std_carbohydrates_in_cocoa_snf)?,
         )
-        .minerals(cocoa_snf * std_ash_in_cocoa_solids)
+        .minerals(cocoa_snf * std_ash_in_cocoa_snf)
         .validate_into()
 }
 
 /// Calculates the hardness factor based on the specified `cacao_solids` and `cocoa_butter`
 pub(super) fn calculate_cocoa_hardness(cacao_solids: f64, cocoa_butter: f64) -> f64 {
     let cocoa_snf = cacao_solids - cocoa_butter;
-    cocoa_butter * hf::COCOA_BUTTER + cocoa_snf * hf::COCOA_SOLIDS
+    cocoa_butter * hf::COCOA_BUTTER + cocoa_snf * hf::COCOA_SNF
 }
 
 /// Estimates a chocolate's cocoa solids non-fat, per 100 g, from its `fiber`, which milk lacks
 ///
 /// This estimation assumes that milk contributes no significant fiber, as USDA's milk powder
 /// listings report none, so all the fiber comes from the cocoa solids non-fat. Those are then
-/// estimated as <code>fiber / [cacao::STD_FIBER_IN_COCOA_SOLIDS]</code>.
+/// estimated as <code>fiber / [cocoa::STD_FIBER_IN_COCOA_SNF]</code>.
 ///
 /// **Note:** The estimation holds where its [standard fractions](super#standard-fractions) do.
 #[must_use]
 pub const fn estimate_chocolate_cocoa_snf_from_fiber(fiber: f64) -> f64 {
-    fiber / STD_FIBER_IN_COCOA_SOLIDS
+    fiber / STD_FIBER_IN_COCOA_SNF
 }
 
 /// Estimates a chocolate's SNF split, per 100 g, from its `protein`, by its `fiber`
 ///
 /// The split is `(cocoa_snf, msnf)`, the cocoa solids non-fat and the milk solids non-fat (MSNF),
-/// which share the protein at [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`] and
+/// which share the protein at [`cocoa::STD_PROTEIN_IN_COCOA_SNF`] and
 /// [`dairy::milk::STD_PROTEIN_IN_MSNF`]. The protein left by the cocoa solids non-fat, estimated
 /// from the `fiber` by [`estimate_chocolate_cocoa_snf_from_fiber`], gives the MSNF.
 ///
@@ -131,7 +130,7 @@ pub const fn estimate_chocolate_cocoa_snf_from_fiber(fiber: f64) -> f64 {
 #[must_use]
 pub const fn estimate_chocolate_snf_split_from_protein_by_fiber(protein: f64, fiber: f64) -> (f64, f64) {
     let cocoa_snf = estimate_chocolate_cocoa_snf_from_fiber(fiber);
-    let milk_protein = protein - cocoa_snf * STD_PROTEIN_IN_COCOA_SOLIDS;
+    let milk_protein = protein - cocoa_snf * STD_PROTEIN_IN_COCOA_SNF;
     let msnf = milk_protein / STD_PROTEIN_IN_MSNF;
     (cocoa_snf, msnf)
 }
@@ -139,14 +138,14 @@ pub const fn estimate_chocolate_snf_split_from_protein_by_fiber(protein: f64, fi
 /// Estimates a chocolate's SNF split, per 100 g, from its `protein`, by its `cacao_solids`
 ///
 /// The split is `(cocoa_snf, msnf)`, the cocoa solids non-fat and the milk solids non-fat (MSNF),
-/// which share the protein at [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`] and
+/// which share the protein at [`cocoa::STD_PROTEIN_IN_COCOA_SNF`] and
 /// [`dairy::milk::STD_PROTEIN_IN_MSNF`]. The cocoa solids non-fat are the `cacao_solids` less the
 /// cocoa butter, which is the `fat` less the milk fat, at
 /// [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`] of the milk solids. So both shares depend on the
 /// MSNF, which this solves for:
 ///
 /// ```text
-/// protein     = msnf * STD_PROTEIN_IN_MSNF + cocoa_snf * STD_PROTEIN_IN_COCOA_SOLIDS
+/// protein     = msnf * STD_PROTEIN_IN_MSNF + cocoa_snf * STD_PROTEIN_IN_COCOA_SNF
 /// cocoa_snf   = cacao_solids - (fat - milk_fat)
 /// milk_fat    = milk_solids * STD_BUTTERFAT_IN_WHOLE_MILK_POWDER
 /// milk_solids = msnf + milk_fat
@@ -160,8 +159,8 @@ pub const fn estimate_chocolate_snf_split_from_protein_by_cacao_solids(
     cacao_solids: f64,
 ) -> (f64, f64) {
     let milk_fat_per_msnf = STD_BUTTERFAT_IN_WHOLE_MILK_POWDER / (1.0 - STD_BUTTERFAT_IN_WHOLE_MILK_POWDER);
-    let protein_without_milk = (cacao_solids - fat) * STD_PROTEIN_IN_COCOA_SOLIDS;
-    let protein_per_msnf = STD_PROTEIN_IN_MSNF + milk_fat_per_msnf * STD_PROTEIN_IN_COCOA_SOLIDS;
+    let protein_without_milk = (cacao_solids - fat) * STD_PROTEIN_IN_COCOA_SNF;
+    let protein_per_msnf = STD_PROTEIN_IN_MSNF + milk_fat_per_msnf * STD_PROTEIN_IN_COCOA_SNF;
     let msnf = (protein - protein_without_milk) / protein_per_msnf;
     let milk_fat = msnf * milk_fat_per_msnf;
     let cocoa_snf = cacao_solids - (fat - milk_fat);
@@ -171,7 +170,7 @@ pub const fn estimate_chocolate_snf_split_from_protein_by_cacao_solids(
 /// Estimates a chocolate's SNF split, per 100 g, from its `protein`, by its `milk_solids`
 ///
 /// The split is `(cocoa_snf, msnf)`, the cocoa solids non-fat and the milk solids non-fat (MSNF),
-/// which share the protein at [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`] and
+/// which share the protein at [`cocoa::STD_PROTEIN_IN_COCOA_SNF`] and
 /// [`dairy::milk::STD_PROTEIN_IN_MSNF`]. The protein left by the MSNF, the `milk_solids` less
 /// their milk fat at [`dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`], gives the cocoa solids non-fat.
 ///
@@ -181,7 +180,7 @@ pub const fn estimate_chocolate_snf_split_from_protein_by_milk_solids(protein: f
     let msnf = msnf_from_milk_solids(milk_solids);
     let milk_protein = msnf * STD_PROTEIN_IN_MSNF;
     let cocoa_protein = protein - milk_protein;
-    let cocoa_snf = cocoa_protein / STD_PROTEIN_IN_COCOA_SOLIDS;
+    let cocoa_snf = cocoa_protein / STD_PROTEIN_IN_COCOA_SNF;
     (cocoa_snf, msnf)
 }
 
@@ -230,10 +229,10 @@ const MAX_SUGARS_ROUNDING_EXCESS: f64 = 0.5;
 
 /// Verifies that a label's `sugars` counted in its `cocoa_solids`, per 100 g, are the cocoa's own
 ///
-/// Cocoa's intrinsic sugars are [`cacao::STD_SUGARS_IN_COCOA_SOLIDS`] of the cocoa solids, which
+/// Cocoa's intrinsic sugars are [`cocoa::STD_SUGARS_IN_COCOA_SNF`] of the cocoa solids, which
 /// the label can exceed by [`MAX_SUGARS_ROUNDING_EXCESS`] per `serving_size` in grams.
 pub(super) fn verify_cocoa_sugars_are_intrinsic(sugars: f64, cocoa_solids: f64, serving_size: f64) -> Result<()> {
-    let intrinsic = cocoa_solids * STD_SUGARS_IN_COCOA_SOLIDS;
+    let intrinsic = cocoa_solids * STD_SUGARS_IN_COCOA_SNF;
     let rounding = MAX_SUGARS_ROUNDING_EXCESS * 100.0 / serving_size;
 
     if is_subset(sugars, intrinsic + rounding) {
@@ -463,7 +462,7 @@ mod tests {
     #[test]
     fn verify_cocoa_sugars_are_intrinsic_allows_what_rounding_adds() {
         // USDA's natural cocoa as a 100 g label: 1.75 g of sugars over 83.3 g of cocoa solids
-        let own = 83.3 * STD_SUGARS_IN_COCOA_SOLIDS;
+        let own = 83.3 * STD_SUGARS_IN_COCOA_SNF;
 
         assert!(verify_cocoa_sugars_are_intrinsic(1.75, 83.3, 100.0).is_ok());
         assert!(verify_cocoa_sugars_are_intrinsic(own + 0.5, 83.3, 100.0).is_ok());

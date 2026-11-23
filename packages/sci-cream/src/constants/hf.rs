@@ -14,7 +14,7 @@ pub const COCOA_BUTTER: f64 = 0.9;
 ///
 /// (Corvitto, 2005, p. 243)[^3]
 #[doc = include_str!("../../docs/references/index/3.md")]
-pub const COCOA_SOLIDS: f64 = 1.8;
+pub const COCOA_SNF: f64 = 1.8;
 
 /// Hardness Factor for nut fat; see [`NutSpec`](crate::specs::NutSpec).
 ///

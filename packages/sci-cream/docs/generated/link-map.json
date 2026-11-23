@@ -59,7 +59,7 @@
     "composition::sugars::Sugars::maltose": "composition/sugars/struct.Sugars.html#structfield.maltose",
     "composition::sugars::Sugars::sucrose": "composition/sugars/struct.Sugars.html#structfield.sucrose",
     "composition::sugars::Sugars::trehalose": "composition/sugars/struct.Sugars.html#structfield.trehalose",
-    "constants::composition::cacao::STD_WATER_IN_COCOA_POWDER": "constants/composition/cacao/constant.STD_WATER_IN_COCOA_POWDER.html",
+    "constants::composition::cocoa::STD_WATER_IN_COCOA_POWDER": "constants/composition/cocoa/constant.STD_WATER_IN_COCOA_POWDER.html",
     "constants::composition::dairy": "constants/composition/dairy/index.html",
     "constants::composition::dairy::dairy::STD_BUTTERFAT_IN_WHOLE_MILK_POWDER": "constants/composition/dairy/dairy/constant.STD_BUTTERFAT_IN_WHOLE_MILK_POWDER.html",
     "constants::composition::dairy::milk::STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN": "constants/composition/dairy/milk/constant.STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN.html",

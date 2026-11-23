@@ -12,7 +12,7 @@
 //!
 //! Each listing is also reconciled as its test-only [`ChocolateLabelSpec`], named `… (Label)`, see
 //! [`variants`](crate::tests::embedded::variants). The dark chocolate and cocoa powder labels take
-//! no more from a listing than its entry does, leaving its protein and fiber to the [`cacao`]
+//! no more from a listing than its entry does, leaving its protein and fiber to the [`cocoa`]
 //! fractions, which come from these listings. The milk and white labels split theirs as the entries
 //! do, without rounding.
 //!
@@ -45,7 +45,7 @@ use super::util::{EXACT_MATCH, LabelRounding, Proximates, reconcile_proximates};
 use crate::{
     composition::{CompKey, Composition, ToComposition},
     constants::composition::{
-        cacao::STD_WATER_IN_COCOA_POWDER,
+        cocoa::STD_WATER_IN_COCOA_POWDER,
         dairy::{STD_BUTTERFAT_IN_WHOLE_MILK_POWDER, milk::STD_LACTOSE_IN_MSNF},
     },
     data::{get_all_spec_entries, get_spec_entry_by_name},
@@ -58,7 +58,7 @@ use crate::{
 };
 
 #[cfg(doc)]
-use crate::constants::composition::{cacao, dairy::milk};
+use crate::constants::composition::{cocoa, dairy::milk};
 
 /// Measured proximates of each embedded `USDA …` entry, from its FoodData Central listing, with
 /// the ceilings for its entry and for its `… (Label)` variant.
@@ -198,7 +198,7 @@ const FULL_MISS: f64 = 100.0;
 /// exactly. [`ChocolateSpec`](crate::specs::ChocolateSpec) has no water field, so water reads as a
 /// full miss, a ceiling that records the gap rather than tolerates drift. That same water stays
 /// inside `cacao_solids` and inflates the cocoa solids, while the sugars intrinsic to cocoa deflate
-/// them by leaving with the declared `sugars` ([`cacao::STD_SUGARS_IN_COCOA_SOLIDS`]); the rest
+/// them by leaving with the declared `sugars` ([`cocoa::STD_SUGARS_IN_COCOA_SNF`]); the rest
 /// bound that net overstatement plus the scatter of each constant, fiber being the loosest.
 ///
 /// The `… (Label)` variants model the same compositions, a dark chocolate label's cacao solids
@@ -266,7 +266,7 @@ const WHITE_CHOCOLATE_LABEL_CEILING: Proximates = Proximates {
 /// [`CocoaPowderSpec`](crate::specs::CocoaPowderSpec) has no sugars field, so each listing's sugars
 /// read as a full miss; that mass stays inside the modeled cocoa solids as carbohydrate, keeping
 /// that row tight. Fat and water are transcribed, so both match exactly. Ash tracks alkalization
-/// via [`cacao::STD_ASH_IN_DUTCHED_COCOA_SOLIDS`], missing only where a listing departs from it.
+/// via [`cocoa::STD_ASH_IN_DUTCHED_COCOA_SNF`], missing only where a listing departs from it.
 /// Fiber is the loosest, with protein also wide against a shared constant.
 const COCOA_CEILING: Proximates = Proximates {
     water: EXACT_MATCH,
@@ -421,12 +421,12 @@ const AS_PRINTED: FigureCeilings = FigureCeilings {
 ///
 /// Fat and sugars are transcribed, and the milk and white labels split their protein, so those
 /// round to what the labels print. The dark chocolates and cocoa powders take their protein, fiber,
-/// and carbohydrate from the [`cacao`] fractions of their cocoa solids non-fat:
+/// and carbohydrate from the [`cocoa`] fractions of their cocoa solids non-fat:
 ///
 /// - Lindt's dark labels put 30-33% protein in the cocoa solids non-fat, against
-///   [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`]'s 23.5%, and correspondingly less carbohydrate, so
+///   [`cocoa::STD_PROTEIN_IN_COCOA_SNF`]'s 23.5%, and correspondingly less carbohydrate, so
 ///   their protein reads up to 29.5% low and their carbohydrate up to 20.2% high. The 95% and
-///   100% put 44% and 35% fiber in it, against [`cacao::STD_FIBER_IN_COCOA_SOLIDS`]'s 37.8%.
+///   100% put 44% and 35% fiber in it, against [`cocoa::STD_FIBER_IN_COCOA_SNF`]'s 37.8%.
 /// - Purest's figures account for only 9.5 g of its 12 g serving, leaving more than its water and
 ///   ash take, so its carbohydrate reads 16.4% high.
 /// - Green & Black's Milk's cacao minimum raises its cocoa solids non-fat past what its fiber
