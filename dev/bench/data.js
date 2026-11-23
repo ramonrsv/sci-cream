@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795475539294,
+  "lastUpdate": 1795475900201,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -605287,6 +605287,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 727.5,
             "range": "38.45",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "db376c6c7f4e5fd3af9ba216aec6cb37153364bb",
+          "message": "Add Cadbury Dairy Milk labels, scaling overfills\n\nA milk or white ChocolateLabelSpec rejected any label whose rounded\nfigures composed more than 100 g, as Canada's Cadbury Dairy Milk does\nby 1.3%. Those parts now scale into 100 g, as far as that keeps the\nlabel's fat and sugars within half a gram per serving of what it\nprints, leaving no other solids.\n\nCadbury Dairy Milk Chocolate (UK) declares its actual milk solids and\ncounts its palm and shea, cocoa butter equivalents, as cocoa butter;\n(Canada) is the 90 g bar's label, with no vegetable fats. Test-only\nfixtures add the UK label's minima, two more Canadian sizes, and\nDarkmilk, and the tests compare them and refuse the US label, which\nnothing on it can split.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T17:52:07-05:00",
+          "tree_id": "cdd663cfcb464b9bcad156f9c346afb372d61964",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/db376c6c7f4e5fd3af9ba216aec6cb37153364bb"
+        },
+        "date": 1795475815910,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.63,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52.25,
+            "range": "3.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57.63,
+            "range": "4.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2182.13,
+            "range": "69.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 336.13,
+            "range": "2.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 345,
+            "range": "5.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 364.88,
+            "range": "8.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17371.38,
+            "range": "37.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 799.13,
+            "range": "12.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 59.25,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.13,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 47.38,
+            "range": "2.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.75,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 125.75,
+            "range": "5.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 72.13,
+            "range": "2.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 49.23,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 37.86,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 610.75,
+            "range": "30.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 662.38,
+            "range": "14.97",
             "unit": "ms"
           }
         ]
