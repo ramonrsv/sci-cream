@@ -186,7 +186,8 @@ jobs:
           output-file-path: packages/sci-cream/bench_output_rust.txt
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
-          fail-on-alert: true
+          # Track-only until CodSpeed and Bencher supersede it: runner noise trips false alerts.
+          fail-on-alert: false
           comment-on-alert: true
           alert-comment-cc-users: "@ramonrsv"
 
@@ -218,7 +219,8 @@ jobs:
           output-file-path: packages/sci-cream/bench_output_js.txt
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
-          fail-on-alert: true
+          # Track-only until CodSpeed and Bencher supersede it: runner noise trips false alerts.
+          fail-on-alert: false
           comment-on-alert: true
           alert-comment-cc-users: "@ramonrsv"
 
