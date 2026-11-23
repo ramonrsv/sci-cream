@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795470233598,
+  "lastUpdate": 1795470282608,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -603529,6 +603529,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 716.38,
             "range": "29.80",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3003fbf0ffc33bc8d8307894f56a4ea7a681c149",
+          "message": "Wait for the peek drawer to clear the content\n\ngoToPageAndWaitFor parks the cursor off the sidebar's hover zone, but\na peek drawer the page load opened doesn't close at once: it closes\nafter a short delay, then animates shut, covering the content's left\nedge meanwhile. Playwright retries a click beneath it, scrolling the\ntarget into view at a new alignment on each attempt: centred if\nneeded, then end, center, and start.\n\nAt the 1080p half-screen viewport the ingredients list sits under the\ndrawer, so the selected item ended up centred or at the top of the\ncolumn depending on which retry landed, and the layout test flaked.\n\nIt now waits, after parking, until the sidebar's right edge no longer\npasses the content's left edge.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T16:15:53-05:00",
+          "tree_id": "e610a90986347bf8e229183fc744c4e9996dce6f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3003fbf0ffc33bc8d8307894f56a4ea7a681c149"
+        },
+        "date": 1795470189692,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 55,
+            "range": "3.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 59.13,
+            "range": "4.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 70.88,
+            "range": "3.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2682,
+            "range": "78.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 388,
+            "range": "6.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 400,
+            "range": "7.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 415.63,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 20099.38,
+            "range": "134.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 875,
+            "range": "9.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 71.75,
+            "range": "2.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 70.75,
+            "range": "3.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 59.63,
+            "range": "3.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 48.38,
+            "range": "3.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 152.75,
+            "range": "6.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 99.13,
+            "range": "8.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 63.73,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 48.45,
+            "range": "0.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 731.13,
+            "range": "37.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 806.25,
+            "range": "29.64",
             "unit": "ms"
           }
         ]
