@@ -6,7 +6,7 @@ use crate::{
     composition::{Composition, PAC, SimpleSolids, Solids, ToComposition},
     constants::composition::cocoa::STD_WATER_IN_COCOA_POWDER,
     error::Result,
-    specs::chocolate::util::{calculate_cocoa_hardness, make_cocoa_solids},
+    specs::cocoa::util::{calculate_cocoa_hardness, make_cocoa_solids},
     validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_subset},
 };
 

@@ -7,7 +7,7 @@ use crate::{
     constants::composition::{cocoa::STD_WATER_IN_COCOA_POWDER, dairy::milk::STD_LACTOSE_IN_MSNF},
     error::{Error, Result},
     specs::{
-        chocolate::{
+        cocoa::{
             ChocolateFat, ChocolateSpec, CocoaPowderSpec,
             util::{
                 actual_or, derive_dark_chocolate_solids, derive_milk_chocolate_solids, derive_white_chocolate_solids,

@@ -20,7 +20,7 @@ use crate::{
     },
     error::{Error, Result},
     specs::{
-        chocolate::{ChocolateFat, DeclaredSolids},
+        cocoa::{ChocolateFat, DeclaredSolids},
         dairy::make_milk_proteins,
     },
     validate::{Validate, is_subset, is_within_range, verify_is_subset},

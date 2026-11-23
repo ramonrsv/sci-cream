@@ -42,9 +42,7 @@ use crate::{
     specs::CompositeSpec,
 };
 
-#[allow(clippy::module_inception)]
 pub mod chocolate;
-
 pub mod cocoa_powder;
 pub mod label;
 pub mod util;

@@ -6,7 +6,7 @@ use crate::{
     composition::{Carbohydrates, Composition, PAC, ScaleComponents, SimpleSolids, Solids, Sugars, ToComposition},
     constants::{composition::dairy::milk::STD_LACTOSE_IN_MSNF, pac},
     error::Result,
-    specs::chocolate::util::{calculate_cocoa_hardness, make_cocoa_solids, make_milk_solids, resolve_chocolate_fats},
+    specs::cocoa::util::{calculate_cocoa_hardness, make_cocoa_solids, make_milk_solids, resolve_chocolate_fats},
     validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_subset},
 };
 

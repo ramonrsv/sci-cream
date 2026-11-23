@@ -17,7 +17,7 @@ pub(crate) use crate::{
     specs::{
         alcohol::tests::*,
         alias::tests::*,
-        chocolate::{chocolate::tests::*, cocoa_powder::tests::*, label::tests::*},
+        cocoa::{chocolate::tests::*, cocoa_powder::tests::*, label::tests::*},
         composite::tests::*,
         dairy::{label::tests::*, sheet::tests::*, simple::tests::*},
         egg::tests::*,

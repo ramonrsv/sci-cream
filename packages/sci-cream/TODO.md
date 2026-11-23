@@ -62,7 +62,7 @@
       It would reach `Category::Chocolate`, mirrored by the app's database enum, `specs::chocolate`,
       `ChocolateLabelSpec`, `ChocolateKind`, the docs' chocolate chapter, and `chocolates.md`.
 - [ ] Review the 'Lindt Classic Milk Chocolate' entry, which counts its added lactose as sucrose and
-      so overstates its POD, though `specs::chocolate` says added lactose needs a `CompositeSpec`.
+      so overstates its POD, though `specs::cocoa` says added lactose needs a `CompositeSpec`.
 - [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
 - [ ] Add wine ingredients, and considered adding evaporated wine - how to handle, parametric?
 - [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '\* [Evap 15]', etc.

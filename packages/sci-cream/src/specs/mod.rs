@@ -30,7 +30,7 @@ use crate::{
 
 pub mod alcohol;
 pub mod alias;
-pub mod chocolate;
+pub mod cocoa;
 pub mod composite;
 pub mod dairy;
 pub mod egg;
@@ -45,10 +45,10 @@ pub mod stabilizer;
 pub mod sweetener;
 pub mod units;
 
-// `chocolate` and `dairy` are globbed by submodule, as their `label` modules would clash
+// `cocoa` and `dairy` are globbed by submodule, as their `label` modules would clash
 pub use alcohol::*;
 pub use alias::*;
-pub use chocolate::{chocolate::*, cocoa_powder::*, label::*, util::*};
+pub use cocoa::{chocolate::*, cocoa_powder::*, label::*, util::*};
 pub use composite::*;
 pub use dairy::{label::*, sheet::*, simple::*};
 pub use egg::*;
