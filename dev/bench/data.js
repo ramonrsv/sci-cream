@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795455078350,
+  "lastUpdate": 1795455092394,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -643909,6 +643909,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.22%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "353c2f05730af20a82539fb6b9a5a85bd5fc10a3",
+          "message": "Rename the chocolate specs' cacao_solids field\n\nChocolateSpec, CocoaPowderSpec, and ChocolateLabelSpec take\ncocoa_solids, the total cocoa solids, in place of cacao_solids, as do\nestimate_chocolate_snf_split_from_protein_by_cocoa_solids and the\nentries; the code's cacao locals become cocoa.\n\nMigration 0005 renames the key in stored ingredient specs, keeping\nthe rest of each row's JSON text as it is; its rollback renames it\nback. Share links go to version 2, and a v1 link's chocolate specs are\nupgraded on decode, as comparePayloadVersion now reports a lesser\nversion as older.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T11:23:55-05:00",
+          "tree_id": "13abc8d870009a3257ea87d1e923a629796b0355",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/353c2f05730af20a82539fb6b9a5a85bd5fc10a3"
+        },
+        "date": 1795455003348,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 45298,
+            "range": "±1.15%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 446703,
+            "range": "±0.42%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 30990,
+            "range": "±0.89%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 339398,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
