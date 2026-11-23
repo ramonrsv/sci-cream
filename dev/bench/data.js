@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795454743331,
+  "lastUpdate": 1795454747807,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -736512,6 +736512,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/e4f0878551a447cc832e4675c1fcf938087701fd"
         },
         "date": 1795453757723,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "df2fad40a5bb8214ec7176bb6fabdf5225ce571a",
+          "message": "Rename the cocoa composition constants\n\nconstants::composition::cacao becomes cocoa. The seven fractions of\nthe non-fat part, STD_*_IN_COCOA_SOLIDS, become STD_*_IN_COCOA_SNF, as\nCompKey::CocoaSNF, and hf::COCOA_SOLIDS becomes hf::COCOA_SNF.\nSTD_COCOA_BUTTER_IN_CACAO_SOLIDS, a fraction of the total, becomes\nSTD_COCOA_BUTTER_IN_COCOA_SOLIDS.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-23T01:41:15-05:00",
+          "tree_id": "177c05db10ff339b1c84423698b6c272875063e6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/df2fad40a5bb8214ec7176bb6fabdf5225ce571a"
+        },
+        "date": 1795454746973,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
