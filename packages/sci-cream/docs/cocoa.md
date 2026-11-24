@@ -13,7 +13,7 @@ sheets, and the literature:
 - **Cocoa solids**: Everything in a product that comes from the cocoa bean, including cocoa butter.
   Codex and Canadian standards call them _"total cocoa solids"_ (Codex, CXS 87-1981, §2.1.1)[^135],
   (CFIA, 2025, Volume 4, 4.1.6)[^136], EU ones _"total dry cocoa solids"_ (Directive 2000/36/EC,
-  2000, Annex I 3.(a))[^84], and Callebaut's sheets _"Dry cocoa solids"_ (Barry
+  2000, Annex I A.3(a))[^84], and Callebaut's sheets _"Dry cocoa solids"_ (Barry
   Callebaut, 2023)[^543]. They are the percentage on a chocolate's label, which EU labels state as
   _"cocoa solids: ... % minimum"_ (Directive 2000/36/EC, 2000, Article 3(3))[^84], and North
   American ones often as "cacao", as in _"CACAO SOLIDS: 70% MINIMUM"_ (Lindt 70% Cacao Dark
@@ -30,7 +30,7 @@ sheets, and the literature:
 - **Cocoa butter**: The fat in cocoa beans, about 55% of the nibs (Goff & Hartel, 2025,
   p. 104)[^20]. Codex, Canadian, and EU standards call it _"cocoa butter"_ (Codex, CXS 87-1981,
   §2.1.1)[^135], (CFIA, 2025, Volume 4, 4.1.6)[^136], the EU defining it as _"the fat obtained from
-  cocoa beans or parts of cocoa beans"_ (Directive 2000/36/EC, 2000, Annex I 1.)[^84], and US ones
+  cocoa beans or parts of cocoa beans"_ (Directive 2000/36/EC, 2000, Annex I A.1)[^84], and US ones
   _"cacao fat"_ (U.S. FDA, CFR 21, 163.111)[^86]. It is _"practically flavorless"_ (Goff & Hartel,
   2025, p. 105)[^20], but it hardens the frozen product (Corvitto, 2005, p. 243)[^3], and enhances
   _"the perception of richness in chocolate ice creams"_ through _"the lubricating effect that cocoa
@@ -63,7 +63,7 @@ the non-fat cocoa solids and the cocoa butter ("Cocoa solids", 2026)[^137], (U.S
 total, cocoa butter included. Cocoa powder contains chiefly cocoa solids non-fat, although it almost
 always contains residual fat, typically in grades of 10-12% or 22-24% (Goff & Hartel, 2025,
 p. 105)[^20], or of 20-22%, the EU requiring at least 20% cocoa butter in the dry matter of "cocoa
-powder" (Directive 2000/36/EC, 2000, Annex I 2.)[^84]. The names used to describe the grades can
+powder" (Directive 2000/36/EC, 2000, Annex I A.2)[^84]. The names used to describe the grades can
 vary by jurisdiction; see the "Cocoa Powder, 10/12% Fat", "Cocoa Powder, 20/22% Fat", and "Cocoa
 Powder, 22/24% Fat" ingredients for more information. A product's cocoa solids typically come from
 chocolate liquor, from added cocoa butter, or from cocoa powder.

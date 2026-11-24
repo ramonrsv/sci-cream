@@ -73,7 +73,7 @@ use crate::{
 /// - (USDA, 2019, "Cocoa, dry powder, unsweetened, processed with alkali")[^528]
 /// - (USDA, 2019, "Cocoa, dry powder, hi-fat or breakfast, processed with alkali")[^529]
 ///
-/// The EU caps cocoa powder at 9% water (Directive 2000/36/EC, 2000, Annex I 2.(a))[^84].
+/// The EU caps cocoa powder at 9% water (Directive 2000/36/EC, 2000, Annex I A.2(a))[^84].
 #[doc = include_str!("../../../docs/references/index/84.md")]
 #[doc = include_str!("../../../docs/references/index/506.md")]
 #[doc = include_str!("../../../docs/references/index/528.md")]

@@ -45,7 +45,13 @@ A few notes and clarifications about the entries in this list:
 - Callebaut entries take fat from the sheet's total, and cocoa butter as the total less the milk fat
   rather than the cocoa solids less the cocoa solids non-fat, which can differ by rounding.
 - Callebaut's nutritional data is _"by calculation based on literature data"_ rather than measured,
-  so entries leave it out, as it would only swap the standard fractions for the vendor's own.
+  so entries leave it out, as it would only swap the standard fractions in this library for the
+  vendor's own; a cocoa powder's fat and water are the exceptions.
+- A cocoa powder's fat is taken as given, whether its source states it on the whole product or on
+  dry matter, as the EU defines it (Directive 2000/36/EC, 2000, Annex I A.2)[^84]. Most sheets state
+  no basis, and those that state dry matter print the same figure per 100 g in their nutritional
+  data. The difference, about 3% of the figure at typical moisture, is less than a grade's two-point
+  range and the spread between products.
 - A cocoa powder's _"100%"_ means pure cocoa, i.e. no other ingredients, rather than a declared
   content, as an actual 100% would leave no room for its water.
 - US and Canadian labels include fiber in the carbohydrate (U.S. FDA, CFR 21, 101.9(c)(6))[^123],
@@ -259,7 +265,7 @@ e.g. [Callebaut Natural Cocoa Powder -
 It has different classifications depending on the regulatory jurisdiction. Its 10% floor matches the
 FDA's "cocoa" or "medium fat cocoa" designation, below which it would be "lowfat cocoa" (U.S. FDA,
 CFR 21, 163.113-114)[^86]. Being below 20%, it falls within the EU's "fat-reduced cocoa" designation
-(Directive 2000/36/EC, 2000, Annex I 2.)[^84]. Due to the challenges of achieving less than 10%
+(Directive 2000/36/EC, 2000, Annex I A.2)[^84]. Due to the challenges of achieving less than 10%
 cocoa butter content, this is the leanest grade found in commonly sold commercial products, and can
 be considered medium (Kuehn, 2021)[^88] or low-fat (CFW Blog, 2025)[^89] content.
 
@@ -279,7 +285,7 @@ Powder](https://www.callebaut.com/en/products/callebaut/botanical-decor-cacao-en
 
 It has different classifications depending on the regulatory jurisdiction. Its 20% floor matches the
 EU's "cocoa powder" designation, below which it would be "fat-reduced cocoa" (Directive 2000/36/EC,
-2000, Annex I 2.)[^84]. Being below 22%, it falls within the FDA's "cocoa" or "medium fat cocoa"
+2000, Annex I A.2)[^84]. Being below 22%, it falls within the FDA's "cocoa" or "medium fat cocoa"
 designation (U.S. FDA, CFR 21, 163.113)[^86].
 
 The spec uses 21% cocoa butter content, the grade's midpoint, matching the _"TOTAL FAT 21.0 g"_ of
@@ -299,7 +305,7 @@ Powder](https://www.callebaut.com/en/products/callebaut/callebaut-selection-bota
 It has different classifications depending on the regulatory jurisdiction. Its 22% floor matches the
 FDA's "breakfast cocoa" or "high fat cocoa" designation, below which it would be "cocoa" (U.S. FDA,
 CFR 21, 163.112-113)[^86]. Being above 20%, it falls within the EU's "cocoa powder" designation
-(Directive 2000/36/EC, 2000, Annex I 2.)[^84]. It is the grade most commonly used in ice-cream
+(Directive 2000/36/EC, 2000, Annex I A.2)[^84]. It is the grade most commonly used in ice-cream
 making (Corvitto, 2005, p. 249)[^3], and is consistently considered high-fat content
 (Kuehn, 2021)[^88], (CFW Blog, 2025)[^89].
 

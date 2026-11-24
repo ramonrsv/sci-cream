@@ -117,7 +117,12 @@ pub struct CocoaPowderSpec {
     pub cocoa_solids: Option<f64>,
     /// Cocoa butter content as a percentage of the product as a whole, usually from nutrition facts
     ///
-    /// It must be specified, and must be a subset of [`cocoa_solids`](Self::cocoa_solids)
+    /// It must be specified, and must be a subset of [`cocoa_solids`](Self::cocoa_solids).
+    ///
+    /// A figure on dry matter, as the EU defines it (Directive 2000/36/EC, 2000, Annex I A.2)[^84],
+    /// can be used as is, as specification sheets do in their own nutritional data: the difference,
+    /// about 3% of the figure at typical moisture, is less than a grade's two-point range.
+    #[doc = include_str!("../../../docs/references/index/84.md")]
     pub cocoa_butter: f64,
     /// Other solids content as a percentage of the product as a whole, usually from nutrition facts
     ///
@@ -129,7 +134,7 @@ pub struct CocoaPowderSpec {
     ///
     /// Defaults to [`cocoa::STD_WATER_IN_COCOA_POWDER`] if not specified, which is usually the case
     /// for most commercial products. A ceiling can sometimes be inferred from regulatory standards,
-    /// e.g. EU caps water in cocoa powder to 9% (Directive 2000/36/EC, 2000, Annex I 2.(a))[^84].
+    /// e.g. EU caps water in cocoa powder to 9% (Directive 2000/36/EC, 2000, Annex I A.2(a))[^84].
     #[doc = include_str!("../../../docs/references/index/84.md")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub water: Option<f64>,
