@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795557348558,
+  "lastUpdate": 1795557353512,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -654630,6 +654630,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fb803ee6c7275402d5872838a520ea2536e4e544",
+          "message": "Write generated min data one entry per line\n\nEach generated/min/ file was one line of JSON, so an editor diff or a\nmerge saw any change as the whole file. They now hold one entry per\nline, growing the 15 files by 0.7% (473 bytes), and parse to the same\nentries as before.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T16:47:56-05:00",
+          "tree_id": "2db55c8f347e7c117f1ca8ce622b30d26e3cd761",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fb803ee6c7275402d5872838a520ea2536e4e544"
+        },
+        "date": 1795557270132,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 48748,
+            "range": "±12.80%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 486165,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 38067,
+            "range": "±1.00%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 411122,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
