@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795501985436,
+  "lastUpdate": 1795538497251,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -762366,6 +762366,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2204.79,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9e57d81411250b82e18034fa11b71dea56f51fb5",
+          "message": "Reconcile the Valrhona white chocolate sheets\n\nThe sheet-based reconciliation tests covered only the Callebaut and\nMona Lisa entries, the only ones with specification sheets until the\nValrhona and Belcolade whites. The three Valrhona sheets now join them,\nwith test-only label variants of their nutritional data, which also\njoin the white chocolate comparison. The tests and their tables drop\nthe Callebaut prefix from their names.\n\nBelcolade Blanc Selection stays out, as its sheet's protein and fat\ndisagree with its declared solids, which its entry now notes.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T11:26:33-05:00",
+          "tree_id": "c4772ff20bf15c9673de5e5e9ca3faabf8ba0ca7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9e57d81411250b82e18034fa11b71dea56f51fb5"
+        },
+        "date": 1795538432996,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1234.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 369.67,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1995.18,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 607.34,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 655.88,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2205.05,
             "unit": "KB"
           }
         ]
