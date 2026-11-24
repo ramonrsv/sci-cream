@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795556629788,
+  "lastUpdate": 1795556943736,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -608515,6 +608515,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 706.13,
             "range": "24.27",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "82d01f9658e09defe466eb5dae2f1651eedd87b7",
+          "message": "Add generic milk and white chocolates\n\nAdd 30%, 35%, and 40% Milk Chocolate and White Chocolate as simple\nspecs, whose fields are the rounded averages of the entries each note\nlists. The milk ones take their cocoa solids from their names, and the\nwhite one leaves out Valrhona Opalys as an outlier, its sugars two\nstandard deviations below the tier's mean.\n\nEach joins its compare_specs group as Simple, within the groups'\ncurrent ceilings. A reconciliation test re-derives each from its\nentries, and checks that its fields are their rounded averages but for\nthe exceptions its note lists, which stay within a point of theirs.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T16:04:03-05:00",
+          "tree_id": "3f220fd1f517c304041ea1c5e64500bdfce9ea88",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/82d01f9658e09defe466eb5dae2f1651eedd87b7"
+        },
+        "date": 1795556852935,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.25,
+            "range": "3.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 47.63,
+            "range": "5.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 53.13,
+            "range": "3.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2231.38,
+            "range": "100.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 376.63,
+            "range": "6.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 391.25,
+            "range": "9.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 399,
+            "range": "5.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19479,
+            "range": "195.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 831.13,
+            "range": "17.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 59.13,
+            "range": "2.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.5,
+            "range": "2.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 46,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.38,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 131.75,
+            "range": "8.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 76.5,
+            "range": "4.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 48.21,
+            "range": "0.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 38.51,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 632.63,
+            "range": "28.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 700.75,
+            "range": "25.07",
             "unit": "ms"
           }
         ]
