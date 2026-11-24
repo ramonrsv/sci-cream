@@ -340,6 +340,15 @@ impl<K: PartialEq + Copy> KeyCeiling<K> {
         self
     }
 
+    /// Overrides the ceiling for several keys in the pairs that include `source`, as
+    /// [`with_source`](Self::with_source) does for each.
+    #[must_use]
+    pub(crate) fn with_source_keys(mut self, source: &'static str, overrides: &[(K, f64)]) -> Self {
+        self.source_overrides
+            .extend(overrides.iter().map(|&(key, pp)| (source, key, pp)));
+        self
+    }
+
     /// Returns the ceiling that applies to `key`.
     pub(crate) fn for_key(&self, key: K) -> f64 {
         self.overrides
@@ -637,6 +646,16 @@ mod tests {
         assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "B", "A"), 60.0);
         assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "B", "C"), 25.0);
         assert_eq_flt!(ceiling.for_pair(CompKey::MilkProteins, "A", "B"), 25.0);
+    }
+
+    #[test]
+    fn key_ceiling_source_keys_override_each_key_only_for_its_source() {
+        let ceiling =
+            KeyCeiling::new(25.0).with_source_keys("A", &[(CompKey::Energy, 60.0), (CompKey::MilkProteins, 40.0)]);
+        assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "A", "B"), 60.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::MilkProteins, "B", "A"), 40.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::Energy, "B", "C"), 25.0);
+        assert_eq_flt!(ceiling.for_pair(CompKey::MilkFat, "A", "B"), 25.0);
     }
 
     #[test]

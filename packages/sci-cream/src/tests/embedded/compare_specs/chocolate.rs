@@ -332,29 +332,39 @@ fn compare_specs_white_chocolate() {
         .with_source("Green & Black's", CompKey::POD, 11.0)
         .with_source("Valrhona Ivoire", CompKey::Energy, 9.5)
         .with_source("Valrhona Ivoire", CompKey::TotalFats, 9.0)
-        .with_source("Valrhona Opalys", CompKey::Energy, 11.5)
-        .with_source("Valrhona Opalys", CompKey::TotalFats, 12.0)
-        .with_source("Valrhona Opalys", CompKey::MilkSolids, 10.5)
-        .with_source("Valrhona Opalys", CompKey::TotalSugars, 15.0)
-        .with_source("Valrhona Opalys", CompKey::TotalCarbohydrates, 15.5)
-        .with_source("Valrhona Opalys", CompKey::POD, 18.0)
-        .with_source("Valrhona Opalys", CompKey::PACsgr, 15.0)
-        .with_source("Valrhona Opalys", CompKey::TotalPAC, 13.0)
+        .with_source_keys(
+            "Valrhona Opalys",
+            &[
+                (CompKey::Energy, 11.5),
+                (CompKey::TotalFats, 12.0),
+                (CompKey::MilkSolids, 10.5),
+                (CompKey::TotalSugars, 15.0),
+                (CompKey::TotalCarbohydrates, 15.5),
+                (CompKey::POD, 18.0),
+                (CompKey::PACsgr, 15.0),
+                (CompKey::TotalPAC, 13.0),
+            ],
+        )
         .with_source("Valrhona Ivoire (Label)", CompKey::Energy, 9.5)
         .with_source("Valrhona Ivoire (Label)", CompKey::TotalFats, 9.0)
         .with_source("Valrhona Ivoire (Label)", CompKey::CocoaSolids, 9.5)
         .with_source("Valrhona Ivoire (Label)", CompKey::CocoaButter, 9.5)
-        .with_source("Valrhona Opalys (Label)", CompKey::Energy, 12.5)
-        .with_source("Valrhona Opalys (Label)", CompKey::TotalFats, 12.0)
-        .with_source("Valrhona Opalys (Label)", CompKey::CocoaSolids, 10.0)
-        .with_source("Valrhona Opalys (Label)", CompKey::CocoaButter, 10.0)
-        .with_source("Valrhona Opalys (Label)", CompKey::MilkSolids, 9.5)
-        .with_source("Valrhona Opalys (Label)", CompKey::TotalSugars, 14.5)
-        .with_source("Valrhona Opalys (Label)", CompKey::TotalCarbohydrates, 14.5)
-        .with_source("Valrhona Opalys (Label)", CompKey::POD, 17.5)
-        .with_source("Valrhona Opalys (Label)", CompKey::PACsgr, 14.5)
-        .with_source("Valrhona Opalys (Label)", CompKey::HF, 9.0)
-        .with_source("Valrhona Opalys (Label)", CompKey::TotalPAC, 12.0);
+        .with_source_keys(
+            "Valrhona Opalys (Label)",
+            &[
+                (CompKey::Energy, 12.5),
+                (CompKey::TotalFats, 12.0),
+                (CompKey::CocoaSolids, 10.0),
+                (CompKey::CocoaButter, 10.0),
+                (CompKey::MilkSolids, 9.5),
+                (CompKey::TotalSugars, 14.5),
+                (CompKey::TotalCarbohydrates, 14.5),
+                (CompKey::POD, 17.5),
+                (CompKey::PACsgr, 14.5),
+                (CompKey::HF, 9.0),
+                (CompKey::TotalPAC, 12.0),
+            ],
+        );
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
