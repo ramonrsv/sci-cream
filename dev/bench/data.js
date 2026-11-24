@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795557911386,
+  "lastUpdate": 1795561626717,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -655489,6 +655489,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.19%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "15147bfffbf9acf29144c652ad57997b2799921f",
+          "message": "Document taking cocoa butter on either basis\n\nCocoa powder sheets state fat on dry matter, as the EU defines it, or\ngive no basis, and those on dry matter print the same figure per 100 g\nin their nutritional data. CocoaPowderSpec's cocoa_butter doc and the\nchocolates.md intro now say such a figure is used as is: the\ndifference, about 3% of it, is less than a grade's two-point range.\n\nThe intro also says the Callebaut cocoa powders take their fat and water\nfrom the nutritional data the other entries leave out, and citations of\nDirective 2000/36/EC's Annex I now include its part, as in A.2.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T17:57:17-05:00",
+          "tree_id": "cfbde9db940c8aa248b8893092a6ad60f2edcdb8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/15147bfffbf9acf29144c652ad57997b2799921f"
+        },
+        "date": 1795561564921,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 68885,
+            "range": "±0.90%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 619461,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 49945,
+            "range": "±0.61%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 537974,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
