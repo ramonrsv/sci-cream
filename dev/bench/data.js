@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795539642476,
+  "lastUpdate": 1795539647109,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -747707,6 +747707,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/9e57d81411250b82e18034fa11b71dea56f51fb5"
         },
         "date": 1795538570347,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6eac34bee7245149d7ab7687c9a5e7140ee5ca23",
+          "message": "Add KeyCeiling::with_source_keys for long groups\n\nAdd KeyCeiling::with_source_keys, which sets several keys' ceilings for\none source, and use it for the two Valrhona Opalys groups in the white\nchocolate comparison, whose 8 and 11 overrides repeated the source name\non every line. Every other override stays on with_source.\n\nAdd Opalys and Ivoire to the spell-check words.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T11:35:24-05:00",
+          "tree_id": "d8b83b1c04d37e27e3290b3ad0f81720b7eadb72",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6eac34bee7245149d7ab7687c9a5e7140ee5ca23"
+        },
+        "date": 1795539645933,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
