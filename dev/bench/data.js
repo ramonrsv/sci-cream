@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795557292720,
+  "lastUpdate": 1795557348558,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -738934,6 +738934,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.66,
             "range": "0.52",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fb803ee6c7275402d5872838a520ea2536e4e544",
+          "message": "Write generated min data one entry per line\n\nEach generated/min/ file was one line of JSON, so an editor diff or a\nmerge saw any change as the whole file. They now hold one entry per\nline, growing the 15 files by 0.7% (473 bytes), and parse to the same\nentries as before.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T16:47:56-05:00",
+          "tree_id": "2db55c8f347e7c117f1ca8ce622b30d26e3cd761",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fb803ee6c7275402d5872838a520ea2536e4e544"
+        },
+        "date": 1795557276073,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.51,
+            "range": "5.78",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 17.01,
+            "range": "4.28",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 16.98,
+            "range": "4.30",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 151.5,
+            "range": "10.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 151.5,
+            "range": "10.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.05,
+            "range": "5.80",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.76,
+            "range": "0.51",
             "unit": "ms"
           }
         ]
