@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795539508214,
+  "lastUpdate": 1795539581161,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -652912,6 +652912,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.11%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6eac34bee7245149d7ab7687c9a5e7140ee5ca23",
+          "message": "Add KeyCeiling::with_source_keys for long groups\n\nAdd KeyCeiling::with_source_keys, which sets several keys' ceilings for\none source, and use it for the two Valrhona Opalys groups in the white\nchocolate comparison, whose 8 and 11 overrides repeated the source name\non every line. Every other override stays on with_source.\n\nAdd Opalys and Ivoire to the spell-check words.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T11:35:24-05:00",
+          "tree_id": "d8b83b1c04d37e27e3290b3ad0f81720b7eadb72",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6eac34bee7245149d7ab7687c9a5e7140ee5ca23"
+        },
+        "date": 1795539489171,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 54482,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 427383,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 39924,
+            "range": "±1.71%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 323791,
+            "range": "±1.00%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
