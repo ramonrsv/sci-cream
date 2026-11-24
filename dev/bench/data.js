@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795501252772,
+  "lastUpdate": 1795501267320,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -651194,6 +651194,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "98 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "308a90e76893d5cce26b0980dd3a38c0d9af06ed",
+          "message": "Add Valrhona and Belcolade white chocolates\n\nW2 was the only white chocolate entry with a specification sheet. Four\nmore come from theirs: Valrhona Ivoire 35%, Opalys 33% and Ariaga\nBlanche 30%, and Belcolade Blanc Selection. The Valrhona sheets give no\nmilk fat of their own, so it is their nutritional fat less their cocoa\nbutter.\n\nAll four join the white chocolate comparison, where Ivoire's 41% fat\nand Opalys's 44% fat, 32.3% sugar and 31% milk solids take overrides\npast its default ceiling.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T00:57:12-05:00",
+          "tree_id": "5a238af3cf465c87896b665451667f59d5d217e6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/308a90e76893d5cce26b0980dd3a38c0d9af06ed"
+        },
+        "date": 1795501175834,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47999,
+            "range": "±0.91%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 452947,
+            "range": "±0.55%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32259,
+            "range": "±1.00%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 339442,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
