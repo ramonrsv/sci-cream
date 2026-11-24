@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795501200352,
+  "lastUpdate": 1795501209522,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -701960,6 +701960,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1037.87,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "308a90e76893d5cce26b0980dd3a38c0d9af06ed",
+          "message": "Add Valrhona and Belcolade white chocolates\n\nW2 was the only white chocolate entry with a specification sheet. Four\nmore come from theirs: Valrhona Ivoire 35%, Opalys 33% and Ariaga\nBlanche 30%, and Belcolade Blanc Selection. The Valrhona sheets give no\nmilk fat of their own, so it is their nutritional fat less their cocoa\nbutter.\n\nAll four join the white chocolate comparison, where Ivoire's 41% fat\nand Opalys's 44% fat, 32.3% sugar and 31% milk solids take overrides\npast its default ceiling.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T00:57:12-05:00",
+          "tree_id": "5a238af3cf465c87896b665451667f59d5d217e6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/308a90e76893d5cce26b0980dd3a38c0d9af06ed"
+        },
+        "date": 1795501157484,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 779.33,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 947.05,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 723.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 891.39,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 733.53,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 901.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 707.08,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 874.8,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 708.61,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 876.33,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1039.08,
             "unit": "KB"
           },
           {
