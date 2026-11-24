@@ -256,6 +256,42 @@
     "comments": "https://linneasinc.com/wp-content/uploads/2025/11/6-NCP1012-SPEC.pdf"
   },
   {
+    "name": "Valrhona Ivoire 35% White Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "WhiteChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 41,
+      "carbohydrates": { "available": 51, "fiber": 0, "sugars": 51 },
+      "protein": 5.7
+    },
+    "comments": "https://dam.valrhona.com/m/03ceabce19cf5f67/original/4660-IVOIRE_FT_UK.pdf"
+  },
+  {
+    "name": "Valrhona Opalys 33% White Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "WhiteChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 44,
+      "carbohydrates": { "available": 45, "fiber": 0, "sugars": 45 },
+      "protein": 8.2
+    },
+    "comments": "https://www.webstaurantstore.com/documents/nutrition/valrhona_8118_nutrition.pdf"
+  },
+  {
+    "name": "Valrhona Ariaga Blanche 30% White Chocolate (Label)",
+    "category": "Chocolate",
+    "ChocolateLabelSpec": {
+      "kind": "WhiteChocolate",
+      "serving_size": { "grams": 100 },
+      "total_fat": 36,
+      "carbohydrates": { "available": 54, "fiber": 0, "sugars": 54 },
+      "protein": 7.2
+    },
+    "comments": "https://dam.valrhona.com/m/4096ff845fe81357/original/12141-ARIAGA-BLANCHE-30-_FT_UK.pdf"
+  },
+  {
     "name": "Cadbury Dairy Milk Chocolate (UK, Minima)",
     "category": "Chocolate",
     "ChocolateLabelSpec": {

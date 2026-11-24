@@ -1,8 +1,8 @@
 //! Cross-source consistency checks for chocolate ingredients, spanning dark, milk, white and
 //! cocoa powder, lining up each entry against labelled references from other sources. Each USDA
-//! listing and each Callebaut and Mona Lisa sheet is compared both as its embedded entry and as its
-//! test-only `… (Label)` variant. The Cadbury Dairy Milk entries are also compared with each other,
-//! and with the test-only labels that vary their size or declarations.
+//! listing and each Callebaut, Mona Lisa, and Valrhona sheet is compared both as its embedded entry
+//! and as its test-only `… (Label)` variant. The Cadbury Dairy Milk entries are also compared with
+//! each other, and with the test-only labels that vary their size or declarations.
 
 #![cfg_attr(coverage, coverage(off))]
 
@@ -306,8 +306,11 @@ fn compare_specs_white_chocolate() {
         ("Callebaut", "Callebaut W2 White Chocolate"),
         ("Callebaut (Label)", "Callebaut W2 White Chocolate (Label)"),
         ("Valrhona Ivoire", "Valrhona Ivoire 35% White Chocolate"),
+        ("Valrhona Ivoire (Label)", "Valrhona Ivoire 35% White Chocolate (Label)"),
         ("Valrhona Opalys", "Valrhona Opalys 33% White Chocolate"),
+        ("Valrhona Opalys (Label)", "Valrhona Opalys 33% White Chocolate (Label)"),
         ("Valrhona Ariaga Blanche", "Valrhona Ariaga Blanche 30% White Chocolate"),
+        ("Valrhona Ariaga Blanche (Label)", "Valrhona Ariaga Blanche 30% White Chocolate (Label)"),
         ("Belcolade", "Belcolade Blanc Selection White Chocolate"),
         ("Lindt", "Lindt Classic White Chocolate"),
         ("Green & Black's", "Green & Black's Organic White Chocolate"),
@@ -319,7 +322,9 @@ fn compare_specs_white_chocolate() {
     // Black's, at 38% fat and 39.5% sucrose, is further from USDA on POD, and Valrhona Ivoire, at
     // 41% fat, on energy and fat. Valrhona Opalys, at 44% fat, 32.3% sugar, and 31% milk solids,
     // sits furthest from USDA and the sweeter entries, past the default for energy, fat, milk
-    // solids, sugars, carbohydrates, POD, and PAC.
+    // solids, sugars, carbohydrates, POD, and PAC. Their label variants take a smaller share of
+    // their milk solids as milk fat than their sheets do, and so more cocoa butter, past the
+    // default for cocoa solids and cocoa butter as well, and Opalys's for HF.
     let ceiling = KeyCeiling::new(8.5)
         .with_source("Corvitto", CompKey::Energy, 9.5)
         .with_source("Corvitto", CompKey::MilkSolids, 9.5)
@@ -334,7 +339,22 @@ fn compare_specs_white_chocolate() {
         .with_source("Valrhona Opalys", CompKey::TotalCarbohydrates, 15.5)
         .with_source("Valrhona Opalys", CompKey::POD, 18.0)
         .with_source("Valrhona Opalys", CompKey::PACsgr, 15.0)
-        .with_source("Valrhona Opalys", CompKey::TotalPAC, 13.0);
+        .with_source("Valrhona Opalys", CompKey::TotalPAC, 13.0)
+        .with_source("Valrhona Ivoire (Label)", CompKey::Energy, 9.5)
+        .with_source("Valrhona Ivoire (Label)", CompKey::TotalFats, 9.0)
+        .with_source("Valrhona Ivoire (Label)", CompKey::CocoaSolids, 9.5)
+        .with_source("Valrhona Ivoire (Label)", CompKey::CocoaButter, 9.5)
+        .with_source("Valrhona Opalys (Label)", CompKey::Energy, 12.5)
+        .with_source("Valrhona Opalys (Label)", CompKey::TotalFats, 12.0)
+        .with_source("Valrhona Opalys (Label)", CompKey::CocoaSolids, 10.0)
+        .with_source("Valrhona Opalys (Label)", CompKey::CocoaButter, 10.0)
+        .with_source("Valrhona Opalys (Label)", CompKey::MilkSolids, 9.5)
+        .with_source("Valrhona Opalys (Label)", CompKey::TotalSugars, 14.5)
+        .with_source("Valrhona Opalys (Label)", CompKey::TotalCarbohydrates, 14.5)
+        .with_source("Valrhona Opalys (Label)", CompKey::POD, 17.5)
+        .with_source("Valrhona Opalys (Label)", CompKey::PACsgr, 14.5)
+        .with_source("Valrhona Opalys (Label)", CompKey::HF, 9.0)
+        .with_source("Valrhona Opalys (Label)", CompKey::TotalPAC, 12.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));

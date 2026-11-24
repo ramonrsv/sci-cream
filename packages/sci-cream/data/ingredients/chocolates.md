@@ -1039,6 +1039,11 @@ The cocoa butter and milk fat give 36.5% fat, within its _"Total Fat Content 35,
 sheet](https://cdn.shopify.com/s/files/1/0020/9046/7391/files/TDS_4102183_Belcolade_Blanco_X605G_Drops_2X5.pdf)
 agrees, with a recipe of 44.5% sugar, 29.8% cocoa butter, and 25.1% whole milk powder.
 
+The data sheet has some inconsistencies in its nutritional information:
+
+- its 6.2 g of protein is 33.5% of the 18.5% fat-free milk solids, against the older sheet's 36%
+- its 37.1 g of fat is 0.6 g more than the 30.0% cocoa butter and 6.5% milk fat add up to
+
 ## Green & Black's Organic Milk Chocolate
 
 ```json

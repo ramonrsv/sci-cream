@@ -7,8 +7,8 @@
 //! listings, so they reconcile by construction.
 //!
 //! The milk and white entries split their listings between cocoa and milk by fiber and protein,
-//! see [`estimate_chocolate_snf_split_from_protein_by_fiber`], which the Callebaut entries, whose
-//! milk solids their specification sheets declare, check against known answers.
+//! see [`estimate_chocolate_snf_split_from_protein_by_fiber`], which the Callebaut and Valrhona
+//! entries, whose milk solids their specification sheets declare, check against known answers.
 //!
 //! Each listing is also reconciled as its test-only [`ChocolateLabelSpec`], named `… (Label)`, see
 //! [`variants`](crate::tests::embedded::variants). The dark chocolate and cocoa powder labels take
@@ -17,10 +17,10 @@
 //! do, without rounding.
 //!
 //! Each label entry is reconciled against the figures its label prints, within the label's
-//! rounding, see [`LabelRounding`]. The Callebaut and Mona Lisa `… (Label)` variants, which leave
-//! out the solids their sources declare, are reconciled against their entries with them declared:
-//! their product page's minima, or their sheet's actual cocoa and milk solids. The milk and white
-//! ones, so declared, must still compose their label's protein, to within its rounding.
+//! rounding, see [`LabelRounding`]. The Callebaut, Mona Lisa, and Valrhona `… (Label)` variants,
+//! which leave out the solids their sources declare, are reconciled against their entries with them
+//! declared: their sources' minima, or their sheet's actual cocoa and milk solids. The milk and
+//! white ones, so declared, must still compose their label's protein, to within its rounding.
 //!
 //! The Cadbury labels compose the fat and sugars they print, to within their rounding, those whose
 //! rounding leaves their parts over 100 g being scaled into it.
@@ -665,54 +665,61 @@ fn cadbury_labels_scale_into_100_g_within_their_rounding() {
     insta::assert_snapshot!(lines.join("\n"));
 }
 
-/// Protein and fiber per 100 g of each Callebaut entry with milk solids, from the nutritional data
-/// of the specification sheet its prose links, which also declares its milk solids.
-const CALLEBAUT_SHEETS: &[(&str, f64, f64)] = &[
+/// Protein and fiber per 100 g of each Callebaut, Mona Lisa, and Valrhona entry with milk solids,
+/// from the nutritional data of the specification sheet its prose links, which also declares its
+/// milk solids. Belcolade Blanc Selection's is left out, its nutritional data disagreeing with its
+/// declared solids: its protein comes to 33.5% of its MSNF, against 36% on its older sheet.
+const SPEC_SHEETS: &[(&str, f64, f64)] = &[
     ("Callebaut 823 Milk Chocolate", 7.0, 2.1),
     ("Callebaut 665 Milk Chocolate", 8.1, 1.1),
     ("Callebaut Power 41 Milk Chocolate", 8.5, 4.1),
     ("Callebaut Arriba Milk Chocolate", 9.1, 2.8),
     ("Callebaut W2 White Chocolate", 6.0, 0.0),
     ("Mona Lisa Milk Chocolate Blossoms", 6.5, 2.7),
+    ("Valrhona Ivoire 35% White Chocolate", 5.7, 0.0),
+    ("Valrhona Opalys 33% White Chocolate", 8.2, 0.0),
+    ("Valrhona Ariaga Blanche 30% White Chocolate", 7.2, 0.0),
 ];
 
 /// Ceiling on the relative error of [`estimate_chocolate_snf_split_from_protein_by_fiber`]'s MSNF,
-/// in percent, against the MSNF that each Callebaut entry's declared milk solids give.
+/// in percent, against the MSNF that each [`SPEC_SHEETS`] entry's declared milk solids give.
 ///
-/// The estimate reads low on every entry, as the sheets that list milk protein put it at 35.5-36.9%
-/// of the MSNF, below [`milk::STD_PROTEIN_IN_MSNF`]. Like the rest of their nutritional data, those
-/// figures are calculated from the vendor's reference values rather than measured.
-const CALLEBAUT_MSNF_CEILING: f64 = 6.5;
+/// The estimate reads low on the Callebaut entries, as the sheets that list milk protein put it at
+/// 35.5-36.9% of the MSNF, below [`milk::STD_PROTEIN_IN_MSNF`]. Like the rest of their nutritional
+/// data, those figures are calculated from the vendor's reference values rather than measured. On
+/// the Valrhona ones it reads just high, their protein coming to 37.7-38.0% of their MSNF.
+const SHEET_MSNF_CEILING: f64 = 6.5;
 
-/// [`estimate_chocolate_snf_split_from_protein_by_fiber`] recovers each Callebaut entry's MSNF from
-/// its sheet's protein and fiber; the snapshot tables each estimate and its error.
+/// [`estimate_chocolate_snf_split_from_protein_by_fiber`] recovers each [`SPEC_SHEETS`] entry's
+/// MSNF from its sheet's protein and fiber; the snapshot tables each estimate and its error.
 #[test]
-fn estimate_chocolate_snf_split_from_protein_by_fiber_recovers_callebaut_entries() {
+fn estimate_chocolate_snf_split_from_protein_by_fiber_recovers_sheet_entries() {
     let mut lines = vec![format!(
-        "{:<34}{:>9}{:>7}{:>8}{:>10}{:>9}",
+        "{:<44}{:>9}{:>7}{:>8}{:>10}{:>9}",
         "entry", "protein", "fiber", "MSNF", "estimate", "error"
     )];
 
-    for &(name, protein, fiber) in CALLEBAUT_SHEETS {
+    for &(name, protein, fiber) in SPEC_SHEETS {
         let msnf = get_embedded_or_variant_comp_by_name(name).get(CompKey::MSNF);
         let (_, estimate) = estimate_chocolate_snf_split_from_protein_by_fiber(protein, fiber);
         let error = relative_error_percent(estimate, msnf);
 
-        lines.push(format!("{name:<34}{protein:>9.1}{fiber:>7.1}{msnf:>8.2}{estimate:>10.2}{error:>+8.2}%"));
+        lines.push(format!("{name:<44}{protein:>9.1}{fiber:>7.1}{msnf:>8.2}{estimate:>10.2}{error:>+8.2}%"));
 
         assert!(
-            error.abs() <= CALLEBAUT_MSNF_CEILING,
+            error.abs() <= SHEET_MSNF_CEILING,
             "{name}: MSNF from protein is {error:+.2}% off the entry's {msnf:.2} \
-             (estimated {estimate:.2}, ceiling {CALLEBAUT_MSNF_CEILING:.2}%)"
+             (estimated {estimate:.2}, ceiling {SHEET_MSNF_CEILING:.2}%)"
         );
     }
 
     insta::assert_snapshot!(lines.join("\n"));
 }
 
-/// Minimum cocoa and milk solids that the product page of each Callebaut and Mona Lisa entry with a
-/// `… (Label)` variant declares, which the variant leaves out; `(name, cocoa_solids, milk_solids)`
-const CALLEBAUT_PAGE_MINIMA: &[(&str, Option<f64>, Option<f64>)] = &[
+/// Minimum cocoa and milk solids that each Callebaut, Mona Lisa, and Valrhona entry with a
+/// `… (Label)` variant declares, on its product page or in its legal name, which the variant leaves
+/// out; `(name, cocoa_solids, milk_solids)`
+const LABEL_VARIANT_MINIMA: &[(&str, Option<f64>, Option<f64>)] = &[
     ("Callebaut 811 Dark Chocolate", Some(54.5), None),
     ("Callebaut 60-40-38 Dark Chocolate", Some(60.1), None),
     ("Callebaut 70-30-38 Dark Chocolate", Some(70.5), None),
@@ -723,20 +730,23 @@ const CALLEBAUT_PAGE_MINIMA: &[(&str, Option<f64>, Option<f64>)] = &[
     ("Callebaut W2 White Chocolate", Some(28.0), Some(22.0)),
     ("Mona Lisa Dark Chocolate Curved Shavings", None, None),
     ("Mona Lisa Milk Chocolate Blossoms", Some(28.0), None),
+    ("Valrhona Ivoire 35% White Chocolate", Some(35.0), None),
+    ("Valrhona Opalys 33% White Chocolate", Some(33.0), None),
+    ("Valrhona Ariaga Blanche 30% White Chocolate", Some(30.0), None),
     ("Callebaut Botanical Extra Brute Cocoa Powder", None, None),
     ("Callebaut Zestina Plein Arome Cocoa Powder", None, None),
     ("Callebaut 10/12 Natural Cocoa Powder", None, None),
 ];
 
-/// Ceilings on each solid's relative error, in percent, when a [`CALLEBAUT_PAGE_MINIMA`] variant
-/// declares nothing, its page's minima, or its sheet's actual solids, against its entry.
+/// Ceilings on each solid's relative error, in percent, when a [`LABEL_VARIANT_MINIMA`] variant
+/// declares nothing, its minima, or its sheet's actual solids, against its entry.
 ///
 /// The milk fat, at [`STD_BUTTERFAT_IN_WHOLE_MILK_POWDER`] of the milk solids, misses widest
-/// however the solids are declared: the sheets' milk solids carry 20-28% milk fat, so the milk fat
+/// however the solids are declared: the sheets' milk solids carry 20-30% milk fat, so the milk fat
 /// misses by up to 36%, and the cocoa butter by the same grams the other way. The cocoa solids
 /// non-fat, the cocoa solids less the cocoa butter, take on the errors of both, and in 665 come to
 /// only 3.2 g, so they miss by up to 35%.
-const CALLEBAUT_DECLARED_CEILINGS: &[(CompKey, f64)] = &[
+const DECLARED_SOLIDS_CEILINGS: &[(CompKey, f64)] = &[
     (CompKey::CocoaSolids, 5.5),
     (CompKey::CocoaButter, 5.5),
     (CompKey::CocoaSNF, 35.5),
@@ -744,9 +754,9 @@ const CALLEBAUT_DECLARED_CEILINGS: &[(CompKey, f64)] = &[
     (CompKey::MilkFat, 36.5),
 ];
 
-/// The declarations a [`CALLEBAUT_PAGE_MINIMA`] variant of `kind` is composed with, as its kind
-/// takes them: none, its page's minima if it has any, or its `entry`'s actual cocoa and milk
-/// solids; `(case, cocoa_solids, milk_solids)`
+/// The declarations a [`LABEL_VARIANT_MINIMA`] variant of `kind` is composed with, as its kind
+/// takes them: none, its minima if it has any, or its `entry`'s actual cocoa and milk solids;
+/// `(case, cocoa_solids, milk_solids)`
 fn declared_solids_cases(
     kind: ChocolateKind,
     min_cocoa: Option<f64>,
@@ -772,13 +782,13 @@ fn declared_solids_cases(
     cases
 }
 
-/// Each [`CALLEBAUT_PAGE_MINIMA`] variant recovers its entry's solids and fat split within the
-/// [`CALLEBAUT_DECLARED_CEILINGS`], declaring nothing, its page's minima, or its sheet's actual
-/// solids, as its kind takes them; the snapshot tables each case's errors. A solid its entry lacks,
-/// such as a dark chocolate's milk solids, must come out zero.
+/// Each [`LABEL_VARIANT_MINIMA`] variant recovers its entry's solids and fat split within the
+/// [`DECLARED_SOLIDS_CEILINGS`], declaring nothing, its minima, or its sheet's actual solids, as
+/// its kind takes them; the snapshot tables each case's errors. A solid its entry lacks, such as a
+/// dark chocolate's milk solids, must come out zero.
 #[test]
-fn callebaut_labels_recover_their_entries_with_declared_solids() {
-    let header = CALLEBAUT_DECLARED_CEILINGS
+fn sheet_labels_recover_their_entries_with_declared_solids() {
+    let header = DECLARED_SOLIDS_CEILINGS
         .iter()
         .map(|(key, _)| {
             let key = format!("{key:?}");
@@ -788,14 +798,14 @@ fn callebaut_labels_recover_their_entries_with_declared_solids() {
         .concat();
     let mut lines = Vec::new();
 
-    for &(name, min_cocoa, min_milk) in CALLEBAUT_PAGE_MINIMA {
+    for &(name, min_cocoa, min_milk) in LABEL_VARIANT_MINIMA {
         let variant = format!("{name} (Label)");
         let TaggedSpec::ChocolateLabelSpec(label) = get_embedded_or_variant_spec_by_name(&variant).spec else {
             panic!("{variant} is not a ChocolateLabelSpec");
         };
         let entry = get_embedded_or_variant_comp_by_name(name);
 
-        let values = CALLEBAUT_DECLARED_CEILINGS
+        let values = DECLARED_SOLIDS_CEILINGS
             .iter()
             .map(|&(key, _)| format!("{:>16.2}", entry.get(key)))
             .collect::<Vec<_>>()
@@ -814,7 +824,7 @@ fn callebaut_labels_recover_their_entries_with_declared_solids() {
             .unwrap_or_else(|e| panic!("{variant}, {case}: {e}"));
 
             let mut cells = Vec::new();
-            for &(key, ceiling) in CALLEBAUT_DECLARED_CEILINGS {
+            for &(key, ceiling) in DECLARED_SOLIDS_CEILINGS {
                 let (expected, modeled) = (entry.get(key), comp.get(key));
 
                 if expected == 0.0 {
@@ -841,14 +851,14 @@ fn callebaut_labels_recover_their_entries_with_declared_solids() {
     insta::assert_snapshot!(lines.join("\n"));
 }
 
-/// Each [`CALLEBAUT_PAGE_MINIMA`] milk and white chocolate variant composes its label's protein to
+/// Each [`LABEL_VARIANT_MINIMA`] milk and white chocolate variant composes its label's protein to
 /// within rounding, as [`ChocolateLabelSpec`] requires, in each of its [`declared_solids_cases`];
 /// the snapshot tables each case's composed protein against the label's.
 #[test]
-fn callebaut_labels_compose_their_protein_with_declared_solids() {
+fn sheet_labels_compose_their_protein_with_declared_solids() {
     let mut lines = Vec::new();
 
-    for &(name, min_cocoa, min_milk) in CALLEBAUT_PAGE_MINIMA {
+    for &(name, min_cocoa, min_milk) in LABEL_VARIANT_MINIMA {
         let variant = format!("{name} (Label)");
         let TaggedSpec::ChocolateLabelSpec(label) = get_embedded_or_variant_spec_by_name(&variant).spec else {
             panic!("{variant} is not a ChocolateLabelSpec");

@@ -9,10 +9,10 @@
 //! `… (Label)`: its listing as a 100 g nutrition label would give it, without water or ash.
 //!
 //! `chocolates.json` has a [`ChocolateLabelSpec`] variant of each `USDA …` entry, named
-//! `… (Label)`: its listing as a 100 g label would give it. It also has one of each Callebaut and
-//! Mona Lisa entry with a specification sheet: the sheet's nutritional data as a 100 g label would
-//! give it, without the solids it declares. Its [`CHOCOLATE_LABEL_FIXTURES`] are other labels,
-//! which no entry holds.
+//! `… (Label)`: its listing as a 100 g label would give it. It also has one of each Callebaut,
+//! Mona Lisa, and Valrhona entry with a specification sheet: the sheet's nutritional data as a
+//! 100 g label would give it, without the solids it declares. Its [`CHOCOLATE_LABEL_FIXTURES`] are
+//! other labels, which no entry holds.
 
 #![cfg_attr(coverage, coverage(off))]
 
