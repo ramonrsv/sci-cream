@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795540341040,
+  "lastUpdate": 1795556183752,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -653769,6 +653769,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 323791,
             "range": "±1.00%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "82d01f9658e09defe466eb5dae2f1651eedd87b7",
+          "message": "Add generic milk and white chocolates\n\nAdd 30%, 35%, and 40% Milk Chocolate and White Chocolate as simple\nspecs, whose fields are the rounded averages of the entries each note\nlists. The milk ones take their cocoa solids from their names, and the\nwhite one leaves out Valrhona Opalys as an outlier, its sugars two\nstandard deviations below the tier's mean.\n\nEach joins its compare_specs group as Simple, within the groups'\ncurrent ceilings. A reconciliation test re-derives each from its\nentries, and checks that its fields are their rounded averages but for\nthe exceptions its note lists, which stay within a point of theirs.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T16:04:03-05:00",
+          "tree_id": "3f220fd1f517c304041ea1c5e64500bdfce9ea88",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/82d01f9658e09defe466eb5dae2f1651eedd87b7"
+        },
+        "date": 1795556120690,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 67697,
+            "range": "±0.53%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 613363,
+            "range": "±0.36%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 49470,
+            "range": "±0.63%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 536427,
+            "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "95 samples"
           }
