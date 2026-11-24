@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795561660272,
+  "lastUpdate": 1795561673743,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -706717,6 +706717,100 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/fb803ee6c7275402d5872838a520ea2536e4e544"
         },
         "date": 1795557290684,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 779.87,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 947.59,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 724.22,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 891.94,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 734.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 901.79,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 707.62,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 875.34,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 709.15,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 876.87,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1039.62,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "15147bfffbf9acf29144c652ad57997b2799921f",
+          "message": "Document taking cocoa butter on either basis\n\nCocoa powder sheets state fat on dry matter, as the EU defines it, or\ngive no basis, and those on dry matter print the same figure per 100 g\nin their nutritional data. CocoaPowderSpec's cocoa_butter doc and the\nchocolates.md intro now say such a figure is used as is: the\ndifference, about 3% of it, is less than a grade's two-point range.\n\nThe intro also says the Callebaut cocoa powders take their fat and water\nfrom the nutritional data the other entries leave out, and citations of\nDirective 2000/36/EC's Annex I now include its part, as in A.2.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T17:57:17-05:00",
+          "tree_id": "cfbde9db940c8aa248b8893092a6ad60f2edcdb8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/15147bfffbf9acf29144c652ad57997b2799921f"
+        },
+        "date": 1795561579815,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
