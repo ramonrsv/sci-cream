@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795538571198,
+  "lastUpdate": 1795538646061,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -735987,6 +735987,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.44,
             "range": "0.54",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9e57d81411250b82e18034fa11b71dea56f51fb5",
+          "message": "Reconcile the Valrhona white chocolate sheets\n\nThe sheet-based reconciliation tests covered only the Callebaut and\nMona Lisa entries, the only ones with specification sheets until the\nValrhona and Belcolade whites. The three Valrhona sheets now join them,\nwith test-only label variants of their nutritional data, which also\njoin the white chocolate comparison. The tests and their tables drop\nthe Callebaut prefix from their names.\n\nBelcolade Blanc Selection stays out, as its sheet's protein and fat\ndisagree with its declared solids, which its entry now notes.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T11:26:33-05:00",
+          "tree_id": "c4772ff20bf15c9673de5e5e9ca3faabf8ba0ca7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9e57d81411250b82e18034fa11b71dea56f51fb5"
+        },
+        "date": 1795538540358,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 77.7,
+            "range": "11.45",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 22.29,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 22.22,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 198.5,
+            "range": "17.88",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 40,
+            "range": "8.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 198.5,
+            "range": "17.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 70,
+            "range": "8.86",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.72,
+            "range": "0.29",
             "unit": "ms"
           }
         ]
