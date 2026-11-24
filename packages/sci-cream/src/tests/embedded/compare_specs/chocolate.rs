@@ -207,6 +207,7 @@ fn compare_specs_chocolate_100() {
 #[test]
 fn compare_specs_milk_chocolate_30() {
     let sources = [
+        ("Simple", "30% Milk Chocolate"),
         ("USDA", "USDA Milk Chocolate"),
         ("USDA (Label)", "USDA Milk Chocolate (Label)"),
         ("Mona Lisa", "Mona Lisa Milk Chocolate Blossoms"),
@@ -250,6 +251,7 @@ fn compare_specs_cadbury_dairy_milk() {
 #[test]
 fn compare_specs_milk_chocolate_35() {
     let sources = [
+        ("Simple", "35% Milk Chocolate"),
         ("Callebaut 823", "Callebaut 823 Milk Chocolate"),
         ("Callebaut 823 (Label)", "Callebaut 823 Milk Chocolate (Label)"),
         ("Callebaut 665", "Callebaut 665 Milk Chocolate"),
@@ -276,6 +278,7 @@ fn compare_specs_milk_chocolate_35() {
 #[test]
 fn compare_specs_milk_chocolate_40() {
     let sources = [
+        ("Simple", "40% Milk Chocolate"),
         ("Corvitto", "Corvitto 40% Milk Chocolate"),
         ("Callebaut Power 41", "Callebaut Power 41 Milk Chocolate"),
         ("Callebaut Power 41 (Label)", "Callebaut Power 41 Milk Chocolate (Label)"),
@@ -300,6 +303,7 @@ fn compare_specs_milk_chocolate_40() {
 #[test]
 fn compare_specs_white_chocolate() {
     let sources = [
+        ("Simple", "White Chocolate"),
         ("Corvitto", "Corvitto White Chocolate"),
         ("USDA", "USDA White Chocolate"),
         ("USDA (Label)", "USDA White Chocolate (Label)"),

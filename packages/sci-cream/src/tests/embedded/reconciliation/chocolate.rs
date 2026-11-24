@@ -28,6 +28,9 @@
 //! Cocoa powders whose sources omit their water default to [`STD_WATER_IN_COCOA_POWDER`], which the
 //! USDA and Callebaut powders, whose sources give it, check against known answers.
 //!
+//! The generic milk and white chocolates are derived from the entries they average, as their prose
+//! describes, and checked against the averages it quotes.
+//!
 //! Energy is excluded: the listings share no convention, with 170273 on general Atwater and the
 //! cocoas on specific factors that discount fiber, landing near 220 where Atwater gives over 400.
 
@@ -36,7 +39,7 @@
 
 use std::collections::BTreeSet;
 
-use crate::tests::asserts::shadow_asserts::assert_eq;
+use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
 use crate::tests::asserts::*;
 
 use crate::tests::{
@@ -401,6 +404,157 @@ fn usda_chocolate_entries_follow_their_derivation() {
     }
 
     assert_eq!(checked, 5);
+}
+
+/// A generic milk or white chocolate, as its prose derives it from the entries it averages.
+struct GenericChocolate {
+    /// Its name
+    name: &'static str,
+    /// The cocoa solids its name gives, for a milk chocolate, rather than their average
+    named_cocoa_solids: Option<f64>,
+    /// The entries it averages
+    entries: &'static [&'static str],
+    /// The fields its prose lists as exceptions to the averages, each with the average it quotes
+    exceptions: &'static [(CompKey, f64)],
+}
+
+/// Each generic milk and white chocolate, as its prose derives it.
+const GENERIC_CHOCOLATES: &[GenericChocolate] = &[
+    GenericChocolate {
+        name: "30% Milk Chocolate",
+        named_cocoa_solids: Some(30.0),
+        entries: &[
+            "USDA Milk Chocolate",
+            "Lindt Classic Milk Chocolate",
+            "Mona Lisa Milk Chocolate Blossoms",
+            "Cadbury Dairy Milk Chocolate (UK)",
+            "Cadbury Dairy Milk Chocolate (Canada)",
+        ],
+        exceptions: &[(CompKey::CocoaSolids, 30.8)],
+    },
+    GenericChocolate {
+        name: "35% Milk Chocolate",
+        named_cocoa_solids: Some(35.0),
+        entries: &[
+            "Callebaut 823 Milk Chocolate",
+            "Callebaut 665 Milk Chocolate",
+            "Green & Black's Organic Milk Chocolate",
+        ],
+        exceptions: &[],
+    },
+    GenericChocolate {
+        name: "40% Milk Chocolate",
+        named_cocoa_solids: Some(40.0),
+        entries: &[
+            "Corvitto 40% Milk Chocolate",
+            "Callebaut Power 41 Milk Chocolate",
+            "Callebaut Arriba Milk Chocolate",
+        ],
+        exceptions: &[(CompKey::CocoaSolids, 40.9), (CompKey::CocoaButter, 33.7)],
+    },
+    GenericChocolate {
+        name: "White Chocolate",
+        named_cocoa_solids: None,
+        // Leaves out "Valrhona Opalys 33% White Chocolate" as an outlier,
+        // its sugars two standard deviations below the mean of all nine
+        entries: &[
+            "USDA White Chocolate",
+            "Corvitto White Chocolate",
+            "Lindt Classic White Chocolate",
+            "Callebaut W2 White Chocolate",
+            "Green & Black's Organic White Chocolate",
+            "Valrhona Ivoire 35% White Chocolate",
+            "Valrhona Ariaga Blanche 30% White Chocolate",
+            "Belcolade Blanc Selection White Chocolate",
+        ],
+        exceptions: &[],
+    },
+];
+
+/// The average of `key` over the compositions of `entries`.
+fn average_of(entries: &[&str], key: CompKey) -> f64 {
+    #[allow(clippy::cast_precision_loss)] // Entry counts stay far below f64's exact-integer range
+    let count = entries.len() as f64;
+
+    entries
+        .iter()
+        .map(|name| get_embedded_or_variant_comp_by_name(name).get(key))
+        .sum::<f64>()
+        / count
+}
+
+/// Derives a generic milk or white chocolate from the entries it averages: each field their
+/// average, rounded to whole percents, but a milk chocolate's cocoa solids, which its name gives.
+/// Its cocoa butter is their rounded total fat less its milk fat, and its sugars are the remainder.
+fn derive_generic_chocolate(named_cocoa_solids: Option<f64>, entries: &[&str]) -> ChocolateSpec {
+    let rounded_avg = |key| average_of(entries, key).round();
+    let cocoa_solids = named_cocoa_solids.unwrap_or_else(|| rounded_avg(CompKey::CocoaSolids));
+    let milk_solids = rounded_avg(CompKey::MilkSolids);
+    let milk_fat = rounded_avg(CompKey::MilkFat);
+    let cocoa_butter = rounded_avg(CompKey::TotalFats) - milk_fat;
+    let other_solids = rounded_avg(CompKey::OtherSNFS);
+
+    ChocolateSpec {
+        cocoa_solids,
+        milk_solids: Some(milk_solids),
+        fat: Some(ChocolateFat::Split { cocoa_butter, milk_fat }),
+        sugars: Some(100.0 - cocoa_solids - milk_solids - other_solids),
+        other_solids: Some(other_solids),
+    }
+}
+
+/// A generic chocolate's fields, keyed as it composes them.
+fn generic_chocolate_fields(name: &str, spec: ChocolateSpec) -> [(CompKey, f64); 6] {
+    let ChocolateSpec {
+        cocoa_solids,
+        milk_solids: Some(milk_solids),
+        fat: Some(ChocolateFat::Split { cocoa_butter, milk_fat }),
+        sugars: Some(sugars),
+        other_solids: Some(other_solids),
+    } = spec
+    else {
+        panic!("{name} leaves out a field, or doesn't split its fat");
+    };
+
+    [
+        (CompKey::CocoaSolids, cocoa_solids),
+        (CompKey::MilkSolids, milk_solids),
+        (CompKey::CocoaButter, cocoa_butter),
+        (CompKey::MilkFat, milk_fat),
+        (CompKey::Sucrose, sugars),
+        (CompKey::OtherSNFS, other_solids),
+    ]
+}
+
+/// Each [`GENERIC_CHOCOLATES`] entry is exactly what its prose derives from the entries it
+/// averages, and its fields are their rounded averages but for its exceptions. Those are within a
+/// point of their averages, which its prose quotes to one decimal.
+#[test]
+#[allow(clippy::float_cmp)] // Whole percents, averages rounded to the decimal their prose quotes
+fn generic_chocolates_follow_their_derivation() {
+    for generic in GENERIC_CHOCOLATES {
+        let name = generic.name;
+        let Ok(SpecEntry::Ingredient(IngredientSpec {
+            spec: TaggedSpec::ChocolateSpec(spec),
+            ..
+        })) = get_spec_entry_by_name(name)
+        else {
+            panic!("{name} is not an embedded ChocolateSpec");
+        };
+
+        assert_eq!(spec, derive_generic_chocolate(generic.named_cocoa_solids, generic.entries), "{name}");
+
+        for (key, field) in generic_chocolate_fields(name, spec) {
+            let average = average_of(generic.entries, key);
+            if let Some(&(_, exc_avg)) = generic.exceptions.iter().find(|(exc_key, _)| *exc_key == key) {
+                assert_eq!(round_to_decimals(average, 1), exc_avg, "{name}: {key:?}");
+                assert_ne!(field, average.round(), "{name}: {key:?}");
+                assert_le!((field - average).abs(), 1.0, "{name}: {key:?} is over 1 pp from its average");
+            } else {
+                assert_eq!(field, average.round(), "{name}: {key:?}");
+            }
+        }
+    }
 }
 
 /// Ceilings on how far a label entry's figures may miss what its label prints

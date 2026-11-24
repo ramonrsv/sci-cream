@@ -119,6 +119,91 @@ A few notes and clarifications about the entries in this list:
 { "category": "Chocolate", "ChocolateSpec": { "cocoa_solids": 100 } }
 ```
 
+## 30% Milk Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cocoa_solids": 30,
+    "milk_solids": 21,
+    "split_fats": { "cocoa_butter": 25, "milk_fat": 5 },
+    "sugars": 47,
+    "other_solids": 2
+  }
+}
+```
+
+A typical milk chocolate with 30% cocoa solids. Its fields are the averages of several entries at
+around that level, rounded to whole percents: "USDA Milk Chocolate", "Lindt Classic Milk Chocolate",
+"Mona Lisa Milk Chocolate Blossoms", "Cadbury Dairy Milk Chocolate (UK)", and "Cadbury Dairy Milk
+Chocolate (Canada)". The exceptions are:
+
+- `cocoa_solids`, the 30% it's named for, against their 30.8%.
+
+## 35% Milk Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cocoa_solids": 35,
+    "milk_solids": 26,
+    "split_fats": { "cocoa_butter": 30, "milk_fat": 6 },
+    "sugars": 38,
+    "other_solids": 1
+  }
+}
+```
+
+A typical milk chocolate with 35% cocoa solids. Its fields are the averages of several entries at
+around that level, rounded to whole percents: "Callebaut 823 Milk Chocolate", "Callebaut 665 Milk
+Chocolate", and "Green & Black's Organic Milk Chocolate".
+
+## 40% Milk Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cocoa_solids": 40,
+    "milk_solids": 24,
+    "split_fats": { "cocoa_butter": 33, "milk_fat": 5 },
+    "sugars": 35,
+    "other_solids": 1
+  }
+}
+```
+
+A typical milk chocolate with 40% cocoa solids. Its fields are the averages of several entries at
+around that level, rounded to whole percents: "Corvitto 40% Milk Chocolate", "Callebaut Power 41
+Milk Chocolate", and "Callebaut Arriba Milk Chocolate". The exceptions are:
+
+- `cocoa_solids` the 40% it's named for, against their 40.9%
+- `cocoa_butter` 33%, against their 33.7%, which keeps the total fat and cocoa solids non-fat at
+  their rounded averages, 38% and 7%
+
+## White Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cocoa_solids": 30,
+    "milk_solids": 25,
+    "split_fats": { "cocoa_butter": 30, "milk_fat": 7 },
+    "sugars": 44,
+    "other_solids": 1
+  }
+}
+```
+
+A typical white chocolate. Its fields are the averages of several white chocolate entries, rounded
+to whole percents: "USDA White Chocolate", "Corvitto White Chocolate", "Lindt Classic White
+Chocolate", "Callebaut W2 White Chocolate", "Green & Black's Organic White Chocolate", "Valrhona
+Ivoire 35% White Chocolate", "Valrhona Ariaga Blanche 30% White Chocolate", and "Belcolade Blanc
+Selection White Chocolate".
+
 ## Cocoa Powder, 10% Fat
 
 ```json

@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 431  (non-alias: 367, independent: 353)
+"total: 435  (non-alias: 371, independent: 357)
 
             0% Milk
             1% Milk
@@ -13,11 +13,14 @@ exports[`Embedded spec entries 1`] = `
             3.25% Milk
             3.5% Milk
             3.6% Milk
+            30% Milk Chocolate
             35% Cream
+            35% Milk Chocolate
             36% Cream
             4% Milk
             40% ABV Spirit
             40% Cream
+            40% Milk Chocolate
             43% ABV Spirit
             45% ABV Spirit
             48% Cream
@@ -429,6 +432,7 @@ exports[`Embedded spec entries 1`] = `
             Whey Protein Concentrate 80%
             Whey Protein Isolate
 [alias]     Whipping Cream
+            White Chocolate
             White Rum
 [alias]     Whole Milk
             Whole Milk Powder
