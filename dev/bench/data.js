@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795538497251,
+  "lastUpdate": 1795538561294,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -652053,6 +652053,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.19%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9e57d81411250b82e18034fa11b71dea56f51fb5",
+          "message": "Reconcile the Valrhona white chocolate sheets\n\nThe sheet-based reconciliation tests covered only the Callebaut and\nMona Lisa entries, the only ones with specification sheets until the\nValrhona and Belcolade whites. The three Valrhona sheets now join them,\nwith test-only label variants of their nutritional data, which also\njoin the white chocolate comparison. The tests and their tables drop\nthe Callebaut prefix from their names.\n\nBelcolade Blanc Selection stays out, as its sheet's protein and fat\ndisagree with its declared solids, which its entry now notes.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T11:26:33-05:00",
+          "tree_id": "c4772ff20bf15c9673de5e5e9ca3faabf8ba0ca7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9e57d81411250b82e18034fa11b71dea56f51fb5"
+        },
+        "date": 1795538469739,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 46283,
+            "range": "±0.61%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 453577,
+            "range": "±0.47%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32276,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 346679,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
