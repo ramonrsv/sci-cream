@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795561678596,
+  "lastUpdate": 1795561703738,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -740111,6 +740111,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.76,
             "range": "0.51",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "15147bfffbf9acf29144c652ad57997b2799921f",
+          "message": "Document taking cocoa butter on either basis\n\nCocoa powder sheets state fat on dry matter, as the EU defines it, or\ngive no basis, and those on dry matter print the same figure per 100 g\nin their nutritional data. CocoaPowderSpec's cocoa_butter doc and the\nchocolates.md intro now say such a figure is used as is: the\ndifference, about 3% of it, is less than a grade's two-point range.\n\nThe intro also says the Callebaut cocoa powders take their fat and water\nfrom the nutritional data the other entries leave out, and citations of\nDirective 2000/36/EC's Annex I now include its part, as in A.2.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T17:57:17-05:00",
+          "tree_id": "cfbde9db940c8aa248b8893092a6ad60f2edcdb8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/15147bfffbf9acf29144c652ad57997b2799921f"
+        },
+        "date": 1795561646974,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 51.94,
+            "range": "10.08",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 16.97,
+            "range": "4.90",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 16.96,
+            "range": "4.91",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 128.5,
+            "range": "11.74",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 128.5,
+            "range": "11.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 48.82,
+            "range": "9.99",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.76,
+            "range": "0.32",
             "unit": "ms"
           }
         ]
