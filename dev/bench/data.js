@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795539909065,
+  "lastUpdate": 1795540341040,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -607708,6 +607708,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 690.25,
             "range": "42.86",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6eac34bee7245149d7ab7687c9a5e7140ee5ca23",
+          "message": "Add KeyCeiling::with_source_keys for long groups\n\nAdd KeyCeiling::with_source_keys, which sets several keys' ceilings for\none source, and use it for the two Valrhona Opalys groups in the white\nchocolate comparison, whose 8 and 11 overrides repeated the source name\non every line. Every other override stays on with_source.\n\nAdd Opalys and Ivoire to the spell-check words.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T11:35:24-05:00",
+          "tree_id": "d8b83b1c04d37e27e3290b3ad0f81720b7eadb72",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6eac34bee7245149d7ab7687c9a5e7140ee5ca23"
+        },
+        "date": 1795540249138,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 56.88,
+            "range": "4.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 48.13,
+            "range": "4.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 59.63,
+            "range": "5.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2247.25,
+            "range": "43.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 367.5,
+            "range": "4.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 383.5,
+            "range": "6.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 397.25,
+            "range": "7.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 18980.75,
+            "range": "70.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 835,
+            "range": "14.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 63.63,
+            "range": "3.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59.38,
+            "range": "2.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 50.5,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41.5,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 142.75,
+            "range": "5.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 82.75,
+            "range": "2.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 52.81,
+            "range": "1.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.24,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 634.25,
+            "range": "15.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 706.13,
+            "range": "24.27",
             "unit": "ms"
           }
         ]
