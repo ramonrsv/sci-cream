@@ -305,19 +305,36 @@ fn compare_specs_white_chocolate() {
         ("USDA (Label)", "USDA White Chocolate (Label)"),
         ("Callebaut", "Callebaut W2 White Chocolate"),
         ("Callebaut (Label)", "Callebaut W2 White Chocolate (Label)"),
+        ("Valrhona Ivoire", "Valrhona Ivoire 35% White Chocolate"),
+        ("Valrhona Opalys", "Valrhona Opalys 33% White Chocolate"),
+        ("Valrhona Ariaga Blanche", "Valrhona Ariaga Blanche 30% White Chocolate"),
+        ("Belcolade", "Belcolade Blanc Selection White Chocolate"),
         ("Lindt", "Lindt Classic White Chocolate"),
         ("Green & Black's", "Green & Black's Organic White Chocolate"),
     ]
     .map(source_str_to_comp);
 
-    // Corvitto's idealized 40% fat, 40% sugar, and 30% milk solids sit furthest from USDA's lower
-    // fat and milk solids and higher sugar, past the default for energy, milk solids, and POD.
-    // Green & Black's, at 38% fat and 39.5% sucrose, is further still from USDA on POD.
+    // Corvitto's idealized 40% fat, 40% sugar, and 30% milk solids sit far from USDA's lower fat
+    // and milk solids and higher sugar, past the default for energy, milk solids, and POD. Green &
+    // Black's, at 38% fat and 39.5% sucrose, is further from USDA on POD, and Valrhona Ivoire, at
+    // 41% fat, on energy and fat. Valrhona Opalys, at 44% fat, 32.3% sugar, and 31% milk solids,
+    // sits furthest from USDA and the sweeter entries, past the default for energy, fat, milk
+    // solids, sugars, carbohydrates, POD, and PAC.
     let ceiling = KeyCeiling::new(8.5)
         .with_source("Corvitto", CompKey::Energy, 9.5)
         .with_source("Corvitto", CompKey::MilkSolids, 9.5)
         .with_source("Corvitto", CompKey::POD, 10.5)
-        .with_source("Green & Black's", CompKey::POD, 11.0);
+        .with_source("Green & Black's", CompKey::POD, 11.0)
+        .with_source("Valrhona Ivoire", CompKey::Energy, 9.5)
+        .with_source("Valrhona Ivoire", CompKey::TotalFats, 9.0)
+        .with_source("Valrhona Opalys", CompKey::Energy, 11.5)
+        .with_source("Valrhona Opalys", CompKey::TotalFats, 12.0)
+        .with_source("Valrhona Opalys", CompKey::MilkSolids, 10.5)
+        .with_source("Valrhona Opalys", CompKey::TotalSugars, 15.0)
+        .with_source("Valrhona Opalys", CompKey::TotalCarbohydrates, 15.5)
+        .with_source("Valrhona Opalys", CompKey::POD, 18.0)
+        .with_source("Valrhona Opalys", CompKey::PACsgr, 15.0)
+        .with_source("Valrhona Opalys", CompKey::TotalPAC, 13.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));

@@ -589,6 +589,102 @@ Couverture_](https://supplies.gusta.ca/products/valrhona-guanaja-70-dark-chocola
 Neither of the two listings above gave any additional information other than _"70%"_, so the
 ingredient is modeled as a simple 70% dark chocolate.
 
+## Valrhona Ivoire 35% White Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cocoa_solids": 35.1,
+    "milk_solids": 21,
+    "split_fats": { "cocoa_butter": 35.1, "milk_fat": 5.9 },
+    "sugars": 42.78,
+    "other_solids": 1.12
+  }
+}
+```
+
+White chocolate, from the [product
+page](https://www.valrhona.com/en/our-products/for-professionals/chocolate-co/couverture-chocolates/gourmet-chocolates/ivoire-35)
+and [specification
+sheet](https://dam.valrhona.com/m/03ceabce19cf5f67/original/4660-IVOIRE_FT_UK.pdf). The values
+are taken from the spec sheet:
+
+- `cocoa_solids` from _"cocoa butter 35.1%"_, the recipe's only cocoa ingredient
+- `milk_solids` from _"Dry matter content of milk 21 %"_, corroborated by _"whole MILK powder
+  21.6%"_
+- `cocoa_butter` equal to cocoa solids
+- `milk_fat` as the nutritional values' _"Fat 41 g/100g"_ less the cocoa butter, as the sheet
+  gives no milk fat of its own
+- `sugars` from _"sugar 42.78%"_
+- `other_solids` the remainder from the above
+
+These are in agreement with the product page's _"35% of cocoa butter"_.
+
+## Valrhona Opalys 33% White Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cocoa_solids": 34.6,
+    "milk_solids": 31,
+    "split_fats": { "cocoa_butter": 34.6, "milk_fat": 9.4 },
+    "sugars": 32.3,
+    "other_solids": 2.1
+  }
+}
+```
+
+White chocolate, from the [product
+page](https://www.valrhona.com/en/our-products/for-professionals/chocolate-co/couverture-chocolates/gourmet-chocolates/opalys-33)
+and a distributor's copy of the [specification
+sheet](https://www.webstaurantstore.com/documents/nutrition/valrhona_8118_nutrition.pdf), which
+describes it as _"a white chocolate with the merest hint of sweetness"_. The values are taken from
+the spec sheet:
+
+- `cocoa_solids` from _"cocoa butter 34.6%"_, the recipe's only cocoa ingredient
+- `milk_solids` from _"Dry matter content of milk 31 %"_, corroborated by _"whole MILK powder
+  32.3%"_
+- `cocoa_butter` equal to cocoa solids
+- `milk_fat` as the nutritional values' _"Fat 44 g/100g"_ less the cocoa butter, as the sheet
+  gives no milk fat of its own
+- `sugars` from _"sugar 32.3%"_
+- `other_solids` the remainder from the above
+
+These are in agreement with the product page's _"33% of cocoa butter"_.
+
+## Valrhona Ariaga Blanche 30% White Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cocoa_solids": 30,
+    "milk_solids": 25,
+    "split_fats": { "cocoa_butter": 30, "milk_fat": 6 },
+    "sugars": 43.16,
+    "other_solids": 1.84
+  }
+}
+```
+
+White chocolate, from the [specification
+sheet](https://dam.valrhona.com/m/4096ff845fe81357/original/12141-ARIAGA-BLANCHE-30-_FT_UK.pdf).
+The values are taken from it:
+
+- `cocoa_solids` from _"cocoa butter 30%"_, the recipe's only cocoa ingredient
+- `milk_solids` from _"Dry matter content of milk 25 %"_, corroborated by _"whole MILK powder
+  21.2%"_ plus _"dried skimmed MILK 5%"_
+- `cocoa_butter` equal to cocoa solids
+- `milk_fat` as the nutritional values' _"Fat 36 g/100g"_ less the cocoa butter, as the sheet
+  gives no milk fat of its own
+- `sugars` from _"sugar 43.16%"_
+- `other_solids` the remainder from the above
+
+Its _"Dairy protein content 0%"_ must be an error, as milk powders are its only source of protein,
+which its nutritional values put at 7.2 g.
+
 ## Callebaut 811 Dark Chocolate
 
 ```json
@@ -908,6 +1004,40 @@ couverture. The values are taken from the spec sheet:
 - `other_solids` the remainder from the above
 
 These are in agreement with the product page's _"Min Cocoa Solids: 28%"_.
+
+## Belcolade Blanc Selection White Chocolate
+
+```json
+{
+  "category": "Chocolate",
+  "ChocolateSpec": {
+    "cocoa_solids": 30,
+    "milk_solids": 25,
+    "split_fats": { "cocoa_butter": 30, "milk_fat": 6.5 },
+    "sugars": 44.2,
+    "other_solids": 0.8
+  }
+}
+```
+
+White chocolate, from Puratos's [technical data
+sheet](https://www.cfw.co.uk/Media/PDF%20Spec%20Sheets/Belcolade/Spec-Sheet-Belcolade-White-Chocolate-Easimelt-15kg-X605.pdf),
+version 1.8. The values are taken from it:
+
+- `cocoa_solids` from _"Dry cocoa solids 30,0 %"_, all cocoa butter by _"Fat free dry cocoa solids
+  0%"_
+- `milk_solids` from _"Dry milk solids 25,0 %"_
+- `cocoa_butter` from _"Cocoa Butter 30,0 %"_
+- `milk_fat` from _"Milk fat 6,5 %"_, the rest of the milk solids being _"Fat free dry milk solids
+  18,5 %"_
+- `sugars` from the nutritional information's _"Added sugars 44,2 g"_, as the sheet lists the
+  ingredients without percentages
+- `other_solids` the remainder from the above
+
+The cocoa butter and milk fat give 36.5% fat, within its _"Total Fat Content 35,6 - 38,6 %"_. An
+[older
+sheet](https://cdn.shopify.com/s/files/1/0020/9046/7391/files/TDS_4102183_Belcolade_Blanco_X605G_Drops_2X5.pdf)
+agrees, with a recipe of 44.5% sugar, 29.8% cocoa butter, and 25.1% whole milk powder.
 
 ## Green & Black's Organic Milk Chocolate
 
