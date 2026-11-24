@@ -179,9 +179,10 @@ function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
       if (kinds.has("min")) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const min = raw.map(({ comments: _comments, ...rest }) => rest);
+        // One entry per line, so a diff shows which entries changed.
         outputs.set(
           path.join(base, "generated", "min", `${stem}.json`),
-          `${JSON.stringify(min)}\n`,
+          `[\n${min.map((e) => JSON.stringify(e)).join(",\n")}\n]\n`,
         );
       }
     }
