@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795633183076,
+  "lastUpdate": 1795642121827,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -658925,6 +658925,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.06%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0b453dc5b62deab1eef5a03f5758a7d0090bad23",
+          "message": "Note Lindt Classic Milk's lactose and milk fat\n\nLindt Classic Milk adds lactose to its milk powders, which its label\nspec counts as sucrose. The UK label lists the lactose between the\ncocoa mass and the skimmed milk powder. Bounded by that order and the\nlabel's figures, within their rounding, it can reach about 15 g per\n100 g, at which the entry's POD would read about 25% high.\n\nThe entry now says so, and that its milk fat, estimated as if its milk\nsolids were all whole milk powder, is likely too high, as some are\nskimmed milk powder. A CompositeSpec would have to pick a lactose\nfigure no source gives, so the entry stays as it is, and the TODO item\nreviewing it moves to Completed. The fiber note is also tightened.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T16:00:49-05:00",
+          "tree_id": "9915b1dd90b028c24282343d677de65b521ed009",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0b453dc5b62deab1eef5a03f5758a7d0090bad23"
+        },
+        "date": 1795642057685,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 67523,
+            "range": "±0.56%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 599227,
+            "range": "±0.42%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 49491,
+            "range": "±0.64%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 534925,
+            "range": "±0.68%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
