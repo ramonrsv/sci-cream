@@ -2,6 +2,8 @@
 //! serving-mass estimation from component densities (via [`mixture_density`]), and label rounding,
 //! the FDA's (21 CFR 101.9) and by market, [`LabelRounding`].
 
+use std::ops::Range;
+
 use struct_iterable::Iterable;
 
 use crate::tests::asserts::EPSILON_8DP;
@@ -205,6 +207,14 @@ impl LabelRounding {
         }
     }
 
+    /// The range of amounts of a serving's fat, in grams, that the label prints as `printed`
+    pub(super) fn fat_range(self, printed: f64) -> Range<f64> {
+        // Every market rounds fat to the gram or finer, so a gram more always prints more
+        let upper = printed + 1.0;
+        least_amount_where(|grams| self.fat(grams) >= printed, upper)
+            ..least_amount_where(|grams| self.fat(grams) > printed, upper)
+    }
+
     /// Rounds a serving's carbohydrate, fiber, or sugars, in grams, as the label prints it
     ///
     /// A US label may print less than 1 g as _"less than 1 gram"_, which this doesn't model.
@@ -225,10 +235,34 @@ impl LabelRounding {
     }
 }
 
+/// The least amount, from 0 to `upper`, at which `holds`, by bisection:
+/// it must hold at `upper`, and wherever it holds, at every larger amount too
+fn least_amount_where(holds: impl Fn(f64) -> bool, upper: f64) -> f64 {
+    assert!(holds(upper), "the predicate must hold at the upper bound, {upper}");
+
+    if holds(0.0) {
+        return 0.0;
+    }
+
+    let (mut low, mut high) = (0.0, upper);
+    // Halving 64 times narrows the bracket past an ulp of any bound the markets' rules have
+    for _ in 0..64 {
+        let mid = f64::midpoint(low, high);
+        if holds(mid) {
+            high = mid;
+        } else {
+            low = mid;
+        }
+    }
+    high
+}
+
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::float_cmp)]
 mod tests {
+    use crate::tests::asserts::assert_eq_flt;
+
     use super::*;
 
     #[test]
@@ -261,5 +295,27 @@ mod tests {
         assert_eq!(LabelRounding::Canada.protein(0.43), 0.4);
         assert_eq!(LabelRounding::US.protein(0.43), 0.0);
         assert_eq!(LabelRounding::EU.protein(7.94), 7.9);
+    }
+
+    #[test]
+    fn label_rounding_fat_ranges() {
+        let cases = [
+            (LabelRounding::US, 0.0, 0.0..0.5),
+            (LabelRounding::US, 0.5, 0.5..0.75),
+            (LabelRounding::US, 1.0, 0.75..1.25),
+            (LabelRounding::US, 5.0, 4.75..5.5),
+            (LabelRounding::Canada, 0.4, 0.35..0.45),
+            (LabelRounding::Canada, 0.5, 0.45..0.75),
+            (LabelRounding::Canada, 8.0, 7.5..8.5),
+            (LabelRounding::EU, 0.0, 0.0..0.5),
+            (LabelRounding::EU, 2.8, 2.75..2.85),
+            (LabelRounding::EU, 32.0, 31.5..32.5),
+        ];
+
+        for (rounding, printed, expected) in cases {
+            let range = rounding.fat_range(printed);
+            assert_eq_flt!(range.start, expected.start);
+            assert_eq_flt!(range.end, expected.end);
+        }
     }
 }

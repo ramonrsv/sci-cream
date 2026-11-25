@@ -22,6 +22,9 @@
 //! declared: their sources' minima, or their sheet's actual cocoa and milk solids. The milk and
 //! white ones, so declared, must still compose their label's protein, to within its rounding.
 //!
+//! Each label entry's fat is also tabled with the range its label's rounding allows, which a small
+//! serving widens to several points.
+//!
 //! The Cadbury labels compose the fat and sugars they print, to within their rounding, those whose
 //! rounding leaves their parts over 100 g being scaled into it.
 //!
@@ -769,6 +772,47 @@ fn chocolate_labels_reproduce_their_printed_figures() {
         }
 
         lines.push(String::new());
+    }
+
+    insta::assert_snapshot!(lines.join("\n"));
+}
+
+/// Each [`LABEL_ENTRIES`] entry's fat lies within the range its label's rounding allows, which the
+/// snapshot tables as a share of the product: the smaller the serving, the wider the range.
+#[test]
+fn chocolate_label_fat_lies_within_its_rounding_range() {
+    let mut lines = vec![format!(
+        "{:<48}{:>7}{:>9}{:>9}{:>9}{:>14}{:>7}",
+        "entry", "market", "serving", "printed", "fat", "range", "width"
+    )];
+
+    for &(name, rounding, _) in LABEL_ENTRIES {
+        let TaggedSpec::ChocolateLabelSpec(label) = get_embedded_or_variant_spec_by_name(name).spec else {
+            panic!("{name} is not a ChocolateLabelSpec");
+        };
+        let Unit::Grams(serving) = label.serving_size else {
+            panic!("{name}'s serving is not in grams");
+        };
+
+        let fat = get_embedded_or_variant_comp_by_name(name).get(CompKey::TotalFats);
+        let per_serving = fat * serving / 100.0;
+        let range = rounding.fat_range(label.total_fat);
+        assert!(
+            range.contains(&per_serving),
+            "{name}: {per_serving:.2} g of fat is outside the {:.2}-{:.2} g its label allows",
+            range.start,
+            range.end
+        );
+
+        let [low, high] = [range.start, range.end].map(|grams| grams * 100.0 / serving);
+        let market = format!("{rounding:?}");
+        // Half up, unlike `{:.1}`'s half to even, so ends on quarter points stay their width apart
+        let range = format!("{:.1}-{:.1}%", round_to_decimals(low, 1), round_to_decimals(high, 1));
+        lines.push(format!(
+            "{name:<48}{market:>7}{serving:>7} g{:>7.1} g{fat:>8.1}%{range:>14}{:>7.2}",
+            label.total_fat,
+            high - low
+        ));
     }
 
     insta::assert_snapshot!(lines.join("\n"));
