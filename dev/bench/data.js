@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795632833296,
+  "lastUpdate": 1795632846726,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -111695,6 +111695,204 @@ window.BENCHMARK_DATA = {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 11,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "19653ef0312b212b0e0a70c05318311455c8bd70",
+          "message": "Move the examples to the 22/24 cocoa powder\n\nThe examples and test assets used Cocoa Powder, 17% Fat, a default by\nhabit that nothing measured backs. They now use the 22/24% grade, the\none pastry powders are sold in and the one Corvitto calls most common\nin ice cream making. The 17% entry stays, with the two recipes that use\nit and the Ice Cream Science test assets that mirror one of them.\n\nAt the main recipe's 28 g, the 23% fat moves 17 of its expected\nproperties: cocoa butter up 0.27 and cocoa solids non-fat down as much,\nEnergy up 1.87, HF down 0.25, ServingTemp to -13.598 and HardnessAt14C\nto 75.81. Each is recomputed, in the test assets, the crate docs and\nREADME, and the TS examples.\n\nThe newest migration fixture holds the main recipe in three recipe\nversions, which the data tests read back once migrated, so they take\nthe new powder too. DEVELOPMENT.md now says to edit such rows by hand,\nas dumping again needs the pre-migration schema and data.\n\nThe balancing example's powder met its 2.0 cocoa butter target nearly\nalone, leaving 3 g of chocolate, so it now takes the more common 70%\nchocolate and a 4.0 cocoa solids non-fat target: 44 g of powder and\n25 g of chocolate, with total fat still drifting from its 16, to 13.9.\n\nThe README linked data/ingredients/generated without defining the link,\nwhich the crate docs now share. TODO.md gains an item for a custom\nscreenshot of the FPD graph, as the README's image pins a snapshot from\na since-deleted path.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T13:27:49-05:00",
+          "tree_id": "c5fa803776fa7f635cb84eb911f659c0484f8b01",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/19653ef0312b212b0e0a70c05318311455c8bd70"
+        },
+        "date": 1795632780067,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 2701,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 82904,
+            "range": "± 371",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1702,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 81776,
+            "range": "± 397",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 2391,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 2302,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 2354,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 2395,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 2363,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 2521,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 2432,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 2455,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 61999,
+            "range": "± 369",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 62493,
+            "range": "± 485",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 162254630,
+            "range": "± 518730",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 424429,
+            "range": "± 2613",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 3304,
+            "range": "± 85",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 40,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 3785,
+            "range": "± 199",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 50758,
+            "range": "± 277",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 47682,
+            "range": "± 322",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 80711,
+            "range": "± 453",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 77120,
+            "range": "± 684",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 212487,
+            "range": "± 815",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 11791,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 448,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 11,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
