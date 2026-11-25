@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795586042639,
+  "lastUpdate": 1795586105268,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -707730,6 +707730,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1039.62,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b38f346565fb336d7c34e388c323b09ba79670d8",
+          "message": "Trim the generic cocoa powder ladder\n\nRemove the generic 15%, 20% and 24% fat cocoa powders, leaving 10%,\n13%, 17% and 22% beside the three grades, which cover the powders sold\nprofessionally, as the branded entries cover specific products.\nProduction's saved recipes still name the 10%, so it stays.\n\nKeep 13% rather than moving to 14%: USDA's natural and alkalized\nlistings average 13.4%, and only 13% and 14% print the fat figures of\nall three label powders, Ghirardelli, Hershey's and Purest, with 13%\nnearer the middle of Hershey's and Purest's ranges.\n\ncompare_specs_cocoa_powder_13_fat now also compares USDA's alkalized\nlisting, which no comparison paired, its label variant, and Purest.\nEnergy and carbohydrates take wider ceilings for the alkalized pairs,\nand Purest's pairs take overrides on the keys its printed 12.5% fat\nwidens against USDA's natural 13.7%, so the USDA pairs keep 1.0.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T00:26:21-05:00",
+          "tree_id": "8d57f09b85996b3e96151be2f8990df974727580",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b38f346565fb336d7c34e388c323b09ba79670d8"
+        },
+        "date": 1795585998059,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 779.77,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 947.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 724.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 891.84,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 733.97,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 901.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 707.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 875.24,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 709.05,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 876.77,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1039.52,
             "unit": "KB"
           },
           {
