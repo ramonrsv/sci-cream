@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795626906199,
+  "lastUpdate": 1795626961507,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -611743,6 +611743,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 675.5,
             "range": "11.09",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "84c15635b7193c40d55cdb932ee4b9b23c3690c7",
+          "message": "Table label fat against its rounding range\n\nA label rounds a serving's fat coarsely, to the nearest half gram from\n0.5 to 5 g in the US and Canada, so on a small serving its figure\nstands for several points of the product's fat: Ghirardelli's 1 g per\n6 g allows anything from 12.5% to 20.8%.\n\nLabelRounding::fat_range gives the amounts of fat a label prints as a\ngiven figure. It finds the range's ends by bisecting\nLabelRounding::fat, which never decreases as the amount grows, so the\nmarkets' rules aren't written out twice.\n\nchocolate_label_fat_lies_within_its_rounding_range checks that each\nlabel entry's fat lies within its range, and tables the range as a\nshare of the product: 4-8 points wide for the cocoa powders and\nBaker's, against 1-2.5 for the other bars.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T10:47:03-05:00",
+          "tree_id": "d36c98a1a85b8aac83fd3a35b813dbe41bb46df9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/84c15635b7193c40d55cdb932ee4b9b23c3690c7"
+        },
+        "date": 1795626909851,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 26.5,
+            "range": "1.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 32.38,
+            "range": "3.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 34.13,
+            "range": "1.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1481.75,
+            "range": "33.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 221,
+            "range": "5.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 227,
+            "range": "3.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 229.25,
+            "range": "3.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 11249.88,
+            "range": "83.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 24.8,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 673.88,
+            "range": "15.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 34.63,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 33.88,
+            "range": "1.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 28.13,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 23.88,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 91.75,
+            "range": "3.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 30.87,
+            "range": "0.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 23.46,
+            "range": "1.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 469,
+            "range": "19.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 471,
+            "range": "14.66",
             "unit": "ms"
           }
         ]
