@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795626479745,
+  "lastUpdate": 1795626487762,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -708631,6 +708631,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1039.52,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "84c15635b7193c40d55cdb932ee4b9b23c3690c7",
+          "message": "Table label fat against its rounding range\n\nA label rounds a serving's fat coarsely, to the nearest half gram from\n0.5 to 5 g in the US and Canada, so on a small serving its figure\nstands for several points of the product's fat: Ghirardelli's 1 g per\n6 g allows anything from 12.5% to 20.8%.\n\nLabelRounding::fat_range gives the amounts of fat a label prints as a\ngiven figure. It finds the range's ends by bisecting\nLabelRounding::fat, which never decreases as the amount grows, so the\nmarkets' rules aren't written out twice.\n\nchocolate_label_fat_lies_within_its_rounding_range checks that each\nlabel entry's fat lies within its range, and tables the range as a\nshare of the product: 4-8 points wide for the cocoa powders and\nBaker's, against 1-2.5 for the other bars.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T10:47:03-05:00",
+          "tree_id": "d36c98a1a85b8aac83fd3a35b813dbe41bb46df9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/84c15635b7193c40d55cdb932ee4b9b23c3690c7"
+        },
+        "date": 1795626412983,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 779.77,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 947.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 724.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 891.84,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 733.97,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 901.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 707.53,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 875.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 709.06,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 876.78,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1039.53,
             "unit": "KB"
           },
           {
