@@ -222,34 +222,16 @@ Selection White Chocolate".
 { "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 13 } }
 ```
 
-## Cocoa Powder, 15% Fat
-
-```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 15 } }
-```
-
 ## Cocoa Powder, 17% Fat
 
 ```json
 { "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 17 } }
 ```
 
-## Cocoa Powder, 20% Fat
-
-```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 20 } }
-```
-
 ## Cocoa Powder, 22% Fat
 
 ```json
 { "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 22 } }
-```
-
-## Cocoa Powder, 24% Fat
-
-```json
-{ "category": "Chocolate", "CocoaPowderSpec": { "cocoa_butter": 24 } }
 ```
 
 ## Cocoa Powder, 10/12% Fat

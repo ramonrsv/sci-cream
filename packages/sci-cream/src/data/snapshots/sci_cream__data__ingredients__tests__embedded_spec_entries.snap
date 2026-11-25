@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 435  (non-alias: 371, independent: 357)
+total: 432  (non-alias: 368, independent: 354)
 
             0% Milk
             1% Milk
@@ -78,13 +78,10 @@ total: 435  (non-alias: 371, independent: 357)
             Cocoa Powder, 10% Fat
             Cocoa Powder, 10/12% Fat
             Cocoa Powder, 13% Fat
-            Cocoa Powder, 15% Fat
             Cocoa Powder, 17% Fat
-            Cocoa Powder, 20% Fat
             Cocoa Powder, 20/22% Fat
             Cocoa Powder, 22% Fat
             Cocoa Powder, 22/24% Fat
-            Cocoa Powder, 24% Fat
 [alias]     Coffee Extract
 [alias]     Commercial Stabilizers
             Cornstarch

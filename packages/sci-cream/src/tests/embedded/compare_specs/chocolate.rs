@@ -380,10 +380,25 @@ fn compare_specs_cocoa_powder_13_fat() {
         ("Simple", "Cocoa Powder, 13% Fat"),
         ("USDA", "USDA Unsweetened Cocoa Powder"),
         ("USDA (Label)", "USDA Unsweetened Cocoa Powder (Label)"),
+        ("USDA Alkalized", "USDA Unsweetened Cocoa Powder, Processed with Alkali"),
+        ("USDA Alkalized (Label)", "USDA Unsweetened Cocoa Powder, Processed with Alkali (Label)"),
+        ("Purest", "Purest Natural Cocoa Powder"),
     ]
     .map(source_str_to_comp);
 
-    let ceiling = KeyCeiling::new(1.0);
+    let ceiling = KeyCeiling::new(1.0)
+        .with(CompKey::Energy, 2.5)
+        .with(CompKey::TotalCarbohydrates, 2.0)
+        .with_source_keys(
+            "Purest",
+            &[
+                (CompKey::TotalFats, 1.5),
+                (CompKey::CocoaButter, 1.5),
+                (CompKey::CocoaSNF, 1.5),
+                (CompKey::TotalSNFS, 1.5),
+                (CompKey::HF, 1.5),
+            ],
+        );
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
