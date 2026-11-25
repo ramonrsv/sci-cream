@@ -627,8 +627,11 @@ UK [product page](https://www.lindt.co.uk/lindt-classic-recipe-milk-chocolate-10
 with _"Cocoa : 30% minimum. Milk solids : 20% minimum"_.
 
 The UK label gives no fiber, so the cocoa minimum stands in for the cocoa solids. The Canadian
-label's 1 g of fiber per 30 g covers 1.7-5.0 g per 100 g once rounded, too coarse to estimate them
-from. The added lactose counts as sucrose.
+label's 1 g of fiber per 30 g covers 1.7-5.0 g per 100 g once rounded, too coarse for an estimate.
+
+The added lactose is counted as sucrose, though the label's figures and ingredient order allow up
+to about 15 g of it, at which the entry's POD would read about 25% high. Its milk fat, estimated as
+if its milk solids were all whole milk powder, is likely too high, as some are skimmed milk powder.
 
 ## Lindt Classic White Chocolate
 

@@ -57,8 +57,6 @@
       is smaller than the scatter within each kind: 1.7 points for protein against 2.0 for powders.
 - [ ] Consider modeling the sugars `STD_SUGARS_IN_COCOA_SNF` measures, today only a derivation
       basis. `ChocolateSpec`'s `sugars` must read as added-only; `Sugars::other` blocks POD/PAC.
-- [ ] Review the 'Lindt Classic Milk Chocolate' entry, which counts its added lactose as sucrose and
-      so overstates its POD, though `specs::cocoa` says added lactose needs a `CompositeSpec`.
 - [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
 - [ ] Add wine ingredients, and considered adding evaporated wine - how to handle, parametric?
 - [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '\* [Evap 15]', etc.
@@ -162,6 +160,8 @@
 
 ## Completed
 
+- [x] Review the 'Lindt Classic Milk Chocolate' entry, which counts its added lactose as sucrose and
+      so overstates its POD, though `specs::cocoa` says added lactose needs a `CompositeSpec`.
 - [x] Explore "cacao" as the umbrella term for chocolates and cocoa powders, instead of "chocolate",
       as `constants::composition::cacao` and the FDA's Part 163, "Cacao Products", already use it.
       It would reach `Category::Chocolate`, mirrored by the app's database enum, `specs::chocolate`,
