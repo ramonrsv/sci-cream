@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795626961507,
+  "lastUpdate": 1795632442171,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -770234,6 +770234,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2208.46,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "19653ef0312b212b0e0a70c05318311455c8bd70",
+          "message": "Move the examples to the 22/24 cocoa powder\n\nThe examples and test assets used Cocoa Powder, 17% Fat, a default by\nhabit that nothing measured backs. They now use the 22/24% grade, the\none pastry powders are sold in and the one Corvitto calls most common\nin ice cream making. The 17% entry stays, with the two recipes that use\nit and the Ice Cream Science test assets that mirror one of them.\n\nAt the main recipe's 28 g, the 23% fat moves 17 of its expected\nproperties: cocoa butter up 0.27 and cocoa solids non-fat down as much,\nEnergy up 1.87, HF down 0.25, ServingTemp to -13.598 and HardnessAt14C\nto 75.81. Each is recomputed, in the test assets, the crate docs and\nREADME, and the TS examples.\n\nThe newest migration fixture holds the main recipe in three recipe\nversions, which the data tests read back once migrated, so they take\nthe new powder too. DEVELOPMENT.md now says to edit such rows by hand,\nas dumping again needs the pre-migration schema and data.\n\nThe balancing example's powder met its 2.0 cocoa butter target nearly\nalone, leaving 3 g of chocolate, so it now takes the more common 70%\nchocolate and a 4.0 cocoa solids non-fat target: 44 g of powder and\n25 g of chocolate, with total fat still drifting from its 16, to 13.9.\n\nThe README linked data/ingredients/generated without defining the link,\nwhich the crate docs now share. TODO.md gains an item for a custom\nscreenshot of the FPD graph, as the README's image pins a snapshot from\na since-deleted path.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T13:27:49-05:00",
+          "tree_id": "c5fa803776fa7f635cb84eb911f659c0484f8b01",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/19653ef0312b212b0e0a70c05318311455c8bd70"
+        },
+        "date": 1795632368675,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1235.78,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 369.72,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1998.57,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 607.63,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 656.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2208.6,
             "unit": "KB"
           }
         ]
