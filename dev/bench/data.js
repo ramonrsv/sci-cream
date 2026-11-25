@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795642498824,
+  "lastUpdate": 1795642878436,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -613357,6 +613357,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 574.13,
             "range": "22.54",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0b453dc5b62deab1eef5a03f5758a7d0090bad23",
+          "message": "Note Lindt Classic Milk's lactose and milk fat\n\nLindt Classic Milk adds lactose to its milk powders, which its label\nspec counts as sucrose. The UK label lists the lactose between the\ncocoa mass and the skimmed milk powder. Bounded by that order and the\nlabel's figures, within their rounding, it can reach about 15 g per\n100 g, at which the entry's POD would read about 25% high.\n\nThe entry now says so, and that its milk fat, estimated as if its milk\nsolids were all whole milk powder, is likely too high, as some are\nskimmed milk powder. A CompositeSpec would have to pick a lactose\nfigure no source gives, so the entry stays as it is, and the TODO item\nreviewing it moves to Completed. The fiber note is also tightened.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T16:00:49-05:00",
+          "tree_id": "9915b1dd90b028c24282343d677de65b521ed009",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0b453dc5b62deab1eef5a03f5758a7d0090bad23"
+        },
+        "date": 1795642791044,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.25,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 47.88,
+            "range": "3.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 55.63,
+            "range": "3.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2288.5,
+            "range": "35.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 353.63,
+            "range": "12.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 352.75,
+            "range": "3.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 367.88,
+            "range": "4.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17712.5,
+            "range": "54.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 811.13,
+            "range": "12.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 63.25,
+            "range": "1.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.13,
+            "range": "2.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 51.25,
+            "range": "2.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.25,
+            "range": "2.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 128.5,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 79.38,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 52.36,
+            "range": "0.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 39.92,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 631.5,
+            "range": "20.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 707,
+            "range": "37.46",
             "unit": "ms"
           }
         ]
