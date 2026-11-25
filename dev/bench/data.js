@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795586109823,
+  "lastUpdate": 1795586153394,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -741142,6 +741142,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.76,
             "range": "0.32",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b38f346565fb336d7c34e388c323b09ba79670d8",
+          "message": "Trim the generic cocoa powder ladder\n\nRemove the generic 15%, 20% and 24% fat cocoa powders, leaving 10%,\n13%, 17% and 22% beside the three grades, which cover the powders sold\nprofessionally, as the branded entries cover specific products.\nProduction's saved recipes still name the 10%, so it stays.\n\nKeep 13% rather than moving to 14%: USDA's natural and alkalized\nlistings average 13.4%, and only 13% and 14% print the fat figures of\nall three label powders, Ghirardelli, Hershey's and Purest, with 13%\nnearer the middle of Hershey's and Purest's ranges.\n\ncompare_specs_cocoa_powder_13_fat now also compares USDA's alkalized\nlisting, which no comparison paired, its label variant, and Purest.\nEnergy and carbohydrates take wider ceilings for the alkalized pairs,\nand Purest's pairs take overrides on the keys its printed 12.5% fat\nwidens against USDA's natural 13.7%, so the USDA pairs keep 1.0.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T00:26:21-05:00",
+          "tree_id": "8d57f09b85996b3e96151be2f8990df974727580",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b38f346565fb336d7c34e388c323b09ba79670d8"
+        },
+        "date": 1795586081294,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.91,
+            "range": "6.47",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 17.45,
+            "range": "2.92",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 17.41,
+            "range": "2.90",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 154,
+            "range": "9.38",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 154,
+            "range": "9.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.31,
+            "range": "6.53",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.26,
+            "range": "0.38",
             "unit": "ms"
           }
         ]
