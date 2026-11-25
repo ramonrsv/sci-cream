@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795642189657,
+  "lastUpdate": 1795642196501,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -710589,6 +710589,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1039.53,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0b453dc5b62deab1eef5a03f5758a7d0090bad23",
+          "message": "Note Lindt Classic Milk's lactose and milk fat\n\nLindt Classic Milk adds lactose to its milk powders, which its label\nspec counts as sucrose. The UK label lists the lactose between the\ncocoa mass and the skimmed milk powder. Bounded by that order and the\nlabel's figures, within their rounding, it can reach about 15 g per\n100 g, at which the entry's POD would read about 25% high.\n\nThe entry now says so, and that its milk fat, estimated as if its milk\nsolids were all whole milk powder, is likely too high, as some are\nskimmed milk powder. A CompositeSpec would have to pick a lactose\nfigure no source gives, so the entry stays as it is, and the TODO item\nreviewing it moves to Completed. The fiber note is also tightened.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T16:00:49-05:00",
+          "tree_id": "9915b1dd90b028c24282343d677de65b521ed009",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0b453dc5b62deab1eef5a03f5758a7d0090bad23"
+        },
+        "date": 1795642102017,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 779.88,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 947.6,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 724.22,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 891.95,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 734.08,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 901.8,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 707.63,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 875.35,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 709.16,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 876.88,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1039.63,
             "unit": "KB"
           },
           {
