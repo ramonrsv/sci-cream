@@ -50,7 +50,7 @@ let recipe = Recipe::from_const_recipe(
     &[
         ("Whole Milk", 245.0),
         ("Whipping Cream", 215.0),
-        ("Cocoa Powder, 17% Fat", 28.0),
+        ("Cocoa Powder, 22/24% Fat", 28.0),
         ("Skimmed Milk Powder", 21.0),
         ("Egg Yolk", 18.0),
         ("Dextrose", 45.0),
@@ -78,14 +78,14 @@ properties can be accessed via `MixProperties::get`, using the appropriate keys 
 let mix_properties = recipe.calculate_mix_properties()?;
 
 for (key, value) in [
-    (Energy.into(), 230.0426), // kcal per 100g
+    (Energy.into(), 231.9144), // kcal per 100g
     (MilkFat.into(), 13.6367), // grams per 100g
     (Lactose.into(), 4.8171), // ...
     (MSNF.into(), 8.8387),
     (MilkProteins.into(), 3.3145),
     (MilkSolids.into(), 22.4754),
-    (CocoaButter.into(), 0.7781),
-    (CocoaSNF.into(), 3.6616),
+    (CocoaButter.into(), 1.0527),
+    (CocoaSNF.into(), 3.387),
     (Glucose.into(), 6.7675),
     (Fructose.into(), 5.2309),
     (TotalSugars.into(), 16.8155),
@@ -99,10 +99,10 @@ for (key, value) in [
     (PACalc.into(), 2.1067),
     (TotalPAC.into(), 33.4463),
     (AbsPAC.into(), 56.6165), // TotalPAC / Water
-    (HF.into(), 7.2912),
+    (HF.into(), 7.0441),
     (FPD.into(), -3.6032), // °C
-    (ServingTemp.into(), -13.4865), // °C
-    (HardnessAt14C.into(), 76.0404), // [0, 100] scale
+    (ServingTemp.into(), -13.598), // °C
+    (HardnessAt14C.into(), 75.8095), // [0, 100] scale
 ] {
     assert_eq_4dp!(mix_properties.get(key), value);
 }
@@ -428,7 +428,7 @@ typically a tricky recipe to balance and requires careful tradeoffs to meet comm
 let targets: Vec<(BalanceKey, f64, Option<Priority>)> = vec![
     (MSNF.into(), 7.0, None),
     (CocoaButter.into(), 2.0, Some(High)),
-    (CocoaSNF.into(), 6.0, Some(Critical)),
+    (CocoaSNF.into(), 4.0, Some(Critical)),
     (ABV.into(), 0.4, None),
     (Salt.into(), 0.08, None),
     (TotalFats.into(), 16.0, None),
@@ -444,14 +444,14 @@ let balanced = recipe.balance(&targets, Some(1000.0), &[])?;
 assert_recipe_matches(
     &balanced,
     &[
-        ("Whole Milk", 470.0),
-        ("Whipping Cream", 236.0),
-        ("Cocoa Powder, 17% Fat", 67.0),
-        ("95% Dark Chocolate", 16.0),
-        ("Skimmed Milk Powder", 12.0),
-        ("Egg Yolk", 23.0),
-        ("Dextrose", 138.0),
-        ("Fructose", 24.0),
+        ("Whole Milk", 441.0),
+        ("Whipping Cream", 278.0),
+        ("Cocoa Powder, 22/24% Fat", 44.0),
+        ("70% Dark Chocolate", 25.0),
+        ("Skimmed Milk Powder", 14.0),
+        ("Egg Yolk", 25.0),
+        ("Dextrose", 139.0),
+        ("Fructose", 20.0),
         ("Salt", 0.8),
         ("Stabilizer Blend", 2.0),
         ("Vanilla Extract", 11.0),
@@ -460,14 +460,14 @@ assert_recipe_matches(
 
 let balanced_properties = balanced.calculate_mix_properties()?;
 assert_eq_flt!(balanced_properties.total_amount, 1000.0, epsilon = 0.1);
-assert_eq_4dp!(balanced_properties.get(ServingTemp.into()), -13.0991);
+assert_eq_4dp!(balanced_properties.get(ServingTemp.into()), -14.8133);
 
 for (key, value, _) in targets.iter().filter(|(key, _, _)| not_total_fats(key)) {
     assert_eq_flt!(balanced_properties.get((*key).into()), *value, epsilon = 0.7);
 }
 
 // With disparate targets, some non-priority ones can drift to accommodate the priorities
-assert_eq_4dp!(balanced_properties.get(TotalFats.into()), 12.4955);
+assert_eq_4dp!(balanced_properties.get(TotalFats.into()), 13.9342);
 ```
 
 ## WASM Interoperability
@@ -499,7 +499,7 @@ import {
 const RECIPE: LightRecipe = [
   ["Whole Milk", 245],
   ["Whipping Cream", 215],
-  ["Cocoa Powder, 17% Fat", 28],
+  ["Cocoa Powder, 22/24% Fat", 28],
   ["Skimmed Milk Powder", 21],
   ["Egg Yolk", 18],
   ["Dextrose", 45],
@@ -524,18 +524,18 @@ const recipe = new Recipe("Chocolate Ice Cream", recipeLines);
 const mix_properties = recipe.calculate_mix_properties();
 
 const comp = mix_properties.composition;
-expect(comp.get(CompKey.Energy)).toBeCloseTo(230.043);
+expect(comp.get(CompKey.Energy)).toBeCloseTo(231.914);
 expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.637);
 expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.817);
 // ...
 
 const fpd = mix_properties.fpd;
 expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
-expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.486);
-expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.04);
+expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.598);
+expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(75.81);
 
 // Via prop keys:
-expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(230.043);
+expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(231.914);
 expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.603);
 ```
 
@@ -560,13 +560,14 @@ import {
 const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
 const mix_properties = bridge.calculate_recipe_mix_properties(RECIPE);
 
-expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(230.043);
+expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(231.914);
 // ...
 expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
 // ...
 ```
 
 [data/ingredients]: https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream/data/ingredients
+[data/ingredients/generated]: https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream/data/ingredients/generated
 [fpd-graph-png]: https://media.githubusercontent.com/media/ramonrsv/sci-cream/2c35c15bb6f19980cc809c6a8a6e8908ba29a5ba/packages/app/src/__tests__/visual/components.spec.ts-snapshots/fpd-graph-populated-main-visual-linux.png
 [benches/ts]: https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream/benches/ts
 [bench-tracking]: https://ramonrsv.github.io/sci-cream/dev/bench/

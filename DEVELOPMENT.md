@@ -280,6 +280,9 @@ pg_dump "$POSTGRES_URL" --data-only --schema=public --no-owner --no-privileges \
 dropdb sci_cream_fixture
 ```
 
+The job's data tests expect the seed assets, so when one changes, manually edit its rows in the
+newest fixture rather than dumping again, which needs the pre-migration schema and data.
+
 ### Ordering a migration against a deploy
 
 Drizzle names every column explicitly, so running code breaks the moment a column it still names

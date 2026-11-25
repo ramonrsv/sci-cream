@@ -1262,7 +1262,7 @@ fn balancing_issues_report_real_setup_with_ref_recipes_chocolate_powder_only() {
     // A typical scenario: balance a chocolate recipe to a reference base + cocoa targets.
     // Adding only cocoa powder produces many warnings that are redundant and confusing.
     let recipe = get_light_recipe_by_id("Standard Base", Some("Underbelly"));
-    let comps = comps_from_light_recipe(&[recipe.clone(), vec![("Cocoa Powder, 17% Fat".into(), 0.0)]].concat());
+    let comps = comps_from_light_recipe(&[recipe.clone(), vec![("Cocoa Powder, 22/24% Fat".into(), 0.0)]].concat());
 
     let targets = get_targets_from_light_recipe(&recipe, &get_typical_balancing_keys())
         .iter()

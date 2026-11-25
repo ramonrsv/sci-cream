@@ -60,7 +60,7 @@ export function recipeIdToOption(recipeId: RecipeID): string {
 const MAIN_RECIPE_LIGHT: LightRecipe = [
   ["Whole Milk", 245],
   ["Whipping Cream", 215],
-  ["Cocoa Powder, 17% Fat", 28],
+  ["Cocoa Powder, 22/24% Fat", 28],
   ["Skimmed Milk Powder", 21],
   ["Egg Yolk", 18],
   ["Dextrose", 45],

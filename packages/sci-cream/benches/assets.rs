@@ -12,7 +12,7 @@ pub(crate) static REF_LIGHT_RECIPE: LazyLock<OwnedLightRecipe> = LazyLock::new(|
     [
         ("3.25% Milk", 245.0),
         ("35% Cream", 215.0),
-        ("Cocoa Powder, 17% Fat", 28.0),
+        ("Cocoa Powder, 22/24% Fat", 28.0),
         ("Skimmed Milk Powder", 21.0),
         ("Egg Yolk", 18.0),
         ("Dextrose", 45.0),

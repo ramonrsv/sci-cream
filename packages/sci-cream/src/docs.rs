@@ -44,7 +44,7 @@ macro_rules! main_recipe {
         [
             ("Whole Milk", 245.0),
             ("Whipping Cream", 215.0),
-            ("Cocoa Powder, 17% Fat", 28.0),
+            ("Cocoa Powder, 22/24% Fat", 28.0),
             ("Skimmed Milk Powder", 21.0),
             ("Egg Yolk", 18.0),
             ("Dextrose", 45.0),
@@ -64,8 +64,8 @@ macro_rules! recipe_for_balancing {
         [
             ("Whole Milk", 0.0),
             ("Whipping Cream", 0.0),
-            ("Cocoa Powder, 17% Fat", 0.0),
-            ("95% Dark Chocolate", 0.0),
+            ("Cocoa Powder, 22/24% Fat", 0.0),
+            ("70% Dark Chocolate", 0.0),
             ("Skimmed Milk Powder", 0.0),
             ("Egg Yolk", 0.0),
             ("Dextrose", 0.0),

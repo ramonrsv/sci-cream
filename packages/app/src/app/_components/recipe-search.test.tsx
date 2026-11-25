@@ -65,7 +65,7 @@ const MOCK_EMBEDDED_ENTRIES = vi.hoisted((): RecipeEntryJson[] => [
     name: "Chocolate Mix",
     recipe: [
       ["Whole Milk", 400],
-      ["Cocoa Powder, 17% Fat", 50],
+      ["Cocoa Powder, 22/24% Fat", 50],
     ],
     evaporation: 150,
   },
@@ -109,7 +109,7 @@ const groupedEmbedded2: GroupedRecipe = {
       version: 1,
       recipe: [
         ["Whole Milk", 400],
-        ["Cocoa Powder, 17% Fat", 50],
+        ["Cocoa Powder, 22/24% Fat", 50],
       ],
       createdAt: "",
     },

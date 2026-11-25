@@ -95,6 +95,8 @@
       Sodium Caseinate's drops from 4.3 g to 3.3 g, as its values sum to 101.0%.
 - [ ] Add grid tests over each dairy spec's valid inputs, checking they convert and keep their
       invariants; example fixtures missed a rounding failure in 8% of valid Simple specs.
+- [ ] Create a custom FPD graph screenshot, with its "FPD Graph" label, for the README and crate
+      docs' `[fpd-graph-png]` image, which pins a visual snapshot from a since-deleted path.
 
 ## Backlog
 

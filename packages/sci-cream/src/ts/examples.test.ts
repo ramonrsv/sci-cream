@@ -16,7 +16,7 @@ import {
 const RECIPE: LightRecipe = [
   ["Whole Milk", 245],
   ["Whipping Cream", 215],
-  ["Cocoa Powder, 17% Fat", 28],
+  ["Cocoa Powder, 22/24% Fat", 28],
   ["Skimmed Milk Powder", 21],
   ["Egg Yolk", 18],
   ["Dextrose", 45],
@@ -45,18 +45,18 @@ test("example, without using WasmBridge", () => {
   const mix_properties = recipe.calculate_mix_properties();
 
   const comp = mix_properties.composition;
-  expect(comp.get(CompKey.Energy)).toBeCloseTo(230.043);
+  expect(comp.get(CompKey.Energy)).toBeCloseTo(231.914);
   expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.637);
   expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.817);
   // ...
 
   const fpd = mix_properties.fpd;
   expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
-  expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.486);
-  expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.04);
+  expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.598);
+  expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(75.81);
 
   // Via prop keys:
-  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(230.043);
+  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(231.914);
   expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.603);
 });
 
@@ -69,12 +69,12 @@ test("example, using WasmBridge", () => {
   const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
   const mix_properties = bridge.calculate_recipe_mix_properties(RECIPE);
 
-  expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(230.043);
+  expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(231.914);
   // ...
   expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
   // ...
 
   // Via prop keys:
-  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(230.043);
+  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(231.914);
   expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.603);
 });
