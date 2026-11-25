@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795626492444,
+  "lastUpdate": 1795626500666,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -742121,6 +742121,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.26,
             "range": "0.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "84c15635b7193c40d55cdb932ee4b9b23c3690c7",
+          "message": "Table label fat against its rounding range\n\nA label rounds a serving's fat coarsely, to the nearest half gram from\n0.5 to 5 g in the US and Canada, so on a small serving its figure\nstands for several points of the product's fat: Ghirardelli's 1 g per\n6 g allows anything from 12.5% to 20.8%.\n\nLabelRounding::fat_range gives the amounts of fat a label prints as a\ngiven figure. It finds the range's ends by bisecting\nLabelRounding::fat, which never decreases as the amount grows, so the\nmarkets' rules aren't written out twice.\n\nchocolate_label_fat_lies_within_its_rounding_range checks that each\nlabel entry's fat lies within its range, and tables the range as a\nshare of the product: 4-8 points wide for the cocoa powders and\nBaker's, against 1-2.5 for the other bars.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T10:47:03-05:00",
+          "tree_id": "d36c98a1a85b8aac83fd3a35b813dbe41bb46df9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/84c15635b7193c40d55cdb932ee4b9b23c3690c7"
+        },
+        "date": 1795626446165,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 47.81,
+            "range": "7.29",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.78,
+            "range": "0.88",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.76,
+            "range": "0.89",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 124.5,
+            "range": "10.48",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 31,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 124.5,
+            "range": "10.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 45.19,
+            "range": "7.08",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.56,
+            "range": "0.25",
             "unit": "ms"
           }
         ]
