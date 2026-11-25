@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795586511497,
+  "lastUpdate": 1795586850930,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -610936,6 +610936,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 749.75,
             "range": "20.24",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b38f346565fb336d7c34e388c323b09ba79670d8",
+          "message": "Trim the generic cocoa powder ladder\n\nRemove the generic 15%, 20% and 24% fat cocoa powders, leaving 10%,\n13%, 17% and 22% beside the three grades, which cover the powders sold\nprofessionally, as the branded entries cover specific products.\nProduction's saved recipes still name the 10%, so it stays.\n\nKeep 13% rather than moving to 14%: USDA's natural and alkalized\nlistings average 13.4%, and only 13% and 14% print the fat figures of\nall three label powders, Ghirardelli, Hershey's and Purest, with 13%\nnearer the middle of Hershey's and Purest's ranges.\n\ncompare_specs_cocoa_powder_13_fat now also compares USDA's alkalized\nlisting, which no comparison paired, its label variant, and Purest.\nEnergy and carbohydrates take wider ceilings for the alkalized pairs,\nand Purest's pairs take overrides on the keys its printed 12.5% fat\nwidens against USDA's natural 13.7%, so the USDA pairs keep 1.0.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T00:26:21-05:00",
+          "tree_id": "8d57f09b85996b3e96151be2f8990df974727580",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b38f346565fb336d7c34e388c323b09ba79670d8"
+        },
+        "date": 1795586759145,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.13,
+            "range": "4.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 49,
+            "range": "4.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 53.5,
+            "range": "6.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2184.5,
+            "range": "29.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 374.63,
+            "range": "4.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 390.88,
+            "range": "5.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 395.88,
+            "range": "6.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19185,
+            "range": "43.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 809.63,
+            "range": "21.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 58.5,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.63,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 47.38,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.63,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 130.13,
+            "range": "4.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 76.5,
+            "range": "2.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 49.46,
+            "range": "0.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 38.34,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 628.25,
+            "range": "31.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 675.5,
+            "range": "11.09",
             "unit": "ms"
           }
         ]
