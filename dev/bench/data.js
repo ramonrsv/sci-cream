@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795632442171,
+  "lastUpdate": 1795632493610,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -658066,6 +658066,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.13%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "19653ef0312b212b0e0a70c05318311455c8bd70",
+          "message": "Move the examples to the 22/24 cocoa powder\n\nThe examples and test assets used Cocoa Powder, 17% Fat, a default by\nhabit that nothing measured backs. They now use the 22/24% grade, the\none pastry powders are sold in and the one Corvitto calls most common\nin ice cream making. The 17% entry stays, with the two recipes that use\nit and the Ice Cream Science test assets that mirror one of them.\n\nAt the main recipe's 28 g, the 23% fat moves 17 of its expected\nproperties: cocoa butter up 0.27 and cocoa solids non-fat down as much,\nEnergy up 1.87, HF down 0.25, ServingTemp to -13.598 and HardnessAt14C\nto 75.81. Each is recomputed, in the test assets, the crate docs and\nREADME, and the TS examples.\n\nThe newest migration fixture holds the main recipe in three recipe\nversions, which the data tests read back once migrated, so they take\nthe new powder too. DEVELOPMENT.md now says to edit such rows by hand,\nas dumping again needs the pre-migration schema and data.\n\nThe balancing example's powder met its 2.0 cocoa butter target nearly\nalone, leaving 3 g of chocolate, so it now takes the more common 70%\nchocolate and a 4.0 cocoa solids non-fat target: 44 g of powder and\n25 g of chocolate, with total fat still drifting from its 16, to 13.9.\n\nThe README linked data/ingredients/generated without defining the link,\nwhich the crate docs now share. TODO.md gains an item for a custom\nscreenshot of the FPD graph, as the README's image pins a snapshot from\na since-deleted path.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T13:27:49-05:00",
+          "tree_id": "c5fa803776fa7f635cb84eb911f659c0484f8b01",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/19653ef0312b212b0e0a70c05318311455c8bd70"
+        },
+        "date": 1795632400150,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47593,
+            "range": "±1.09%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 434410,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32359,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 342457,
+            "range": "±1.06%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
