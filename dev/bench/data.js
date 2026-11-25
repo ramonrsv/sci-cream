@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795632846726,
+  "lastUpdate": 1795633183076,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -612550,6 +612550,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 471,
             "range": "14.66",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "19653ef0312b212b0e0a70c05318311455c8bd70",
+          "message": "Move the examples to the 22/24 cocoa powder\n\nThe examples and test assets used Cocoa Powder, 17% Fat, a default by\nhabit that nothing measured backs. They now use the 22/24% grade, the\none pastry powders are sold in and the one Corvitto calls most common\nin ice cream making. The 17% entry stays, with the two recipes that use\nit and the Ice Cream Science test assets that mirror one of them.\n\nAt the main recipe's 28 g, the 23% fat moves 17 of its expected\nproperties: cocoa butter up 0.27 and cocoa solids non-fat down as much,\nEnergy up 1.87, HF down 0.25, ServingTemp to -13.598 and HardnessAt14C\nto 75.81. Each is recomputed, in the test assets, the crate docs and\nREADME, and the TS examples.\n\nThe newest migration fixture holds the main recipe in three recipe\nversions, which the data tests read back once migrated, so they take\nthe new powder too. DEVELOPMENT.md now says to edit such rows by hand,\nas dumping again needs the pre-migration schema and data.\n\nThe balancing example's powder met its 2.0 cocoa butter target nearly\nalone, leaving 3 g of chocolate, so it now takes the more common 70%\nchocolate and a 4.0 cocoa solids non-fat target: 44 g of powder and\n25 g of chocolate, with total fat still drifting from its 16, to 13.9.\n\nThe README linked data/ingredients/generated without defining the link,\nwhich the crate docs now share. TODO.md gains an item for a custom\nscreenshot of the FPD graph, as the README's image pins a snapshot from\na since-deleted path.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-25T13:27:49-05:00",
+          "tree_id": "c5fa803776fa7f635cb84eb911f659c0484f8b01",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/19653ef0312b212b0e0a70c05318311455c8bd70"
+        },
+        "date": 1795633109150,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 37.75,
+            "range": "2.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 41.5,
+            "range": "3.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 45.38,
+            "range": "2.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2002.38,
+            "range": "26.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 307.88,
+            "range": "4.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 326.75,
+            "range": "5.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 332.38,
+            "range": "7.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15892.75,
+            "range": "26.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 745,
+            "range": "17.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.75,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 50.63,
+            "range": "1.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.88,
+            "range": "1.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 32.75,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 117.38,
+            "range": "5.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 67,
+            "range": "3.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 42.86,
+            "range": "1.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 33.28,
+            "range": "0.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 539,
+            "range": "27.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 574.13,
+            "range": "22.54",
             "unit": "ms"
           }
         ]
