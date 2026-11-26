@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795724738723,
+  "lastUpdate": 1795724770666,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -112486,6 +112486,204 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b5e3d27b8ef92868c1343dd8dcb4b8dd96b038d6",
+          "message": "Add butter and a salt field to DairySheetSpec\n\nUnsalted Butter, aliased as Butter, is a simple spec at 82% fat and 1%\nMSNF, within the 80% minimum fat of the US, Canada, and Codex, and\nCodex's 2% maximum MSNF. Salted Butter composes it with 1.6% salt.\nTheir references are Goff & Hartel's unsalted butter and USDA's\nunsalted and salted butter.\n\nGoff & Hartel's Table 3.2 lists 0.8% protein in its butter's 0.5%\nMSNF, which the row's 83% total solids confirm, so the entry leaves\nthe protein out as almost certainly an error. USDA Unsalted Butter\ntakes its water and fat from Foundation and the rest from SR Legacy's\nrecord of the same food, whose own water repeats the salted record's,\nleaving its proximates 1.72 g short.\n\nDairySheetSpec gains an optional salt, part of the ash where listed.\nIt counts as MicroSpec::Salt does, with its own PAC, outside the milk\nminerals and MSNF. USDA Salted Butter takes it from the sodium beyond\nthe unsalted record's. Codex's standard for butter and the U.S. Code's\ndefinition of butter join the literature.\n\ncompare_specs covers both butters, and the USDA reconciliation adds\ntheir rows. Its label ceiling is now optional, as DairyLabelSpec has\nno salt, so salted butter has no label variant.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T14:19:14-05:00",
+          "tree_id": "5cbef3a3cada1aa7511a97d110ccdc157e5624b2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b5e3d27b8ef92868c1343dd8dcb4b8dd96b038d6"
+        },
+        "date": 1795724717235,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 2059,
+            "range": "± 181",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 78631,
+            "range": "± 3822",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1194,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 77110,
+            "range": "± 7154",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 2187,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 2128,
+            "range": "± 168",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 2094,
+            "range": "± 99",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 2102,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 2103,
+            "range": "± 438",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 2216,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 2255,
+            "range": "± 220",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 2253,
+            "range": "± 202",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 54056,
+            "range": "± 533",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 55130,
+            "range": "± 892",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 134769113,
+            "range": "± 4659563",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 367067,
+            "range": "± 4337",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 3361,
+            "range": "± 160",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 28,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 3175,
+            "range": "± 138",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 48606,
+            "range": "± 678",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 44232,
+            "range": "± 1756",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 74894,
+            "range": "± 1533",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 71478,
+            "range": "± 3282",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 189225,
+            "range": "± 5491",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 7383,
+            "range": "± 73",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 467,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 7,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 7,
             "range": "± 0",
             "unit": "ns/iter"
           }
