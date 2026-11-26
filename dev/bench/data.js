@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795709385075,
+  "lastUpdate": 1795709416727,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -711542,6 +711542,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1039.63,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f301c2d0dc3c71e9433d55f6694a1be6a6cd1596",
+          "message": "Add vegetable oils as FullSpec entries\n\nCanola, coconut, olive, palm, soybean, and sunflower oils are now\nFullSpec entries from their USDA SR Legacy records, at three\nsignificant figures, with Rapeseed Oil as an alias of Canola Oil. Their\nfat is Other Fats, with no hardness factor, which Corvitto gives only\nfor cocoa butter and nut fat.\n\nPalm Oil was a NutSpec, so its fat counted as Nut Fat, at Corvitto's\nnut-fat hardness factor. As Other Fats, its HF goes from 140 to 0, and\nits energy from 900 to USDA's 884 kcal.\n\nCoconut Oil takes USDA's 99.1 g of fat and 892 kcal as given, and the\n0.9 g that isn't fat counts as water. Sunflower Oil is SR Legacy's\nmid-oleic record, as Foundation's only sunflower oil is mid-oleic too:\n67.5% oleic acid, within the 55-75% that Health Canada and the oil's\ntrading rules give.\n\nFullSpec gains an energy override, its first field as in the other\nspecs, for USDA's 884 kcal per 100 g of oil, where the crate's general\nfactors give 900. It now validates its composition, as the other specs\ndo, so a fat subset over its total or a negative value is an error.\nEach oil has a test asset with its USDA link, and new tests cover the\nvalidation and the override.\n\nCodex's standard for named vegetable oils, Health Canada, and the\nNational Sunflower Association join the literature. Vegetable Oil stays\na FruitSpec until a follow-up, though the file's intro already counts\nit among the FullSpec entries.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T01:27:58-05:00",
+          "tree_id": "37d89b9046f4784939b86a3396274746d004d63c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f301c2d0dc3c71e9433d55f6694a1be6a6cd1596"
+        },
+        "date": 1795709362834,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 780.17,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 947.9,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 724.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 892.24,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 734.37,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 902.09,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 707.93,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 875.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 709.46,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 877.18,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1039.92,
             "unit": "KB"
           },
           {
