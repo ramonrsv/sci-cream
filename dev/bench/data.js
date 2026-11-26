@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795709420447,
+  "lastUpdate": 1795709507323,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -745266,6 +745266,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.61,
             "range": "0.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f301c2d0dc3c71e9433d55f6694a1be6a6cd1596",
+          "message": "Add vegetable oils as FullSpec entries\n\nCanola, coconut, olive, palm, soybean, and sunflower oils are now\nFullSpec entries from their USDA SR Legacy records, at three\nsignificant figures, with Rapeseed Oil as an alias of Canola Oil. Their\nfat is Other Fats, with no hardness factor, which Corvitto gives only\nfor cocoa butter and nut fat.\n\nPalm Oil was a NutSpec, so its fat counted as Nut Fat, at Corvitto's\nnut-fat hardness factor. As Other Fats, its HF goes from 140 to 0, and\nits energy from 900 to USDA's 884 kcal.\n\nCoconut Oil takes USDA's 99.1 g of fat and 892 kcal as given, and the\n0.9 g that isn't fat counts as water. Sunflower Oil is SR Legacy's\nmid-oleic record, as Foundation's only sunflower oil is mid-oleic too:\n67.5% oleic acid, within the 55-75% that Health Canada and the oil's\ntrading rules give.\n\nFullSpec gains an energy override, its first field as in the other\nspecs, for USDA's 884 kcal per 100 g of oil, where the crate's general\nfactors give 900. It now validates its composition, as the other specs\ndo, so a fat subset over its total or a negative value is an error.\nEach oil has a test asset with its USDA link, and new tests cover the\nvalidation and the override.\n\nCodex's standard for named vegetable oils, Health Canada, and the\nNational Sunflower Association join the literature. Vegetable Oil stays\na FruitSpec until a follow-up, though the file's intro already counts\nit among the FullSpec entries.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T01:27:58-05:00",
+          "tree_id": "37d89b9046f4784939b86a3396274746d004d63c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f301c2d0dc3c71e9433d55f6694a1be6a6cd1596"
+        },
+        "date": 1795709434753,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 59.05,
+            "range": "6.37",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 17.83,
+            "range": "4.58",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 17.75,
+            "range": "4.52",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 146,
+            "range": "10.00",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 146,
+            "range": "10.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 55.84,
+            "range": "6.43",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.43,
+            "range": "0.34",
             "unit": "ms"
           }
         ]
