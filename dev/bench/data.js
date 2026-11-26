@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795729083182,
+  "lastUpdate": 1795729109908,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -716255,6 +716255,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1043.2,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f6ffffaad83217db9d65ec4bcc29b986b17e2fa6",
+          "message": "Add butter oil and anhydrous milk fat\n\nButter Oil and Anhydrous Milk Fat are simple specs at the US and Codex\nlimits: 99.6% fat and 0.1% MSNF for butteroil, and 99.8% fat and 0.1%\nMSNF for anhydrous milkfat, leaving 0.3% and 0.1% water. Ghee and\nClarified Butter are aliases of Butter Oil, as FNDDS makes its ghee,\nclarified butter wholly from SR Legacy's anhydrous butter oil, and AMF\nis an alias of Anhydrous Milk Fat.\n\nTheir references are Goff & Hartel's butter oil and anhydrous milk fat,\nand USDA Anhydrous Butter Oil, whose fat is SR Legacy's unrounded\n99.48 g, as the page's 99.5 g takes its proximates past 100 g.\n\ncompare_specs covers both, and the USDA reconciliation adds the butter\noil, with no label, as DairyLabelSpec keeps at least 2% water. Codex's\nmilkfat standard, 7 CFR 58.347, and ADPI's anhydrous milk fat standard\njoin the literature, and the butter products TODO item moves to\nCompleted.\n\nIt also regenerates the ingredients page's visual snapshots, fixing\nthe visual regression tests that b5e3d27b (\"Add butter and a salt\nfield to DairySheetSpec\") broke.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T16:24:55-05:00",
+          "tree_id": "24f46d931e8dbd9c3d06e1f6ceff055ee6f34a20",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f6ffffaad83217db9d65ec4bcc29b986b17e2fa6"
+        },
+        "date": 1795729033973,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 784.4,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 952.13,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 728.75,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 896.47,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 738.61,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 906.33,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 712.16,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 879.88,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 713.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 881.41,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1044.15,
             "unit": "KB"
           },
           {
