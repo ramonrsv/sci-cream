@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795729555313,
+  "lastUpdate": 1795729652317,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -618199,6 +618199,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 690.25,
             "range": "33.50",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f6ffffaad83217db9d65ec4bcc29b986b17e2fa6",
+          "message": "Add butter oil and anhydrous milk fat\n\nButter Oil and Anhydrous Milk Fat are simple specs at the US and Codex\nlimits: 99.6% fat and 0.1% MSNF for butteroil, and 99.8% fat and 0.1%\nMSNF for anhydrous milkfat, leaving 0.3% and 0.1% water. Ghee and\nClarified Butter are aliases of Butter Oil, as FNDDS makes its ghee,\nclarified butter wholly from SR Legacy's anhydrous butter oil, and AMF\nis an alias of Anhydrous Milk Fat.\n\nTheir references are Goff & Hartel's butter oil and anhydrous milk fat,\nand USDA Anhydrous Butter Oil, whose fat is SR Legacy's unrounded\n99.48 g, as the page's 99.5 g takes its proximates past 100 g.\n\ncompare_specs covers both, and the USDA reconciliation adds the butter\noil, with no label, as DairyLabelSpec keeps at least 2% water. Codex's\nmilkfat standard, 7 CFR 58.347, and ADPI's anhydrous milk fat standard\njoin the literature, and the butter products TODO item moves to\nCompleted.\n\nIt also regenerates the ingredients page's visual snapshots, fixing\nthe visual regression tests that b5e3d27b (\"Add butter and a salt\nfield to DairySheetSpec\") broke.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T16:24:55-05:00",
+          "tree_id": "24f46d931e8dbd9c3d06e1f6ceff055ee6f34a20",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f6ffffaad83217db9d65ec4bcc29b986b17e2fa6"
+        },
+        "date": 1795729595406,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 33.13,
+            "range": "2.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 39.25,
+            "range": "5.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 44.5,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1704.63,
+            "range": "51.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 231.38,
+            "range": "6.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 232.5,
+            "range": "2.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 245.38,
+            "range": "7.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 11810.63,
+            "range": "110.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.5,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 685.25,
+            "range": "11.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 38.63,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 38.75,
+            "range": "1.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 31.63,
+            "range": "2.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 27.75,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 98,
+            "range": "4.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 47,
+            "range": "3.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 41.08,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.34,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 513.25,
+            "range": "29.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 544,
+            "range": "17.80",
             "unit": "ms"
           }
         ]
