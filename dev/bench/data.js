@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795709719224,
+  "lastUpdate": 1795709770261,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -112079,6 +112079,204 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 449,
             "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f301c2d0dc3c71e9433d55f6694a1be6a6cd1596",
+          "message": "Add vegetable oils as FullSpec entries\n\nCanola, coconut, olive, palm, soybean, and sunflower oils are now\nFullSpec entries from their USDA SR Legacy records, at three\nsignificant figures, with Rapeseed Oil as an alias of Canola Oil. Their\nfat is Other Fats, with no hardness factor, which Corvitto gives only\nfor cocoa butter and nut fat.\n\nPalm Oil was a NutSpec, so its fat counted as Nut Fat, at Corvitto's\nnut-fat hardness factor. As Other Fats, its HF goes from 140 to 0, and\nits energy from 900 to USDA's 884 kcal.\n\nCoconut Oil takes USDA's 99.1 g of fat and 892 kcal as given, and the\n0.9 g that isn't fat counts as water. Sunflower Oil is SR Legacy's\nmid-oleic record, as Foundation's only sunflower oil is mid-oleic too:\n67.5% oleic acid, within the 55-75% that Health Canada and the oil's\ntrading rules give.\n\nFullSpec gains an energy override, its first field as in the other\nspecs, for USDA's 884 kcal per 100 g of oil, where the crate's general\nfactors give 900. It now validates its composition, as the other specs\ndo, so a fat subset over its total or a negative value is an error.\nEach oil has a test asset with its USDA link, and new tests cover the\nvalidation and the override.\n\nCodex's standard for named vegetable oils, Health Canada, and the\nNational Sunflower Association join the literature. Vegetable Oil stays\na FruitSpec until a follow-up, though the file's intro already counts\nit among the FullSpec entries.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T01:27:58-05:00",
+          "tree_id": "37d89b9046f4784939b86a3396274746d004d63c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f301c2d0dc3c71e9433d55f6694a1be6a6cd1596"
+        },
+        "date": 1795709695049,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3670,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 126775,
+            "range": "± 2168",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2203,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 133958,
+            "range": "± 4180",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 3846,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 3575,
+            "range": "± 113",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 3691,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 3772,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 3701,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 3920,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 3825,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 3824,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 86311,
+            "range": "± 2342",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 91338,
+            "range": "± 1980",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 186047715,
+            "range": "± 1216198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 547112,
+            "range": "± 15881",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 5590,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 46,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 5176,
+            "range": "± 65",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 79273,
+            "range": "± 2540",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 75136,
+            "range": "± 2361",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 120466,
+            "range": "± 3037",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 118211,
+            "range": "± 3424",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 299194,
+            "range": "± 2380",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 11502,
+            "range": "± 185",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 560,
+            "range": "± 16",
             "unit": "ns/iter"
           },
           {
