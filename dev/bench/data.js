@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795710072225,
+  "lastUpdate": 1795710187592,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -614827,6 +614827,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 707,
             "range": "37.46",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f301c2d0dc3c71e9433d55f6694a1be6a6cd1596",
+          "message": "Add vegetable oils as FullSpec entries\n\nCanola, coconut, olive, palm, soybean, and sunflower oils are now\nFullSpec entries from their USDA SR Legacy records, at three\nsignificant figures, with Rapeseed Oil as an alias of Canola Oil. Their\nfat is Other Fats, with no hardness factor, which Corvitto gives only\nfor cocoa butter and nut fat.\n\nPalm Oil was a NutSpec, so its fat counted as Nut Fat, at Corvitto's\nnut-fat hardness factor. As Other Fats, its HF goes from 140 to 0, and\nits energy from 900 to USDA's 884 kcal.\n\nCoconut Oil takes USDA's 99.1 g of fat and 892 kcal as given, and the\n0.9 g that isn't fat counts as water. Sunflower Oil is SR Legacy's\nmid-oleic record, as Foundation's only sunflower oil is mid-oleic too:\n67.5% oleic acid, within the 55-75% that Health Canada and the oil's\ntrading rules give.\n\nFullSpec gains an energy override, its first field as in the other\nspecs, for USDA's 884 kcal per 100 g of oil, where the crate's general\nfactors give 900. It now validates its composition, as the other specs\ndo, so a fat subset over its total or a negative value is an error.\nEach oil has a test asset with its USDA link, and new tests cover the\nvalidation and the override.\n\nCodex's standard for named vegetable oils, Health Canada, and the\nNational Sunflower Association join the literature. Vegetable Oil stays\na FruitSpec until a follow-up, though the file's intro already counts\nit among the FullSpec entries.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T01:27:58-05:00",
+          "tree_id": "37d89b9046f4784939b86a3396274746d004d63c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f301c2d0dc3c71e9433d55f6694a1be6a6cd1596"
+        },
+        "date": 1795710095385,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 44.63,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 47.13,
+            "range": "3.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 59.88,
+            "range": "2.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2190.13,
+            "range": "67.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 371.63,
+            "range": "8.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 379.75,
+            "range": "3.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 389,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 20110.13,
+            "range": "805.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 816.63,
+            "range": "12.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 60.25,
+            "range": "2.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.63,
+            "range": "2.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 48.63,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.5,
+            "range": "3.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 133.25,
+            "range": "7.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 77.88,
+            "range": "6.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 48.88,
+            "range": "0.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 38.22,
+            "range": "0.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 610.25,
+            "range": "27.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 684.75,
+            "range": "24.40",
             "unit": "ms"
           }
         ]
