@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     composition::{
-        Carbohydrates, Composition, Fats, MilkProteins, MilkSolids, PAC, SimpleSolids, Solids, Sugars, ToComposition,
+        Carbohydrates, Composition, Fats, Micro, MilkProteins, MilkSolids, PAC, SimpleSolids, Solids, Sugars,
+        ToComposition,
     },
     constants::{
         composition::dairy::{STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT, SolidsSource},
@@ -19,7 +20,7 @@ use crate::{
 use crate::{
     composition::CompKey,
     constants::composition::dairy::minerals_in_snf,
-    specs::{DairyLabelSpec, DairySimpleSpec},
+    specs::{DairyLabelSpec, DairySimpleSpec, MicroSpec},
 };
 
 /// Spec for dairy ingredients from spec sheets and food composition databases, per 100 g
@@ -38,19 +39,19 @@ use crate::{
 /// limits, use the typical values, or the midpoints of typical ranges. Values given on a dry basis
 /// should be converted to as-is using the water content, as: `as-is = dry × (100 - water) / 100`.
 ///
-/// **Note:** The solids non-fat are the greater of `100 - water - fat - added_sugars` and
-/// `milk_sugars + protein + ash`. If the latter is greater, the difference is subtracted from the
-/// water; this can happen as proximates measured apart rarely sum to exactly 100 g. An unlisted
-/// [`ash`](Self::ash) is modeled up to what the water leaves, so it never lowers the water. In
-/// contrast, [`DairyLabelSpec`] lacks the water, so it estimates the solids non-fat from the sugars
-/// and protein plus the minerals modeled for the solids source, and the water is what remains.
+/// **Note:** The solids non-fat are the greater of `100 - water - fat - added_sugars - salt` and
+/// `milk_sugars + protein + ash - salt`. If the latter is greater, the difference is subtracted
+/// from the water; this can happen as proximates measured apart rarely sum to exactly 100 g. An
+/// unlisted [`ash`](Self::ash) is modeled up to what the water leaves, so it never lowers the
+/// water. In contrast, [`DairyLabelSpec`] lacks the water, so it estimates the solids non-fat from
+/// the sugars and protein plus the minerals modeled for the solids source; the water is the rest.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct DairySheetSpec {
     /// Water content, in grams per 100 g; spec sheets usually list it as moisture
     ///
-    /// Water content determines the solids non-fat as `100 - water - fat - added_sugars`, unless
-    /// `milk_sugars + protein + ash` is greater, when the difference is subtracted from the water.
+    /// Water content determines the solids non-fat, `100 - water - fat - added_sugars - salt`,
+    /// unless `milk_sugars + protein + ash - salt` is greater, which then lowers the water.
     pub water: f64,
     /// Energy per 100 g, in kcal; calculated based on macronutrients composition if unspecified
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -94,12 +95,20 @@ pub struct DairySheetSpec {
     pub casein: Option<f64>,
     /// Ash or mineral content, in grams per 100 g, if listed
     ///
-    /// The milk solids' minerals, [`CompKey::MilkMinerals`], are the listed ash or, if unlisted,
-    /// those modeled for the [`solids_source`](Self::solids_source), see [`minerals_in_snf`], up to
-    /// what the solids non-fat leave after the milk sugars and [`protein`](Self::protein). The rest
-    /// of the solids non-fat, e.g. organic acids, are other milk solids.
+    /// The milk solids' minerals, [`CompKey::MilkMinerals`], are the listed ash less any
+    /// [`salt`](Self::salt) or, if unlisted, those modeled for the
+    /// [`solids_source`](Self::solids_source), see [`minerals_in_snf`], up to what the solids
+    /// non-fat leave after the milk sugars and [`protein`](Self::protein). The rest of the solids
+    /// non-fat, e.g. organic acids, are other milk solids.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ash: Option<f64>,
+    /// Added salt (sodium chloride), in grams per 100 g, if any; part of the ash, where listed
+    ///
+    /// It counts as [`MicroSpec::Salt`] does, as [`CompKey::Salt`] with its own PAC, not as milk
+    /// minerals or solids non-fat. Sheets list sodium, some of it dairy's own, so the salt is the
+    /// sodium beyond the unsalted product's times 58.443 / 22.990, salt's molar mass over sodium's.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub salt: Option<f64>,
     /// Source of the solids non-fat in this product, [`SolidsSource::Milk`] if unspecified
     ///
     /// This affects the detailed protein composition of the solids non-fat, unless
@@ -121,11 +130,13 @@ impl ToComposition for DairySheetSpec {
             protein,
             casein,
             ash,
+            salt,
             solids_source,
         } = *self;
 
         let saturated_fat = saturated_fat.unwrap_or(STD_SATURATED_FAT_IN_MILK_FAT * fat);
         let trans_fat = trans_fat.unwrap_or(STD_TRANS_FAT_IN_MILK_FAT * fat);
+        let salt = salt.unwrap_or(0.0);
         let solids_source = solids_source.unwrap_or(SolidsSource::Milk);
 
         sugars.validate()?;
@@ -138,19 +149,23 @@ impl ToComposition for DairySheetSpec {
             protein,
             casein.unwrap_or(0.0),
             ash.unwrap_or(0.0),
+            salt,
         ])?;
-        verify_is_within_100_percent(water + fat + sugars.total() + protein)?;
+        verify_is_within_100_percent(water + fat + sugars.total() + protein + salt)?;
         verify_is_subset(saturated_fat, fat, "saturated_fat <= fat")?;
         verify_is_subset(trans_fat, fat, "trans_fat <= fat")?;
         verify_is_subset(casein.unwrap_or(0.0), protein, "casein <= protein")?;
+        if let Some(ash) = ash {
+            verify_is_subset(salt, ash, "salt <= ash")?;
+        }
 
         let (milk_sugars, other_sugars) = split_milk_sugars(sugars);
-        let snf_by_water = 100.0 - water - fat - other_sugars.total();
+        let snf_by_water = 100.0 - water - fat - other_sugars.total() - salt;
 
         let estimated_minerals = estimate_minerals(snf_by_water, protein, solids_source);
         let minerals_by_diff = snf_by_water - milk_sugars.total() - protein;
 
-        let minerals = ash.unwrap_or_else(|| f64::min(estimated_minerals, minerals_by_diff));
+        let minerals = ash.map_or_else(|| f64::min(estimated_minerals, minerals_by_diff), |ash| ash - salt);
         let snf_by_solids = milk_sugars.total() + protein + minerals;
 
         let snf = f64::max(snf_by_water, snf_by_solids);
@@ -167,16 +182,20 @@ impl ToComposition for DairySheetSpec {
             .minerals(minerals)
             .others_from_total(fat + snf)?;
 
-        let other_solids = SimpleSolids::new().carbohydrates(Carbohydrates::new().sugars(other_sugars));
+        let other_solids = SimpleSolids::new()
+            .carbohydrates(Carbohydrates::new().sugars(other_sugars))
+            .minerals(salt);
 
         Composition::new()
             .energy(energy.unwrap_or(milk_solids.energy()? + other_solids.energy()?))
             .solids(Solids::new().milk(milk_solids).other(other_solids))
+            .micro(Micro::new().salt(salt))
             .pod(sugars.to_pod()?)
             .pac(
                 PAC::new()
                     .sugars(sugars.to_pac()?)
-                    .msnf_ws_salts(snf * pac::MSNF_WS_SALTS / 100.0),
+                    .msnf_ws_salts(snf * pac::MSNF_WS_SALTS / 100.0)
+                    .salt(salt * pac::SALT / 100.0),
             )
             .validate_into()
     }
@@ -231,6 +250,7 @@ pub(crate) mod tests {
                 protein: 3.27,
                 casein: None,
                 ash: Some(0.8),
+                salt: None,
                 solids_source: None,
             }
             .into(),
@@ -317,6 +337,7 @@ pub(crate) mod tests {
                 protein: 7.42,
                 casein: None,
                 ash: None,
+                salt: None,
                 solids_source: None,
             }
             .into(),
@@ -404,6 +425,7 @@ pub(crate) mod tests {
                 protein: 7.91,
                 casein: None,
                 ash: Some(1.83),
+                salt: None,
                 solids_source: None,
             }
             .into(),
@@ -467,6 +489,103 @@ pub(crate) mod tests {
         ]);
     }
 
+    // https://fdc.nal.usda.gov/food-details/173410/nutrients
+    pub(crate) const ING_SPEC_DAIRY_SHEET_SALTED_BUTTER_USDA_STR: &str = r#"{
+      "name": "USDA Salted Butter",
+      "category": "Dairy",
+      "DairySheetSpec": {
+        "water": 16.2,
+        "energy": 717,
+        "fat": 81.1,
+        "saturated_fat": 51.4,
+        "trans_fat": 3.28,
+        "sugars": { "lactose": 0.06 },
+        "protein": 0.85,
+        "ash": 2.11,
+        "salt": 1.61
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_SHEET_SALTED_BUTTER_USDA: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "USDA Salted Butter".to_string(),
+            category: Category::Dairy,
+            spec: DairySheetSpec {
+                water: 16.2,
+                energy: Some(717.0),
+                fat: 81.1,
+                saturated_fat: Some(51.4),
+                trans_fat: Some(3.28),
+                sugars: Sugars::new().lactose(0.06),
+                protein: 0.85,
+                casein: None,
+                ash: Some(2.11),
+                salt: Some(1.61),
+                solids_source: None,
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_SALTED_BUTTER_USDA: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(717.0)
+            .solids(
+                Solids::new()
+                    .milk(
+                        SolidsBreakdown::new()
+                            .fats(Fats::new().total(81.1).saturated(51.4).trans(3.28))
+                            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(0.06)))
+                            .proteins(MilkProteins::new().casein(0.68).whey(0.17))
+                            .minerals(0.5),
+                    )
+                    .other(SolidsBreakdown::new().minerals(1.61)),
+            )
+            .micro(Micro::new().salt(1.61))
+            .pod(0.0096)
+            .pac(PAC::new().sugars(0.06).msnf_ws_salts(0.518).salt(9.4185))
+    });
+
+    #[test]
+    fn to_composition_dairy_sheet_spec_salted_butter_usda() {
+        // Its proximates sum to 100.32 g, so the water gives way to the listed solids, to 15.88 g.
+        // Its 1.61 g of salt counts as salt, leaving 0.5 g of its 2.11 g of ash as milk minerals
+        let comp = asset_composition(&ING_SPEC_DAIRY_SHEET_SALTED_BUTTER_USDA);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 717.0),
+            (CompKey::MilkSolids, 82.51),
+            (CompKey::MilkFat, 81.1),
+            (CompKey::MSNF, 1.41),
+            (CompKey::MilkSugars, 0.06),
+            (CompKey::MilkSNFS, 1.35),
+            (CompKey::MilkProteins, 0.85),
+            (CompKey::Casein, 0.68),
+            (CompKey::Whey, 0.17),
+            (CompKey::MilkMinerals, 0.5),
+            (CompKey::OtherSNFS, 1.61),
+            (CompKey::TotalSolids, 84.12),
+            (CompKey::TotalFats, 81.1),
+            (CompKey::TotalSNF, 3.02),
+            (CompKey::TotalSNFS, 2.96),
+            (CompKey::TotalProteins, 0.85),
+            (CompKey::TotalMinerals, 2.11),
+            (CompKey::Water, 15.88),
+            (CompKey::TotalCarbohydrates, 0.06),
+            (CompKey::TotalSugars, 0.06),
+            (CompKey::Lactose, 0.06),
+            (CompKey::TotalSweeteners, 0.06),
+            (CompKey::Salt, 1.61),
+            (CompKey::POD, 0.0096),
+            (CompKey::NetPAC, 9.996_540),
+            (CompKey::TotalPAC, 9.996_540),
+            (CompKey::PACsgr, 0.06),
+            (CompKey::PACslt, 9.4185),
+            (CompKey::PACmlk, 0.518_040),
+            (CompKey::SaturatedFat, 51.4),
+            (CompKey::TransFat, 3.28),
+        ]);
+    }
+
     /// (USDEC, 2003, Table 6, pp. 51-52)[^91]
     #[doc = include_str!("../../../docs/references/index/91.md")]
     pub(crate) const ING_SPEC_DAIRY_SHEET_WPC_80_USDEC_STR: &str = r#"{
@@ -496,6 +615,7 @@ pub(crate) mod tests {
             protein: 80.0,
             casein: None,
             ash: Some(3.98),
+            salt: None,
             solids_source: Some(SolidsSource::Whey),
         }
         .into(),
@@ -581,6 +701,7 @@ pub(crate) mod tests {
             protein: 89.0,
             casein: None,
             ash: Some(2.5),
+            salt: None,
             solids_source: Some(SolidsSource::Whey),
         }
         .into(),
@@ -669,6 +790,7 @@ pub(crate) mod tests {
                 protein: 79.25,
                 casein: Some(71.74),
                 ash: Some(8.15),
+                salt: None,
                 solids_source: Some(SolidsSource::MicellarCasein),
             }
             .into(),
@@ -755,6 +877,7 @@ pub(crate) mod tests {
                 protein: 91.4,
                 casein: None,
                 ash: Some(3.6),
+                salt: None,
                 solids_source: Some(SolidsSource::Caseinate),
             }
             .into(),
@@ -831,6 +954,11 @@ pub(crate) mod tests {
                     Some(*COMP_SWEETENED_CONDENSED_MILK_USDA),
                 ),
                 (
+                    ING_SPEC_DAIRY_SHEET_SALTED_BUTTER_USDA_STR,
+                    ING_SPEC_DAIRY_SHEET_SALTED_BUTTER_USDA.clone(),
+                    Some(*COMP_SALTED_BUTTER_USDA),
+                ),
+                (
                     ING_SPEC_DAIRY_SHEET_WPC_80_USDEC_STR,
                     ING_SPEC_DAIRY_SHEET_WPC_80_USDEC.clone(),
                     Some(*COMP_WPC_80_USDEC),
@@ -852,6 +980,13 @@ pub(crate) mod tests {
     fn usda_whole_milk_sheet_spec() -> DairySheetSpec {
         let TaggedSpec::DairySheetSpec(spec) = ING_SPEC_DAIRY_SHEET_WHOLE_MILK_USDA.spec else {
             unreachable!("the USDA whole milk asset is a DairySheetSpec");
+        };
+        spec
+    }
+
+    fn usda_salted_butter_sheet_spec() -> DairySheetSpec {
+        let TaggedSpec::DairySheetSpec(spec) = ING_SPEC_DAIRY_SHEET_SALTED_BUTTER_USDA.spec else {
+            unreachable!("the USDA salted butter asset is a DairySheetSpec");
         };
         spec
     }
@@ -930,6 +1065,7 @@ pub(crate) mod tests {
             protein: 2.02,
             casein: None,
             ash: None,
+            salt: None,
             solids_source: None,
         }
         .to_composition()
@@ -938,6 +1074,23 @@ pub(crate) mod tests {
         assert_eq_6dp!(comp.get(CompKey::MilkMinerals), 0.509_968);
         assert_eq_6dp!(comp.solids.milk.others, 0.860_032);
         assert_eq_flt!(comp.get(CompKey::Water), 58.13);
+    }
+
+    #[test]
+    fn dairy_sheet_spec_unlisted_ash_leaves_out_the_salt() {
+        // Without its ash, USDA's salted butter leaves 1.09 g of solids non-fat beside its fat and
+        // salt, so its modeled minerals fit within them, the listed water stands, and salt counts
+        let comp = DairySheetSpec {
+            ash: None,
+            ..usda_salted_butter_sheet_spec()
+        }
+        .to_composition()
+        .unwrap();
+
+        assert_eq_8dp!(comp.get(CompKey::MSNF), 1.09);
+        assert_eq_flt!(comp.get(CompKey::Water), 16.2);
+        assert_eq!(comp.get(CompKey::Salt), 1.61);
+        assert_eq_flt!(comp.get(CompKey::PACslt), 1.61 * pac::SALT / 100.0);
     }
 
     #[test]
@@ -997,6 +1150,10 @@ pub(crate) mod tests {
                 ash: Some(-1.0),
                 ..base
             },
+            DairySheetSpec {
+                salt: Some(-1.0),
+                ..base
+            },
         ];
 
         for spec in neg_cases {
@@ -1009,6 +1166,18 @@ pub(crate) mod tests {
     fn dairy_sheet_spec_err_when_water_plus_fat_plus_sugars_plus_protein_exceeds_100() {
         let result = DairySheetSpec {
             water: 90.0,
+            ..usda_whole_milk_sheet_spec()
+        }
+        .to_composition();
+        assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn dairy_sheet_spec_err_when_salt_takes_the_proximates_past_100() {
+        // USDA's whole milk lists 99.38 g of water, fat, sugars, and protein, so 0.7 g of salt,
+        // within its 0.8 g of ash, takes them past 100 g
+        let result = DairySheetSpec {
+            salt: Some(0.7),
             ..usda_whole_milk_sheet_spec()
         }
         .to_composition();
@@ -1047,6 +1216,17 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn dairy_sheet_spec_err_when_salt_exceeds_ash() {
+        // Its 1.61 g of salt is part of its ash, so 1 g of ash can't hold it
+        let result = DairySheetSpec {
+            ash: Some(1.0),
+            ..usda_salted_butter_sheet_spec()
+        }
+        .to_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
     fn dairy_sheet_spec_err_when_micellar_casein_protein_is_below_milk_solids() {
         // At 30 g of protein in 94 g of solids non-fat, under milk solids' 37.5%, the micellar
         // casein lines would split its protein with more whey than milk has
@@ -1060,6 +1240,7 @@ pub(crate) mod tests {
             protein: 30.0,
             casein: None,
             ash: None,
+            salt: None,
             solids_source: Some(SolidsSource::MicellarCasein),
         }
         .to_composition();

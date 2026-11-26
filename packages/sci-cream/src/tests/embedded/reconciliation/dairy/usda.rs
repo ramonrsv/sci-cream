@@ -4,15 +4,16 @@
 //! [`DairyLabelSpec`] of the same listing, named `… (Label)`. Protein, fat and sugars are
 //! transcribed inputs to both, so they match exactly. Both take the carbohydrate as the sugars,
 //! except heavy cream's label, which transcribes it, so it misses wherever a listing's sugars are
-//! measured lactose, as for milk and cream, rather than its carbohydrate by difference.
+//! measured lactose, as for milk and cream, rather than its carbohydrate by difference. Salted
+//! butter has no label: [`DairyLabelSpec`] has no salt.
 //!
-//! The sheets' water and ash are transcribed too, the ash as their minerals, so both match exactly
-//! unless a listing's proximates sum past 100 g, when its water gives way to the listed solids and
-//! misses by the overshoot. Where they fall short, the other milk solids hold the rest: beside
-//! measurement error, the organic acids, mostly citrate, that only carbohydrate by difference
-//! counts. Since the composition keeps those as other milk solids rather than carbohydrate, a sheet
-//! has no carbohydrates field. The FNDDS listings report no ash, so their sheets model the
-//! minerals, reconciled against the ash their proximates leave.
+//! The sheets' water and ash are transcribed too, the ash as their minerals and salt, so both match
+//! exactly unless a listing's proximates sum past 100 g, when its water gives way to the listed
+//! solids and misses by the overshoot. Where they fall short, the other milk solids hold the rest:
+//! beside measurement error, the organic acids, mostly citrate, that only carbohydrate by
+//! difference counts. Since the composition keeps those as other milk solids rather than
+//! carbohydrate, a sheet has no carbohydrates field. The FNDDS listings report no ash, so their
+//! sheets model the minerals, reconciled against the ash their proximates leave.
 //!
 //! The labels' water and ash show how [`DairyLabelSpec`] estimates the milk solids non-fat (MSNF)
 //! around them: sugars and protein make up all of it but the minerals that [`minerals_in_snf`]
@@ -37,10 +38,10 @@ use crate::{
 };
 
 /// Measured proximates of each `USDA …` dairy entry, from its FoodData Central listing, with the
-/// ceilings for its sheet and its label.
+/// ceilings for its sheet and, where it has one, its label.
 ///
 /// Foundation listings report no fiber, taken as zero since dairy has none.
-const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
+const USDA_LISTINGS: &[(&str, Proximates, Proximates, Option<Proximates>)] = &[
     // https://fdc.nal.usda.gov/food-details/746776/nutrients
     (
         "USDA Fat-Free (Skim) Milk",
@@ -54,7 +55,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 0.77,
         },
         MILK_SHEET_CEILING,
-        MILK_LABEL_CEILING,
+        Some(MILK_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/746778/nutrients
     (
@@ -69,7 +70,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 0.75,
         },
         MILK_SHEET_CEILING,
-        MILK_LABEL_CEILING,
+        Some(MILK_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/746782/nutrients
     (
@@ -84,7 +85,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 0.8,
         },
         MILK_SHEET_CEILING,
-        MILK_LABEL_CEILING,
+        Some(MILK_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/171255/nutrients
     (
@@ -99,7 +100,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 0.51,
         },
         CREAM_SHEET_CEILING,
-        CREAM_LABEL_CEILING,
+        Some(CREAM_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/170857/nutrients
     (
@@ -114,7 +115,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 0.61,
         },
         CREAM_SHEET_CEILING,
-        CREAM_LABEL_CEILING,
+        Some(CREAM_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/2705597/nutrients
     //
@@ -131,7 +132,40 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 0.49,
         },
         HEAVY_CREAM_SHEET_CEILING,
-        CREAM_LABEL_CEILING,
+        Some(CREAM_LABEL_CEILING),
+    ),
+    // https://fdc.nal.usda.gov/food-details/789828/nutrients
+    // https://fdc.nal.usda.gov/food-details/173430/nutrients
+    //
+    // Foundation lists only the water and fat, so the rest is SR Legacy's, for the same food
+    (
+        "USDA Unsalted Butter",
+        Proximates {
+            water: 17.4,
+            protein: 0.85,
+            fat: 81.5,
+            carbohydrate: 0.06,
+            fiber: 0.0,
+            sugars: 0.06,
+            ash: 0.09,
+        },
+        BUTTER_SHEET_CEILING,
+        Some(BUTTER_LABEL_CEILING),
+    ),
+    // https://fdc.nal.usda.gov/food-details/173410/nutrients
+    (
+        "USDA Salted Butter",
+        Proximates {
+            water: 16.2,
+            protein: 0.85,
+            fat: 81.1,
+            carbohydrate: 0.06,
+            fiber: 0.0,
+            sugars: 0.06,
+            ash: 2.11,
+        },
+        SALTED_BUTTER_SHEET_CEILING,
+        None,
     ),
     // https://fdc.nal.usda.gov/food-details/170878/nutrients
     (
@@ -146,7 +180,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 1.5,
         },
         EVAPORATED_SHEET_CEILING,
-        EVAPORATED_LABEL_CEILING,
+        Some(EVAPORATED_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/2705400/nutrients
     //
@@ -163,7 +197,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 1.47,
         },
         EVAPORATED_SHEET_CEILING,
-        EVAPORATED_LABEL_CEILING,
+        Some(EVAPORATED_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/171276/nutrients
     (
@@ -178,7 +212,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 1.55,
         },
         EVAPORATED_SHEET_CEILING,
-        EVAPORATED_LABEL_CEILING,
+        Some(EVAPORATED_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/171275/nutrients
     (
@@ -193,7 +227,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 1.83,
         },
         CONDENSED_SHEET_CEILING,
-        CONDENSED_LABEL_CEILING,
+        Some(CONDENSED_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/170877/nutrients
     (
@@ -208,7 +242,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 7.93,
         },
         POWDER_SHEET_CEILING,
-        POWDER_LABEL_CEILING,
+        Some(POWDER_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/173454/nutrients
     (
@@ -223,7 +257,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 6.08,
         },
         POWDER_SHEET_CEILING,
-        POWDER_LABEL_CEILING,
+        Some(POWDER_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/171282/nutrients
     (
@@ -238,7 +272,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 0.53,
         },
         WHEY_SHEET_CEILING,
-        WHEY_LABEL_CEILING,
+        Some(WHEY_LABEL_CEILING),
     ),
     // https://fdc.nal.usda.gov/food-details/171283/nutrients
     (
@@ -253,7 +287,7 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Proximates)] = &[
             ash: 8.35,
         },
         WHEY_POWDER_SHEET_CEILING,
-        WHEY_POWDER_LABEL_CEILING,
+        Some(WHEY_POWDER_LABEL_CEILING),
     ),
 ];
 
@@ -294,6 +328,24 @@ const CREAM_LABEL_CEILING: Proximates = Proximates {
     water: 0.5,
     carbohydrate: 4.0,
     ash: 19.5,
+    ..Proximates::splat(EXACT_MATCH)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — butter sheet.
+const BUTTER_SHEET_CEILING: Proximates = Proximates::splat(EXACT_MATCH);
+
+/// Per-field ceilings on relative error vs the measured value, in percent — butter label.
+const BUTTER_LABEL_CEILING: Proximates = Proximates {
+    water: 1.0,
+    ash: 21.0,
+    ..Proximates::splat(EXACT_MATCH)
+};
+
+/// Per-field ceilings on relative error vs the measured value, in percent — salted butter sheet.
+///
+/// Its proximates sum to 100.32 g, so its water gives way to the listed solids.
+const SALTED_BUTTER_SHEET_CEILING: Proximates = Proximates {
+    water: 2.0,
     ..Proximates::splat(EXACT_MATCH)
 };
 
@@ -366,10 +418,8 @@ fn usda_dairy_reconcile() {
     let listings: Vec<(String, Proximates, Proximates)> = USDA_LISTINGS
         .iter()
         .flat_map(|&(name, measured, sheet_ceiling, label_ceiling)| {
-            [
-                (name.to_string(), measured, sheet_ceiling),
-                (format!("{name} (Label)"), measured, label_ceiling),
-            ]
+            std::iter::once((name.to_string(), measured, sheet_ceiling))
+                .chain(label_ceiling.map(|ceiling| (format!("{name} (Label)"), measured, ceiling)))
         })
         .collect();
 

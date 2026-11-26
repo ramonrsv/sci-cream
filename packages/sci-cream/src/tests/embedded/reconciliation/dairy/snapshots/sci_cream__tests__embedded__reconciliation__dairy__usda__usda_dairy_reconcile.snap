@@ -122,6 +122,36 @@ USDA Heavy Cream (Label)
   sugars             2.92      2.92      0.00 %
   ash                0.43      0.49     12.35 %
 
+USDA Unsalted Butter
+  [     key      | modeled | measured |  diff  ]
+  water             17.40     17.40      0.00 %
+  protein            0.85      0.85      0.00 %
+  fat               81.50     81.50      0.00 %
+  carbohydrate       0.06      0.06      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars             0.06      0.06      0.00 %
+  ash                0.09      0.09      0.00 %
+
+USDA Unsalted Butter (Label)
+  [     key      | modeled | measured |  diff  ]
+  water             17.52     17.40      0.68 %
+  protein            0.85      0.85      0.00 %
+  fat               81.50     81.50      0.00 %
+  carbohydrate       0.06      0.06      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars             0.06      0.06      0.00 %
+  ash                0.07      0.09     20.77 %
+
+USDA Salted Butter
+  [     key      | modeled | measured |  diff  ]
+  water             15.88     16.20      1.98 %
+  protein            0.85      0.85      0.00 %
+  fat               81.10     81.10      0.00 %
+  carbohydrate       0.06      0.06      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars             0.06      0.06      0.00 %
+  ash                2.11      2.11      0.00 %
+
 USDA Fat-Free Evaporated Milk
   [     key      | modeled | measured |  diff  ]
   water             79.35     79.40      0.06 %

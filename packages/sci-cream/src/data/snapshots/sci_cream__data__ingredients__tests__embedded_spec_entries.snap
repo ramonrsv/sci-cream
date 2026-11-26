@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 438  (non-alias: 373, independent: 359)
+total: 444  (non-alias: 378, independent: 363)
 
             0% Milk
             1% Milk
@@ -48,6 +48,7 @@ total: 438  (non-alias: 373, independent: 359)
             Belcolade Blanc Selection White Chocolate
             Bourbon Whiskey
             Bulk Barn Whey Protein Isolate 90%
+[alias]     Butter
 [alias]     CMC
             Cadbury Dairy Milk Chocolate (Canada)
             Cadbury Dairy Milk Chocolate (UK)
@@ -162,6 +163,7 @@ total: 438  (non-alias: 373, independent: 359)
             Goff & Hartel Skim Milk Powder
             Goff & Hartel Sweetened Condensed Milk
             Goff & Hartel Sweetened Condensed Skim Milk
+            Goff & Hartel Unsalted Butter
             Goff & Hartel Whole Milk Powder
 [alias]     Grand Marnier
             Grand Marnier Cordon Rouge
@@ -316,6 +318,7 @@ total: 438  (non-alias: 373, independent: 359)
             Roasted Pistachio
 [alias]     Rose Essential Oil
             Salt
+[composite] Salted Butter
             Sealtest 0% Skim Milk
             Sealtest 1% Milk
             Sealtest 2% Milk
@@ -387,10 +390,12 @@ total: 438  (non-alias: 373, independent: 359)
             USDA Raw Egg Yolk
             USDA Raw Lemon Peel
             USDA Raw Whole Egg
+            USDA Salted Butter
             USDA Skim Milk Powder
             USDA Sweet Whey
             USDA Sweet Whey Powder
             USDA Sweetened Condensed Milk
+            USDA Unsalted Butter
             USDA Unsweetened Cocoa Powder
             USDA Unsweetened Cocoa Powder, Processed with Alkali
             USDA Unsweetened Cocoa Powder, Processed with Alkali, High Fat
@@ -415,6 +420,7 @@ total: 438  (non-alias: 373, independent: 359)
 [composite] Underbelly Eggless Ice Cream Stabilizer Blend
 [composite] Underbelly General Purpose Stabilizer Blend
 [composite] Underbelly Sorbet Stabilizer Blend
+            Unsalted Butter
             Valrhona Ariaga Blanche 30% White Chocolate
             Valrhona Guanaja 70% Dark Chocolate
             Valrhona Ivoire 35% White Chocolate

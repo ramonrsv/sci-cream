@@ -79,6 +79,19 @@
     "comments": "https://fdc.nal.usda.gov/food-details/2705597/nutrients, whose 3.8 g of carbohydrate by difference exceeds its 2.92 g of sugars, which the sheet can't carry"
   },
   {
+    "name": "USDA Unsalted Butter (Label)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 717,
+      "total_fat": { "grams": 81.5 },
+      "saturated_fat": 50.5,
+      "sugars": 0.06,
+      "protein": 0.85
+    },
+    "comments": "https://fdc.nal.usda.gov/food-details/789828/nutrients, with the rest from https://fdc.nal.usda.gov/food-details/173430/nutrients"
+  },
+  {
     "name": "USDA Fat-Free Evaporated Milk (Label)",
     "category": "Dairy",
     "DairyLabelSpec": {

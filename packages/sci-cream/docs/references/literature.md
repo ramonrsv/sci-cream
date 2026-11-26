@@ -287,3 +287,7 @@
 [^142]: [_Erucic acid_](https://en.wikipedia.org/w/index.php?title=Erucic_acid&oldid=1387362674). (2026, November). In Wikipedia.
 
 [^143]: Canadian Food Inspection Agency. (2025, November). [_Labelling requirements for fats and oils_](https://inspection.canada.ca/en/food-labels/labelling/industry/fats-and-oils).
+
+[^144]: Codex Alimentarius Commission. (2010). [_Standard for Butter (CXS 279-1971)_](https://www.fao.org/input/download/standards/170/CXS_279e.pdf). FAO/WHO.
+
+[^145]: [_21 U.S. Code § 321a - "Butter" defined_](https://www.law.cornell.edu/uscode/text/21/321a). (n.d.). Legal Information Institute.

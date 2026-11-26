@@ -102,6 +102,32 @@
 { "category": "Dairy", "DairySimpleSpec": { "fat": 55 } }
 ```
 
+## Unsalted Butter
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 82, "msnf": 1 } }
+```
+
+Simplified version of "USDA Unsalted Butter" and "Goff & Hartel Unsalted Butter". Butter is at
+least 80% milk fat in the US (U.S. Code 21, 321a)[^145], Canada (CFIA, 2025, Volume 7,
+7.3.1)[^136], and Codex, which also caps its MSNF at 2% (Codex, CXS 279-1971, §3.3)[^144].
+
+## Salted Butter
+
+```json
+{
+  "category": "Dairy",
+  "CompositeSpec": {
+    "ByPercentage": [
+      ["Unsalted Butter", 98.4],
+      ["Salt", 1.6]
+    ]
+  }
+}
+```
+
+"Unsalted Butter" with 1.6% salt, near the 1.61% of "USDA Salted Butter", for 80.7% milk fat.
+
 ## Skim Milk
 
 ```json
@@ -157,6 +183,12 @@ Ice-Cream)_ (Corvitto, 2005, p. 149)[^3].
 
 ```json
 { "for": "55% Cream" }
+```
+
+## Butter
+
+```json
+{ "for": "Unsalted Butter" }
 ```
 
 ## Lactose-Free 0% Milk
@@ -609,6 +641,19 @@ Caseinate - 25 Kg](https://bulkmart.ca/products/sodium-caseinate-25-kg), [NZMP S
 
 (Goff & Hartel, 2025, Table 3.2, p. 48)[^20]
 
+## Goff & Hartel Unsalted Butter
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 82.5, "msnf": 0.5 } }
+```
+
+(Goff & Hartel, 2025, Table 3.2, p. 48)[^20], without the table's 0.8% protein, almost certainly an
+error. Protein can't exceed the row's 0.5% MSNF, which its 83% total solids confirm. At the 33-37.5%
+protein share of MSNF in the table's other milk rows, 0.8% protein would take 2.1-2.4% MSNF, beyond
+the 2% allowed by Codex (Codex, CXS 279-1971, §3.3)[^144], and 84.6-84.9% total solids, above the
+82.1-83.0% of the unsalted samples behind "USDA Unsalted Butter". Its protein is instead calculated
+internally with the standard 37.5% share, which comes to 0.19%.
+
 ## Goff & Hartel Evaporated Milk
 
 ```json
@@ -827,6 +872,57 @@ sugars Foundation doesn't report, SR Legacy's [Cream, fluid, heavy
 whipping](https://fdc.nal.usda.gov/food-details/170859/nutrients). FNDDS's [Ingredient Nutrient
 Values](https://www.ars.usda.gov/ARSUserFiles/80400530/apps/2021-2023%20FNDDS%20At%20A%20Glance%20-%20Ingredient%20Nutrient%20Values.xlsx)
 spreadsheet lists each value's source.
+
+## USDA Unsalted Butter
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 17.4,
+    "energy": 717,
+    "fat": 81.5,
+    "saturated_fat": 50.5,
+    "sugars": { "lactose": 0.06 },
+    "protein": 0.85,
+    "ash": 0.09
+  }
+}
+```
+
+USDA FoodData Central - Foundation - [Butter, stick,
+unsalted](https://fdc.nal.usda.gov/food-details/789828/nutrients), which lists only water and fat,
+with the rest from SR Legacy's record of the same food (NDB 1145), [Butter, without
+salt](https://fdc.nal.usda.gov/food-details/173430/nutrients). That record's own water repeats its
+salted record's, leaving its proximates 1.72 g short. FNDDS fills Foundation's salted butter from SR
+Legacy the same way, in its [Butter,
+stick](https://fdc.nal.usda.gov/food-details/2710155/nutrients). FNDDS's [Ingredient Nutrient
+Values](https://www.ars.usda.gov/ARSUserFiles/80400530/apps/2021-2023%20FNDDS%20At%20A%20Glance%20-%20Ingredient%20Nutrient%20Values.xlsx)
+spreadsheet lists each value's source.
+
+## USDA Salted Butter
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 16.2,
+    "energy": 717,
+    "fat": 81.1,
+    "saturated_fat": 51.4,
+    "trans_fat": 3.28,
+    "sugars": { "lactose": 0.06 },
+    "protein": 0.85,
+    "ash": 2.11,
+    "salt": 1.61
+  }
+}
+```
+
+USDA FoodData Central - SR Legacy - [Butter,
+salted](https://fdc.nal.usda.gov/food-details/173410/nutrients), with its salt from the 643 mg of
+sodium it lists, less the 11 mg of [Butter, without
+salt](https://fdc.nal.usda.gov/food-details/173430/nutrients): 632 mg × 58.443 / 22.990 = 1.61 g.
 
 ## Sealtest 0% Skim Milk
 

@@ -1,8 +1,9 @@
 //! Cross-source consistency checks for dairy ingredients — milk, ultrafiltered milk, protein
-//! beverages, cream, evaporated and condensed milk, milk powders, milk protein concentrates, whey,
-//! casein, and protein powders — comparing each Simple/default entry against USDA, USDEC, Sealtest,
-//! Lactantia, Carnation, Goff & Hartel, Southward, and brand references. Each USDA listing is
-//! compared both as its embedded sheet and as its test-only `… (Label)` variant.
+//! beverages, cream, butter, evaporated and condensed milk, milk powders, milk protein
+//! concentrates, whey, casein, and protein powders — comparing each Simple/default entry against
+//! USDA, USDEC, Sealtest, Lactantia, Carnation, Goff & Hartel, Southward, and brand references.
+//! Each USDA listing is compared both as its embedded sheet and as its test-only `… (Label)`
+//! variant, where it has one.
 
 #![cfg_attr(coverage, coverage(off))]
 #![allow(clippy::unwrap_used)]
@@ -41,6 +42,28 @@ const COMPARABLE_DAIRY_KEYS: &[CompKey] = &[
     CompKey::Water,
     CompKey::POD,
     CompKey::PACsgr,
+    CompKey::PACmlk,
+    CompKey::TotalPAC,
+    CompKey::SaturatedFat,
+    CompKey::TransFat,
+];
+
+/// [`COMPARABLE_DAIRY_KEYS`] for salted dairy, with its [`CompKey::Salt`] and [`CompKey::PACslt`].
+const COMPARABLE_SALTED_DAIRY_KEYS: &[CompKey] = &[
+    CompKey::Energy,
+    CompKey::MilkFat,
+    CompKey::Lactose,
+    CompKey::MSNF,
+    CompKey::MilkSNFS,
+    CompKey::MilkProteins,
+    CompKey::MilkMinerals,
+    CompKey::MilkSolids,
+    CompKey::TotalSolids,
+    CompKey::Water,
+    CompKey::Salt,
+    CompKey::POD,
+    CompKey::PACsgr,
+    CompKey::PACslt,
     CompKey::PACmlk,
     CompKey::TotalPAC,
     CompKey::SaturatedFat,
@@ -445,6 +468,37 @@ fn compare_specs_clotted_cream() {
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_butter() {
+    assert_true!(is_alias_for("Butter", "Unsalted Butter"));
+
+    let sources = [
+        ("Simple", "Unsalted Butter"),
+        ("Goff & Hartel", "Goff & Hartel Unsalted Butter"),
+        ("USDA", "USDA Unsalted Butter"),
+        ("USDA (Label)", "USDA Unsalted Butter (Label)"),
+    ]
+    .map(source_str_to_comp);
+
+    // USDA's energy takes 8.79 kcal/g of milk fat, the others 9, and its fat is 62% saturated,
+    // not the standard 65%. Goff & Hartel's MSNF is half the others', still within 1 pp of solids.
+    let ceiling = KeyCeiling::new(3.5).with(CompKey::Energy, 6.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_salted_butter() {
+    let sources = [("Simple", "Salted Butter"), ("USDA", "USDA Salted Butter")].map(source_str_to_comp);
+
+    // As for unsalted butter, USDA's energy and saturated fat take its own factor and fraction
+    let ceiling = KeyCeiling::new(2.0).with(CompKey::Energy, 5.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_SALTED_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_SALTED_DAIRY_KEYS));
 }
 
 #[test]
