@@ -138,6 +138,42 @@ pub(crate) mod tests {
         comp.assert_all_keys(&[(CompKey::Water, 100.0)]);
     }
 
+    // https://fdc.nal.usda.gov/food-details/2710180/nutrients
+    pub(crate) const ING_SPEC_FULL_VEGETABLE_OIL_STR: &str = r#"{
+      "name": "Vegetable Oil",
+      "category": "Miscellaneous",
+      "FullSpec": {
+        "solids": { "other": { "fats": { "total": 100, "saturated": 13.4 } } }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_FULL_VEGETABLE_OIL: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Vegetable Oil".to_string(),
+        category: Category::Miscellaneous,
+        spec: FullSpec {
+            energy: None,
+            solids: Some(Solids::new().other(SolidsBreakdown::new().fats(Fats::new().total(100.0).saturated(13.4)))),
+            micro: None,
+            abv: None,
+            pod: None,
+            pac: None,
+        }
+        .into(),
+    });
+
+    #[test]
+    fn to_composition_full_spec_vegetable_oil() {
+        let comp = asset_composition(&ING_SPEC_FULL_VEGETABLE_OIL);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 900.0),
+            (CompKey::OtherFats, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 100.0),
+            (CompKey::SaturatedFat, 13.4),
+        ]);
+    }
+
     // https://fdc.nal.usda.gov/food-details/172336/nutrients
     pub(crate) const ING_SPEC_FULL_CANOLA_OIL_STR: &str = r#"{
       "name": "Canola Oil",
@@ -377,6 +413,7 @@ pub(crate) mod tests {
         LazyLock::new(|| {
             vec![
                 (ING_SPEC_FULL_WATER_STR, ING_SPEC_FULL_WATER.clone(), None),
+                (ING_SPEC_FULL_VEGETABLE_OIL_STR, ING_SPEC_FULL_VEGETABLE_OIL.clone(), None),
                 (ING_SPEC_FULL_CANOLA_OIL_STR, ING_SPEC_FULL_CANOLA_OIL.clone(), None),
                 (ING_SPEC_FULL_COCONUT_OIL_STR, ING_SPEC_FULL_COCONUT_OIL.clone(), None),
                 (ING_SPEC_FULL_OLIVE_OIL_STR, ING_SPEC_FULL_OLIVE_OIL.clone(), None),

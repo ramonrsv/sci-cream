@@ -285,3 +285,5 @@
 [^141]: European Commission. (n.d.). [_Regulation (EC) No 1881/2006_](https://www.legislation.gov.uk/eur/2006/1881/annex). The National Archives.
 
 [^142]: [_Erucic acid_](https://en.wikipedia.org/w/index.php?title=Erucic_acid&oldid=1387362674). (2026, November). In Wikipedia.
+
+[^143]: Canadian Food Inspection Agency. (2025, November). [_Labelling requirements for fats and oils_](https://inspection.canada.ca/en/food-labels/labelling/industry/fats-and-oils).

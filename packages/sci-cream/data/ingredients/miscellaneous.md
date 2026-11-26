@@ -18,8 +18,23 @@ Corvitto gives for cocoa butter and nut fat only (Corvitto, 2005, pp. 243, 274)[
 ## Vegetable Oil
 
 ```json
-{ "category": "Miscellaneous", "FruitSpec": { "water": 0, "fat": 100, "sugars": {} } }
+{
+  "category": "Miscellaneous",
+  "FullSpec": { "solids": { "other": { "fats": { "total": 100, "saturated": 13.4 } } } }
+}
 ```
+
+USDA FoodData Central - Survey (FNDDS) - [Vegetable oil,
+NFS](https://fdc.nal.usda.gov/food-details/2710180/nutrients)
+
+"Vegetable oil" is a class name that can stand for a blend of oils. The EU and UK let refined
+vegetable oils be grouped as _"vegetable oils"_, followed by their origins and optionally _"in
+varying proportions"_ (Regulation (EU) No 1169/2011, n.d., Annex VII, Part A, 8)[^127], and the US
+as a blend of vegetable oils, naming each oil in parentheses (U.S. FDA, CFR 21, 101.4(b)(14))[^52].
+Canada allows _"vegetable oil"_ for one oil or a blend, with some exceptions (CFIA, 2025)[^143].
+
+The entry takes USDA's survey recipe for vegetable oil "not further specified": soybean 45%,
+olive 25%, canola 15%, corn 10%, and sunflower 5%. USDA gives no trans fat value.
 
 ## Canola Oil
 

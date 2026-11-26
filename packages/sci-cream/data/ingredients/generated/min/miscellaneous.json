@@ -1,7 +1,7 @@
 [
 {"name":"Water","category":"Miscellaneous","FullSpec":{}},
 {"name":"Salt","category":"Miscellaneous","MicroSpec":"Salt"},
-{"name":"Vegetable Oil","category":"Miscellaneous","FruitSpec":{"water":0,"fat":100,"sugars":{}}},
+{"name":"Vegetable Oil","category":"Miscellaneous","FullSpec":{"solids":{"other":{"fats":{"total":100,"saturated":13.4}}}}},
 {"name":"Canola Oil","category":"Miscellaneous","FullSpec":{"energy":884,"solids":{"other":{"fats":{"total":100,"saturated":7.36,"trans":0.395}}}}},
 {"alias":"Rapeseed Oil","for":"Canola Oil"},
 {"name":"Coconut Oil","category":"Miscellaneous","FullSpec":{"energy":892,"solids":{"other":{"fats":{"total":99.1,"saturated":82.5,"trans":0.028}}}}},

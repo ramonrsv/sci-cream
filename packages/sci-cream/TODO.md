@@ -61,8 +61,6 @@
 - [ ] Add wine ingredients, and considered adding evaporated wine - how to handle, parametric?
 - [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '\* [Evap 15]', etc.
 - [ ] Look into using sub-footnotes to simplify in-text citations with just a footnote link.
-- [ ] Add proper support for `FullSpec` and convert "Vegetable Oil" and "Palm Oil" to it; they use
-      `FruitSpec`/`NutSpec` today, so their fat lands under fruit/nut fat rather than `OtherFats`.
 - [ ] Consider supporting ignored ingredients — ones strained out before freezing, e.g. herbs, etc.
 - [ ] Add butter products, e.g. "Butter", "Butter Oil", "Anhydrous Milk Fat", etc., all listed in
       Goff & Hartel's Table 3.2, though its unsalted butter row lists 0.8% protein in 0.5% MSNF.
@@ -160,6 +158,8 @@
 
 ## Completed
 
+- [x] Add proper support for `FullSpec` and convert "Vegetable Oil" and "Palm Oil" to it; they use
+      `FruitSpec`/`NutSpec` today, so their fat lands under fruit/nut fat rather than `OtherFats`.
 - [x] Review the 'Lindt Classic Milk Chocolate' entry, which counts its added lactose as sucrose and
       so overstates its POD, though `specs::cocoa` says added lactose needs a `CompositeSpec`.
 - [x] Explore "cacao" as the umbrella term for chocolates and cocoa powders, instead of "chocolate",
