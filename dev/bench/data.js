@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795710349923,
+  "lastUpdate": 1795724442106,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -774730,6 +774730,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2217.91,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b5e3d27b8ef92868c1343dd8dcb4b8dd96b038d6",
+          "message": "Add butter and a salt field to DairySheetSpec\n\nUnsalted Butter, aliased as Butter, is a simple spec at 82% fat and 1%\nMSNF, within the 80% minimum fat of the US, Canada, and Codex, and\nCodex's 2% maximum MSNF. Salted Butter composes it with 1.6% salt.\nTheir references are Goff & Hartel's unsalted butter and USDA's\nunsalted and salted butter.\n\nGoff & Hartel's Table 3.2 lists 0.8% protein in its butter's 0.5%\nMSNF, which the row's 83% total solids confirm, so the entry leaves\nthe protein out as almost certainly an error. USDA Unsalted Butter\ntakes its water and fat from Foundation and the rest from SR Legacy's\nrecord of the same food, whose own water repeats the salted record's,\nleaving its proximates 1.72 g short.\n\nDairySheetSpec gains an optional salt, part of the ash where listed.\nIt counts as MicroSpec::Salt does, with its own PAC, outside the milk\nminerals and MSNF. USDA Salted Butter takes it from the sodium beyond\nthe unsalted record's. Codex's standard for butter and the U.S. Code's\ndefinition of butter join the literature.\n\ncompare_specs covers both butters, and the USDA reconciliation adds\ntheir rows. Its label ceiling is now optional, as DairyLabelSpec has\nno salt, so salted butter has no label variant.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T14:19:14-05:00",
+          "tree_id": "5cbef3a3cada1aa7511a97d110ccdc157e5624b2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b5e3d27b8ef92868c1343dd8dcb4b8dd96b038d6"
+        },
+        "date": 1795724349686,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1241.13,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 372.14,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 2014.74,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 611.53,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 660.31,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2225.08,
             "unit": "KB"
           }
         ]
