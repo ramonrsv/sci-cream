@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795724954812,
+  "lastUpdate": 1795724959909,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -759863,6 +759863,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/2d1d3041d3a0803194baeadf0bac645c07fcefc7"
         },
         "date": 1795724719262,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "119d966286866e1ad71c01644dbfdc6352f24779",
+          "message": "Compute FullSpec's energy before its POD and PAC\n\nFullSpec now computes its energy first, so where more than one value\ncannot be computed, as with \"other\" artificial sweeteners, the energy\nerror is the one returned.\n\nThe POD and PAC error tests give the energy, so their own errors are\nstill reached. The energy error test now leaves POD and PAC to be\ncomputed, and adds a case for \"other\" artificial sweeteners beside the\none for \"other\" polyols.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T15:19:09-05:00",
+          "tree_id": "a0c16dda683221497afe28f46fcdd33ab120cea0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/119d966286866e1ad71c01644dbfdc6352f24779"
+        },
+        "date": 1795724959121,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
