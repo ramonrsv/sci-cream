@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795725360286,
+  "lastUpdate": 1795725470251,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -617248,6 +617248,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 662.5,
             "range": "13.33",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2d1d3041d3a0803194baeadf0bac645c07fcefc7",
+          "message": "Take a sheet's salt as grams or from its sodium\n\nDairySheetSpec's salt is now an AddedSalt, given as { \"grams\": g } or\n{ \"from_sodium\": mg }, the milligrams of sodium from the added salt,\nwhich the spec converts by salt's molar mass over sodium's. Sodium\njoins the molar masses for it.\n\nUSDA Salted Butter now gives its 632 mg of added sodium, the 643 mg it\nlists less the 11 mg of its unsalted record, in place of the 1.61 g\nworked out by hand, so its salt is the unrounded 1.6066 g.\n\nThe total sodium a sheet lists includes milk's own, so it is up to the\nuser to determine the added salt's share, as the field's note says.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T15:15:25-05:00",
+          "tree_id": "cface3147529105bad8f7246324a63d34fa7f9c7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2d1d3041d3a0803194baeadf0bac645c07fcefc7"
+        },
+        "date": 1795725376537,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 41.75,
+            "range": "1.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 43.88,
+            "range": "3.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 53.5,
+            "range": "4.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2156.75,
+            "range": "51.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 370.75,
+            "range": "2.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 378.88,
+            "range": "3.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 400.88,
+            "range": "9.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 18854.5,
+            "range": "29.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 806.5,
+            "range": "17.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 59,
+            "range": "4.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.75,
+            "range": "2.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 44.25,
+            "range": "1.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 127.63,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 71.88,
+            "range": "3.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 47.1,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 36.45,
+            "range": "0.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 611.75,
+            "range": "25.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 683,
+            "range": "26.57",
             "unit": "ms"
           }
         ]
