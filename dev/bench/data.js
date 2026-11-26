@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795724980112,
+  "lastUpdate": 1795725008188,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -749102,6 +749102,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.15,
             "range": "0.33",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "119d966286866e1ad71c01644dbfdc6352f24779",
+          "message": "Compute FullSpec's energy before its POD and PAC\n\nFullSpec now computes its energy first, so where more than one value\ncannot be computed, as with \"other\" artificial sweeteners, the energy\nerror is the one returned.\n\nThe POD and PAC error tests give the energy, so their own errors are\nstill reached. The energy error test now leaves POD and PAC to be\ncomputed, and adds a case for \"other\" artificial sweeteners beside the\none for \"other\" polyols.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T15:19:09-05:00",
+          "tree_id": "a0c16dda683221497afe28f46fcdd33ab120cea0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/119d966286866e1ad71c01644dbfdc6352f24779"
+        },
+        "date": 1795724952621,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 48.07,
+            "range": "9.01",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.71,
+            "range": "4.14",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.67,
+            "range": "4.11",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 122.5,
+            "range": "13.26",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 122.5,
+            "range": "13.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 45.08,
+            "range": "8.56",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.58,
+            "range": "0.26",
             "unit": "ms"
           }
         ]
