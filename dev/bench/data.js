@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795724839556,
+  "lastUpdate": 1795724954812,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -714863,6 +714863,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/docs/[...slug] first-load JS (gzip)",
             "value": 880.46,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1043.2,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "119d966286866e1ad71c01644dbfdc6352f24779",
+          "message": "Compute FullSpec's energy before its POD and PAC\n\nFullSpec now computes its energy first, so where more than one value\ncannot be computed, as with \"other\" artificial sweeteners, the energy\nerror is the one returned.\n\nThe POD and PAC error tests give the energy, so their own errors are\nstill reached. The energy error test now leaves POD and PAC to be\ncomputed, and adds a case for \"other\" artificial sweeteners beside the\none for \"other\" polyols.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T15:19:09-05:00",
+          "tree_id": "a0c16dda683221497afe28f46fcdd33ab120cea0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/119d966286866e1ad71c01644dbfdc6352f24779"
+        },
+        "date": 1795724888775,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 783.44,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 951.17,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 727.79,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 895.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 737.65,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 905.37,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 711.2,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 878.92,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 712.73,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 880.45,
             "unit": "KB"
           },
           {
