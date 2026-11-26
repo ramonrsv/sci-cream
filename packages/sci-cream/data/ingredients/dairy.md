@@ -128,6 +128,29 @@ least 80% milk fat in the US (U.S. Code 21, 321a)[^145], Canada (CFIA, 2025, Vol
 
 "Unsalted Butter" with 1.6% salt, near the 1.61% of "USDA Salted Butter", for 80.7% milk fat.
 
+## Butter Oil
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 99.6, "msnf": 0.1 } }
+```
+
+At the US and Codex limits for butteroil: at least 99.6% milk fat in both, and at most 0.3%
+moisture and 0.1% other constituents in the US (USDA, CFR 7, 58.347)[^147], (Codex, CXS 280-1973,
+§3.3)[^146]. "USDA Anhydrous Butter Oil" and "Goff & Hartel Butter Oil" fall short of the fat
+minimum, at 99.48% and 99%.
+
+## Anhydrous Milk Fat
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 99.8, "msnf": 0.1 } }
+```
+
+At the US and Codex limits for anhydrous milkfat: at least 99.8% milk fat and at most 0.1%
+moisture in both, and at most 0.1% other constituents in the US (USDA, CFR 7, 58.347)[^147],
+(ADPI, 2024, p. 1)[^148], (Codex, CXS 280-1973, §3.3)[^146]. Codex sets the same limits for
+anhydrous butteroil. It sits between the 99.9% fat of "Goff & Hartel Anhydrous Milk Fat" and the
+99.48% of "USDA Anhydrous Butter Oil".
+
 ## Skim Milk
 
 ```json
@@ -189,6 +212,34 @@ Ice-Cream)_ (Corvitto, 2005, p. 149)[^3].
 
 ```json
 { "for": "Unsalted Butter" }
+```
+
+## Clarified Butter
+
+```json
+{ "for": "Butter Oil" }
+```
+
+FNDDS makes its [Ghee, clarified
+butter](https://fdc.nal.usda.gov/food-details/2710168/nutrients) wholly from SR Legacy's [Butter
+oil, anhydrous](https://fdc.nal.usda.gov/food-details/173412/nutrients), and Codex gives ghee the
+same minimum milk fat as butteroil, 99.6% (Codex, CXS 280-1973, §3.3)[^146].
+
+## Ghee
+
+```json
+{ "for": "Butter Oil" }
+```
+
+FNDDS makes its [Ghee, clarified
+butter](https://fdc.nal.usda.gov/food-details/2710168/nutrients) wholly from SR Legacy's [Butter
+oil, anhydrous](https://fdc.nal.usda.gov/food-details/173412/nutrients), and Codex gives ghee the
+same minimum milk fat as butteroil, 99.6% (Codex, CXS 280-1973, §3.3)[^146].
+
+## AMF
+
+```json
+{ "for": "Anhydrous Milk Fat" }
 ```
 
 ## Lactose-Free 0% Milk
@@ -654,6 +705,22 @@ the 2% allowed by Codex (Codex, CXS 279-1971, §3.3)[^144], and 84.6-84.9% total
 82.1-83.0% of the unsalted samples behind "USDA Unsalted Butter". Its protein is instead calculated
 internally with the standard 37.5% share, which comes to 0.19%.
 
+## Goff & Hartel Butter Oil
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 99, "msnf": 0 } }
+```
+
+(Goff & Hartel, 2025, Table 3.2, p. 48)[^20]
+
+## Goff & Hartel Anhydrous Milk Fat
+
+```json
+{ "category": "Dairy", "DairySimpleSpec": { "fat": 99.9, "msnf": 0 } }
+```
+
+(Goff & Hartel, 2025, Table 3.2, p. 48)[^20]
+
 ## Goff & Hartel Evaporated Milk
 
 ```json
@@ -923,6 +990,29 @@ USDA FoodData Central - SR Legacy - [Butter,
 salted](https://fdc.nal.usda.gov/food-details/173410/nutrients), with its salt from the 643 mg of
 sodium it lists, less the 11 mg of [Butter, without
 salt](https://fdc.nal.usda.gov/food-details/173430/nutrients).
+
+## USDA Anhydrous Butter Oil
+
+```json
+{
+  "category": "Dairy",
+  "DairySheetSpec": {
+    "water": 0.24,
+    "energy": 876,
+    "fat": 99.48,
+    "saturated_fat": 61.9,
+    "sugars": {},
+    "protein": 0.28,
+    "ash": 0
+  }
+}
+```
+
+USDA FoodData Central - SR Legacy - [Butter oil,
+anhydrous](https://fdc.nal.usda.gov/food-details/173412/nutrients). Its fat is the unrounded 99.48 g
+from SR Legacy's [CSV
+download](https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip),
+since the page's 99.5 g would take its proximates past 100 g.
 
 ## Sealtest 0% Skim Milk
 

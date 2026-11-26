@@ -1,5 +1,5 @@
 //! Cross-source consistency checks for dairy ingredients — milk, ultrafiltered milk, protein
-//! beverages, cream, butter, evaporated and condensed milk, milk powders, milk protein
+//! beverages, cream, butter and milk fat, evaporated and condensed milk, milk powders, milk protein
 //! concentrates, whey, casein, and protein powders — comparing each Simple/default entry against
 //! USDA, USDEC, Sealtest, Lactantia, Carnation, Goff & Hartel, Southward, and brand references.
 //! Each USDA listing is compared both as its embedded sheet and as its test-only `… (Label)`
@@ -499,6 +499,43 @@ fn compare_specs_salted_butter() {
 
     assert_compositions_consistent(&sources, COMPARABLE_SALTED_DAIRY_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_SALTED_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_butter_oil() {
+    assert_true!(is_alias_for("Clarified Butter", "Butter Oil"));
+    assert_true!(is_alias_for("Ghee", "Butter Oil"));
+
+    let sources = [
+        ("Simple", "Butter Oil"),
+        ("Goff & Hartel", "Goff & Hartel Butter Oil"),
+        ("USDA", "USDA Anhydrous Butter Oil"),
+    ]
+    .map(source_str_to_comp);
+
+    // As for butter, USDA's energy and saturated fat take its own factor and fraction
+    let ceiling = KeyCeiling::new(3.0).with(CompKey::Energy, 4.5);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_anhydrous_milk_fat() {
+    assert_true!(is_alias_for("AMF", "Anhydrous Milk Fat"));
+
+    let sources = [
+        ("Simple", "Anhydrous Milk Fat"),
+        ("Goff & Hartel", "Goff & Hartel Anhydrous Milk Fat"),
+        ("USDA", "USDA Anhydrous Butter Oil"),
+    ]
+    .map(source_str_to_comp);
+
+    // As for butter, USDA's energy and saturated fat take its own factor and fraction
+    let ceiling = KeyCeiling::new(3.0).with(CompKey::Energy, 4.5);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
 }
 
 #[test]

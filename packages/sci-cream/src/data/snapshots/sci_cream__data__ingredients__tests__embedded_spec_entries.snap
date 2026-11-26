@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 444  (non-alias: 378, independent: 363)
+total: 452  (non-alias: 383, independent: 368)
 
             0% Milk
             1% Milk
@@ -38,10 +38,12 @@ total: 444  (non-alias: 378, independent: 363)
             85% Dark Chocolate
             90% Dark Chocolate
             95% Dark Chocolate
+[alias]     AMF
             Almond
 [alias]     Almond Extract
             Angostura Aromatic Bitters
             Angostura Orange Bitters
+            Anhydrous Milk Fat
             Appleton Estate 8-year Rum
             Baileys Irish Cream
             Baker's Unsweetened Chocolate
@@ -49,6 +51,7 @@ total: 444  (non-alias: 378, independent: 363)
             Bourbon Whiskey
             Bulk Barn Whey Protein Isolate 90%
 [alias]     Butter
+            Butter Oil
 [alias]     CMC
             Cadbury Dairy Milk Chocolate (Canada)
             Cadbury Dairy Milk Chocolate (UK)
@@ -74,6 +77,7 @@ total: 444  (non-alias: 378, independent: 363)
             Carnation Sweetened Condensed Milk (US)
             Carrageenan
 [alias]     Chocolate Extract
+[alias]     Clarified Butter
             Clarke Egg Yolk
 [alias]     Clotted Cream
             Cocoa Butter
@@ -126,6 +130,7 @@ total: 444  (non-alias: 378, independent: 363)
 [alias]     Full Fat Milk
 [alias]     GMS
             Gelatin
+[alias]     Ghee
             Ghirardelli 100% Unsweetened Cocoa Powder
             Gin
 [alias]     Glucose Powder
@@ -153,6 +158,8 @@ total: 444  (non-alias: 378, independent: 363)
             Goff & Hartel 5% Milk
             Goff & Hartel 50% Cream
             Goff & Hartel 8% Condensed Milk
+            Goff & Hartel Anhydrous Milk Fat
+            Goff & Hartel Butter Oil
             Goff & Hartel Condensed Skim Milk, 20% MSNF
             Goff & Hartel Condensed Skim Milk, 30% MSNF
             Goff & Hartel Dry Egg Yolk
@@ -364,6 +371,7 @@ total: 444  (non-alias: 378, independent: 363)
             Trehalose
             USDA 2% Reduced-Fat Evaporated Milk
             USDA 2% Reduced-Fat Milk
+            USDA Anhydrous Butter Oil
             USDA Dark Chocolate, 45-59% Cacao Solids
             USDA Dark Chocolate, 60-69% Cacao Solids
             USDA Dark Chocolate, 70-85% Cacao Solids

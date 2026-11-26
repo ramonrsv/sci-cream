@@ -62,8 +62,6 @@
 - [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '\* [Evap 15]', etc.
 - [ ] Look into using sub-footnotes to simplify in-text citations with just a footnote link.
 - [ ] Consider supporting ignored ingredients — ones strained out before freezing, e.g. herbs, etc.
-- [ ] Add butter products, e.g. "Butter", "Butter Oil", "Anhydrous Milk Fat", etc., all listed in
-      Goff & Hartel's Table 3.2, though its unsalted butter row lists 0.8% protein in 0.5% MSNF.
 - [ ] Add sweet cream buttermilk products, liquid, concentrated, and dried ("Buttermilk Powder"),
       with the usual USDA, Goff & Hartel, and spec sheet entries. Look into the stabilizing role
       that Underbelly and Goff & Hartel mention, from its milk fat globule membrane material.
@@ -158,6 +156,8 @@
 
 ## Completed
 
+- [x] Add butter products, e.g. "Butter", "Butter Oil", "Anhydrous Milk Fat", etc., all listed in
+      Goff & Hartel's Table 3.2, though its unsalted butter row lists 0.8% protein in 0.5% MSNF.
 - [x] Add proper support for `FullSpec` and convert "Vegetable Oil" and "Palm Oil" to it; they use
       `FruitSpec`/`NutSpec` today, so their fat lands under fruit/nut fat rather than `OtherFats`.
 - [x] Review the 'Lindt Classic Milk Chocolate' entry, which counts its added lactose as sucrose and

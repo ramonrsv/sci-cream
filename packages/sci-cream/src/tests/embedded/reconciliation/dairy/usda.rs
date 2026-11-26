@@ -5,7 +5,8 @@
 //! transcribed inputs to both, so they match exactly. Both take the carbohydrate as the sugars,
 //! except heavy cream's label, which transcribes it, so it misses wherever a listing's sugars are
 //! measured lactose, as for milk and cream, rather than its carbohydrate by difference. Salted
-//! butter has no label: [`DairyLabelSpec`] has no salt.
+//! butter and butter oil have no label: [`DairyLabelSpec`] has no salt, and keeps at least 2%
+//! water, more than butter oil's fat and protein leave.
 //!
 //! The sheets' water and ash are transcribed too, the ash as their minerals and salt, so both match
 //! exactly unless a listing's proximates sum past 100 g, when its water gives way to the listed
@@ -165,6 +166,21 @@ const USDA_LISTINGS: &[(&str, Proximates, Proximates, Option<Proximates>)] = &[
             ash: 2.11,
         },
         SALTED_BUTTER_SHEET_CEILING,
+        None,
+    ),
+    // https://fdc.nal.usda.gov/food-details/173412/nutrients
+    (
+        "USDA Anhydrous Butter Oil",
+        Proximates {
+            water: 0.24,
+            protein: 0.28,
+            fat: 99.48,
+            carbohydrate: 0.0,
+            fiber: 0.0,
+            sugars: 0.0,
+            ash: 0.0,
+        },
+        BUTTER_OIL_SHEET_CEILING,
         None,
     ),
     // https://fdc.nal.usda.gov/food-details/170878/nutrients
@@ -348,6 +364,9 @@ const SALTED_BUTTER_SHEET_CEILING: Proximates = Proximates {
     water: 2.0,
     ..Proximates::splat(EXACT_MATCH)
 };
+
+/// Per-field ceilings on relative error vs the measured value, in percent — butter oil sheet.
+const BUTTER_OIL_SHEET_CEILING: Proximates = Proximates::splat(EXACT_MATCH);
 
 /// Per-field ceilings on relative error vs the measured value, in percent — evaporated milk sheets.
 const EVAPORATED_SHEET_CEILING: Proximates = Proximates {

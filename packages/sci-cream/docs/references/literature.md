@@ -291,3 +291,9 @@
 [^144]: Codex Alimentarius Commission. (2010). [_Standard for Butter (CXS 279-1971)_](https://www.fao.org/input/download/standards/170/CXS_279e.pdf). FAO/WHO.
 
 [^145]: [_21 U.S. Code § 321a - "Butter" defined_](https://www.law.cornell.edu/uscode/text/21/321a). (n.d.). Legal Information Institute.
+
+[^146]: Codex Alimentarius Commission. (2010). [_Standard for Milkfat Products (CXS 280-1973)_](https://www.fao.org/input/download/standards/171/CXS_280e.pdf). FAO/WHO.
+
+[^147]: U.S. Department of Agriculture. (n.d.). [_7 CFR § 58.347 - Butteroil or anhydrous milkfat_](https://www.law.cornell.edu/cfr/text/7/58.347). Legal Information Institute.
+
+[^148]: American Dairy Products Institute. (2024). [_Anhydrous Milk Fat Standard_](https://adpi.org/wp-content/uploads/2025/01/Anhydrous-Milk-Fat-Standard-v1.0_2024.pdf).

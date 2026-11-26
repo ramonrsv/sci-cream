@@ -152,6 +152,16 @@ USDA Salted Butter
   sugars             0.06      0.06      0.00 %
   ash                2.11      2.11      0.00 %
 
+USDA Anhydrous Butter Oil
+  [     key      | modeled | measured |  diff  ]
+  water              0.24      0.24      0.00 %
+  protein            0.28      0.28      0.00 %
+  fat               99.48     99.48      0.00 %
+  carbohydrate       0.00      0.00      0.00 %
+  fiber              0.00      0.00      0.00 %
+  sugars             0.00      0.00      0.00 %
+  ash                0.00      0.00      0.00 %
+
 USDA Fat-Free Evaporated Milk
   [     key      | modeled | measured |  diff  ]
   water             79.35     79.40      0.06 %
