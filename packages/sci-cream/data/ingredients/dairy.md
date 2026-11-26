@@ -914,7 +914,7 @@ spreadsheet lists each value's source.
     "sugars": { "lactose": 0.06 },
     "protein": 0.85,
     "ash": 2.11,
-    "salt": 1.61
+    "salt": { "from_sodium": 632 }
   }
 }
 ```
@@ -922,7 +922,7 @@ spreadsheet lists each value's source.
 USDA FoodData Central - SR Legacy - [Butter,
 salted](https://fdc.nal.usda.gov/food-details/173410/nutrients), with its salt from the 643 mg of
 sodium it lists, less the 11 mg of [Butter, without
-salt](https://fdc.nal.usda.gov/food-details/173430/nutrients): 632 mg × 58.443 / 22.990 = 1.61 g.
+salt](https://fdc.nal.usda.gov/food-details/173430/nutrients).
 
 ## Sealtest 0% Skim Milk
 

@@ -100,7 +100,7 @@
 {"name":"USDA Light Cream","category":"Dairy","DairySheetSpec":{"water":73.8,"energy":195,"fat":19.1,"saturated_fat":10.2,"trans_fat":0.625,"sugars":{"lactose":3.67},"protein":2.96,"ash":0.61}},
 {"name":"USDA Heavy Cream","category":"Dairy","DairySheetSpec":{"water":58.13,"energy":343,"fat":35.56,"saturated_fat":20.4,"sugars":{"lactose":2.92},"protein":2.02}},
 {"name":"USDA Unsalted Butter","category":"Dairy","DairySheetSpec":{"water":17.4,"energy":717,"fat":81.5,"saturated_fat":50.5,"sugars":{"lactose":0.06},"protein":0.85,"ash":0.09}},
-{"name":"USDA Salted Butter","category":"Dairy","DairySheetSpec":{"water":16.2,"energy":717,"fat":81.1,"saturated_fat":51.4,"trans_fat":3.28,"sugars":{"lactose":0.06},"protein":0.85,"ash":2.11,"salt":1.61}},
+{"name":"USDA Salted Butter","category":"Dairy","DairySheetSpec":{"water":16.2,"energy":717,"fat":81.1,"saturated_fat":51.4,"trans_fat":3.28,"sugars":{"lactose":0.06},"protein":0.85,"ash":2.11,"salt":{"from_sodium":632}}},
 {"name":"Sealtest 0% Skim Milk","category":"Dairy","DairyLabelSpec":{"serving_size":{"ml":250},"energy":90,"total_fat":{"percent":0},"sugars":12,"protein":9}},
 {"name":"Sealtest 1% Milk","category":"Dairy","DairyLabelSpec":{"serving_size":{"ml":250},"energy":110,"total_fat":{"percent":1},"saturated_fat":1.5,"trans_fat":0.1,"sugars":13,"protein":9}},
 {"name":"Sealtest 2% Milk","category":"Dairy","DairyLabelSpec":{"serving_size":{"ml":250},"energy":130,"total_fat":{"percent":2},"saturated_fat":3,"trans_fat":0.2,"sugars":13,"protein":9}},

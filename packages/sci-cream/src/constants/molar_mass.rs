@@ -33,4 +33,5 @@ pub const SACCHARIN: f64 = 183.18;
 pub const SUCRALOSE: f64 = 397.63;
 
 pub const SALT: f64 = 58.443;
+pub const SODIUM: f64 = 22.990;
 pub const ALCOHOL: f64 = 46.069;
