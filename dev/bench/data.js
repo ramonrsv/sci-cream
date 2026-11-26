@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795725470251,
+  "lastUpdate": 1795725691236,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -617392,6 +617392,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 683,
             "range": "26.57",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "119d966286866e1ad71c01644dbfdc6352f24779",
+          "message": "Compute FullSpec's energy before its POD and PAC\n\nFullSpec now computes its energy first, so where more than one value\ncannot be computed, as with \"other\" artificial sweeteners, the energy\nerror is the one returned.\n\nThe POD and PAC error tests give the energy, so their own errors are\nstill reached. The energy error test now leaves POD and PAC to be\ncomputed, and adds a case for \"other\" artificial sweeteners beside the\none for \"other\" polyols.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T15:19:09-05:00",
+          "tree_id": "a0c16dda683221497afe28f46fcdd33ab120cea0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/119d966286866e1ad71c01644dbfdc6352f24779"
+        },
+        "date": 1795725596833,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 41.75,
+            "range": "3.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 47.38,
+            "range": "4.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 51.5,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2235.5,
+            "range": "94.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 371,
+            "range": "4.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 380.88,
+            "range": "5.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 394.75,
+            "range": "6.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 18887.63,
+            "range": "59.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 795.5,
+            "range": "14.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 58.5,
+            "range": "2.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.38,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 46.25,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.25,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 132.88,
+            "range": "11.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 74,
+            "range": "3.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 48.54,
+            "range": "0.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 37.87,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 605,
+            "range": "16.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 690.25,
+            "range": "33.50",
             "unit": "ms"
           }
         ]
