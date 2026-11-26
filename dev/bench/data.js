@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795724645891,
+  "lastUpdate": 1795724716034,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -713594,6 +713594,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1042.86,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2d1d3041d3a0803194baeadf0bac645c07fcefc7",
+          "message": "Take a sheet's salt as grams or from its sodium\n\nDairySheetSpec's salt is now an AddedSalt, given as { \"grams\": g } or\n{ \"from_sodium\": mg }, the milligrams of sodium from the added salt,\nwhich the spec converts by salt's molar mass over sodium's. Sodium\njoins the molar masses for it.\n\nUSDA Salted Butter now gives its 632 mg of added sodium, the 643 mg it\nlists less the 11 mg of its unsalted record, in place of the 1.61 g\nworked out by hand, so its salt is the unrounded 1.6066 g.\n\nThe total sodium a sheet lists includes milk's own, so it is up to the\nuser to determine the added salt's share, as the field's note says.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T15:15:25-05:00",
+          "tree_id": "cface3147529105bad8f7246324a63d34fa7f9c7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2d1d3041d3a0803194baeadf0bac645c07fcefc7"
+        },
+        "date": 1795724640999,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 783.46,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 951.18,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 727.81,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 895.53,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 737.66,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 905.38,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 711.21,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 878.93,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 712.74,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 880.46,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1043.2,
             "unit": "KB"
           },
           {
