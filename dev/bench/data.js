@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795710187592,
+  "lastUpdate": 1795710349923,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -614971,6 +614971,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 684.75,
             "range": "24.40",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "caf675f962abea631cb18806ee9011d0af8030cb",
+          "message": "Define Vegetable Oil as USDA's oil blend\n\nVegetable Oil was a FruitSpec of plain fat, with no saturated fat. It is\nnow a FullSpec from USDA FNDDS \"Vegetable oil, NFS\", as given: 100 g of\nfat, 13.4 g of it saturated. It needs no energy override, as USDA's\n900 kcal is what the crate calculates. USDA's recipe for it blends\nsoybean, olive, canola, corn, and sunflower oils.\n\nIts note sets out why the name can stand for a blend: the EU, UK, and US\nlet a blend be listed as vegetable oils with each oil named, and Canada\nallows \"vegetable oil\" for one oil or a blend, with some exceptions. The\nCFIA's labelling page for fats and oils joins the literature.\n\nShoei Pistachio Paste needs no re-fit, as its label gives energy,\nprotein, fat, and carbohydrate, which the change leaves as they were.\nOnly its saturated fat rises, by 1.07 g per 100 g. A test asset covers\nthe new entry, and the TODO item for FullSpec moves to Completed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T11:05:43-05:00",
+          "tree_id": "dbb6b295f0fbf51a76f51714667bea4b46fdbcdd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/caf675f962abea631cb18806ee9011d0af8030cb"
+        },
+        "date": 1795710285488,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 27.88,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 31.5,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 41,
+            "range": "3.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1481.75,
+            "range": "38.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 262.25,
+            "range": "2.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 271.38,
+            "range": "4.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 277.63,
+            "range": "3.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 13513.5,
+            "range": "51.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 23.37,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 710.13,
+            "range": "8.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 41.63,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 35.38,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 28.13,
+            "range": "0.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 106.25,
+            "range": "3.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 55.75,
+            "range": "5.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 34.5,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.69,
+            "range": "0.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 503.25,
+            "range": "41.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 523.38,
+            "range": "20.17",
             "unit": "ms"
           }
         ]
