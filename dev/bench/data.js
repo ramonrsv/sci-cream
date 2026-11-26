@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795710015545,
+  "lastUpdate": 1795710072225,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -112277,6 +112277,204 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 560,
             "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "caf675f962abea631cb18806ee9011d0af8030cb",
+          "message": "Define Vegetable Oil as USDA's oil blend\n\nVegetable Oil was a FruitSpec of plain fat, with no saturated fat. It is\nnow a FullSpec from USDA FNDDS \"Vegetable oil, NFS\", as given: 100 g of\nfat, 13.4 g of it saturated. It needs no energy override, as USDA's\n900 kcal is what the crate calculates. USDA's recipe for it blends\nsoybean, olive, canola, corn, and sunflower oils.\n\nIts note sets out why the name can stand for a blend: the EU, UK, and US\nlet a blend be listed as vegetable oils with each oil named, and Canada\nallows \"vegetable oil\" for one oil or a blend, with some exceptions. The\nCFIA's labelling page for fats and oils joins the literature.\n\nShoei Pistachio Paste needs no re-fit, as its label gives energy,\nprotein, fat, and carbohydrate, which the change leaves as they were.\nOnly its saturated fat rises, by 1.07 g per 100 g. A test asset covers\nthe new entry, and the TODO item for FullSpec moves to Completed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T11:05:43-05:00",
+          "tree_id": "dbb6b295f0fbf51a76f51714667bea4b46fdbcdd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/caf675f962abea631cb18806ee9011d0af8030cb"
+        },
+        "date": 1795709996569,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3583,
+            "range": "± 165",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 126268,
+            "range": "± 2408",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2311,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 125130,
+            "range": "± 2154",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 3725,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 3757,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 3769,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 3796,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 3764,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 3895,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 3928,
+            "range": "± 69",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 3932,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 92357,
+            "range": "± 1494",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 93402,
+            "range": "± 2011",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 188547437,
+            "range": "± 661118",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 539707,
+            "range": "± 7938",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 5394,
+            "range": "± 128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 46,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 5212,
+            "range": "± 379",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 77402,
+            "range": "± 692",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 74923,
+            "range": "± 420",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 126122,
+            "range": "± 5953",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 120426,
+            "range": "± 814",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 297435,
+            "range": "± 1777",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 11505,
+            "range": "± 82",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 560,
+            "range": "± 25",
             "unit": "ns/iter"
           },
           {
