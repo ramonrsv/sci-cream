@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795724830864,
+  "lastUpdate": 1795724839556,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -748732,6 +748732,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.09,
             "range": "0.52",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2d1d3041d3a0803194baeadf0bac645c07fcefc7",
+          "message": "Take a sheet's salt as grams or from its sodium\n\nDairySheetSpec's salt is now an AddedSalt, given as { \"grams\": g } or\n{ \"from_sodium\": mg }, the milligrams of sodium from the added salt,\nwhich the spec converts by salt's molar mass over sodium's. Sodium\njoins the molar masses for it.\n\nUSDA Salted Butter now gives its 632 mg of added sodium, the 643 mg it\nlists less the 11 mg of its unsalted record, in place of the 1.61 g\nworked out by hand, so its salt is the unrounded 1.6066 g.\n\nThe total sodium a sheet lists includes milk's own, so it is up to the\nuser to determine the added salt's share, as the field's note says.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T15:15:25-05:00",
+          "tree_id": "cface3147529105bad8f7246324a63d34fa7f9c7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2d1d3041d3a0803194baeadf0bac645c07fcefc7"
+        },
+        "date": 1795724743511,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 71.89,
+            "range": "8.05",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 19.16,
+            "range": "5.41",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 19.12,
+            "range": "5.43",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 192.5,
+            "range": "8.35",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 31,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 192.5,
+            "range": "8.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 67.8,
+            "range": "8.15",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.15,
+            "range": "0.33",
             "unit": "ms"
           }
         ]
