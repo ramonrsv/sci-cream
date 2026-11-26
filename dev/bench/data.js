@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795709507323,
+  "lastUpdate": 1795709651590,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -772799,6 +772799,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2216.55,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "caf675f962abea631cb18806ee9011d0af8030cb",
+          "message": "Define Vegetable Oil as USDA's oil blend\n\nVegetable Oil was a FruitSpec of plain fat, with no saturated fat. It is\nnow a FullSpec from USDA FNDDS \"Vegetable oil, NFS\", as given: 100 g of\nfat, 13.4 g of it saturated. It needs no energy override, as USDA's\n900 kcal is what the crate calculates. USDA's recipe for it blends\nsoybean, olive, canola, corn, and sunflower oils.\n\nIts note sets out why the name can stand for a blend: the EU, UK, and US\nlet a blend be listed as vegetable oils with each oil named, and Canada\nallows \"vegetable oil\" for one oil or a blend, with some exceptions. The\nCFIA's labelling page for fats and oils joins the literature.\n\nShoei Pistachio Paste needs no re-fit, as its label gives energy,\nprotein, fat, and carbohydrate, which the change leaves as they were.\nOnly its saturated fat rises, by 1.07 g per 100 g. A test asset covers\nthe new entry, and the TODO item for FullSpec moves to Completed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T11:05:43-05:00",
+          "tree_id": "dbb6b295f0fbf51a76f51714667bea4b46fdbcdd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/caf675f962abea631cb18806ee9011d0af8030cb"
+        },
+        "date": 1795709587679,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1238.64,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 369.8,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 2007.74,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 608.17,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 656.81,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2217.91,
             "unit": "KB"
           }
         ]
