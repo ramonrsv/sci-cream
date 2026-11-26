@@ -65,8 +65,8 @@ impl ToComposition for FullSpec {
         let (solids, micro) = (solids.unwrap_or_default(), micro.unwrap_or_default());
         let alcohol = abv.map_or_else(Alcohol::default, Alcohol::from_abv);
 
+        let calculate_energy = || Ok(solids.all().energy()? + alcohol.energy());
         let calculate_pod = || Ok(solids.all().carbohydrates.to_pod()? + solids.all().artificial_sweeteners.to_pod()?);
-
         let calculate_pac = || {
             Ok(PAC::new()
                 .sugars(solids.all().carbohydrates.to_pac()? + solids.all().artificial_sweeteners.to_pac()?)
@@ -75,11 +75,9 @@ impl ToComposition for FullSpec {
                 .msnf_ws_salts(solids.milk.snf() * constants::pac::MSNF_WS_SALTS / 100.0))
         };
 
-        let calculate_energy = || Ok(solids.all().energy()? + alcohol.energy());
-
+        let energy = energy.map_or_else(calculate_energy, Ok)?;
         let pod = pod.map_or_else(calculate_pod, Ok)?;
         let pac = pac.map_or_else(calculate_pac, Ok)?;
-        let energy = energy.map_or_else(calculate_energy, Ok)?;
 
         Composition::new()
             .energy(energy)
@@ -429,7 +427,7 @@ pub(crate) mod tests {
             solids: Some(Solids::new()),
             micro: None,
             abv: None,
-            energy: None,
+            energy: Some(0.0),
             pod: None,
             pac: None,
         };
@@ -461,7 +459,7 @@ pub(crate) mod tests {
             solids: Some(Solids::new()),
             micro: None,
             abv: None,
-            energy: None,
+            energy: Some(0.0),
             pod: Some(0.0),
             pac: None,
         };
@@ -555,21 +553,35 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_err_when_energy_cannot_be_computed() {
-        // With lazy evaluation, pod/pac computations are skipped when provided as Some,
-        // so polyols.other != 0 reaches energy() instead of being caught by to_pod() first
-        use crate::composition::{Carbohydrates, Polyols};
-        let spec =
+        // Energy is computed before POD and PAC, so its error takes precedence over theirs
+        use crate::composition::Polyols;
+        let base = FullSpec {
+            solids: Some(Solids::new()),
+            micro: None,
+            abv: None,
+            energy: None,
+            pod: None,
+            pac: None,
+        };
+
+        let cases = [
             FullSpec {
                 solids: Some(Solids::new().other(
                     SolidsBreakdown::new().carbohydrates(Carbohydrates::new().polyols(Polyols::new().other(5.0))),
                 )),
-                micro: None,
-                abv: None,
-                energy: None,
-                pod: Some(0.0),
-                pac: Some(PAC::new()),
-            };
-        assert!(matches!(spec.to_composition(), Err(Error::CannotComputeEnergy(_))));
+                ..base
+            },
+            FullSpec {
+                solids: Some(
+                    Solids::new()
+                        .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().other(5.0))),
+                ),
+                ..base
+            },
+        ];
+        for spec in cases {
+            assert!(matches!(spec.to_composition(), Err(Error::CannotComputeEnergy(_))));
+        }
     }
 
     #[test]
