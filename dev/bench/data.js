@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795709677458,
+  "lastUpdate": 1795709681663,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -660301,6 +660301,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.86%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "caf675f962abea631cb18806ee9011d0af8030cb",
+          "message": "Define Vegetable Oil as USDA's oil blend\n\nVegetable Oil was a FruitSpec of plain fat, with no saturated fat. It is\nnow a FullSpec from USDA FNDDS \"Vegetable oil, NFS\", as given: 100 g of\nfat, 13.4 g of it saturated. It needs no energy override, as USDA's\n900 kcal is what the crate calculates. USDA's recipe for it blends\nsoybean, olive, canola, corn, and sunflower oils.\n\nIts note sets out why the name can stand for a blend: the EU, UK, and US\nlet a blend be listed as vegetable oils with each oil named, and Canada\nallows \"vegetable oil\" for one oil or a blend, with some exceptions. The\nCFIA's labelling page for fats and oils joins the literature.\n\nShoei Pistachio Paste needs no re-fit, as its label gives energy,\nprotein, fat, and carbohydrate, which the change leaves as they were.\nOnly its saturated fat rises, by 1.07 g per 100 g. A test asset covers\nthe new entry, and the TODO item for FullSpec moves to Completed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T11:05:43-05:00",
+          "tree_id": "dbb6b295f0fbf51a76f51714667bea4b46fdbcdd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/caf675f962abea631cb18806ee9011d0af8030cb"
+        },
+        "date": 1795709615981,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 66386,
+            "range": "±0.68%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 591168,
+            "range": "±0.66%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 48863,
+            "range": "±0.94%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 532727,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
