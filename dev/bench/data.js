@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795729439965,
+  "lastUpdate": 1795729555313,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -113069,6 +113069,204 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 636,
             "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f6ffffaad83217db9d65ec4bcc29b986b17e2fa6",
+          "message": "Add butter oil and anhydrous milk fat\n\nButter Oil and Anhydrous Milk Fat are simple specs at the US and Codex\nlimits: 99.6% fat and 0.1% MSNF for butteroil, and 99.8% fat and 0.1%\nMSNF for anhydrous milkfat, leaving 0.3% and 0.1% water. Ghee and\nClarified Butter are aliases of Butter Oil, as FNDDS makes its ghee,\nclarified butter wholly from SR Legacy's anhydrous butter oil, and AMF\nis an alias of Anhydrous Milk Fat.\n\nTheir references are Goff & Hartel's butter oil and anhydrous milk fat,\nand USDA Anhydrous Butter Oil, whose fat is SR Legacy's unrounded\n99.48 g, as the page's 99.5 g takes its proximates past 100 g.\n\ncompare_specs covers both, and the USDA reconciliation adds the butter\noil, with no label, as DairyLabelSpec keeps at least 2% water. Codex's\nmilkfat standard, 7 CFR 58.347, and ADPI's anhydrous milk fat standard\njoin the literature, and the butter products TODO item moves to\nCompleted.\n\nIt also regenerates the ingredients page's visual snapshots, fixing\nthe visual regression tests that b5e3d27b (\"Add butter and a salt\nfield to DairySheetSpec\") broke.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T16:24:55-05:00",
+          "tree_id": "24f46d931e8dbd9c3d06e1f6ceff055ee6f34a20",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f6ffffaad83217db9d65ec4bcc29b986b17e2fa6"
+        },
+        "date": 1795729461863,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4046,
+            "range": "± 54",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 152021,
+            "range": "± 1597",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2426,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 147604,
+            "range": "± 920",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4179,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4017,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4183,
+            "range": "± 66",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4248,
+            "range": "± 76",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4221,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4387,
+            "range": "± 85",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(milk)",
+            "value": 4251,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_sheet_spec_to_composition(sweet)",
+            "value": 4251,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 99511,
+            "range": "± 575",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 103081,
+            "range": "± 686",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 219324679,
+            "range": "± 1348686",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 631306,
+            "range": "± 4998",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 5880,
+            "range": "± 307",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 57,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 5760,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 93543,
+            "range": "± 1285",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 89730,
+            "range": "± 1341",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 146239,
+            "range": "± 1515",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 143801,
+            "range": "± 3383",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 326750,
+            "range": "± 2042",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14348,
+            "range": "± 113",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 636,
+            "range": "± 4",
             "unit": "ns/iter"
           },
           {
