@@ -297,3 +297,7 @@
 [^147]: U.S. Department of Agriculture. (n.d.). [_7 CFR § 58.347 - Butteroil or anhydrous milkfat_](https://www.law.cornell.edu/cfr/text/7/58.347). Legal Information Institute.
 
 [^148]: American Dairy Products Institute. (2024). [_Anhydrous Milk Fat Standard_](https://adpi.org/wp-content/uploads/2025/01/Anhydrous-Milk-Fat-Standard-v1.0_2024.pdf).
+
+[^149]: Marra, F., Lavorgna, A., Incarnato, L., Malvano, F., & Albanese, D. (2023, August). [_Optimization of Hazelnut Spread Based on Total or Partial Substitution of Palm Oil_](https://doi.org/10.3390/foods12163122). Foods, 12(16), 3122.
+
+[^150]: Icyer, N. C., Ozmen, D., Sener, D., Kokyar, N., & Toker, O. S. (2024, October). [_Structural and sensory impact of various emulsifiers in cocoa hazelnut spread formulations_](https://doi.org/10.1111/1750-3841.17343). Journal of Food Science, 89(10), 6590-6600.

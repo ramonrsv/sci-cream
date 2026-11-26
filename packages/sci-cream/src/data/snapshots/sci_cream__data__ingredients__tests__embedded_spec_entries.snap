@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 452  (non-alias: 383, independent: 368)
+total: 456  (non-alias: 387, independent: 369)
 
             0% Milk
             1% Milk
@@ -247,6 +247,7 @@ total: 452  (non-alias: 383, independent: 368)
             Lindt EXCELLENCE 70% Cacao Dark Chocolate
             Lindt EXCELLENCE 85% Cacao Dark Chocolate
             Lindt EXCELLENCE 95% Cacao Dark Chocolate
+[composite] Lindt Hazelnut Milk Chocolate Spread
             Liquid Soy Lecithin
             Liquid Sunflower Lecithin
             Locust Bean Gum
@@ -304,6 +305,7 @@ total: 452  (non-alias: 383, independent: 368)
 [composite] Nielsen-Massey Pure Vanilla Bean Paste
             Nielsen-Massey Pure Vanilla Extract
 [composite] Nielsen-Massey Pure Vanilla Powder
+[composite] Nutella Hazelnut Spread with Cocoa
             Oligofructose Powder
             Olive Oil
             Optimum Nutrition Gold Standard 100% Casein
@@ -321,7 +323,9 @@ total: 452  (non-alias: 383, independent: 368)
             Polysorbate 80
             Purest Natural Cocoa Powder
 [alias]     Rapeseed Oil
+[composite] Rigoni di Asiago Nocciolata
             Ripe Banana
+            Roasted Hazelnut
             Roasted Pistachio
 [alias]     Rose Essential Oil
             Salt

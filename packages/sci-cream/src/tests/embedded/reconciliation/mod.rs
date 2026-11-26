@@ -5,4 +5,5 @@
 mod chocolate;
 mod dairy;
 mod flavourings;
+mod nuts;
 mod util;

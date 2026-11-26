@@ -34,8 +34,6 @@
 - [ ] Once supported, add keys for `Stabilization`, `Emulsification`, etc. Intensive, like ABV?
 - [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
-- [ ] Add a Nutella Sweetened Hazelnut Cocoa Spread ingredient; not very useful, but it's common.
-- [ ] Add a Lindt Hazelnut Cocoa Spread ingredient; similar to Nutella, but less sugar, more useful.
 - [ ] Make the palette-derived balancing feasibility warnings (reachability, dominance, ratio-band,
       over-determination) lock- and evaporation-aware; `validate_balancing_targets` currently skips
       them when any comp is locked or mix evaporates, as they assume fully free, non-evaporated.
@@ -156,6 +154,8 @@
 
 ## Completed
 
+- [x] Add a Nutella Sweetened Hazelnut Cocoa Spread ingredient; not very useful, but it's common.
+- [x] Add a Lindt Hazelnut Cocoa Spread ingredient; similar to Nutella, but less sugar, more useful.
 - [x] Add butter products, e.g. "Butter", "Butter Oil", "Anhydrous Milk Fat", etc., all listed in
       Goff & Hartel's Table 3.2, though its unsalted butter row lists 0.8% protein in 0.5% MSNF.
 - [x] Add proper support for `FullSpec` and convert "Vegetable Oil" and "Palm Oil" to it; they use

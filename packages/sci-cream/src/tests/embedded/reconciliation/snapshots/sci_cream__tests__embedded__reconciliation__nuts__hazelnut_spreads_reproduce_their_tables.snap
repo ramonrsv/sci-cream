@@ -1,0 +1,29 @@
+---
+source: packages/sci-cream/src/tests/embedded/reconciliation/nuts.rs
+expression: "lines.join(\"\\n\")"
+---
+Nutella Hazelnut Spread with Cocoa, per 100 g
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               30.90     29.44     29.00    -1.46     -4.7%
+  saturated fat     10.60     10.99     11.00    +0.39     +3.7%
+  carbohydrate      57.50     58.07     58.00    +0.57     +1.0%
+  fiber              3.00      3.63      3.60    +0.63    +20.9%
+  sugars            56.30     55.66     56.00    -0.64     -1.1%
+  protein            6.30      6.58      6.60    +0.28     +4.4%
+
+Lindt Hazelnut Milk Chocolate Spread, per 100 g
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               33.00     32.62     33.00    -0.38     -1.2%
+  saturated fat      4.70      4.74      4.70    +0.04     +0.8%
+  carbohydrate      52.00     49.76     50.00    -2.24     -4.3%
+  sugars            46.00     46.52     47.00    +0.52     +1.1%
+  protein            9.20      9.17      9.20    -0.03     -0.3%
+
+Rigoni di Asiago Nocciolata, per 100 g
+  [    figure    | printed | modeled | rounded |  diff  | error ]
+  fat               32.00     31.80     32.00    -0.20     -0.6%
+  saturated fat      5.70      5.60      5.60    -0.10     -1.8%
+  carbohydrate      54.00     53.58     54.00    -0.42     -0.8%
+  fiber              3.60      3.85      3.90    +0.25     +7.0%
+  sugars            51.00     51.23     51.00    +0.23     +0.5%
+  protein            8.10      8.05      8.00    -0.05     -0.6%
