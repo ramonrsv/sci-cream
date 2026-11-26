@@ -3,10 +3,10 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Alcohol, CompKey, Composition, Micro, PAC, Solids, ToComposition},
+    composition::{Alcohol, Composition, Micro, PAC, Solids, ToComposition},
     constants::{self},
     error::Result,
-    validate::verify_is_within_100_percent,
+    validate::Validate,
 };
 
 /// Spec for ingredients with a full composition specified
@@ -22,6 +22,12 @@ use crate::{
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct FullSpec {
+    /// Energy of the ingredient as a whole, in kcal per 100 g.
+    ///
+    /// If not provided, it will be internally calculated from the composition of the solids and
+    /// the alcohol content, using the energy factors in [`constants::energy`].
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub energy: Option<f64>,
     /// Detailed specification of the solids and their breakdown into subcategories
     pub solids: Option<Solids>,
     /// Specification of the micro ingredients or components, like salt, emulsifiers, etc.
@@ -48,6 +54,7 @@ pub struct FullSpec {
 impl ToComposition for FullSpec {
     fn to_composition(&self) -> Result<Composition> {
         let Self {
+            energy,
             solids,
             micro,
             abv,
@@ -68,20 +75,20 @@ impl ToComposition for FullSpec {
                 .msnf_ws_salts(solids.milk.snf() * constants::pac::MSNF_WS_SALTS / 100.0))
         };
 
+        let calculate_energy = || Ok(solids.all().energy()? + alcohol.energy());
+
         let pod = pod.map_or_else(calculate_pod, Ok)?;
         let pac = pac.map_or_else(calculate_pac, Ok)?;
+        let energy = energy.map_or_else(calculate_energy, Ok)?;
 
-        let comp = Composition::new()
-            .energy(solids.all().energy()? + alcohol.energy())
+        Composition::new()
+            .energy(energy)
             .solids(solids)
             .micro(micro)
             .alcohol(alcohol)
             .pod(pod)
-            .pac(pac);
-
-        verify_is_within_100_percent(comp.get(CompKey::TotalSolids) + comp.get(CompKey::Alcohol))?;
-
-        Ok(comp)
+            .pac(pac)
+            .validate_into()
     }
 }
 
@@ -98,7 +105,7 @@ pub(crate) mod tests {
 
     use super::*;
     use crate::{
-        composition::{ArtificialSweeteners, Carbohydrates, CompKey, Solids, SolidsBreakdown, Sugars},
+        composition::{ArtificialSweeteners, Carbohydrates, CompKey, Fats, Solids, SolidsBreakdown, Sugars},
         error::Error,
         ingredient::Category,
         specs::IngredientSpec,
@@ -114,6 +121,7 @@ pub(crate) mod tests {
         name: "Water".to_string(),
         category: Category::Miscellaneous,
         spec: FullSpec {
+            energy: None,
             solids: None,
             micro: None,
             abv: None,
@@ -130,8 +138,253 @@ pub(crate) mod tests {
         comp.assert_all_keys(&[(CompKey::Water, 100.0)]);
     }
 
+    // https://fdc.nal.usda.gov/food-details/172336/nutrients
+    pub(crate) const ING_SPEC_FULL_CANOLA_OIL_STR: &str = r#"{
+      "name": "Canola Oil",
+      "category": "Miscellaneous",
+      "FullSpec": {
+        "energy": 884,
+        "solids": { "other": { "fats": { "total": 100, "saturated": 7.36, "trans": 0.395 } } }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_FULL_CANOLA_OIL: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Canola Oil".to_string(),
+        category: Category::Miscellaneous,
+        spec: FullSpec {
+            energy: Some(884.0),
+            solids: Some(
+                Solids::new().other(SolidsBreakdown::new().fats(Fats::new().total(100.0).saturated(7.36).trans(0.395))),
+            ),
+            micro: None,
+            abv: None,
+            pod: None,
+            pac: None,
+        }
+        .into(),
+    });
+
+    #[test]
+    fn to_composition_full_spec_canola_oil() {
+        let comp = asset_composition(&ING_SPEC_FULL_CANOLA_OIL);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 884.0),
+            (CompKey::OtherFats, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 100.0),
+            (CompKey::SaturatedFat, 7.36),
+            (CompKey::TransFat, 0.395),
+        ]);
+    }
+
+    // https://fdc.nal.usda.gov/food-details/171412/nutrients
+    pub(crate) const ING_SPEC_FULL_COCONUT_OIL_STR: &str = r#"{
+      "name": "Coconut Oil",
+      "category": "Miscellaneous",
+      "FullSpec": {
+        "energy": 892,
+        "solids": { "other": { "fats": { "total": 99.1, "saturated": 82.5, "trans": 0.028 } } }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_FULL_COCONUT_OIL: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Coconut Oil".to_string(),
+        category: Category::Miscellaneous,
+        spec: FullSpec {
+            energy: Some(892.0),
+            solids: Some(
+                Solids::new().other(SolidsBreakdown::new().fats(Fats::new().total(99.1).saturated(82.5).trans(0.028))),
+            ),
+            micro: None,
+            abv: None,
+            pod: None,
+            pac: None,
+        }
+        .into(),
+    });
+
+    #[test]
+    fn to_composition_full_spec_coconut_oil() {
+        let comp = asset_composition(&ING_SPEC_FULL_COCONUT_OIL);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 892.0),
+            (CompKey::OtherFats, 99.1),
+            (CompKey::TotalSolids, 99.1),
+            (CompKey::TotalFats, 99.1),
+            (CompKey::Water, 0.9),
+            (CompKey::SaturatedFat, 82.5),
+            (CompKey::TransFat, 0.028),
+        ]);
+    }
+
+    // https://fdc.nal.usda.gov/food-details/171413/nutrients
+    pub(crate) const ING_SPEC_FULL_OLIVE_OIL_STR: &str = r#"{
+      "name": "Olive Oil",
+      "category": "Miscellaneous",
+      "FullSpec": {
+        "energy": 884,
+        "solids": { "other": { "fats": { "total": 100, "saturated": 13.8 } } }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_FULL_OLIVE_OIL: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Olive Oil".to_string(),
+        category: Category::Miscellaneous,
+        spec: FullSpec {
+            energy: Some(884.0),
+            solids: Some(Solids::new().other(SolidsBreakdown::new().fats(Fats::new().total(100.0).saturated(13.8)))),
+            micro: None,
+            abv: None,
+            pod: None,
+            pac: None,
+        }
+        .into(),
+    });
+
+    #[test]
+    fn to_composition_full_spec_olive_oil() {
+        let comp = asset_composition(&ING_SPEC_FULL_OLIVE_OIL);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 884.0),
+            (CompKey::OtherFats, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 100.0),
+            (CompKey::SaturatedFat, 13.8),
+        ]);
+    }
+
+    // https://fdc.nal.usda.gov/food-details/171015/nutrients
+    pub(crate) const ING_SPEC_FULL_PALM_OIL_STR: &str = r#"{
+      "name": "Palm Oil",
+      "category": "Miscellaneous",
+      "FullSpec": {
+        "energy": 884,
+        "solids": { "other": { "fats": { "total": 100, "saturated": 49.3 } } }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_FULL_PALM_OIL: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Palm Oil".to_string(),
+        category: Category::Miscellaneous,
+        spec: FullSpec {
+            energy: Some(884.0),
+            solids: Some(Solids::new().other(SolidsBreakdown::new().fats(Fats::new().total(100.0).saturated(49.3)))),
+            micro: None,
+            abv: None,
+            pod: None,
+            pac: None,
+        }
+        .into(),
+    });
+
+    #[test]
+    fn to_composition_full_spec_palm_oil() {
+        let comp = asset_composition(&ING_SPEC_FULL_PALM_OIL);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 884.0),
+            (CompKey::OtherFats, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 100.0),
+            (CompKey::SaturatedFat, 49.3),
+        ]);
+    }
+
+    // https://fdc.nal.usda.gov/food-details/172370/nutrients
+    pub(crate) const ING_SPEC_FULL_SOYBEAN_OIL_STR: &str = r#"{
+      "name": "Soybean Oil",
+      "category": "Miscellaneous",
+      "FullSpec": {
+        "energy": 884,
+        "solids": { "other": { "fats": { "total": 100, "saturated": 15.3, "trans": 0.678 } } }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_FULL_SOYBEAN_OIL: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Soybean Oil".to_string(),
+        category: Category::Miscellaneous,
+        spec: FullSpec {
+            energy: Some(884.0),
+            solids: Some(
+                Solids::new().other(SolidsBreakdown::new().fats(Fats::new().total(100.0).saturated(15.3).trans(0.678))),
+            ),
+            micro: None,
+            abv: None,
+            pod: None,
+            pac: None,
+        }
+        .into(),
+    });
+
+    #[test]
+    fn to_composition_full_spec_soybean_oil() {
+        let comp = asset_composition(&ING_SPEC_FULL_SOYBEAN_OIL);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 884.0),
+            (CompKey::OtherFats, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 100.0),
+            (CompKey::SaturatedFat, 15.3),
+            (CompKey::TransFat, 0.678),
+        ]);
+    }
+
+    // https://fdc.nal.usda.gov/food-details/172357/nutrients
+    pub(crate) const ING_SPEC_FULL_SUNFLOWER_OIL_STR: &str = r#"{
+      "name": "Sunflower Oil",
+      "category": "Miscellaneous",
+      "FullSpec": {
+        "energy": 884,
+        "solids": { "other": { "fats": { "total": 100, "saturated": 9.01, "trans": 0.219 } } }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_FULL_SUNFLOWER_OIL: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Sunflower Oil".to_string(),
+        category: Category::Miscellaneous,
+        spec: FullSpec {
+            energy: Some(884.0),
+            solids: Some(
+                Solids::new().other(SolidsBreakdown::new().fats(Fats::new().total(100.0).saturated(9.01).trans(0.219))),
+            ),
+            micro: None,
+            abv: None,
+            pod: None,
+            pac: None,
+        }
+        .into(),
+    });
+
+    #[test]
+    fn to_composition_full_spec_sunflower_oil() {
+        let comp = asset_composition(&ING_SPEC_FULL_SUNFLOWER_OIL);
+
+        comp.assert_all_keys(&[
+            (CompKey::Energy, 884.0),
+            (CompKey::OtherFats, 100.0),
+            (CompKey::TotalSolids, 100.0),
+            (CompKey::TotalFats, 100.0),
+            (CompKey::SaturatedFat, 9.01),
+            (CompKey::TransFat, 0.219),
+        ]);
+    }
+
     pub(crate) static INGREDIENT_ASSETS_TABLE_FULL: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
-        LazyLock::new(|| vec![(ING_SPEC_FULL_WATER_STR, ING_SPEC_FULL_WATER.clone(), None)]);
+        LazyLock::new(|| {
+            vec![
+                (ING_SPEC_FULL_WATER_STR, ING_SPEC_FULL_WATER.clone(), None),
+                (ING_SPEC_FULL_CANOLA_OIL_STR, ING_SPEC_FULL_CANOLA_OIL.clone(), None),
+                (ING_SPEC_FULL_COCONUT_OIL_STR, ING_SPEC_FULL_COCONUT_OIL.clone(), None),
+                (ING_SPEC_FULL_OLIVE_OIL_STR, ING_SPEC_FULL_OLIVE_OIL.clone(), None),
+                (ING_SPEC_FULL_PALM_OIL_STR, ING_SPEC_FULL_PALM_OIL.clone(), None),
+                (ING_SPEC_FULL_SOYBEAN_OIL_STR, ING_SPEC_FULL_SOYBEAN_OIL.clone(), None),
+                (ING_SPEC_FULL_SUNFLOWER_OIL_STR, ING_SPEC_FULL_SUNFLOWER_OIL.clone(), None),
+            ]
+        });
 
     #[test]
     fn to_composition_err_when_pod_cannot_be_computed() {
@@ -139,6 +392,7 @@ pub(crate) mod tests {
             solids: Some(Solids::new()),
             micro: None,
             abv: None,
+            energy: None,
             pod: None,
             pac: None,
         };
@@ -170,6 +424,7 @@ pub(crate) mod tests {
             solids: Some(Solids::new()),
             micro: None,
             abv: None,
+            energy: None,
             pod: Some(0.0),
             pac: None,
         };
@@ -200,10 +455,65 @@ pub(crate) mod tests {
             solids: Some(Solids::new().other(SolidsBreakdown::new().others(100.0))),
             micro: None,
             abv: Some(50.0),
+            energy: None,
             pod: None,
             pac: None,
         };
         assert!(matches!(spec.to_composition(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn to_composition_err_when_fat_subset_exceeds_total() {
+        let base = FullSpec {
+            solids: None,
+            micro: None,
+            abv: None,
+            energy: None,
+            pod: None,
+            pac: None,
+        };
+
+        let cases = [
+            Fats::new().total(100.0).saturated(120.0),
+            Fats::new().total(100.0).trans(101.0),
+        ];
+        for fats in cases {
+            let spec = FullSpec {
+                solids: Some(Solids::new().other(SolidsBreakdown::new().fats(fats))),
+                ..base
+            };
+            assert!(matches!(spec.to_composition(), Err(Error::InvalidComposition(_))));
+        }
+    }
+
+    #[test]
+    fn to_composition_err_on_negative_values() {
+        let base = FullSpec {
+            solids: None,
+            micro: None,
+            abv: None,
+            energy: None,
+            pod: None,
+            pac: None,
+        };
+
+        let cases = [
+            FullSpec {
+                solids: Some(Solids::new().other(SolidsBreakdown::new().fats(Fats::new().total(-1.0)))),
+                ..base
+            },
+            FullSpec {
+                energy: Some(-1.0),
+                ..base
+            },
+            FullSpec {
+                pod: Some(-1.0),
+                ..base
+            },
+        ];
+        for spec in cases {
+            assert!(matches!(spec.to_composition(), Err(Error::CompositionNotPositive(_))));
+        }
     }
 
     #[test]
@@ -218,9 +528,29 @@ pub(crate) mod tests {
                 )),
                 micro: None,
                 abv: None,
+                energy: None,
                 pod: Some(0.0),
                 pac: Some(PAC::new()),
             };
         assert!(matches!(spec.to_composition(), Err(Error::CannotComputeEnergy(_))));
+    }
+
+    #[test]
+    fn to_composition_energy_override_skips_calculation() {
+        // As in `to_composition_err_when_energy_cannot_be_computed`, but with the energy given
+        use crate::composition::Polyols;
+        let spec =
+            FullSpec {
+                solids: Some(Solids::new().other(
+                    SolidsBreakdown::new().carbohydrates(Carbohydrates::new().polyols(Polyols::new().other(5.0))),
+                )),
+                micro: None,
+                abv: None,
+                energy: Some(10.0),
+                pod: Some(0.0),
+                pac: Some(PAC::new()),
+            };
+
+        spec.to_composition().unwrap().assert_keys(&[(CompKey::Energy, 10.0)]);
     }
 }

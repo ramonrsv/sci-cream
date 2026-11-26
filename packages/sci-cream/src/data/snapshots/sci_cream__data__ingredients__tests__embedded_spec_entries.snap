@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 432  (non-alias: 368, independent: 354)
+total: 438  (non-alias: 373, independent: 359)
 
             0% Milk
             1% Milk
@@ -64,6 +64,7 @@ total: 432  (non-alias: 368, independent: 354)
             Callebaut Power 41 Milk Chocolate
             Callebaut W2 White Chocolate
             Callebaut Zestina Plein Arome Cocoa Powder
+            Canola Oil
             Carboxymethyl Cellulose
             Carnation 2% Evaporated Partly Skimmed Milk
             Carnation Condensed Milk (UK)
@@ -82,6 +83,7 @@ total: 432  (non-alias: 368, independent: 354)
             Cocoa Powder, 20/22% Fat
             Cocoa Powder, 22% Fat
             Cocoa Powder, 22/24% Fat
+            Coconut Oil
 [alias]     Coffee Extract
 [alias]     Commercial Stabilizers
             Cornstarch
@@ -294,6 +296,7 @@ total: 432  (non-alias: 368, independent: 354)
             Nielsen-Massey Pure Vanilla Extract
 [composite] Nielsen-Massey Pure Vanilla Powder
             Oligofructose Powder
+            Olive Oil
             Optimum Nutrition Gold Standard 100% Casein
             Optimum Nutrition Gold Standard 100% Isolate
             Optimum Nutrition Gold Standard 100% Whey
@@ -308,6 +311,7 @@ total: 432  (non-alias: 368, independent: 354)
             Pistachio
             Polysorbate 80
             Purest Natural Cocoa Powder
+[alias]     Rapeseed Oil
             Ripe Banana
             Roasted Pistachio
 [alias]     Rose Essential Oil
@@ -329,6 +333,7 @@ total: 432  (non-alias: 368, independent: 354)
             Sorbitol
             Southward Sodium Caseinate
             Soy Lecithin Powder
+            Soybean Oil
 [alias]     Spearmint Essential Oil
             Splenda (Monk Fruit)
             Splenda (Stevia)
@@ -344,6 +349,7 @@ total: 432  (non-alias: 368, independent: 354)
             Sucrose
             Sugar Twin
             Sunflower Lecithin Powder
+            Sunflower Oil
             SweetLeaf Stevia
 [alias]     Table Cream
             Tapioca Starch

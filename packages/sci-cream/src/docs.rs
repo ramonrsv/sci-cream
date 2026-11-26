@@ -117,7 +117,7 @@ pub mod ingredients {
             },
         },
         specs::{
-            ChocolateLabelSpec, ChocolateSpec, CocoaPowderSpec, CompositeSpec, NutSpec,
+            ChocolateLabelSpec, ChocolateSpec, CocoaPowderSpec, CompositeSpec, FullSpec, NutSpec,
             estimate_chocolate_cocoa_snf_from_fiber, estimate_chocolate_snf_split_from_protein_by_fiber,
         },
     };

@@ -275,3 +275,13 @@
 [^136]: Canadian Food Inspection Agency. (2025, May). [_Canadian Food Compositional Standards_](https://inspection.canada.ca/en/about-cfia/acts-and-regulations/list-acts-and-regulations/documents-incorporated-reference/canadian-food-compositional-standards-0).
 
 [^137]: [_Cocoa solids_](https://en.wikipedia.org/w/index.php?title=Cocoa_solids&oldid=1354667877). (2026, May). In Wikipedia.
+
+[^138]: Codex Alimentarius Commission. (1999). [_Standard for Named Vegetable Oils (CXS 210-1999)_](https://www.fao.org/4/y2774e/y2774e04.htm). FAO/WHO.
+
+[^139]: Health Canada. (2024, November). [_Novel food information: NuSun mid-oleic sunflower oil_](https://www.canada.ca/en/health-canada/services/food-nutrition/genetically-modified-foods-other-novel-foods/approved-products/novel-food-information-nusun-oleic-sunflower-oil.html).
+
+[^140]: National Sunflower Association. (n.d.). [_2024 U.S. Sunflower Crop Quality Report_](https://www.sunflowernsa.com/uploads/38/2024sunflowercropqualityreport.pdf).
+
+[^141]: European Commission. (n.d.). [_Regulation (EC) No 1881/2006_](https://www.legislation.gov.uk/eur/2006/1881/annex). The National Archives.
+
+[^142]: [_Erucic acid_](https://en.wikipedia.org/w/index.php?title=Erucic_acid&oldid=1387362674). (2026, November). In Wikipedia.
