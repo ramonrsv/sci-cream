@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795725062669,
+  "lastUpdate": 1795725208057,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -616906,6 +616906,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 523.38,
             "range": "20.17",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b5e3d27b8ef92868c1343dd8dcb4b8dd96b038d6",
+          "message": "Add butter and a salt field to DairySheetSpec\n\nUnsalted Butter, aliased as Butter, is a simple spec at 82% fat and 1%\nMSNF, within the 80% minimum fat of the US, Canada, and Codex, and\nCodex's 2% maximum MSNF. Salted Butter composes it with 1.6% salt.\nTheir references are Goff & Hartel's unsalted butter and USDA's\nunsalted and salted butter.\n\nGoff & Hartel's Table 3.2 lists 0.8% protein in its butter's 0.5%\nMSNF, which the row's 83% total solids confirm, so the entry leaves\nthe protein out as almost certainly an error. USDA Unsalted Butter\ntakes its water and fat from Foundation and the rest from SR Legacy's\nrecord of the same food, whose own water repeats the salted record's,\nleaving its proximates 1.72 g short.\n\nDairySheetSpec gains an optional salt, part of the ash where listed.\nIt counts as MicroSpec::Salt does, with its own PAC, outside the milk\nminerals and MSNF. USDA Salted Butter takes it from the sodium beyond\nthe unsalted record's. Codex's standard for butter and the U.S. Code's\ndefinition of butter join the literature.\n\ncompare_specs covers both butters, and the USDA reconciliation adds\ntheir rows. Its label ceiling is now optional, as DairyLabelSpec has\nno salt, so salted butter has no label variant.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T14:19:14-05:00",
+          "tree_id": "5cbef3a3cada1aa7511a97d110ccdc157e5624b2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b5e3d27b8ef92868c1343dd8dcb4b8dd96b038d6"
+        },
+        "date": 1795725114259,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 43.75,
+            "range": "4.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 45.63,
+            "range": "4.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 52.25,
+            "range": "4.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2157.13,
+            "range": "65.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 367.5,
+            "range": "5.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 380,
+            "range": "8.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 391.5,
+            "range": "3.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19047.38,
+            "range": "248.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 810,
+            "range": "12.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 58.25,
+            "range": "2.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.63,
+            "range": "2.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 45.75,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 132.75,
+            "range": "9.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 76.63,
+            "range": "8.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 48.03,
+            "range": "0.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 36.64,
+            "range": "0.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 623.38,
+            "range": "24.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 662.5,
+            "range": "13.33",
             "unit": "ms"
           }
         ]
