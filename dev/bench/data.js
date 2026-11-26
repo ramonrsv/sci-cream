@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795729161989,
+  "lastUpdate": 1795729231518,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -750421,6 +750421,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.58,
             "range": "0.26",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f6ffffaad83217db9d65ec4bcc29b986b17e2fa6",
+          "message": "Add butter oil and anhydrous milk fat\n\nButter Oil and Anhydrous Milk Fat are simple specs at the US and Codex\nlimits: 99.6% fat and 0.1% MSNF for butteroil, and 99.8% fat and 0.1%\nMSNF for anhydrous milkfat, leaving 0.3% and 0.1% water. Ghee and\nClarified Butter are aliases of Butter Oil, as FNDDS makes its ghee,\nclarified butter wholly from SR Legacy's anhydrous butter oil, and AMF\nis an alias of Anhydrous Milk Fat.\n\nTheir references are Goff & Hartel's butter oil and anhydrous milk fat,\nand USDA Anhydrous Butter Oil, whose fat is SR Legacy's unrounded\n99.48 g, as the page's 99.5 g takes its proximates past 100 g.\n\ncompare_specs covers both, and the USDA reconciliation adds the butter\noil, with no label, as DairyLabelSpec keeps at least 2% water. Codex's\nmilkfat standard, 7 CFR 58.347, and ADPI's anhydrous milk fat standard\njoin the literature, and the butter products TODO item moves to\nCompleted.\n\nIt also regenerates the ingredients page's visual snapshots, fixing\nthe visual regression tests that b5e3d27b (\"Add butter and a salt\nfield to DairySheetSpec\") broke.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T16:24:55-05:00",
+          "tree_id": "24f46d931e8dbd9c3d06e1f6ceff055ee6f34a20",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f6ffffaad83217db9d65ec4bcc29b986b17e2fa6"
+        },
+        "date": 1795729134483,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 81.89,
+            "range": "6.52",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 24.41,
+            "range": "6.69",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 24.39,
+            "range": "6.68",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 210,
+            "range": "12.33",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 210,
+            "range": "12.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 77.16,
+            "range": "6.53",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.4,
+            "range": "0.42",
             "unit": "ms"
           }
         ]
