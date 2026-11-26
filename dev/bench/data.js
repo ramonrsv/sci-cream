@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795724518887,
+  "lastUpdate": 1795724523301,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -661554,6 +661554,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.10%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2d1d3041d3a0803194baeadf0bac645c07fcefc7",
+          "message": "Take a sheet's salt as grams or from its sodium\n\nDairySheetSpec's salt is now an AddedSalt, given as { \"grams\": g } or\n{ \"from_sodium\": mg }, the milligrams of sodium from the added salt,\nwhich the spec converts by salt's molar mass over sodium's. Sodium\njoins the molar masses for it.\n\nUSDA Salted Butter now gives its 632 mg of added sodium, the 643 mg it\nlists less the 11 mg of its unsalted record, in place of the 1.61 g\nworked out by hand, so its salt is the unrounded 1.6066 g.\n\nThe total sodium a sheet lists includes milk's own, so it is up to the\nuser to determine the added salt's share, as the field's note says.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T15:15:25-05:00",
+          "tree_id": "cface3147529105bad8f7246324a63d34fa7f9c7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2d1d3041d3a0803194baeadf0bac645c07fcefc7"
+        },
+        "date": 1795724444060,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 71381,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 543191,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 50459,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 400308,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
