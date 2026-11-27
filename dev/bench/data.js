@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795753778484,
+  "lastUpdate": 1795753783552,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -763477,6 +763477,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/bbabd458f7fc446c7c79fe261b11bf5c00ad57ad"
         },
         "date": 1795752634900,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "615e94817aae697197147a39fa33e56b12eb1667",
+          "message": "Update `sci-cream/CHANGELOG.md` for 0.0.9 release\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T23:26:05-05:00",
+          "tree_id": "782e2a595b36ba7b71b845ecb12d5bd5d867b084",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/615e94817aae697197147a39fa33e56b12eb1667"
+        },
+        "date": 1795753782619,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
