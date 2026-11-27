@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795800428149,
+  "lastUpdate": 1795800503362,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -786145,6 +786145,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2245.04,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8b3ae78ec431cd1035702ee12ab456d10df16ffd",
+          "message": "Drop HTML comments and join <code> groups\n\nThe app's Markdown prints raw HTML as text, since it also shows\nusers' comments, so two constructs in the data notes leaked into\ningredient pages: lint directives in HTML comments showed verbatim,\nand the <code> groups that clippy's doc_link_code asks equations\nwith linked constants to use showed their tags.\n\nThe entry parser now drops HTML comments, so they never reach the\npairing, and gen-data rewrites each <code> group after pairing as\njoined code spans around code links, which read as one expression in\nthe app's prose styles. The code masking in doc-links.ts moves to\nmarkdown-code.ts, which the new raw-html.ts shares.\n\nCLAUDE.md now calls what pnpm runs in scripts/ a script, not any\nfile, since scripts/tsconfig.json sits there too.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T12:06:44-05:00",
+          "tree_id": "0671a1f011931481b077bc5e1542cc26765590e3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8b3ae78ec431cd1035702ee12ab456d10df16ffd"
+        },
+        "date": 1795800403216,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1248.86,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 371.21,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 2034.14,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 614.5,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 663.47,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2244.85,
             "unit": "KB"
           }
         ]
