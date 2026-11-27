@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795804039878,
+  "lastUpdate": 1795804091972,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -759648,6 +759648,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.41,
             "range": "0.58",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0086970801aae7d532c5edc8b9c654953ae7d1b9",
+          "message": "Snapshot a <code> group's equation in the notes\n\nThe joined code spans gen-data writes for a <code> group read as one\nexpression only while the app's inline code has no background or\nbackticks. A narrow snapshot of USDA Milk Chocolate's MSNF equation\nguards that look, and checks that no <code> tag shows and that the\nconstant links into the hosted rustdoc.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T12:33:14-05:00",
+          "tree_id": "90a6b892b3858ec440df4f03762295b69ee3f10b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0086970801aae7d532c5edc8b9c654953ae7d1b9"
+        },
+        "date": 1795804033321,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 51.92,
+            "range": "5.75",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.27,
+            "range": "3.51",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.22,
+            "range": "3.49",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 137.5,
+            "range": "7.73",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 137.5,
+            "range": "7.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 48.42,
+            "range": "5.68",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.59,
+            "range": "0.24",
             "unit": "ms"
           }
         ]
