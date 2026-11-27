@@ -24,7 +24,8 @@
  * (`lib/doc-links.ts`). A citation rustdoc didn't render the same way is a hard error.
  *
  * The app's renderer prints raw HTML as text, so comments leave out HTML comments, and each
- * `<code>` group, an expression with links, becomes joined code spans (`lib/raw-html.ts`).
+ * `<code>` group, an expression with links, becomes joined code spans (`lib/raw-html.ts`). Any
+ * other raw HTML is a hard error.
  *
  * Those pages come from `pnpm doc:site`, and the crate only compiles once `generated/min/` holds a
  * file for every source `data.rs` embeds. `--min` writes that copy alone, reading no rendered page,
@@ -40,7 +41,7 @@ import path from "node:path";
 
 import { entryLabel, parseMarkdownEntries } from "./lib/data-entries";
 import { DATA_PAGES, comparable, pairDocLinks, readEntryLinks } from "./lib/doc-links";
-import { joinCodeGroups } from "./lib/raw-html";
+import { findRawHtml, joinCodeGroups } from "./lib/raw-html";
 
 const PKG_ROOT = path.resolve(import.meta.dirname, "..");
 const SOURCE_DIRS = ["ingredients", "recipes"] as const;
@@ -99,7 +100,13 @@ function makeCommentResolver(
     /** Links first, so the pairing sees prose and never the appended bibliography. */
     const paired = pairDocLinks(label, comment, links);
     /** Then the `<code>` groups, which join around the URLs the pairing wrote. */
-    return resolveFootnotes(label, joinCodeGroups(label, paired), defs);
+    const comments = resolveFootnotes(label, joinCodeGroups(label, paired), defs);
+    const html = findRawHtml(comments);
+    if (html.length > 0) {
+      const found = html.join(", ");
+      throw new Error(`Entry '${label}' holds raw HTML, which the app prints as text: ${found}`);
+    }
+    return comments;
   };
 }
 

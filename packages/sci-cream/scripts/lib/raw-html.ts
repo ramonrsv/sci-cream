@@ -5,7 +5,8 @@
  * {@link stripHtmlComments} drops HTML comments, such as lint directives, which are never meant
  * for readers. {@link joinCodeGroups} turns each `<code>` group, the form clippy's `doc_link_code`
  * asks of an expression with links, into joined code spans, which read as one expression in the
- * app's prose styles. Neither touches code, which renders as written.
+ * app's prose styles. {@link findRawHtml} lists any raw HTML left over. None of them touches code,
+ * which renders as written.
  */
 import { CODE_FENCE, CODE_SPAN, blank } from "./markdown-code";
 
@@ -18,6 +19,13 @@ const HTML_COMMENT =
 
 /** A `<code>` group. */
 const CODE_GROUP = /<code>([\s\S]*?)<\/code>/g;
+
+/**
+ * Raw HTML: a comment, a declaration or processing instruction, or an opening or closing tag. An
+ * autolink, such as `<https://example.org>`, and an escaped `\<` are markdown instead.
+ */
+const RAW_HTML =
+  /(?<!\\)(?:<!--(?:(?!-->)[\s\S])*(?:-->)?|<[!?][^>]*>|<\/?[A-Za-z][A-Za-z\d-]*(?:\s[^<>]*)?\/?>)/g;
 
 /** A link to a destination, the form pairing gives each intra-doc link. */
 const LINK = /\[((?:[^[\]\\]|\\.)*)\]\(([^)\s]+)\)/g;
@@ -73,6 +81,13 @@ export function joinCodeGroups(label: string, markdown: string): string {
     cursor = end;
   }
   return result + markdown.slice(cursor);
+}
+
+/** The raw HTML in `markdown` outside code, in order, each as written. */
+export function findRawHtml(markdown: string): string[] {
+  return [...prose(markdown).matchAll(RAW_HTML)].map((match) =>
+    markdown.slice(match.index, match.index + match[0].length),
+  );
 }
 
 /** A group's text as code spans, around its links as code links. */

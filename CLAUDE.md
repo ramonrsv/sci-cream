@@ -273,7 +273,8 @@ an id on its target page, which rustdoc doesn't check; anything else is a hard e
 An equation with a linked constant is a `<code>` group, `<code>x * [CONST]</code>`, since clippy's
 `doc_link_code` rejects a code span joined to a code link. The app's `Markdown` prints raw HTML as
 text, as it also shows users' comments, so `lib/raw-html.ts` rewrites each group as joined code
-spans and code links, and the entry parser drops HTML comments, such as lint directives.
+spans and code links, and the entry parser drops HTML comments, such as lint directives. Any other
+raw HTML left in an entry's comments is a hard error.
 
 `gen:data` builds the docs it reads: `gen:data:min` first, since the crate only compiles once
 `generated/min/` holds a file for every source `data.rs` embeds, then `doc:site`, then the full

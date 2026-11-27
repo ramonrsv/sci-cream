@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { joinCodeGroups, stripHtmlComments } from "./raw-html";
+import { findRawHtml, joinCodeGroups, stripHtmlComments } from "./raw-html";
 
 /** `rows` as the lines of one markdown string. */
 const lines = (...rows: string[]) => rows.join("\n");
@@ -99,5 +99,27 @@ describe("joinCodeGroups", () => {
     expect(() => joinCodeGroups("Vanilla Extract", "<code>a&nbsp;b</code>")).toThrow(
       /'Vanilla Extract' has a reference a <code> group can't decode: &nbsp;/,
     );
+  });
+});
+
+describe("findRawHtml", () => {
+  test("finds tags and comments, in order", () => {
+    const markdown = 'A<sup>2</sup>, a <br/>, a <span class="x">, and <!-- a note -->.';
+    expect(findRawHtml(markdown)).toEqual([
+      "<sup>",
+      "</sup>",
+      "<br/>",
+      '<span class="x">',
+      "<!-- a note -->",
+    ]);
+  });
+
+  test("passes over autolinks, escapes, comparisons, and character references", () => {
+    const markdown = "See <https://example.org> or <a@b.c>; \\<b>, 1 < 2, and &lt;b&gt; are text.";
+    expect(findRawHtml(markdown)).toEqual([]);
+  });
+
+  test("passes over fenced code and code spans", () => {
+    expect(findRawHtml(lines("```html", "<b>bold</b>", "```", "", "Use `<b>`."))).toEqual([]);
   });
 });
