@@ -185,8 +185,8 @@ rustfmt's `group_imports` can't express the test groups, so this is kept by hand
 
 #### Crate features
 
-- `data` (default) — embeds the JSON files in `data/ingredients/*.json` at compile time via
-  `include_str!` in `data.rs`. Adds `serde_json` dep.
+- `data` (default) — embeds `data/{ingredients,recipes}/generated/min/*.json` at compile time
+  via `include_str!` in `src/data/`. Adds `serde_json` dep.
 - `database` (default) — `IngredientDatabase` and seeding APIs.
 - `wasm` — `wasm-bindgen` + `serde-wasm-bindgen`; needed for the npm package.
 - `diesel` — optional Postgres ORM support for `IngredientSpec`. Requires `libpq-dev`.
@@ -196,9 +196,12 @@ wasm_bindgen)]`. The same crate must compile cleanly for native and WASM targets
 
 #### Adding ingredient definitions
 
-JSON files in `packages/sci-cream/data/ingredients/<category>.json` are the source of truth for
-embedded data. After editing, rebuild WASM (`pnpm build:package`) and re-run `pnpm seed-db` in the
-app to refresh the database copy.
+`packages/sci-cream/data/{ingredients,recipes}/<name>.md` are the source of truth for embedded
+data: one entry per `##` section, its JSON spec in the first code fence and its notes after.
+`pnpm gen:data` resolves them into the tracked `generated/min/*.json` the crate embeds, and the
+gitignored `generated/full/*.json` the app reads, notes included. After editing,
+rebuild WASM (`pnpm build:package`, which runs `gen:data` first) and re-run `pnpm seed-db` in the
+app to refresh the copies it seeds for the test users.
 
 #### Float assertions
 
@@ -277,7 +280,7 @@ spans and code links, and the entry parser drops HTML comments, such as lint dir
 raw HTML left in an entry's comments is a hard error.
 
 `gen:data` builds the docs it reads: `gen:data:min` first, since the crate only compiles once
-`generated/min/` holds a file for every source `data.rs` embeds, then `doc:site`, then the full
+`generated/min/` holds a file for every source `src/data/` embeds, then `doc:site`, then the full
 pass. CI's `gen_check` runs `gen:data:check`, which validates the pairing and the tracked `min/`.
 
 #### Default vs. reference dairy ingredients

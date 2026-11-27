@@ -28,8 +28,8 @@
  * other raw HTML is a hard error.
  *
  * Those pages come from `pnpm doc:site`, and the crate only compiles once `generated/min/` holds a
- * file for every source `data.rs` embeds. `--min` writes that copy alone, reading no rendered page,
- * so `pnpm gen:data` can seed the crate, build the docs, then pair the links against them.
+ * file for every source `src/data/` embeds. `--min` writes that copy alone, reading no rendered
+ * page, so `pnpm gen:data` can seed the crate, build the docs, then pair the links against them.
  *
  * Run `pnpm gen:data`, which builds the docs first, or this script directly after `pnpm doc:site`:
  * `node --import tsx scripts/gen-data.ts [--check | --min]`. With no flag it writes both variants;
