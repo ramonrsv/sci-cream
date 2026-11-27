@@ -11,6 +11,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- `DairySheetSpec::salt`, an `AddedSalt` of `Grams` or `FromSodium` (mg), counted as salt, not MSNF.
+- `molar_mass::SODIUM`, for converting an `AddedSalt::FromSodium` to grams of salt.
+- `FullSpec::energy`, overriding the energy it calculates, e.g. USDA's 884 kcal for oils, not 900.
+- New ingredients, now 387 specs and 69 aliases, up from 361 and 64:
+  - Chocolate: generic 30/35/40% milk and white, Cadbury Dairy Milk, Valrhona and Belcolade whites.
+  - Dairy defaults: unsalted and salted butter, butter oil (ghee, clarified butter), and AMF.
+  - Dairy references: Goff & Hartel and USDA butters and butter oils, and Goff & Hartel's AMF.
+  - Oils: canola (rapeseed), coconut, olive, soybean, and sunflower, from USDA SR Legacy.
+  - Nuts: roasted hazelnut, and the Nutella, Lindt, and Nocciolata spreads, fit to their labels.
+- `CocoaPowderSpec::cocoa_butter` docs on using a sheet's fat as is, even when on dry matter.
+
+### Changed
+
+- Adopt the cocoa terminology of standards and spec sheets, where "cocoa solids" is the total:
+  - `CompKey::CocoaSolids` now names the total, formerly `CacaoSolids`; check every existing use.
+  - `CompKey::CocoaSNF` names the non-fat part, formerly `CocoaSolids`, displayed "Cocoa SNF".
+  - The chocolate and cocoa powder specs' `cacao_solids` is `cocoa_solids`, JSON key included.
+  - `estimate_chocolate_snf_split_from_protein_by_cacao_solids` is now `_by_cocoa_solids`.
+  - The seven `STD_*_IN_COCOA_SOLIDS` fractions of the non-fat part are `STD_*_IN_COCOA_SNF`.
+  - `STD_COCOA_BUTTER_IN_CACAO_SOLIDS` is `STD_COCOA_BUTTER_IN_COCOA_SOLIDS`.
+  - `hf::COCOA_SOLIDS` is `hf::COCOA_SNF`, as Corvitto's 1.8 is the non-fat part's.
+  - Modules `constants::composition::cacao` and `specs::chocolate` are renamed `cocoa`.
+  - The guide's chocolate chapter is now "Cocoa", at `docs#cocoa`, citing Codex, Canada, and the EU.
+- Milk and white `ChocolateLabelSpec`s scale a rounding overfill into 100 g, rather than reject it.
+- 'Palm Oil' is a USDA `FullSpec` of `OtherFats`, not `NutFat`: HF 140 to 0, energy 900 to 884.
+- 'Vegetable Oil' is a `FullSpec` of USDA's FNDDS oil blend, at 13.4% saturated fat, up from none.
+- Crate and README examples use 'Cocoa Powder, 22/24% Fat', the common pastry grade, not the 17%.
+
+### Fixed
+
+- `FullSpec` accepted negative values and fat subsets over the total; it now validates them.
+- Broken `data/ingredients/generated` link in `README.md`.
+
+### Removed
+
+- 'Cocoa Powder, 15% Fat', '20% Fat', and '24% Fat', leaving 10%, 13%, 17%, 22%, and the grades.
+
 ## [0.0.8] - 2026-11-22
 
 ### Added
