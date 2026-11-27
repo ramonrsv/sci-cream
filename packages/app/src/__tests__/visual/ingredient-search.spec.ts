@@ -64,6 +64,26 @@ test.describe("Visual Regression: Ingredient Search", () => {
     );
   });
 
+  test("ingredient notes - a <code> group's equation, as joined code", async ({ page }) => {
+    await goToIngredientsPage(page);
+    await selectIngredientByName(page, "USDA Milk Chocolate");
+
+    // gen-data rewrites `<code>` groups as joined code spans, since the app prints HTML as text
+    const notes = page.locator(".search-detail-panel .prose");
+    await expect(notes).not.toContainText("<code>");
+
+    const equation = notes.locator("li", { hasText: "MSNF / (1 -" });
+    await expect(equation.locator("code", { hasText: "MSNF / (1 -" })).toBeVisible();
+    const link = equation.getByRole("link", { name: "STD_BUTTERFAT_IN_WHOLE_MILK_POWDER" });
+    await expect(link).toHaveAttribute(
+      "href",
+      /^\/rustdoc\/sci_cream\/.*\/constant\.STD_BUTTERFAT_IN_WHOLE_MILK_POWDER\.html$/,
+    );
+
+    // Just the equation's item, so edits elsewhere in the notes leave the snapshot alone
+    await expect(equation).toHaveScreenshot("ingredient-search-notes-code-group.png");
+  });
+
   test("alias selected - 'Alias' badge in detail header", async ({ page }) => {
     await goToIngredientsPage(page);
     await selectIngredientByName(page, "Whole Milk");
