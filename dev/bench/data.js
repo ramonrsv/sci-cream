@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795806326120,
+  "lastUpdate": 1795806330462,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -772873,6 +772873,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/76842d5f4dd0f2c7c08ee7958a4dc6db070cca63"
         },
         "date": 1795805840391,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3b98c303d252ee42c63ee38a09074b066595b24b",
+          "message": "Fix badge height so a failed badge keeps its row\n\nA badge that fails to load renders as a broken-image placeholder\nwith its alt text, which sizes its line 1px taller than the 20px\nSVG. The visual snapshots mask the badge rows but keep their box,\nso the docs overview page shifted down a pixel whenever GitHub's\nworkflow badge endpoint timed out.\n\nGive badge images their own 20px height, so the row is the same\nsize whether or not every badge loads.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T14:00:39-05:00",
+          "tree_id": "9ae96645448d3eb0a3b83b0bc84e2b1c770912af",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3b98c303d252ee42c63ee38a09074b066595b24b"
+        },
+        "date": 1795806329694,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
