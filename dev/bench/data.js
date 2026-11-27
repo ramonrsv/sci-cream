@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795800416097,
+  "lastUpdate": 1795800424019,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -722978,6 +722978,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1046.27,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8b3ae78ec431cd1035702ee12ab456d10df16ffd",
+          "message": "Drop HTML comments and join <code> groups\n\nThe app's Markdown prints raw HTML as text, since it also shows\nusers' comments, so two constructs in the data notes leaked into\ningredient pages: lint directives in HTML comments showed verbatim,\nand the <code> groups that clippy's doc_link_code asks equations\nwith linked constants to use showed their tags.\n\nThe entry parser now drops HTML comments, so they never reach the\npairing, and gen-data rewrites each <code> group after pairing as\njoined code spans around code links, which read as one expression in\nthe app's prose styles. The code masking in doc-links.ts moves to\nmarkdown-code.ts, which the new raw-html.ts shares.\n\nCLAUDE.md now calls what pnpm runs in scripts/ a script, not any\nfile, since scripts/tsconfig.json sits there too.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T12:06:44-05:00",
+          "tree_id": "0671a1f011931481b077bc5e1542cc26765590e3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8b3ae78ec431cd1035702ee12ab456d10df16ffd"
+        },
+        "date": 1795800363639,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 786.42,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 954.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 730.78,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 898.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 740.64,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 908.37,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 714.19,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 881.91,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 715.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 883.44,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1046.2,
             "unit": "KB"
           },
           {
