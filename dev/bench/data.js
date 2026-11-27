@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795821301917,
+  "lastUpdate": 1795821511583,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -629497,6 +629497,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 690.13,
             "range": "39.08",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fb70b576ccfe917305124cbcac1347deb4739338",
+          "message": "Emit data files' intros for the app\n\nA data file's intro, the notes between its title and first entry,\napplies to every entry in the file, but gen-data skipped it, so the\napp never had it. gen-data now writes each directory's intros to\ngenerated/full/intros.json, processed like entries' comments: links\npaired against the intro rustdoc renders, <code> groups joined, and\nfootnotes appended.\n\nThe package's loaders map each built-in entry and recipe to its\nfile's intro, and recipeEntryId takes just the name and author it\nreads, so the recipe map needs no copies of the entries.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T17:50:40-05:00",
+          "tree_id": "872efd18d0d309e41e4abcd452ddd1e526008da2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fb70b576ccfe917305124cbcac1347deb4739338"
+        },
+        "date": 1795821455775,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 36.88,
+            "range": "3.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 45.13,
+            "range": "3.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 44.63,
+            "range": "3.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1832.5,
+            "range": "28.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 237.75,
+            "range": "6.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 242.38,
+            "range": "6.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 250.63,
+            "range": "7.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 11797,
+            "range": "126.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.5,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 718.25,
+            "range": "21.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 42,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 44.88,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 33.88,
+            "range": "1.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 31.38,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 112.13,
+            "range": "10.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 57.88,
+            "range": "4.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 37.41,
+            "range": "0.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.16,
+            "range": "0.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 489.38,
+            "range": "26.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 504.38,
+            "range": "14.95",
             "unit": "ms"
           }
         ]
