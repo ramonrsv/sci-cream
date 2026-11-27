@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795820926606,
+  "lastUpdate": 1795820990902,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -675961,6 +675961,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.20%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fb70b576ccfe917305124cbcac1347deb4739338",
+          "message": "Emit data files' intros for the app\n\nA data file's intro, the notes between its title and first entry,\napplies to every entry in the file, but gen-data skipped it, so the\napp never had it. gen-data now writes each directory's intros to\ngenerated/full/intros.json, processed like entries' comments: links\npaired against the intro rustdoc renders, <code> groups joined, and\nfootnotes appended.\n\nThe package's loaders map each built-in entry and recipe to its\nfile's intro, and recipeEntryId takes just the name and author it\nreads, so the recipe map needs no copies of the entries.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T17:50:40-05:00",
+          "tree_id": "872efd18d0d309e41e4abcd452ddd1e526008da2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fb70b576ccfe917305124cbcac1347deb4739338"
+        },
+        "date": 1795820891847,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 46645,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 429907,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32066,
+            "range": "±1.01%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 319255,
+            "range": "±1.09%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
