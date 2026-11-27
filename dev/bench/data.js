@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795758373369,
+  "lastUpdate": 1795758402168,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -783463,6 +783463,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/f1b930e0bc72d4e9439f158ba55d77335c8937ea"
         },
         "date": 1795757854491,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1248.86,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 371.21,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 2034.83,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 614.6,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 663.59,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2245.69,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a06f9a930209e199e4825dca36267c6c68cb291a",
+          "message": "Add an API sidebar item for the hosted rustdoc\n\nIt opens /rustdoc/sci_cream/index.html in a new tab, since the page\nlies outside the app and opening it in place would unload the app.\nOn touch devices the click also dismisses the peek drawer, which no\nroute change does for it.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T00:41:26-05:00",
+          "tree_id": "18356a9e30da872ddb88df008e747881c6b2d216",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a06f9a930209e199e4825dca36267c6c68cb291a"
+        },
+        "date": 1795758333958,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
