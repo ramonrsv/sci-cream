@@ -677,9 +677,10 @@ body {
   content: none !important;
 }
 
-/* Badge rows: preflight makes every image a block, so a paragraph of badges would stack. */
+/* Badge rows: preflight makes every image a block, so a paragraph of badges would stack.
+   The fixed height is a badge's own, so one that fails to load leaves the row the same size. */
 .badges img {
-  @apply my-0 inline-block align-middle;
+  @apply my-0 inline-block h-5 align-middle;
 }
 
 /* Markdown callouts, authored as GitHub alert blockquotes (`> [!NOTE]`). These names win the
