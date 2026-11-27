@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795753794567,
+  "lastUpdate": 1795753823658,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -665795,6 +665795,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 381876,
             "range": "±0.84%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "615e94817aae697197147a39fa33e56b12eb1667",
+          "message": "Update `sci-cream/CHANGELOG.md` for 0.0.9 release\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T23:26:05-05:00",
+          "tree_id": "782e2a595b36ba7b71b845ecb12d5bd5d867b084",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/615e94817aae697197147a39fa33e56b12eb1667"
+        },
+        "date": 1795753737539,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 51382,
+            "range": "±1.51%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 485786,
+            "range": "±0.66%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 37591,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 388323,
+            "range": "±2.52%",
             "unit": "ops/sec",
             "extra": "93 samples"
           }
