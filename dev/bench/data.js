@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795820288990,
+  "lastUpdate": 1795820350815,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -763824,6 +763824,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.66,
             "range": "2.36",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c065f2ea8ae04169ce46982b7c245108b32e3d04",
+          "message": "Fix stale references to data.rs and JSON sources\n\nCLAUDE.md still named data/ingredients/<category>.json the source of\ntruth, and said the data feature embeds those files from data.rs,\nwhich no longer exists. The sources are the data/**/*.md files, the\ncrate embeds the generated/min/ JSON from src/data/, and seed-db\nrefreshes the test users' copies. gen-data.ts's header named data.rs\ntoo.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T17:49:41-05:00",
+          "tree_id": "0d1a102c26a47e2723c326597ae984e0599042fb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c065f2ea8ae04169ce46982b7c245108b32e3d04"
+        },
+        "date": 1795820259025,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 72.95,
+            "range": "6.71",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 19.03,
+            "range": "0.82",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 19,
+            "range": "0.82",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 188.5,
+            "range": "7.33",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 188.5,
+            "range": "7.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 68.49,
+            "range": "6.79",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 5,
+            "range": "0.53",
             "unit": "ms"
           }
         ]
