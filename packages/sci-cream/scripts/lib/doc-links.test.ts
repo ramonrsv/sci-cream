@@ -2,8 +2,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
 
-import { type Entry, entryLabel, parseMarkdownEntries } from "./data-entries";
-import { DATA_PAGES, comparable, findCitations, pairDocLinks, readEntryLinks } from "./doc-links";
+import { type DataSource, type Entry, entryLabel, parseDataSource } from "./data-entries";
+import {
+  DATA_PAGES,
+  comparable,
+  findCitations,
+  pairDocLinks,
+  readDataPageLinks,
+} from "./doc-links";
 import { DOC_ROOT, SITE_ROOT, brokenAnchors } from "./rustdoc-html";
 
 const PKG_ROOT = path.resolve(import.meta.dirname, "../..");
@@ -125,13 +131,19 @@ describe("pairDocLinks", () => {
   });
 });
 
-/** The entries with comments in a data directory, read the way `gen-data.ts` reads them. */
-function commentedEntries(dir: string): (Entry & { comments: string })[] {
+/** The data sources in a data directory, read the way `gen-data.ts` reads them. */
+function dataSources(dir: string): DataSource[] {
   const base = path.join(PKG_ROOT, "data", dir);
   return fs
     .readdirSync(base)
     .filter((file) => file.endsWith(".md"))
-    .flatMap((file) => parseMarkdownEntries(fs.readFileSync(path.join(base, file), "utf8")))
+    .map((file) => parseDataSource(fs.readFileSync(path.join(base, file), "utf8")));
+}
+
+/** The entries with comments in a data directory. */
+function commentedEntries(dir: string): (Entry & { comments: string })[] {
+  return dataSources(dir)
+    .flatMap(({ entries }) => entries)
     .filter((entry): entry is Entry & { comments: string } => entry.comments !== undefined);
 }
 
@@ -139,7 +151,7 @@ describe("the rendered docs", () => {
   test("pair with every data entry's citations", () => {
     const failures: string[] = [];
     for (const [dir, page] of Object.entries(DATA_PAGES)) {
-      const rendered = readEntryLinks(page);
+      const rendered = readDataPageLinks(page).entries;
       for (const entry of commentedEntries(dir)) {
         const label = entryLabel(entry);
         const links = rendered.get(comparable(label));
@@ -157,6 +169,30 @@ describe("the rendered docs", () => {
     expect(failures).toEqual([]);
   });
 
+  test("pair with every data file intro's citations", () => {
+    const failures: string[] = [];
+    let intros = 0;
+    for (const [dir, page] of Object.entries(DATA_PAGES)) {
+      const rendered = readDataPageLinks(page).intros;
+      for (const { title, intro } of dataSources(dir)) {
+        if (intro === undefined) continue;
+        intros += 1;
+        const links = rendered.get(comparable(title));
+        if (links === undefined) {
+          failures.push(`'${title}' is not on ${page}`);
+          continue;
+        }
+        try {
+          pairDocLinks(`${title} (intro)`, intro, links);
+        } catch (error) {
+          failures.push(String(error));
+        }
+      }
+    }
+    expect(intros).toBeGreaterThan(0);
+    expect(failures).toEqual([]);
+  });
+
   /** Without this the check above passes vacuously should the scan ever find nothing. */
   test("hold citations among the data entries", () => {
     const cited = Object.keys(DATA_PAGES).flatMap((dir) =>
@@ -165,10 +201,11 @@ describe("the rendered docs", () => {
     expect(cited.length).toBeGreaterThan(0);
   });
 
-  test("point every entry's links at a hosted page that exists", () => {
-    const urls = Object.values(DATA_PAGES).flatMap((page) =>
-      [...readEntryLinks(page).values()].flat().map(({ url }) => url),
-    );
+  test("point every intro's and entry's links at a hosted page that exists", () => {
+    const urls = Object.values(DATA_PAGES).flatMap((page) => {
+      const { intros, entries } = readDataPageLinks(page);
+      return [...intros.values(), ...entries.values()].flat().map(({ url }) => url);
+    });
     const missing = urls.filter((url) => {
       if (!url.startsWith(`${SITE_ROOT}/`)) return true;
       const file = url.slice(SITE_ROOT.length + 1).split("#")[0];

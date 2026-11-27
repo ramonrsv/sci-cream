@@ -1,12 +1,13 @@
 /**
- * Parses the data sources, `data/{ingredients,recipes}/<name>.md`, into the entries they define.
+ * Parses the data sources, `data/{ingredients,recipes}/<name>.md`, into their title, intro, and the
+ * entries they define.
  *
- * Each `##` section is one entry, named by its heading. The section's first code block, a `json`
- * fence, is the entry's spec, whose fields become the entry's; a spec with a `for` key makes the
- * entry an alias, named by `alias` rather than `name`. The rest of the section, prose or code, is
- * the entry's `comments`, as written but without HTML comments, such as lint directives, which
- * aren't meant for readers. Anything before the first `##`, such as the file's `#` title and
- * intro, belongs to no entry and is skipped.
+ * A source opens with its `#` title, and what lies between that and its first `##` is its intro,
+ * notes on all of its entries. Each `##` section is one entry, named by its heading. The section's
+ * first code block, a `json` fence, is the entry's spec, whose fields become the entry's; a spec
+ * with a `for` key makes the entry an alias, named by `alias` rather than `name`. The rest of the
+ * section, prose or code, is the entry's `comments`. Intro and comments are kept as written but
+ * without HTML comments, such as lint directives, which aren't meant for readers.
  */
 import { marked } from "marked";
 
@@ -20,16 +21,26 @@ export interface Entry {
   [key: string]: unknown;
 }
 
+/** A data source: its title, its intro when it has one, and its entries, in order. */
+export interface DataSource {
+  title: string;
+  intro?: string;
+  entries: Entry[];
+}
+
 /** Human identifier for error messages. */
 export function entryLabel(entry: Entry): string {
   return entry.name ?? entry.alias ?? "<unnamed>";
 }
 
 /**
- * The entries `md` defines, in order. Throws on an empty heading, a name used twice, or a section
- * whose first code block is missing, not a `json` fence, or not valid JSON.
+ * The data source `md` holds. Throws on a missing `#` title or content before it, an empty heading,
+ * a name used twice, or a section whose first code block is missing, not a `json` fence, or not
+ * valid JSON.
  */
-export function parseMarkdownEntries(md: string): Entry[] {
+export function parseDataSource(md: string): DataSource {
+  let title: string | undefined;
+  const intro: string[] = [];
   const entries: Entry[] = [];
   const seen = new Set<string>();
   let cur: { name: string; spec?: Record<string, unknown>; body: string[] } | null = null;
@@ -54,7 +65,12 @@ export function parseMarkdownEntries(md: string): Entry[] {
       seen.add(name);
       cur = { name, body: [] };
     } else if (!cur) {
-      continue; // preamble before the first entry
+      // Before the first entry: the `#` title, after only blank lines or HTML, then the intro
+      if (title !== undefined) intro.push(token.raw);
+      else if (token.type === "heading" && token.depth === 1) title = token.text.trim();
+      else if (token.type !== "space" && token.type !== "html") {
+        throw new Error("Content before the source's `#` title");
+      }
     } else if (token.type === "code" && cur.spec === undefined) {
       if (token.lang !== "json") {
         throw new Error(
@@ -71,5 +87,8 @@ export function parseMarkdownEntries(md: string): Entry[] {
     }
   }
   flush();
-  return entries;
+
+  if (!title) throw new Error("Source with no `#` title");
+  const text = stripHtmlComments(intro.join("")).trim();
+  return { title, ...(text && { intro: text }), entries };
 }

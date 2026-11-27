@@ -1,7 +1,12 @@
 /**
  * Codegen: markdown data sources -> JSON consumed by the crate and the app.
  *
- * Source of truth is `data/{ingredients,recipes}/<name>.md`, where each entry is a level-2 section:
+ * Source of truth is `data/{ingredients,recipes}/<name>.md`: a title, an optional intro, then the
+ * entries, each a level-2 section:
+ *
+ *   # <title>
+ *
+ *   <intro: markdown notes on every entry below>
  *
  *   ## <name>
  *
@@ -15,16 +20,20 @@
  *   - `generated/full/<name>.json` full entries WITH `comments` (footnotes resolved inline) — app
  *   - `generated/min/<name>.json`  the same entries WITHOUT `comments` — embedded into WASM binary
  *
+ * and once per directory `generated/full/intros.json`, each file's title and resolved intro, by
+ * file name, for the files with one — app.
+ *
  * Footnote definitions are pulled from `docs/references/{literature,ingredients}.md`; a citation
  * with no matching definition is a hard error.
  *
- * Comments also cite crate items the way rustdoc resolves them, e.g. `[POD](crate::docs#pod)`. The
- * app renders comments outside rustdoc, where those are dead links, so each is rewritten to the
- * link rustdoc rendered for it on the data's `docs` page, into the app's hosted copy at `/rustdoc/`
- * (`lib/doc-links.ts`). A citation rustdoc didn't render the same way is a hard error.
+ * Comments and intros also cite crate items the way rustdoc resolves them, e.g.
+ * `[POD](crate::docs#pod)`. The app renders them outside rustdoc, where those are dead links, so
+ * each is rewritten to the link rustdoc rendered for it on the data's `docs` page, into the app's
+ * hosted copy at `/rustdoc/` (`lib/doc-links.ts`). A citation rustdoc didn't render the same way is
+ * a hard error.
  *
- * The app's renderer prints raw HTML as text, so comments leave out HTML comments, and each
- * `<code>` group, an expression with links, becomes joined code spans (`lib/raw-html.ts`). Any
+ * The app's renderer prints raw HTML as text, so comments and intros leave out HTML comments, and
+ * each `<code>` group, an expression with links, becomes joined code spans (`lib/raw-html.ts`). Any
  * other raw HTML is a hard error.
  *
  * Those pages come from `pnpm doc:site`, and the crate only compiles once `generated/min/` holds a
@@ -39,9 +48,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { entryLabel, parseMarkdownEntries } from "./lib/data-entries";
-import { DATA_PAGES, comparable, pairDocLinks, readEntryLinks } from "./lib/doc-links";
+import { entryLabel, parseDataSource } from "./lib/data-entries";
+import { DATA_PAGES, comparable, pairDocLinks, readDataPageLinks } from "./lib/doc-links";
 import { findRawHtml, joinCodeGroups } from "./lib/raw-html";
+import type { RenderedLink } from "./lib/rustdoc-html";
 
 const PKG_ROOT = path.resolve(import.meta.dirname, "..");
 const SOURCE_DIRS = ["ingredients", "recipes"] as const;
@@ -75,7 +85,7 @@ function resolveFootnotes(label: string, comment: string, defs: Map<string, stri
   const missing = cited.filter((n) => !defs.has(n));
   if (missing.length > 0) {
     throw new Error(
-      `Entry '${label}' cites undefined footnote(s): ${missing.map((n) => `[^${n}]`).join(", ")}`,
+      `'${label}' cites undefined footnote(s): ${missing.map((n) => `[^${n}]`).join(", ")}`,
     );
   }
   const block = cited.map((n) => `[^${n}]: ${defs.get(n)}`).join("\n");
@@ -85,29 +95,39 @@ function resolveFootnotes(label: string, comment: string, defs: Map<string, stri
 /** Which variants to emit: `full` (with comments) for the app, `min` (comment-free) for binary. */
 type Kind = "full" | "min";
 
-/** A comment of `dir` as `full` stores it: intra-doc links paired, then footnotes appended. */
-function makeCommentResolver(
-  dir: (typeof SOURCE_DIRS)[number],
-  defs: Map<string, string>,
-): (label: string, comment: string) => string {
+/** Markdown of `dir` as `full` stores it: links paired, `<code>` groups joined, footnotes added. */
+interface NotesResolver {
+  /** An entry's comments, by the entry's label. */
+  entry: (label: string, comments: string) => string;
+  /** A file's intro, by the file's title. */
+  intro: (title: string, intro: string) => string;
+}
+
+/** The {@link NotesResolver} of `dir`, pairing links against the page it renders on. */
+function makeNotesResolver(dir: (typeof SOURCE_DIRS)[number], defs: Map<string, string>) {
   const page = DATA_PAGES[dir];
-  const rendered = readEntryLinks(page);
-  return (label, comment) => {
-    const links = rendered.get(comparable(label));
-    if (links === undefined) {
-      throw new Error(`Entry '${label}' is not on ${page}; run \`pnpm doc:site\``);
-    }
+  const rendered = readDataPageLinks(page);
+
+  /** `markdown`, named `label` in errors, given `links`, the ones rustdoc rendered for it. */
+  const resolve = (label: string, markdown: string, links: RenderedLink[] | undefined): string => {
+    if (links === undefined) throw new Error(`'${label}' is not on ${page}; run \`pnpm doc:site\``);
     /** Links first, so the pairing sees prose and never the appended bibliography. */
-    const paired = pairDocLinks(label, comment, links);
+    const paired = pairDocLinks(label, markdown, links);
     /** Then the `<code>` groups, which join around the URLs the pairing wrote. */
-    const comments = resolveFootnotes(label, joinCodeGroups(label, paired), defs);
-    const html = findRawHtml(comments);
+    const resolved = resolveFootnotes(label, joinCodeGroups(label, paired), defs);
+    const html = findRawHtml(resolved);
     if (html.length > 0) {
       const found = html.join(", ");
-      throw new Error(`Entry '${label}' holds raw HTML, which the app prints as text: ${found}`);
+      throw new Error(`'${label}' holds raw HTML, which the app prints as text: ${found}`);
     }
-    return comments;
+    return resolved;
   };
+
+  return {
+    entry: (label, comments) => resolve(label, comments, rendered.entries.get(comparable(label))),
+    intro: (title, intro) =>
+      resolve(`${title} (intro)`, intro, rendered.intros.get(comparable(title))),
+  } satisfies NotesResolver;
 }
 
 /** Compute the requested generated files' paths and content without touching disk. */
@@ -117,27 +137,33 @@ function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
   const outputs = new Map<string, string>();
 
   for (const dir of SOURCE_DIRS) {
-    const resolveComment = defs === undefined ? undefined : makeCommentResolver(dir, defs);
+    const resolver = defs === undefined ? undefined : makeNotesResolver(dir, defs);
     const base = path.join(PKG_ROOT, "data", dir);
     const sources = fs
       .readdirSync(base)
       .filter((f) => f.endsWith(".md"))
       .sort();
+    /** Each file's title and resolved intro, by file name, for the files with one. */
+    const intros: Record<string, { title: string; text: string }> = {};
 
     for (const file of sources) {
-      const raw = parseMarkdownEntries(fs.readFileSync(path.join(base, file), "utf8"));
+      const source = parseDataSource(fs.readFileSync(path.join(base, file), "utf8"));
+      const raw = source.entries;
       const stem = file.replace(/\.md$/, "");
 
-      if (resolveComment !== undefined) {
+      if (resolver !== undefined) {
         const full = raw.map((e) =>
           e.comments === undefined
             ? e
-            : { ...e, comments: resolveComment(entryLabel(e), e.comments) },
+            : { ...e, comments: resolver.entry(entryLabel(e), e.comments) },
         );
         outputs.set(
           path.join(base, "generated", "full", `${stem}.json`),
           `${JSON.stringify(full, null, 2)}\n`,
         );
+        if (source.intro !== undefined) {
+          intros[stem] = { title: source.title, text: resolver.intro(source.title, source.intro) };
+        }
       }
       if (kinds.has("min")) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -148,6 +174,12 @@ function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
           `[\n${min.map((e) => JSON.stringify(e)).join(",\n")}\n]\n`,
         );
       }
+    }
+    if (resolver !== undefined) {
+      outputs.set(
+        path.join(base, "generated", "full", "intros.json"),
+        `${JSON.stringify(intros, null, 2)}\n`,
+      );
     }
   }
   return outputs;

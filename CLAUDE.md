@@ -199,7 +199,7 @@ wasm_bindgen)]`. The same crate must compile cleanly for native and WASM targets
 `packages/sci-cream/data/{ingredients,recipes}/<name>.md` are the source of truth for embedded
 data: one entry per `##` section, its JSON spec in the first code fence and its notes after.
 `pnpm gen:data` resolves them into the tracked `generated/min/*.json` the crate embeds, and the
-gitignored `generated/full/*.json` the app reads, notes included. After editing,
+gitignored `generated/full/*.json` the app reads, notes and file intros included. After editing,
 rebuild WASM (`pnpm build:package`, which runs `gen:data` first) and re-run `pnpm seed-db` in the
 app to refresh the copies it seeds for the test users.
 
@@ -239,9 +239,9 @@ APA, with Wikipedia's link convention: the title carries the link and the URL is
 - Entries with no URL take the same shape, unlinked.
 
 Edit the source `.md`, never a generated copy. Three render targets: rustdoc via
-`docs/references/index/<N>.md` (`pnpm gen:footnotes`), GitHub, and the app via the `comments`
-resolved into `data/**/generated/full/*.json` (`pnpm gen:data`). Run `pnpm gen:all` after editing;
-the app's print stylesheet appends each `href`.
+`docs/references/index/<N>.md` (`pnpm gen:footnotes`), GitHub, and the app via the `comments` and
+file intros resolved into `data/**/generated/full/*.json` (`pnpm gen:data`). Run `pnpm gen:all`
+after editing; the app's print stylesheet appends each `href`.
 
 #### Derived constants
 
@@ -261,17 +261,20 @@ corroborated by them, is a literal, checked by a doctest that asserts the relati
 `docs/*.md` and `data/**/*.md` cite crate items the way rustdoc resolves them — ``[`Fibers`]``,
 ``[`field@Sugars::sucrose`]``, `[pac](crate::constants::pac)`, `[POD](crate::docs#pod)`, or a bare
 `[STD_LACTOSE_IN_MSNF]` inside a `<code>` group. Outside rustdoc those are dead links, so
-`gen-data.ts` rewrites the ones in entry comments as it resolves them into `generated/full/`.
+`gen-data.ts` rewrites the ones in entry comments and file intros as it resolves them into
+`generated/full/`. A data file's intro, between its `#` title and first entry, holds notes on all
+its entries, and `gen-data.ts` writes the intros to `generated/full/intros.json`.
 
 Each script directly in the crate's `scripts/` is something `pnpm` runs; `scripts/lib/` holds the
 modules they import, such as the link pairing.
 
 The targets are rustdoc's own. It renders each data file on the `docs::ingredients` or
 `docs::recipes` page, resolving every citation in that page's scope, and `rustdoc::all` is `warn`
-with CI's `RUSTDOCFLAGS: -D warnings`, so each one resolves. `lib/doc-links.ts` gives an entry's
-n-th citation the URL of the n-th intra-doc link rustdoc rendered in the entry's section, under
-the app's hosted `/rustdoc/`. The two must agree in number and text, and each fragment must name
-an id on its target page, which rustdoc doesn't check; anything else is a hard error.
+with CI's `RUSTDOCFLAGS: -D warnings`, so each one resolves. `lib/doc-links.ts` gives the n-th
+citation in an entry's comments, or a file's intro, the URL of the n-th intra-doc link rustdoc
+rendered in the same section, under the app's hosted `/rustdoc/`. The two must agree in number and
+text, and each fragment must name an id on its target page, which rustdoc doesn't check; anything
+else is a hard error.
 
 An equation with a linked constant is a `<code>` group, `<code>x * [CONST]</code>`, since clippy's
 `doc_link_code` rejects a code span joined to a code link. The app's `Markdown` prints raw HTML as

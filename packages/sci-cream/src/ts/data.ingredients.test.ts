@@ -23,6 +23,7 @@ import {
   isSpecEntryAlias,
   getIndependentIngredientSpecByName,
   getNonAliasIngredientSpecs,
+  specEntryIntro,
 } from "./data.ingredients";
 
 // Note: WASM functions like `get_all_spec_entries` may serialize missing optional fields as
@@ -76,6 +77,16 @@ test("specEntryName returns name for ingredient/alias specs", () => {
 test("specEntryName throws for invalid spec entry", () => {
   const invalidEntry = { invalid: "entry" } as unknown as SpecEntryJson;
   expect(() => specEntryName(invalidEntry)).toThrowError();
+});
+
+test("specEntryIntro gives an entry its data file's intro, its links resolved", () => {
+  const intro = specEntryIntro(getSpecEntryByName("70% Dark Chocolate"));
+  expect(intro?.title).toBe("Chocolates");
+  expect(intro?.text).toMatch(/\]\(\/rustdoc\//);
+});
+
+test("specEntryIntro is undefined for an entry whose file has only a title", () => {
+  expect(specEntryIntro(getSpecEntryByName("Sucrose"))).toBeUndefined();
 });
 
 test("isSpecEntryAlias returns true for alias specs", () => {

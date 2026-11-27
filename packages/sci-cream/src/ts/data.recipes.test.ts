@@ -2,7 +2,12 @@ import { expect, test } from "vitest";
 
 import { get_all_recipe_entries, get_all_recipe_entry_ids } from "../../dist/index";
 
-import { type RecipeEntryJson, allRecipeEntries, recipeEntryId } from "./data.recipes";
+import {
+  type RecipeEntryJson,
+  allRecipeEntries,
+  recipeEntryId,
+  recipeEntryIntro,
+} from "./data.recipes";
 
 // --- TS-side recipe helpers ---
 
@@ -45,6 +50,16 @@ test("recipeEntryId returns 'Author: Name' when author is present", () => {
 test("recipeEntryId returns just name when author is absent", () => {
   const entry: RecipeEntryJson = { name: "My Recipe", recipe: [] };
   expect(recipeEntryId(entry)).toEqual("My Recipe");
+});
+
+test("recipeEntryIntro gives a recipe its data file's intro", () => {
+  const entry = allRecipeEntries.find((e) => recipeEntryId(e) === "Corvitto: White Cream, -11°C");
+  expect(entry).toBeDefined();
+  expect(recipeEntryIntro(entry!)?.title).toBe("Corvitto Recipes");
+});
+
+test("recipeEntryIntro is undefined for a recipe from no data file", () => {
+  expect(recipeEntryIntro({ name: "My Recipe", recipe: [] })).toBeUndefined();
 });
 
 test("Ice Cream Science chocolate entry carries 150 g evaporation", () => {

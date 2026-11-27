@@ -1,12 +1,13 @@
 /**
- * The intra-doc links in data entries' notes, given the URLs rustdoc rendered for them.
+ * The intra-doc links in data entries' notes and data files' intros, given the URLs rustdoc
+ * rendered for them.
  *
- * The app shows an entry's notes as markdown, so citations such as `` [`Sugars`] `` or
+ * The app shows notes and intros as markdown, so citations such as `` [`Sugars`] `` or
  * `[POD](crate::docs#pod)` have to become ordinary links. Rustdoc renders each data file on a
- * `docs` module page, an entry's notes in the order they're written, so the n-th citation found
- * here takes the URL of the n-th intra-doc link rustdoc rendered in that entry's section. The two
- * must agree in number and text: a disagreement means this scan read the markdown differently from
- * rustdoc, so it fails rather than write a wrong URL.
+ * `docs` module page, in the order it's written, so the n-th citation found here takes the URL of
+ * the n-th intra-doc link rustdoc rendered in the same section. The two must agree in number and
+ * text: a disagreement means this scan read the markdown differently from rustdoc, so it fails
+ * rather than write a wrong URL.
  */
 import { CODE_FENCE, CODE_SPAN, blank } from "./markdown-code";
 import {
@@ -138,30 +139,39 @@ export function pairDocLinks(label: string, markdown: string, rendered: Rendered
   return result + markdown.slice(cursor);
 }
 
+/** The intra-doc links rendered on a data page, each list keyed by {@link comparable} name. */
+export interface DataPageLinks {
+  /** Each data file's intro's, by the file's title. */
+  intros: Map<string, RenderedLink[]>;
+  /** Each entry's, by the entry's name. */
+  entries: Map<string, RenderedLink[]>;
+}
+
 /**
- * Each entry's rendered intra-doc links, keyed by {@link comparable} name, from the page a data
- * directory renders on.
+ * Each file intro's and entry's rendered intra-doc links, from a data directory's page.
  *
  * A data file's `#` title renders as an `h2` and each `##` entry as an `h3`, whose section runs to
- * the next heading of either. A link to an anchor its target page lacks is an error here.
+ * the next heading of either, so an `h2`'s section is the file's intro. A link to an anchor its
+ * target page lacks is an error here.
  */
-export function readEntryLinks(page: string): Map<string, RenderedLink[]> {
+export function readDataPageLinks(page: string): DataPageLinks {
   const sections = splitSections(readDocblock(page), ({ tagName }) =>
     ["h2", "h3"].includes(tagName ?? ""),
   );
 
-  const entries = new Map<string, RenderedLink[]>();
+  const links: DataPageLinks = { intros: new Map(), entries: new Map() };
   for (const { heading, title, nodes } of sections) {
-    if (heading.tagName !== "h3") continue;
+    const [map, kind] =
+      heading.tagName === "h2" ? [links.intros, "files"] : [links.entries, "entries"];
     const name = comparable(title);
-    if (entries.has(name)) throw new Error(`${page} renders two entries named '${title}'`);
-    entries.set(name, renderedLinks(page, nodes));
+    if (map.has(name)) throw new Error(`${page} renders two ${kind} titled '${title}'`);
+    map.set(name, renderedLinks(page, nodes));
   }
 
-  const broken = brokenAnchors([...entries.values()].flat());
+  const broken = brokenAnchors([...links.intros.values(), ...links.entries.values()].flat());
   if (broken.length > 0) {
     const urls = broken.map(({ url }) => url).join(", ");
     throw new Error(`${page} links to anchors their pages lack: ${urls}`);
   }
-  return entries;
+  return links;
 }
