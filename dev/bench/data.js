@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795799581989,
+  "lastUpdate": 1795799964616,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -623041,6 +623041,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 675.75,
             "range": "24.44",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "80a91a2571153fb2f7ce2ee462a5437ef1c1f614",
+          "message": "Pair data-note links with rustdoc's own hrefs\n\nThe tracked link map guessed which item each citation meant, by\nmatching path tails, and missed the bare [CONST] links that <code>\ngroups use. gen-data now reads the docs pages rustdoc rendered and\ngives each entry's n-th citation the n-th link rustdoc rendered for\nit, failing on any disagreement in number or text, or on an anchor\nits page lacks. Notes link into the hosted /rustdoc/ docs, which the\napp's Markdown opens in a new tab.\n\ngen:data builds the docs it reads, so the map, its scraper, and the\nCI map check are gone, and the interim MilkProteins link is reverted.\nThe entry parser moves to lib/data-entries.ts for the corpus tests,\nand scripts/tsconfig.json gives those tests Node's types.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T11:32:47-05:00",
+          "tree_id": "dc47bebcda010b5617497d30471455659a31ba34",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/80a91a2571153fb2f7ce2ee462a5437ef1c1f614"
+        },
+        "date": 1795799868345,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.25,
+            "range": "4.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 47.63,
+            "range": "2.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 62.25,
+            "range": "4.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2270.63,
+            "range": "10.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 370.13,
+            "range": "3.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 386.38,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 397.63,
+            "range": "4.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 19053.13,
+            "range": "48.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 827.75,
+            "range": "27.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 63.25,
+            "range": "2.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.63,
+            "range": "2.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 50.13,
+            "range": "3.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45.5,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 131.75,
+            "range": "4.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 81.5,
+            "range": "2.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 51.92,
+            "range": "0.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 39.72,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 643,
+            "range": "22.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 712.63,
+            "range": "29.48",
             "unit": "ms"
           }
         ]
