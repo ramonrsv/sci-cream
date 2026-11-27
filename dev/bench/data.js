@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795801814907,
+  "lastUpdate": 1795801853196,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -670951,6 +670951,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.82%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6ba6b1b5b5ff016ac1a203223274e8dcb647f7bd",
+          "message": "Fail gen-data on raw HTML left in data notes\n\nThe app prints raw HTML as text, and gen-data only rewrites HTML\ncomments and <code> groups, so any other tag in a data file would\nreach ingredient pages as literal markup. gen-data now fails on an\nentry whose finished comments, bibliography included, still hold a\ntag or comment outside code; autolinks and escapes stay markdown.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T12:33:14-05:00",
+          "tree_id": "9e2168c5defd0ad194e8bbfae567eccee8dcb0dc",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6ba6b1b5b5ff016ac1a203223274e8dcb647f7bd"
+        },
+        "date": 1795801770416,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 54942,
+            "range": "±0.98%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 518190,
+            "range": "±0.90%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 40650,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 446251,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
