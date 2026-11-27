@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795757992673,
+  "lastUpdate": 1795758073192,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -754545,6 +754545,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.17,
             "range": "0.54",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f1b930e0bc72d4e9439f158ba55d77335c8937ea",
+          "message": "Host the crate's rustdoc output at /rustdoc/\n\nbuild:package now runs doc:site, a clean public docs build whose\npages use the site's icon rather than the Rust logo, and the app's\nbuild copies it into public/rustdoc/. Responses under /rustdoc/\ncarry X-Robots-Tag: noindex, since the tree repeats docs.rs.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T23:56:40-05:00",
+          "tree_id": "9940607d9d0a31d74fe35da172b393081d083fd9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f1b930e0bc72d4e9439f158ba55d77335c8937ea"
+        },
+        "date": 1795758018142,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 47,
+            "range": "2.83",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.66,
+            "range": "0.57",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.6,
+            "range": "0.56",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 124.5,
+            "range": "5.45",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 124.5,
+            "range": "5.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 43.91,
+            "range": "2.92",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.63,
+            "range": "0.34",
             "unit": "ms"
           }
         ]
