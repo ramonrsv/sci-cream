@@ -4,9 +4,10 @@ import { TEST_USER_B } from "@/__tests__/seed-assets";
 import {
   goToPageAndWaitFor,
   loginAsTestUserWithCredentials,
+  parkCursor,
   selectRecipeByName,
 } from "@/__tests__/e2e/util";
-import { captureFullContent } from "./util";
+import { appContent, captureFullContent, getOverflow } from "./util";
 
 const RECIPES_URL = "/recipes";
 
@@ -130,6 +131,32 @@ test.describe("Visual Regression: Recipe Search", () => {
     await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
       "recipe-search-evaporation-yield.png",
     );
+  });
+
+  test("built-in recipe's long file intro, opened - arrow turns, page doesn't scroll", async ({
+    page,
+  }) => {
+    await goToRecipesPage(page);
+    await selectRecipeByName(page, "White Cream, -11°C");
+
+    const panel = page.locator(".search-detail-panel");
+    const intro = panel.locator("details");
+    await intro.getByText("About Corvitto Recipes").click();
+    await expect(intro).toHaveJSProperty("open", true);
+
+    // The intro outgrows the panel, which scrolls; the page mustn't, as it does when the
+    // footnotes' `sr-only` heading, being absolute, is placed outside the panel
+    expect(await getOverflow(panel)).toBeGreaterThan(0);
+    expect(await getOverflow(page.locator("html"))).toBe(0);
+    expect(await getOverflow(appContent(page))).toBe(0);
+
+    // Only the "About" row and the intro's first paragraph, which names the book, so edits
+    // further into the intro leave the snapshot alone
+    await parkCursor(page);
+    await page.addStyleTag({
+      content: ".search-detail-panel details .prose > :not(:first-child) { display: none; }",
+    });
+    await expect(intro).toHaveScreenshot("recipe-search-file-intro-open.png");
   });
 
   test("saved recipe with long ingredient name - table truncates, layout intact", async ({

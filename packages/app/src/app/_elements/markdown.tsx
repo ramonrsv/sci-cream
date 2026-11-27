@@ -16,10 +16,12 @@ import { leafKey } from "@/lib/storage-keys";
  * threads as well as private notes, and untrusted text must not pass link equity to whatever it
  * points at. Applied to every caller rather than via props, so new public surface cannot forget it.
  */
-export function Markdown({ text, className }: { text: string; className?: string }) {
+export function Markdown({ text, className = "" }: { text: string; className?: string }) {
   return (
+    // `relative` contains the footnotes' `sr-only` heading, which is absolute:
+    // past the bottom of a scrolling ancestor, it would otherwise stretch the page to reach it
     <div
-      className={`prose prose-sm dark:prose-invert text-secondary max-w-none leading-relaxed ${className ?? ""}`}
+      className={`prose prose-sm dark:prose-invert text-secondary relative max-w-none leading-relaxed ${className}`}
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}

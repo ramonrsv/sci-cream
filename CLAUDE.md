@@ -263,7 +263,7 @@ corroborated by them, is a literal, checked by a doctest that asserts the relati
 `[STD_LACTOSE_IN_MSNF]` inside a `<code>` group. Outside rustdoc those are dead links, so
 `gen-data.ts` rewrites the ones in entry comments and file intros as it resolves them into
 `generated/full/`. A data file's intro, between its `#` title and first entry, holds notes on all
-its entries; the app shows it above each built-in entry's own, as a collapsed "About <title>".
+its entries; the app shows it above each built-in entry's own, as a collapsed `About <title>`.
 
 Each script directly in the crate's `scripts/` is something `pnpm` runs; `scripts/lib/` holds the
 modules they import, such as the link pairing.
