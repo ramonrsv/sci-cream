@@ -1,13 +1,13 @@
 import { isSpecEntryAlias, specEntryName, type SpecEntryJson } from "@workspace/sci-cream";
 
-/** Rustdoc root for the crate, tracking the latest published release like the README badge. */
-const DOCS_BASE = "https://docs.rs/sci-cream/latest/sci_cream";
+/** The crate's rustdoc, which the app hosts for the build it deploys. */
+const DOCS_BASE = "/rustdoc/sci_cream";
 
 /** A documentation link shown beneath an entry's spec */
 export interface SpecDocLink {
   /** Link text */
   label: string;
-  /** Absolute docs.rs URL */
+  /** A page of the hosted rustdoc */
   href: string;
 }
 

@@ -232,14 +232,14 @@ describe("IngredientSearch", () => {
       const typeLink = within(detailPanel).getByRole("link", { name: "SweetenerSpec" });
       expect(typeLink).toHaveAttribute(
         "href",
-        "https://docs.rs/sci-cream/latest/sci_cream/specs/sweetener/struct.SweetenerSpec.html",
+        "/rustdoc/sci_cream/specs/sweetener/struct.SweetenerSpec.html",
       );
       expect(typeLink).toHaveAttribute("target", "_blank");
       expect(typeLink).toHaveAttribute("rel", "noopener noreferrer");
 
       expect(within(detailPanel).getByRole("link", { name: "Sweeteners" })).toHaveAttribute(
         "href",
-        "https://docs.rs/sci-cream/latest/sci_cream/docs/index.html#sweeteners",
+        "/rustdoc/sci_cream/docs/index.html#sweeteners",
       );
     });
 

@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { allSpecEntries, getSpecEntryByName } from "@workspace/sci-cream";
 
+import { resolveRustdocLink } from "@/__tests__/unit/rustdoc";
 import { specDocLinks, specKindOf } from "@/lib/sci-cream/spec-docs";
 
 /** The labels of an entry's doc links, looked up by ingredient name */
@@ -32,7 +33,7 @@ describe("specDocLinks", () => {
     const [first] = specDocLinks(getSpecEntryByName("Sucrose"));
     expect(first).toEqual({
       label: "SweetenerSpec",
-      href: "https://docs.rs/sci-cream/latest/sci_cream/specs/sweetener/struct.SweetenerSpec.html",
+      href: "/rustdoc/sci_cream/specs/sweetener/struct.SweetenerSpec.html",
     });
   });
 
@@ -66,8 +67,19 @@ describe("specDocLinks", () => {
   test("chapter links target the guide's anchors", () => {
     const chocolate = specDocLinks(getSpecEntryByName("70% Dark Chocolate"));
     expect(chocolate.find((l) => l.label === "Cocoa")?.href).toBe(
-      "https://docs.rs/sci-cream/latest/sci_cream/docs/index.html#cocoa",
+      "/rustdoc/sci_cream/docs/index.html#cocoa",
     );
+  });
+
+  test("every embedded entry's links resolve in the crate's docs build", () => {
+    const hrefs = new Set(
+      allSpecEntries.flatMap((entry) => specDocLinks(entry).map((l) => l.href)),
+    );
+    const broken = [...hrefs].flatMap((href) => {
+      const problem = resolveRustdocLink(href);
+      return problem === undefined ? [] : [`${href}: ${problem}`];
+    });
+    expect(broken).toEqual([]);
   });
 
   test("chapters contributed by more than one rule appear once", () => {

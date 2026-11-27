@@ -3,26 +3,32 @@ import path from "path";
 
 import { describe, it, expect } from "vitest";
 
+import { resolveRustdocLink } from "@/__tests__/unit/rustdoc";
 import { getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
 
 // ---------------------------------------------------------------------------
 // Internal content links
 //
 // Reads the real `content/docs` and `content/blog` files and resolves every link they author
-// against what the app actually serves: a markdown slug, a public asset, or a route directory.
-// Fragments resolve against the ids the target route renders, so a section rename breaks the
-// links pointing at it. External `http(s)` links are out of scope — checking them needs network.
+// against what the app actually serves: a markdown slug, a public asset, a route directory, or a
+// page of the hosted rustdoc. Fragments resolve against the ids the target renders, so a section
+// rename breaks the links pointing at it. External `http(s)` links are out of scope — checking
+// them needs network.
 // ---------------------------------------------------------------------------
 
 const CONTENT_ROOT = path.join(process.cwd(), "content");
 const PUBLIC_ROOT = path.join(process.cwd(), "public");
 const APP_ROOT = path.join(process.cwd(), "src", "app");
 
-/** Root-relative targets a file links to, from markdown `](/…)` and from raw HTML attributes. */
+/**
+ * Root-relative targets a file links to, from markdown `](/…)` and `[label]: /…` definitions, and
+ * from raw HTML attributes.
+ */
 function internalLinks(section: string, slug: string): string[] {
   const source = fs.readFileSync(path.join(CONTENT_ROOT, section, `${slug}.md`), "utf8");
   return [
     ...[...source.matchAll(/\]\((\/[^)\s]*)\)/g)].map((match) => match[1]),
+    ...[...source.matchAll(/^ {0,3}\[[^\]]+\]:\s*(\/\S*)/gm)].map((match) => match[1]),
     ...[...source.matchAll(/(?:href|src)="(\/[^"]*)"/g)].map((match) => match[1]),
   ];
 }
@@ -63,13 +69,15 @@ async function readContent(): Promise<Content> {
 /**
  * Why `link` does not resolve, or `undefined` when it does.
  *
- * A link to a route whose ids this test cannot know — anything outside `docs` and `blog` — is
- * checked as far as its top-level segment, and its fragment is left alone.
+ * A link to a route whose ids this test cannot know — anything outside `docs`, `blog`, and
+ * `rustdoc` — is checked as far as its top-level segment, and its fragment is left alone.
  */
 function resolveLink(link: string, content: Content): string | undefined {
   const [pathname, fragment] = link.split("#");
   const [, segment, ...rest] = pathname.split("/");
   const slug = rest.join("/");
+
+  if (segment === "rustdoc") return resolveRustdocLink(link);
 
   // Any link naming a real file under `public/` is an asset, wherever in that tree it sits —
   // `/images/…` and `/icons/…`, but also the marks served from the root, such as `/logo.svg`.

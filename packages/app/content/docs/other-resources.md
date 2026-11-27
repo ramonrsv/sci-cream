@@ -38,7 +38,7 @@ Marnier](https://under-belly.org/booze-flavored-ice-cream/), and
 [chocolate](https://under-belly.org/ice-cream-flavor-chocolate/) recipes. Some of the best ice
 creams I have ever had were when I was making these. The ice cream blog has a lot of excellent ice
 cream science information that I still visit, and which I often cite throughout the [reference
-knowledge](https://docs.rs/sci-cream/latest/sci_cream/docs/index.html) base. Their [stabilizer
+knowledge](/rustdoc/sci_cream/docs/index.html) base. Their [stabilizer
 blends](https://under-belly.org/ice-cream-stabilizers/) are fantastic as well; I use them almost
 exclusively. All four stabilizer blends and most of the recipes are available in the Sci-Cream app.
 
@@ -54,10 +54,9 @@ style="display: block; margin: 0 auto; background: white">
 
 [icecreamscience.com](https://www.icecreamscience.com/)'s blog has a lot of informative, seemingly
 well researched, and very well cited ice cream science knowledge articles. I have discovered many of
-the sources that I have used for the [reference
-knowledge](https://docs.rs/sci-cream/latest/sci_cream/docs/index.html) base from their posts. Their
-recipes were the motivation for the development of the evaporation feature - they are formulated
-based on post-evaporation compositions.
+the sources that I have used for the [reference knowledge](/rustdoc/sci_cream/docs/index.html) base
+from their posts. Their recipes were the motivation for the development of the evaporation feature -
+they are formulated based on post-evaporation compositions.
 
 [Science](/docs/other-resources/science#ice-cream-science) ·
 [Recipes](/docs/other-resources/recipes#ice-cream-science)

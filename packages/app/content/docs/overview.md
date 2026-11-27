@@ -20,9 +20,8 @@ and my own journey in ice cream making:
   cream science calculations powering this app.
 - [This app](/docs/overview#sci-cream-app), including an [ice cream calculator](/calculator),
   [ingredient](/ingredients) and [recipe](/recipes) databases, and other tools.
-- Ice cream science knowledge base: [reference
-  knowledge](https://docs.rs/sci-cream/latest/sci_cream/docs/index.html) from the crate, and a less
-  rigorous [supplemental collection](/docs/science) here.
+- Ice cream science knowledge base: [reference knowledge](/rustdoc/sci_cream/docs/index.html) from
+  the crate, and a less rigorous [supplemental collection](/docs/science) here.
 - A [blog](/blog) where I share that journey: experiments, lessons learned, recipes, this project,
   etc.
 
@@ -45,16 +44,16 @@ mixes][ing-mix-comp], to [define ingredients via user-friendly specifications][i
 [calculate the properties of ice cream mixes][calc-props] based on their composition, and a [recipe
 balancing][auto-balance] feature that automates formulating mixes to meet composition targets.
 
-[ing-mix-comp]: https://docs.rs/sci-cream/latest/sci_cream/index.html#ingredientmix-composition
-[ing-spec]: https://docs.rs/sci-cream/latest/sci_cream/index.html#ingredient-specifications
-[calc-props]: https://docs.rs/sci-cream/latest/sci_cream/index.html#usage
-[auto-balance]: https://docs.rs/sci-cream/latest/sci_cream/index.html#automatic-recipe-balancing
+[ing-mix-comp]: /rustdoc/sci_cream/index.html#ingredientmix-composition
+[ing-spec]: /rustdoc/sci_cream/index.html#ingredient-specifications
+[calc-props]: /rustdoc/sci_cream/index.html#usage
+[auto-balance]: /rustdoc/sci_cream/index.html#automatic-recipe-balancing
 
 It is freely available and open-source for anyone to use in their own applications - it supports
 various languages, including native Rust and web environments via
-[WebAssembly](https://docs.rs/sci-cream/latest/sci_cream/index.html#wasm-interoperability). The
-provenance of calculation methods and ingredient definitions is open for anyone to inspect and
-scrutinize, which I encourage and would appreciate.
+[WebAssembly](/rustdoc/sci_cream/index.html#wasm-interoperability). The provenance of calculation
+methods and ingredient definitions is open for anyone to inspect and scrutinize, which I encourage
+and would appreciate.
 
 ## Sci-Cream App
 
