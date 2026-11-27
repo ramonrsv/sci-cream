@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795799151734,
+  "lastUpdate": 1795799200922,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -721973,6 +721973,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1046.26,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.36,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "80a91a2571153fb2f7ce2ee462a5437ef1c1f614",
+          "message": "Pair data-note links with rustdoc's own hrefs\n\nThe tracked link map guessed which item each citation meant, by\nmatching path tails, and missed the bare [CONST] links that <code>\ngroups use. gen-data now reads the docs pages rustdoc rendered and\ngives each entry's n-th citation the n-th link rustdoc rendered for\nit, failing on any disagreement in number or text, or on an anchor\nits page lacks. Notes link into the hosted /rustdoc/ docs, which the\napp's Markdown opens in a new tab.\n\ngen:data builds the docs it reads, so the map, its scraper, and the\nCI map check are gone, and the interim MilkProteins link is reverted.\nThe entry parser moves to lib/data-entries.ts for the corpus tests,\nand scripts/tsconfig.json gives those tests Node's types.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T11:32:47-05:00",
+          "tree_id": "dc47bebcda010b5617497d30471455659a31ba34",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/80a91a2571153fb2f7ce2ee462a5437ef1c1f614"
+        },
+        "date": 1795799123085,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 786.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 954.23,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 730.88,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 898.6,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 740.73,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 908.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 714.28,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 882,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 715.81,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 883.53,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1046.27,
             "unit": "KB"
           },
           {
