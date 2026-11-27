@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795818232730,
+  "lastUpdate": 1795820150123,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -792674,6 +792674,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/b82b8df3dfb3d46175084ad9974fac2b65fd8f9e"
         },
         "date": 1795817508653,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1249.28,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 371.77,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 2034.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 614.24,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 663.23,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2245.41,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c065f2ea8ae04169ce46982b7c245108b32e3d04",
+          "message": "Fix stale references to data.rs and JSON sources\n\nCLAUDE.md still named data/ingredients/<category>.json the source of\ntruth, and said the data feature embeds those files from data.rs,\nwhich no longer exists. The sources are the data/**/*.md files, the\ncrate embeds the generated/min/ JSON from src/data/, and seed-db\nrefreshes the test users' copies. gen-data.ts's header named data.rs\ntoo.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T17:49:41-05:00",
+          "tree_id": "0d1a102c26a47e2723c326597ae984e0599042fb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c065f2ea8ae04169ce46982b7c245108b32e3d04"
+        },
+        "date": 1795820096538,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
