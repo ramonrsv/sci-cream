@@ -617,6 +617,8 @@ expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.603);
 */
 
 #![cfg_attr(coverage, feature(coverage_attribute))]
+// The site hosts these docs under its own icon; rustdoc's default is the Rust Foundation's logo.
+#![cfg_attr(sci_cream_site_docs, doc(html_favicon_url = "/icon.svg"))]
 
 pub mod asserts;
 pub mod balancing;

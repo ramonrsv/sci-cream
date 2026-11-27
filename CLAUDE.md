@@ -33,7 +33,7 @@ pnpm dev                 # Start Next.js dev server (Turbopack)
 Most scripts have `:rust` and `:js` variants; the unqualified form runs both in sequence.
 
 ```bash
-pnpm build:package       # Build WASM + TS bindings (required before the app)
+pnpm build:package       # Build site docs, WASM + TS bindings (required before the app)
 pnpm build:wasm          # WASM only (toggles crate-type; see below)
 pnpm build:rust          # Native cargo build, --all-features --all-targets
 pnpm test                # cargo test (Rust) then vitest run (TS)
@@ -46,6 +46,7 @@ pnpm fmt:check           # cargo fmt --check then prettier --check
 pnpm coverage            # cargo-llvm-cov (Rust) + vitest --coverage (JS)
 pnpm bench               # cargo criterion + benches/ts/run-all.ts
 pnpm doc                 # cargo doc --all-features
+pnpm doc:site            # Clean public docs under the site's icon, for the app's /rustdoc/
 pnpm gen:all             # Every codegen step, in dependency order — the one to reach for
 pnpm gen:data            # Resolve data/**/*.md into generated/{full,min}/*.json
 pnpm gen:doc-links       # Rebuild docs, rescrape docs/generated/link-map.json (tracked)
@@ -395,6 +396,9 @@ to keep the word. Each file drops only its own directory's word: the batch-build
   Each action opens with `action(name, ctx)`, which logs start and binds the name into its calls.
 - **`scripts/`** — run by `pnpm`, never imported by the app: `seed.ts`, `baseline.ts`, `*.sh`.
   Helpers they share, rather than entry points, live in `scripts/lib/` — as they do in the crate.
+  `build` runs `copy-rustdoc.sh`, which copies the crate's `doc:site` output into the gitignored
+  `public/rustdoc/`, served at `/rustdoc/` with `X-Robots-Tag: noindex`. For `pnpm dev`, run
+  `pnpm copy:rustdoc` after rebuilding the crate.
 - **`src/__tests__/seed-assets.ts`** — what `scripts/seed.ts` writes and the suites assert against.
 - **`lib/auth.ts`** — NextAuth v5 (beta) with GitHub + Google OAuth providers.
 - **`app/blog/`**, **`app/docs/`** — markdown-rendered content.

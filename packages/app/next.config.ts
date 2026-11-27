@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
   // renders no session-scoped controls. Last same-key match wins, so the embed rule must stay last.
   async headers() {
     return [
+      // The hosted rustdoc repeats what docs.rs publishes, so it stays out of search results.
+      { source: "/rustdoc/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex" }] },
       {
         source: "/(.*)",
         headers: [{ key: "Content-Security-Policy", value: "frame-ancestors 'self'" }],

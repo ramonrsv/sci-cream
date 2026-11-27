@@ -6,9 +6,10 @@
   "scripts": {
     "install:deps": "pnpm --dir ../sci-cream install:wasm",
     "build:deps": "pnpm --dir ../sci-cream build:package",
+    "copy:rustdoc": "./scripts/copy-rustdoc.sh",
     "gen:data": "pnpm --dir ../sci-cream gen:data",
     "build:analyze": "ANALYZE=true next build --webpack",
-    "build": "next build",
+    "build": "pnpm copy:rustdoc && next build",
     "test": "pnpm test:unit && pnpm test:e2e && pnpm test:visual",
     "test:unit": "vitest run",
     "test:e2e": "playwright test --project chromium firefox webkit mobile-chrome mobile-safari",

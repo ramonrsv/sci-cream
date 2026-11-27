@@ -32,7 +32,7 @@
     "gen:doc-links:check": "node --import tsx scripts/gen-doc-links.ts --check",
     "gen:all": "pnpm gen:footnotes && pnpm gen:data:min && pnpm gen:doc-links && pnpm gen:data",
     "gen:all:check": "pnpm gen:footnotes:check && pnpm gen:data:check && pnpm gen:doc-links:check",
-    "build:package": "pnpm gen:data && pnpm build:wasm && pnpm build:js",
+    "build:package": "pnpm gen:data && pnpm doc:site && pnpm build:wasm && pnpm build:js",
     "build:wasm": "pnpm set-crate-type:cdylib && pnpm build:wasm-pack && pnpm set-crate-type:rlib",
     "build:wasm-pack": "wasm-pack build --out-dir wasm --out-name index -- --features \"wasm,data,database\"",
     "set-crate-type:cdylib": "./scripts/set-crate-type.sh ./Cargo.toml cdylib",
@@ -62,7 +62,8 @@
     "bench:js": "node --import tsx benches/ts/run-all.ts",
     "bench:size": "node --import tsx benches/sizes/measure.ts",
     "doc": "cargo doc --all-features --no-deps --document-private-items",
-    "doc:examples": "cargo doc --all-features --no-deps --document-private-items --examples"
+    "doc:examples": "cargo doc --all-features --no-deps --document-private-items --examples",
+    "doc:site": "cargo clean --doc && cargo rustdoc --lib --all-features -- --cfg sci_cream_site_docs"
   },
   "dependencies": {
     "eslint-plugin-jsdoc": "^65.4.11",

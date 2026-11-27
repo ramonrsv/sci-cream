@@ -100,9 +100,10 @@ unused_qualifications = "warn"
 unused_results = "warn"
 variant_size_differences = "warn"
 
-# For cargo-llvm-cov #[coverage] attribute
+# For cargo-llvm-cov #[coverage] attribute, and the site's docs build (`pnpm doc:site`)
 unexpected_cfgs = { level = "warn", check-cfg = [
     "cfg(coverage,coverage_nightly)",
+    "cfg(sci_cream_site_docs)",
 ] }
 
 [lints.clippy]
