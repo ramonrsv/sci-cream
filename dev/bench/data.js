@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795799200922,
+  "lastUpdate": 1795799205511,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -767717,6 +767717,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/a06f9a930209e199e4825dca36267c6c68cb291a"
         },
         "date": 1795758372423,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "80a91a2571153fb2f7ce2ee462a5437ef1c1f614",
+          "message": "Pair data-note links with rustdoc's own hrefs\n\nThe tracked link map guessed which item each citation meant, by\nmatching path tails, and missed the bare [CONST] links that <code>\ngroups use. gen-data now reads the docs pages rustdoc rendered and\ngives each entry's n-th citation the n-th link rustdoc rendered for\nit, failing on any disagreement in number or text, or on an anchor\nits page lacks. Notes link into the hosted /rustdoc/ docs, which the\napp's Markdown opens in a new tab.\n\ngen:data builds the docs it reads, so the map, its scraper, and the\nCI map check are gone, and the interim MilkProteins link is reverted.\nThe entry parser moves to lib/data-entries.ts for the corpus tests,\nand scripts/tsconfig.json gives those tests Node's types.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T11:32:47-05:00",
+          "tree_id": "dc47bebcda010b5617497d30471455659a31ba34",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/80a91a2571153fb2f7ce2ee462a5437ef1c1f614"
+        },
+        "date": 1795799204430,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
