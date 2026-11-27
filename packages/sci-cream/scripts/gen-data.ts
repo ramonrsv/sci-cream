@@ -18,23 +18,25 @@
  * Footnote definitions are pulled from `docs/references/{literature,ingredients}.md`; a citation
  * with no matching definition is a hard error.
  *
- * Comments also cite crate items the way rustdoc resolves them, e.g. `[POD](crate::docs#pod)`.
- * Those are rewritten to absolute docs.rs URLs via `lib/doc-links.ts`, since the app renders
- * comments outside rustdoc, where an unresolved path is a dead link. Unresolvable is a hard error.
+ * Comments also cite crate items the way rustdoc resolves them, e.g. `[POD](crate::docs#pod)`. The
+ * app renders comments outside rustdoc, where those are dead links, so each is rewritten to the
+ * link rustdoc rendered for it on the data's `docs` page, into the app's hosted copy at `/rustdoc/`
+ * (`lib/doc-links.ts`). A citation rustdoc didn't render the same way is a hard error.
  *
- * That map comes from `gen-doc-links.ts`, which builds the docs to scrape it — and the crate only
- * compiles once `generated/min/` holds a file for every source `data.rs` embeds. `--min` writes
- * that copy alone, reading no map, so `gen:all` can seed the crate, refresh the map, then resolve.
+ * Those pages come from `pnpm doc:site`, and the crate only compiles once `generated/min/` holds a
+ * file for every source `data.rs` embeds. `--min` writes that copy alone, reading no rendered page,
+ * so `pnpm gen:data` can seed the crate, build the docs, then pair the links against them.
  *
- * Run: `node --import tsx scripts/gen-data.ts [--check | --min]`. With no flag it writes both
- * variants; `--min` writes only `generated/min/`; `--check` regenerates both (validating parsing
- * and footnotes) without writing, and verifies the tracked `min/` files are up to date.
+ * Run `pnpm gen:data`, which builds the docs first, or this script directly after `pnpm doc:site`:
+ * `node --import tsx scripts/gen-data.ts [--check | --min]`. With no flag it writes both variants;
+ * `--min` writes only `generated/min/`; `--check` regenerates both (validating parsing, links, and
+ * footnotes) without writing, and verifies the tracked `min/` files are up to date.
  */
 import fs from "node:fs";
 import path from "node:path";
-import { marked } from "marked";
 
-import { loadLinkMap, resolveDocLinks } from "./lib/doc-links";
+import { entryLabel, parseMarkdownEntries } from "./lib/data-entries";
+import { DATA_PAGES, comparable, pairDocLinks, readEntryLinks } from "./lib/doc-links";
 
 const PKG_ROOT = path.resolve(import.meta.dirname, "..");
 const SOURCE_DIRS = ["ingredients", "recipes"] as const;
@@ -42,18 +44,6 @@ const REFERENCE_FILES = [
   "docs/references/literature.md",
   "docs/references/ingredients.md",
 ] as const;
-
-interface Entry {
-  name?: string;
-  alias?: string;
-  comments?: string;
-  [key: string]: unknown;
-}
-
-/** Human identifier for error messages. */
-function entryLabel(entry: Entry): string {
-  return entry.name ?? entry.alias ?? "<unnamed>";
-}
 
 /** Build `{ number -> definition text }` from the ref. bibliographies. Wrapped defs are joined. */
 function loadFootnoteDefs(): Map<string, string> {
@@ -69,56 +59,6 @@ function loadFootnoteDefs(): Map<string, string> {
     }
   }
   return defs;
-}
-
-/**
- * Parse a category markdown file into ordered entries. Each level-2 (`##`) section is one entry:
- * the heading text is the name, its first fenced block is the JSON spec, and the remaining markdown
- * is the verbatim `comments` body (footnote are resolved later). Throws on several checked errors.
- */
-export function parseMarkdownEntries(md: string): Entry[] {
-  const entries: Entry[] = [];
-  const seen = new Set<string>();
-  let cur: { name: string; spec?: Record<string, unknown>; body: string[] } | null = null;
-
-  const flush = (): void => {
-    if (!cur) return;
-    if (cur.spec === undefined) throw new Error(`Entry '${cur.name}': no fenced spec block`);
-    const comment = cur.body.join("").trim();
-    const entry: Entry =
-      "for" in cur.spec ? { alias: cur.name, ...cur.spec } : { name: cur.name, ...cur.spec };
-    if (comment) entry.comments = comment;
-    entries.push(entry);
-    cur = null;
-  };
-
-  for (const token of marked.lexer(md)) {
-    if (token.type === "heading" && token.depth === 2) {
-      flush();
-      const name = token.text.trim();
-      if (!name) throw new Error("Entry with an empty `##` heading");
-      if (seen.has(name)) throw new Error(`Duplicate entry '${name}'`);
-      seen.add(name);
-      cur = { name, body: [] };
-    } else if (!cur) {
-      continue; // preamble before the first entry
-    } else if (token.type === "code" && cur.spec === undefined) {
-      if (token.lang !== "json") {
-        throw new Error(
-          `Entry '${cur.name}': spec block must be a json fence, got '${token.lang}'`,
-        );
-      }
-      try {
-        cur.spec = JSON.parse(token.text) as Record<string, unknown>;
-      } catch (cause) {
-        throw new Error(`Entry '${cur.name}': invalid spec JSON`, { cause });
-      }
-    } else {
-      cur.body.push(token.raw);
-    }
-  }
-  flush();
-  return entries;
 }
 
 /** Append the definitions of every `[^N]` a comment cites, so the string is self-contained. */
@@ -140,21 +80,31 @@ function resolveFootnotes(label: string, comment: string, defs: Map<string, stri
 /** Which variants to emit: `full` (with comments) for the app, `min` (comment-free) for binary. */
 type Kind = "full" | "min";
 
-/** A comment as `full` stores it: intra-doc links rewritten, then footnotes appended. */
-function makeCommentResolver(): (label: string, comment: string) => string {
-  const defs = loadFootnoteDefs();
-  const links = loadLinkMap();
-  /** Links first, so the resolver sees prose and never the appended bibliography. */
-  return (label, comment) => resolveFootnotes(label, resolveDocLinks(label, comment, links), defs);
+/** A comment of `dir` as `full` stores it: intra-doc links paired, then footnotes appended. */
+function makeCommentResolver(
+  dir: (typeof SOURCE_DIRS)[number],
+  defs: Map<string, string>,
+): (label: string, comment: string) => string {
+  const page = DATA_PAGES[dir];
+  const rendered = readEntryLinks(page);
+  return (label, comment) => {
+    const links = rendered.get(comparable(label));
+    if (links === undefined) {
+      throw new Error(`Entry '${label}' is not on ${page}; run \`pnpm doc:site\``);
+    }
+    /** Links first, so the pairing sees prose and never the appended bibliography. */
+    return resolveFootnotes(label, pairDocLinks(label, comment, links), defs);
+  };
 }
 
 /** Compute the requested generated files' paths and content without touching disk. */
 function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
-  /** The `full` gate, hoisted so its inputs load once — and so `min` alone reads no link map. */
-  const resolveComment = kinds.has("full") ? makeCommentResolver() : undefined;
+  /** The `full` inputs, loaded once — and only for `full`, since `min` precedes the docs build. */
+  const defs = kinds.has("full") ? loadFootnoteDefs() : undefined;
   const outputs = new Map<string, string>();
 
   for (const dir of SOURCE_DIRS) {
+    const resolveComment = defs === undefined ? undefined : makeCommentResolver(dir, defs);
     const base = path.join(PKG_ROOT, "data", dir);
     const sources = fs
       .readdirSync(base)

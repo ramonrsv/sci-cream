@@ -1,0 +1,6 @@
+{
+  // The package's config leaves out tests; this one covers the scripts and their tests.
+  "extends": "../tsconfig.json",
+  "include": ["."],
+  "exclude": []
+}

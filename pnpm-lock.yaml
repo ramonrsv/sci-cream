@@ -253,6 +253,9 @@ importers:
       eslint:
         specifier: ^10.15.0
         version: 10.15.0(jiti@2.7.0)
+      hast-util-from-html:
+        specifier: ^2.1.0
+        version: 2.1.0
       jsdom:
         specifier: ^31.0.1
         version: 31.0.1

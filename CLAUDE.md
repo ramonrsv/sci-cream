@@ -48,8 +48,7 @@ pnpm bench               # cargo criterion + benches/ts/run-all.ts
 pnpm doc                 # cargo doc --all-features
 pnpm doc:site            # Clean public docs under the site's icon, for the app's /rustdoc/
 pnpm gen:all             # Every codegen step, in dependency order — the one to reach for
-pnpm gen:data            # Resolve data/**/*.md into generated/{full,min}/*.json
-pnpm gen:doc-links       # Rebuild docs, rescrape docs/generated/link-map.json (tracked)
+pnpm gen:data            # Resolve data/**/*.md into generated/{full,min}/*.json, via the site docs
 
 # Cargo directly (only when pnpm can't express it):
 cargo test --all-features <test_name>        # Run a single Rust test
@@ -257,24 +256,23 @@ corroborated by them, is a literal, checked by a doctest that asserts the relati
 #### Intra-doc links outside rustdoc
 
 `docs/*.md` and `data/**/*.md` cite crate items the way rustdoc resolves them — ``[`Fibers`]``,
-``[`field@Sugars::sucrose`]``, `[pac](crate::constants::pac)`, `[POD](crate::docs#pod)`. Outside
-rustdoc those are dead links, so `gen-data.ts` rewrites them to absolute docs.rs URLs when it
-resolves the `comments` into `generated/full/`.
+``[`field@Sugars::sucrose`]``, `[pac](crate::constants::pac)`, `[POD](crate::docs#pod)`, or a bare
+`[STD_LACTOSE_IN_MSNF]` inside a `<code>` group. Outside rustdoc those are dead links, so
+`gen-data.ts` rewrites the ones in entry comments as it resolves them into `generated/full/`.
 
 Each file directly in the crate's `scripts/` is something `pnpm` runs; `scripts/lib/` holds the
-modules they import, such as the link resolver.
+modules they import, such as the link pairing.
 
-The targets are not hand-maintained. `pnpm gen:doc-links` builds the docs and scrapes the hrefs
-rustdoc already resolved out of the three authored pages (`docs`, `docs::ingredients`,
-`docs::recipes`), inverting each into the path an author would write; the result is the tracked
-`docs/generated/link-map.json`. `rustdoc::all` is `warn` and CI sets `RUSTDOCFLAGS: -D warnings`,
-so `broken_intra_doc_links` guarantees every mapped target exists.
+The targets are rustdoc's own. It renders each data file on the `docs::ingredients` or
+`docs::recipes` page, resolving every citation in that page's scope, and `rustdoc::all` is `warn`
+with CI's `RUSTDOCFLAGS: -D warnings`, so each one resolves. `lib/doc-links.ts` gives an entry's
+n-th citation the URL of the n-th intra-doc link rustdoc rendered in the entry's section, under
+the app's hosted `/rustdoc/`. The two must agree in number and text, and each fragment must name
+an id on its target page, which rustdoc doesn't check; anything else is a hard error.
 
-The two generators need each other: `gen:data` resolves citations against the map, and
-`gen:doc-links` builds the docs to scrape it, which needs a `generated/min/` file for every source
-`data.rs` embeds. `gen:all` breaks the cycle — `gen:data:min` (map-free), the map, then `gen:data`
-in full — so reach for it rather than either half. CI's `gen_check` runs the `:check` variants in
-that order, cheapest first; a stale map or an unresolvable citation fails it.
+`gen:data` builds the docs it reads: `gen:data:min` first, since the crate only compiles once
+`generated/min/` holds a file for every source `data.rs` embeds, then `doc:site`, then the full
+pass. CI's `gen_check` runs `gen:data:check`, which validates the pairing and the tracked `min/`.
 
 #### Default vs. reference dairy ingredients
 

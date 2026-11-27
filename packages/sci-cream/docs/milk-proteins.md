@@ -2,9 +2,8 @@
 
 ## Milk Proteins
 
-Milk proteins, casein and whey proteins, are tracked in
-[`MilkProteins`](crate::composition::proteins::MilkProteins) and accessible via [`CompKey::Casein`],
-[`CompKey::Whey`], and their total, [`CompKey::MilkProteins`].
+Milk proteins, casein and whey proteins, are tracked in [`MilkProteins`] and accessible via
+[`CompKey::Casein`], [`CompKey::Whey`], and their total, [`CompKey::MilkProteins`].
 
 ### Crude and True Protein
 

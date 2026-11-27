@@ -24,7 +24,9 @@
 
 #[cfg(doc)]
 use crate::{
-    composition::{ArtificialSweeteners, CompKey, Composition, Emulsifiers, Fibers, Polyols, Stabilizers, Sugars},
+    composition::{
+        ArtificialSweeteners, CompKey, Composition, Emulsifiers, Fibers, MilkProteins, Polyols, Stabilizers, Sugars,
+    },
     constants::{
         self,
         composition::dairy::milk::{

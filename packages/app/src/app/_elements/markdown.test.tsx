@@ -76,6 +76,14 @@ describe("Markdown links", () => {
     expect(link).toHaveAttribute("rel", "noopener noreferrer ugc nofollow");
   });
 
+  it("opens a link into the hosted rustdoc in a new tab, as it lies outside the app", () => {
+    render(
+      <Markdown text="[`Sugars`](/rustdoc/sci_cream/composition/sugars/struct.Sugars.html)" />,
+    );
+
+    expect(screen.getByRole("link", { name: "Sugars" })).toHaveAttribute("target", "_blank");
+  });
+
   it("leaves an internal link alone, so in-app navigation is unaffected", () => {
     render(<Markdown text="[docs](/docs/overview)" />);
 

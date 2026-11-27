@@ -9,7 +9,8 @@ import { leafKey } from "@/lib/storage-keys";
 /**
  * Read-only markdown renderer for comments and notes. Supports GFM (tables, task lists, footnotes,
  * autolinks) via `remark-gfm`. Raw HTML is not rendered (react-markdown's safe default), so user
- * text can't inject markup. External links open in a new tab; internal ones stay in place.
+ * text can't inject markup. External links open in a new tab, as do links into the hosted rustdoc,
+ * which is static pages outside the app; in-app links stay in place.
  *
  * Outbound links carry `ugc nofollow` alongside `noopener noreferrer`: this renders public comment
  * threads as well as private notes, and untrusted text must not pass link equity to whatever it
@@ -24,11 +25,11 @@ export function Markdown({ text, className }: { text: string; className?: string
         remarkPlugins={[remarkGfm]}
         components={{
           a: ({ href, children }) => {
-            const external = /^https?:\/\//.test(href ?? "");
+            const newTab = /^https?:\/\//.test(href ?? "") || (href ?? "").startsWith("/rustdoc/");
             return (
               <a
                 href={href}
-                {...(external ? { target: "_blank", rel: "noopener noreferrer ugc nofollow" } : {})}
+                {...(newTab ? { target: "_blank", rel: "noopener noreferrer ugc nofollow" } : {})}
                 className="text-blue-500 hover:underline dark:text-blue-400"
               >
                 {children}

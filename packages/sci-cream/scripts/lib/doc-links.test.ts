@@ -1,153 +1,184 @@
-import { expect, test, describe } from "vitest";
+import fs from "node:fs";
+import path from "node:path";
+import { describe, expect, test } from "vitest";
 
-import {
-  collectCitations,
-  loadLinkMap,
-  resolveDocLinks,
-  resolveTarget,
-  type LinkMap,
-} from "./doc-links";
+import { type Entry, entryLabel, parseMarkdownEntries } from "./data-entries";
+import { DATA_PAGES, comparable, findCitations, pairDocLinks, readEntryLinks } from "./doc-links";
+import { DOC_ROOT, SITE_ROOT, brokenAnchors } from "./rustdoc-html";
 
-/**
- * A stand-in map, so the unit tests do not depend on which items the crate happens to have.
- *
- * Keyed by full crate path, as the generator writes it. `Fats::sucrose` shares a tail with
- * `Sugars::sucrose` so the ambiguous case is reachable. Hrefs are stand-ins too: lookup only ever
- * joins them to `docsBase`, so short ones keep the expected URLs readable.
- */
-const MAP: LinkMap = {
-  docsBase: "BASE",
-  items: {
-    "composition::sugars::Sugars": "sugars.html",
-    "composition::sugars::Sugars::sucrose": "sugars.html#sucrose",
-    "composition::fats::Fats::sucrose": "fats.html#sucrose",
-    "constants::pac": "pac/index.html",
-  },
-  anchors: { "docs#pod": "docs.html#pod" },
-};
+const PKG_ROOT = path.resolve(import.meta.dirname, "../..");
 
-describe("resolveTarget", () => {
-  test("joins the map's href to its docsBase", () => {
-    expect(resolveTarget("Sugars", MAP)).toBe("BASE/sugars.html");
+/** A rendered link with a stand-in URL, which pairing only copies. */
+const link = (text: string, url = `URL-${text}`) => ({ text, url });
+
+describe("findCitations", () => {
+  test("finds a shortcut link, its text without the disambiguator", () => {
+    const markdown = "See [`field@Sugars::sucrose`].";
+    const [citation] = findCitations(markdown);
+    expect(citation).toMatchObject({
+      form: "shortcut",
+      target: "field@Sugars::sucrose",
+      text: "Sugars::sucrose",
+    });
+    expect(markdown.slice(citation.start, citation.end)).toBe("[`field@Sugars::sucrose`]");
   });
 
-  test("strips the `crate::` prefix", () => {
-    expect(resolveTarget("crate::constants::pac", MAP)).toBe("BASE/pac/index.html");
-  });
-
-  test("strips a namespace disambiguator", () => {
-    expect(resolveTarget("field@Sugars::sucrose", MAP)).toBe("BASE/sugars.html#sucrose");
-    expect(resolveTarget("struct@Sugars", MAP)).toBe("BASE/sugars.html");
-  });
-
-  test("strips trailing call parens", () => {
-    expect(resolveTarget("Sugars()", MAP)).toBe("BASE/sugars.html");
-  });
-
-  test("looks an anchored path up among anchors", () => {
-    expect(resolveTarget("crate::docs#pod", MAP)).toBe("BASE/docs.html#pod");
-  });
-
-  test("resolves a full crate path exactly", () => {
-    expect(resolveTarget("composition::sugars::Sugars::sucrose", MAP)).toBe(
-      "BASE/sugars.html#sucrose",
+  test("finds an inline link to an item path, its text as written", () => {
+    const markdown = "Per [the `pac` module](crate::constants::pac).";
+    const [citation] = findCitations(markdown);
+    expect(citation).toMatchObject({
+      form: "inline",
+      target: "crate::constants::pac",
+      text: "the `pac` module",
+    });
+    expect(markdown.slice(citation.start, citation.end)).toBe(
+      "[the `pac` module](crate::constants::pac)",
     );
   });
 
-  test("resolves a shortened path by matching the key's tail", () => {
-    expect(resolveTarget("sugars::Sugars", MAP)).toBe("BASE/sugars.html");
+  test("finds an anchored inline link", () => {
+    expect(findCitations("[POD](crate::docs#pod)")).toMatchObject([
+      { form: "inline", target: "crate::docs#pod", text: "POD" },
+    ]);
   });
 
-  test("matches a tail only on a `::` boundary", () => {
-    expect(resolveTarget("ugars", MAP)).toBeUndefined();
+  test("finds a bare shortcut link, as a `<code>` group holds", () => {
+    expect(findCitations("<code>MSNF / (1 - [STD_X])</code>")).toMatchObject([
+      { form: "bare", target: "STD_X", text: "STD_X" },
+    ]);
   });
 
-  test("returns undefined when a shortened path matches several items", () => {
-    expect(resolveTarget("sucrose", MAP)).toBeUndefined();
+  test("passes over URLs, in-page anchors, and paths", () => {
+    const markdown =
+      "[a](https://example.org) [b](/images/x.png) [c](#local) [d](./rel.md) [e](mailto:a@b.c)";
+    expect(findCitations(markdown)).toEqual([]);
   });
 
-  test("returns undefined for an unknown path", () => {
-    expect(resolveTarget("NoSuchThing", MAP)).toBeUndefined();
-    expect(resolveTarget("crate::docs#no-such-anchor", MAP)).toBeUndefined();
+  test("passes over footnotes and reference-style links", () => {
+    const markdown =
+      "Cited[^34], [as here][ref].\n\n[^34]: Author. (2019). [_Title_](https://example.org). Site.\n" +
+      "\n[ref]: https://example.org";
+    expect(findCitations(markdown)).toEqual([]);
+  });
+
+  test("passes over fenced code and code spans", () => {
+    const markdown = '```json\n{ "see": "[`Sugars`]" }\n```\n\nA span, `[x](crate::y)` and `[Z]`.';
+    expect(findCitations(markdown)).toEqual([]);
+  });
+
+  test("lists the citations in document order, whatever their form", () => {
+    const citations = findCitations("[x](crate::x), then [`y`], then <code>[z]</code>.");
+    expect(citations.map(({ target }) => target)).toEqual(["crate::x", "y", "z"]);
   });
 });
 
-describe("resolveDocLinks", () => {
-  test("rewrites a shortcut link, keeping the path as the visible text", () => {
-    expect(resolveDocLinks("e", "See [`Sugars`] for more.", MAP)).toBe(
-      "See [`Sugars`](BASE/sugars.html) for more.",
+describe("pairDocLinks", () => {
+  test("rewrites each citation with the URL rustdoc rendered in its place", () => {
+    const markdown =
+      "See [`field@Sugars::sucrose`], [the `pac` module](crate::constants::pac), and " +
+      "<code>a \\* [STD_X]</code>.";
+    const rendered = [
+      link("Sugars::sucrose", "U1"),
+      link("the pac module", "U2"),
+      link("STD_X", "U3"),
+    ];
+    expect(pairDocLinks("e", markdown, rendered)).toBe(
+      "See [`Sugars::sucrose`](U1), [the `pac` module](U2), and <code>a \\* [STD_X](U3)</code>.",
     );
   });
 
-  test("drops the disambiguator from a shortcut link's text", () => {
-    expect(resolveDocLinks("e", "[`field@Sugars::sucrose`]", MAP)).toBe(
-      "[`Sugars::sucrose`](BASE/sugars.html#sucrose)",
+  test("folds rustdoc's smart punctuation before comparing texts", () => {
+    expect(pairDocLinks("e", "[Goff's guide](crate::docs#goff)", [link("Goff’s guide", "U")])).toBe(
+      "[Goff's guide](U)",
     );
   });
 
-  test("rewrites an inline link, keeping its authored text", () => {
-    expect(resolveDocLinks("e", "[the PAC module](crate::constants::pac)", MAP)).toBe(
-      "[the PAC module](BASE/pac/index.html)",
+  test("leaves footnotes, URLs, and fenced code alone", () => {
+    const markdown =
+      'Cited[^34] at [a site](https://example.org).\n\n```json\n{ "see": "[`Sugars`]" }\n```';
+    expect(pairDocLinks("e", markdown, [])).toBe(markdown);
+  });
+
+  test("throws, naming the source, when rustdoc rendered a link the scan missed", () => {
+    expect(() => pairDocLinks("Vanilla Extract", "No citation here.", [link("Sugars")])).toThrow(
+      /'Vanilla Extract' cites 0 item\(s\), but rustdoc rendered 1 link\(s\)/,
     );
   });
 
-  test("rewrites an anchored inline link", () => {
-    expect(resolveDocLinks("e", "[POD](crate::docs#pod)", MAP)).toBe("[POD](BASE/docs.html#pod)");
-  });
-
-  test("leaves external, absolute, and in-page links alone", () => {
-    const src = "[a](https://example.org) [b](/images/x.png) [c](#local) [d](./rel.md)";
-    expect(resolveDocLinks("e", src, MAP)).toBe(src);
-  });
-
-  test("leaves footnote citations and definitions alone", () => {
-    const src = "Cited[^34].\n\n[^34]: Author. (2019). [_Title_](https://example.org). Site.";
-    expect(resolveDocLinks("e", src, MAP)).toBe(src);
-  });
-
-  test("leaves fenced code untouched", () => {
-    const src = 'Text [`Sugars`].\n\n```json\n{ "see": "[`Sugars`]" }\n```\n';
-    expect(resolveDocLinks("e", src, MAP)).toBe(
-      'Text [`Sugars`](BASE/sugars.html).\n\n```json\n{ "see": "[`Sugars`]" }\n```\n',
+  test("throws when a citation has no rendered link", () => {
+    expect(() => pairDocLinks("Vanilla Extract", "See [`Sugars`].", [])).toThrow(
+      /'Vanilla Extract' cites 1 item\(s\), but rustdoc rendered 0 link\(s\)/,
     );
   });
 
-  test("throws naming the entry and every unresolvable citation, as authored", () => {
-    const src = "[`NoSuchThing`] and [x](crate::also::missing)";
-    expect(() => resolveDocLinks("Vanilla Extract", src, MAP)).toThrowError(
-      /'Vanilla Extract' cites unresolvable intra-doc link\(s\): crate::also::missing, NoSuchThing/,
-    );
-  });
-
-  test("names the rival items when a citation is ambiguous", () => {
-    expect(() => resolveDocLinks("Vanilla Extract", "[`sucrose`]", MAP)).toThrowError(
-      /sucrose \(ambiguous: composition::sugars::Sugars::sucrose, composition::fats::Fats::sucrose\)/,
+  test("throws when a citation's text disagrees with the link in its place", () => {
+    const rendered = [link("Sugars"), link("Polyols")];
+    expect(() => pairDocLinks("Vanilla Extract", "[`Sugars`] and [`Fats`]", rendered)).toThrow(
+      /'Vanilla Extract' cites 'Fats' where rustdoc rendered 'Polyols'/,
     );
   });
 });
 
-describe("the generated link map", () => {
-  test("resolves every citation in the guide and the ingredient/recipe data", () => {
-    const map = loadLinkMap();
-    const unresolved = collectCitations().filter((c) => resolveTarget(c.target, map) === undefined);
-    expect(unresolved).toEqual([]);
+/** The entries with comments in a data directory, read the way `gen-data.ts` reads them. */
+function commentedEntries(dir: string): (Entry & { comments: string })[] {
+  const base = path.join(PKG_ROOT, "data", dir);
+  return fs
+    .readdirSync(base)
+    .filter((file) => file.endsWith(".md"))
+    .flatMap((file) => parseMarkdownEntries(fs.readFileSync(path.join(base, file), "utf8")))
+    .filter((entry): entry is Entry & { comments: string } => entry.comments !== undefined);
+}
+
+describe("the rendered docs", () => {
+  test("pair with every data entry's citations", () => {
+    const failures: string[] = [];
+    for (const [dir, page] of Object.entries(DATA_PAGES)) {
+      const rendered = readEntryLinks(page);
+      for (const entry of commentedEntries(dir)) {
+        const label = entryLabel(entry);
+        const links = rendered.get(comparable(label));
+        if (links === undefined) {
+          failures.push(`'${label}' is not on ${page}`);
+          continue;
+        }
+        try {
+          pairDocLinks(label, entry.comments, links);
+        } catch (error) {
+          failures.push(String(error));
+        }
+      }
+    }
+    expect(failures).toEqual([]);
   });
 
-  /** Without this the check above passes vacuously should the collector ever find nothing. */
-  test("finds citations in each authored source directory", () => {
-    const dirs = new Set(collectCitations().map((c) => c.file.replace(/\/[^/]+$/, "")));
-    expect([...dirs].sort()).toEqual(["data/ingredients", "data/recipes", "docs"]);
-  });
-
-  test("resolves to an absolute docs.rs URL", () => {
-    const map = loadLinkMap();
-    expect(resolveTarget("crate::constants::pac", map)).toBe(
-      "https://docs.rs/sci-cream/latest/sci_cream/constants/pac/index.html",
+  /** Without this the check above passes vacuously should the scan ever find nothing. */
+  test("hold citations among the data entries", () => {
+    const cited = Object.keys(DATA_PAGES).flatMap((dir) =>
+      commentedEntries(dir).flatMap(({ comments }) => findCitations(comments)),
     );
+    expect(cited.length).toBeGreaterThan(0);
   });
 
-  test("covers the guide anchors the app's spec-docs links to", () => {
-    const map = loadLinkMap();
+  test("point every entry's links at a hosted page that exists", () => {
+    const urls = Object.values(DATA_PAGES).flatMap((page) =>
+      [...readEntryLinks(page).values()].flat().map(({ url }) => url),
+    );
+    const missing = urls.filter((url) => {
+      if (!url.startsWith(`${SITE_ROOT}/`)) return true;
+      const file = url.slice(SITE_ROOT.length + 1).split("#")[0];
+      return !fs.existsSync(path.join(DOC_ROOT, file));
+    });
+    expect(urls.length).toBeGreaterThan(0);
+    expect(missing).toEqual([]);
+  });
+
+  test("report an anchor its page lacks", () => {
+    const missing = link("x", `${SITE_ROOT}/sci_cream/docs/index.html#no-such-anchor`);
+    const present = link("POD", `${SITE_ROOT}/sci_cream/docs/index.html#pod`);
+    expect(brokenAnchors([missing, present])).toEqual([missing]);
+  });
+
+  test("define the guide anchors the app's spec-docs links to", () => {
     /** Mirrors `GUIDE_CHAPTERS` in the app's `lib/sci-cream/spec-docs.ts`. */
     const chapters = [
       "sweeteners",
@@ -164,7 +195,9 @@ describe("the generated link map", () => {
       "emulsifiers",
       "cocoa",
     ];
-    const missing = chapters.filter((a) => resolveTarget(`crate::docs#${a}`, map) === undefined);
-    expect(missing).toEqual([]);
+    const links = chapters.map((anchor) =>
+      link(anchor, `${SITE_ROOT}/sci_cream/docs/index.html#${anchor}`),
+    );
+    expect(brokenAnchors(links)).toEqual([]);
   });
 });
