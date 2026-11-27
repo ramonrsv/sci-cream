@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795817625524,
+  "lastUpdate": 1795817629564,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -774077,6 +774077,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/3b98c303d252ee42c63ee38a09074b066595b24b"
         },
         "date": 1795806329694,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b82b8df3dfb3d46175084ad9974fac2b65fd8f9e",
+          "message": "Point the app's crate docs links at /rustdoc/\n\ndocs.rs serves the last published release, while the app deploys\nmain, so a page added or moved since that release was missing there.\nThe spec docs links, the docs pages, and the welcome post now point\ninto the hosted rustdoc, built with the app it ships in. The docs.rs\nbadge stays, since it reports the published crate.\n\nThe content links test checks /rustdoc/ links, fragments included,\nagainst the crate's docs build, as public/rustdoc/ exists only after\nan app build, and now reads reference-style link definitions too. A\nnew spec docs test checks every link an embedded entry shows the\nsame way.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T16:58:51-05:00",
+          "tree_id": "fbd8e0ef20697fcb2fb6462764c4c46b61d9ca4d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b82b8df3dfb3d46175084ad9974fac2b65fd8f9e"
+        },
+        "date": 1795817628667,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
