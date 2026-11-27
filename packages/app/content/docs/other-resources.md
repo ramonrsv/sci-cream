@@ -30,13 +30,19 @@ science articles and reference recipes are collected in these pages, grouped by 
 <img src="/images/docs/underbelly_logo.png" alt="Underbelly Logo" width="400"
 style="display: block; margin: 0 auto; background: black">
 
-[under-belly.org](https://under-belly.org/category/ice-cream/)'s "Standard Base" recipe is arguably
-_the_ standard base recipe - it's certainly the foundation for a lot of the recipes I have
-developed, as are the [strawberry sorbet](https://under-belly.org/sample-sorbet-recipe/), [Grand
+[under-belly.org](https://under-belly.org/category/ice-cream/)'s [Standard
+Base](https://under-belly.org/basic-ice-cream-recipe-examples/) recipe is arguably _the_ standard
+base recipe - it's certainly the foundation for a lot of the recipes I have developed, as are the
+[strawberry sorbet](https://under-belly.org/sample-sorbet-recipe/), [Grand
 Marnier](https://under-belly.org/booze-flavored-ice-cream/), and
 [chocolate](https://under-belly.org/ice-cream-flavor-chocolate/) recipes. Some of the best ice
 creams I have ever had were when I was making these. The ice cream blog has a lot of excellent ice
-cream science information that I still visit often. I could not recommend this source enough.
+cream science information that I still visit, and which I often cite throughout the [reference
+knowledge](https://docs.rs/sci-cream/latest/sci_cream/docs/index.html) base. Their [stabilizer
+blends](https://under-belly.org/ice-cream-stabilizers/) are fantastic as well; I use them almost
+exclusively. All four stabilizer blends and most of the recipes are available in the Sci-Cream app.
+
+If you can only visit one source, make it this one; I cannot recommend it enough.
 
 [Science](/docs/other-resources/science#underbelly) ·
 [Recipes](/docs/other-resources/recipes#underbelly)
@@ -81,8 +87,8 @@ were an instrumental reference during the early days of Sci-Cream - I ~~shameles
 a lot of their methodology and ingredient composition values for the [Apps Script
 predecessor](/blog/2026-04-27-welcome#background) of this project. I don't use it anymore these
 days, but their desktop ice cream calculator is a great piece of software that I encourage you to
-try out. I think they also have a [web app](https://www.icecreamcalc.app/) now, though I've not had
-a chance to try it.
+try out. They now also have a [web app](https://www.icecreamcalc.app/) that looks very good, though
+I've not had a chance to try it.
 
 [Science](/docs/other-resources/science#icecreamcalccom) ·
 [Recipes](/docs/other-resources/recipes#icecreamcalccom)
@@ -118,16 +124,26 @@ cream calculator spreadsheet](https://www.dreamscoops.com/ice-cream-science/ice-
 was the first that I ever used, and where the [Apps Script
 predecessor](/blog/2026-04-27-welcome#background) of this project started from.
 [icecreamcalc.com](https://icecreamcalc.com/) is a great desktop calculator, which I used
-extensively during the early days of Sci-Cream. I've not yet had a chance to fully explore all of
-its features, nor the other entries in this list.
+extensively during the early days of Sci-Cream; it's now also a [web
+app](https://www.icecreamcalc.app/).
+[Scoopulator](https://scoopulator.app/) is a gorgeous-looking web app that I'm, quite frankly,
+jealous of. I've not yet had a chance to fully explore most of the entries below, nor all of their
+features.
 
-- [icecreamcalc.com](https://icecreamcalc.com/)
+Spreadsheets:
+
 - [Ice Cream Science spreadsheet](https://www.icecreamscience.com/blog/commercial-ice-cream-amp-gelato-mix-calculation-spreadsheet)
 - [Dream Scoops spreadsheet](https://www.dreamscoops.com/ice-cream-science/ice-cream-calculator/)
+
+Desktop and web apps:
+
+- [icecreamcalc.com](https://icecreamcalc.com/)
+- [Scoopulator](https://scoopulator.app/)
 - [Gelatodemy](https://gelatodemy.com/en/ice-cream-balancing-software/)
 - [Dairy Science Mix Calculator](https://www.dairyscience.info/calculator1/index.php)
 - [Owl Software](https://owlsoft.com/)
-- [Scoopulator](https://scoopulator.app/)
+- [Calculate Ice Cream](https://calculateicecream.com/)
+- [Omni Calculator](https://www.omnicalculator.com/food/ice-cream)
 
 ## Books
 
@@ -166,7 +182,6 @@ I just may not have had a chance to explore them yet. If and when I do, I will a
 - [Scoop Club](https://www.scoopclub.com.au/)
 - [Saveur](https://www.saveur.com/category/custards-ice-creams-puddings/)
 - [Scoop Science](https://scoop-science.com/)
-- [Omni Calculator](https://www.omnicalculator.com/food/ice-cream)
 - [jhermann/ice-creamery](https://github.com/jhermann/ice-creamery)
 - [Gelatodemy](https://gelatodemy.com/en/)
 - [Polar Ice Creamery](https://www.youtube.com/@PolarIceCreamery)
