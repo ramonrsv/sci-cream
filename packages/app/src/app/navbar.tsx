@@ -14,6 +14,7 @@ import {
   ListChecks,
   Wheat,
   Library,
+  Braces,
   Newspaper,
   PanelLeftClose,
   PanelLeftOpen,
@@ -22,6 +23,7 @@ import {
   LogOut,
   RotateCcw,
   Menu,
+  type LucideIcon,
 } from "lucide-react";
 
 import {
@@ -45,13 +47,23 @@ import { GroupBySelect } from "@/app/_elements/selects/group-by-select";
 import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { clearStoredLayouts, dispatchLayoutReset } from "@/lib/calculator-layout";
 
+/** A sidebar link */
+interface NavItem {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  /** Opens in a new tab: the target is outside the app, so opening it in place unloads the app */
+  newTab?: boolean;
+}
+
 /** Primary navigation links shown in the sidebar */
-const navItems = [
+const navItems: NavItem[] = [
   { href: "/calculator", label: "Calculator", icon: Calculator },
   { href: "/recipes", label: "Recipes", icon: BookOpen },
   { href: "/make-recipe", label: "Make", icon: ListChecks },
   { href: "/ingredients", label: "Ingredients", icon: Wheat },
   { href: "/docs", label: "Docs", icon: Library },
+  { href: "/rustdoc/sci_cream/index.html", label: "API", icon: Braces, newTab: true },
   { href: "/blog", label: "Blog", icon: Newspaper },
 ];
 
@@ -291,17 +303,34 @@ export function Sidebar() {
       >
         {/* Nav links */}
         <nav aria-label="Main" className="mt-1 flex flex-1 flex-col gap-1 px-2">
-          {navItems.map(({ href, label, icon: Icon }) => {
+          {navItems.map(({ href, label, icon: Icon, newTab }) => {
             const active = isNavActive(pathname, href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                title={pinned ? undefined : label}
-                className={`sidebar-item ${active ? "sidebar-item-active" : ""} mx-0.5 gap-2 px-2 sm:mx-2.25`}
-              >
+            const linkProps = {
+              href,
+              title: pinned ? undefined : label,
+              className: `sidebar-item ${active ? "sidebar-item-active" : ""} mx-0.5 gap-2 px-2 sm:mx-2.25`,
+            };
+            const content = (
+              <>
                 <Icon size={iconSize} className="shrink-0" />
                 {<span className="overflow-hidden">{label}</span>}
+              </>
+            );
+
+            // A new tab changes no route, so its click dismisses the touch drawer itself.
+            return newTab ? (
+              <a
+                key={href}
+                {...linkProps}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={canHover ? undefined : closePeek}
+              >
+                {content}
+              </a>
+            ) : (
+              <Link key={href} {...linkProps}>
+                {content}
               </Link>
             );
           })}

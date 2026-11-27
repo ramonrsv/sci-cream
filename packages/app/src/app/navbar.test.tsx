@@ -258,6 +258,35 @@ describe("Header / Sidebar — pin and peek", () => {
     expect(screen.getByRole("complementary")).toHaveClass("w-0");
   });
 
+  it("opens the API docs in a new tab", async () => {
+    render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    const api = await screen.findByRole("link", { name: "API" });
+    expect(api).toHaveAttribute("href", "/rustdoc/sci_cream/index.html");
+    expect(api).toHaveAttribute("target", "_blank");
+  });
+
+  it("dismisses the peek drawer when opening the API docs on mobile", async () => {
+    const user = userEvent.setup();
+    render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Peek sidebar" }));
+    expect(screen.getByRole("complementary")).toHaveClass("w-54");
+
+    // The new tab leaves this page's route unchanged, so no navigation dismisses the drawer.
+    await user.click(screen.getByRole("link", { name: "API" }));
+
+    await waitFor(() => expect(screen.getByRole("complementary")).toHaveClass("w-0"));
+  });
+
   it("keeps the peek drawer open when navigating on desktop", async () => {
     stubViewport({ wide: true, hover: true });
     const { rerender } = render(
