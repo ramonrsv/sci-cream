@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795801898455,
+  "lastUpdate": 1795801946176,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -758669,6 +758669,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.75,
             "range": "0.65",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6ba6b1b5b5ff016ac1a203223274e8dcb647f7bd",
+          "message": "Fail gen-data on raw HTML left in data notes\n\nThe app prints raw HTML as text, and gen-data only rewrites HTML\ncomments and <code> groups, so any other tag in a data file would\nreach ingredient pages as literal markup. gen-data now fails on an\nentry whose finished comments, bibliography included, still hold a\ntag or comment outside code; autolinks and escapes stay markdown.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T12:33:14-05:00",
+          "tree_id": "9e2168c5defd0ad194e8bbfae567eccee8dcb0dc",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6ba6b1b5b5ff016ac1a203223274e8dcb647f7bd"
+        },
+        "date": 1795801848179,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 71.66,
+            "range": "6.04",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 17.65,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 17.61,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 189.5,
+            "range": "10.94",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 189.5,
+            "range": "10.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 67.44,
+            "range": "5.90",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.41,
+            "range": "0.58",
             "unit": "ms"
           }
         ]
