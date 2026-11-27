@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795804451576,
+  "lastUpdate": 1795804495663,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -523278,6 +523278,471 @@ window.BENCHMARK_DATA = {
             "range": "±0.29%",
             "unit": "ops/sec",
             "extra": "97 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0086970801aae7d532c5edc8b9c654953ae7d1b9",
+          "message": "Snapshot a <code> group's equation in the notes\n\nThe joined code spans gen-data writes for a <code> group read as one\nexpression only while the app's inline code has no background or\nbackticks. A narrow snapshot of USDA Milk Chocolate's MSNF equation\nguards that look, and checks that no <code> tag shows and that the\nconstant links into the hosted rustdoc.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T12:33:14-05:00",
+          "tree_id": "90a6b892b3858ec440df4f03762295b69ee3f10b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0086970801aae7d532c5edc8b9c654953ae7d1b9"
+        },
+        "date": 1795804395739,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "composition_value_as_quantity",
+            "value": 425308,
+            "range": "±0.52%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compositionValueAsQuantity",
+            "value": 519141,
+            "range": "±0.94%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "composition_value_as_percentage",
+            "value": 421854,
+            "range": "±0.54%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compositionValueAsPercentage",
+            "value": 521949,
+            "range": "±0.55%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "allIngredientSpecs.find, first",
+            "value": 71444101,
+            "range": "±2.79%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "allIngredientSpecs.find, last",
+            "value": 73065,
+            "range": "±0.51%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "getIngredientSpecByName, first",
+            "value": 24521518,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "getIngredientSpecByName, last",
+            "value": 127017,
+            "range": "±0.56%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "get_ingredient_spec_by_name, first",
+            "value": 532941,
+            "range": "±0.63%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "get_ingredient_spec_by_name, last",
+            "value": 162898,
+            "range": "±0.62%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec(getIngredientSpecByName, first)",
+            "value": 128023,
+            "range": "±0.60%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec(getIngredientSpecByName, last)",
+            "value": 40208,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec(get_ingredient_spec_by_name, first)",
+            "value": 97566,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec(get_ingredient_spec_by_name, last)",
+            "value": 30055,
+            "range": "±0.31%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec(map lookup, first)",
+            "value": 130987,
+            "range": "±0.41%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec(map lookup, last)",
+            "value": 59158,
+            "range": "±0.59%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "IngredientDatabase.get_ingredient_by_name, first",
+            "value": 1722591,
+            "range": "±1.22%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "IngredientDatabase.get_ingredient_by_name, last",
+            "value": 1571489,
+            "range": "±1.17%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "Bridge.get_ingredient_by_name, first",
+            "value": 1722947,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "Bridge.get_ingredient_by_name, last",
+            "value": 1598086,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "validIngNamesList.includes, first",
+            "value": 40353155,
+            "range": "±1.25%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "validIngNamesList.includes, last",
+            "value": 1631625,
+            "range": "±1.04%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "validIngNamesSet.has, first",
+            "value": 47254145,
+            "range": "±1.51%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "validIngNamesSet.has, last",
+            "value": 45494988,
+            "range": "±1.51%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "Bridge.has_ingredient, first",
+            "value": 7910503,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "Bridge.has_ingredient, last",
+            "value": 5875355,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec, single (Dark Rum)",
+            "value": 130954,
+            "range": "±0.53%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec, single (Whey Isolate)",
+            "value": 75369,
+            "range": "±0.31%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec, multiple",
+            "value": 11641,
+            "range": "±0.55%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "isCompKey (all PropKeys)",
+            "value": 7169344,
+            "range": "±0.41%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "isRatioKey (all PropKeys)",
+            "value": 7180030,
+            "range": "±0.40%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "isFpdKey (all PropKeys)",
+            "value": 7184957,
+            "range": "±0.33%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "isCompKey (CompKey-only inputs)",
+            "value": 7652942,
+            "range": "±0.49%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "isRatioKey (RatioKey-only inputs)",
+            "value": 62244569,
+            "range": "±1.84%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "isFpdKey (FpdKey-only inputs)",
+            "value": 67921196,
+            "range": "±2.77%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "composition.get",
+            "value": 156360,
+            "range": "±1.01%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compValueMap.get",
+            "value": 557283,
+            "range": "±0.55%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "getMixProperty",
+            "value": 798,
+            "range": "±37.44%",
+            "unit": "ops/sec",
+            "extra": "12 samples"
+          },
+          {
+            "name": "mixPropValueMap.get",
+            "value": 354046,
+            "range": "±2.90%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "makeCompValueMap",
+            "value": 94694,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "makeMixPropValueMap",
+            "value": 306,
+            "range": "±18.60%",
+            "unit": "ops/sec",
+            "extra": "14 samples"
+          },
+          {
+            "name": "comp_key_as_med_str",
+            "value": 44953,
+            "range": "±9.00%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 443254,
+            "range": "±2.23%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31951,
+            "range": "±0.26%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 344942,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "cloneRecipeLines",
+            "value": 1465,
+            "range": "±13.68%",
+            "unit": "ops/sec",
+            "extra": "11 samples"
+          },
+          {
+            "name": "makeRecipeLines",
+            "value": 9434,
+            "range": "±4.89%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "makeRecipeFromClonedLines",
+            "value": 1431,
+            "range": "±9.66%",
+            "unit": "ops/sec",
+            "extra": "13 samples"
+          },
+          {
+            "name": "makeRecipeFromMadeLines",
+            "value": 9229,
+            "range": "±1.76%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "makeRecipeFromClonedLines.calculate_composition",
+            "value": 792,
+            "range": "±15.84%",
+            "unit": "ops/sec",
+            "extra": "27 samples"
+          },
+          {
+            "name": "makeRecipeFromMadeLines.calculate_composition",
+            "value": 8375,
+            "range": "±4.82%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 84885,
+            "range": "±1.63%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 140168,
+            "range": "±1.57%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "makeRecipeFromClonedLines.calculate_mix_properties",
+            "value": 1200,
+            "range": "±9.87%",
+            "unit": "ops/sec",
+            "extra": "13 samples"
+          },
+          {
+            "name": "makeRecipeFromMadeLines.calculate_mix_properties",
+            "value": 7199,
+            "range": "±5.92%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 32026,
+            "range": "±0.25%",
+            "unit": "ops/sec",
+            "extra": "99 samples"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 37281,
+            "range": "±0.11%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "bridge.balance_recipe",
+            "value": 5098,
+            "range": "±0.36%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "recipe.balance",
+            "value": 5308,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "bridge.validate_recipe_targets(native_keys)",
+            "value": 3.45,
+            "range": "±6.39%",
+            "unit": "ops/sec",
+            "extra": "13 samples"
+          },
+          {
+            "name": "recipe.validate_targets(native_keys)",
+            "value": 3.59,
+            "range": "±0.39%",
+            "unit": "ops/sec",
+            "extra": "13 samples"
+          },
+          {
+            "name": "bridge.validate_recipe_targets(typical_keys)",
+            "value": 1035,
+            "range": "±0.41%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "recipe.validate_targets(typical_keys)",
+            "value": 1041,
+            "range": "±0.24%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
