@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795752654553,
+  "lastUpdate": 1795752717468,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -751452,6 +751452,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.4,
             "range": "0.42",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bbabd458f7fc446c7c79fe261b11bf5c00ad57ad",
+          "message": "Add Nutella, Lindt, and Nocciolata spreads\n\nNutella Hazelnut Spread with Cocoa, Lindt Hazelnut Milk Chocolate\nSpread, and Rigoni di Asiago Nocciolata are CompositeSpec entries built\nfrom their labels: the declared shares are taken as given, and the rest\nare fit to the EU or UK nutrition table, in the order the ingredients\nare listed; Lindt's also meets its declared minimum of cocoa solids.\nNutella declares its lecithin, 0.43%, which Lindt and Nocciolata take\ntoo, within the 0.3-0.5% of Icyer et al. (2024). That paper and Marra\net al. (2023), a base formulation with 0.7%, join the literature. Their\nhazelnut is the new Roasted Hazelnut (USDA SR Legacy).\n\nA reconciliation suite checks each spread against its table, each\nfigure rounding to the printed one or within a ceiling sized to the\nfit's residual, and tables the North American labels per serving.\n\nThe two spread TODO items move to Completed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T23:03:57-05:00",
+          "tree_id": "241062a7bc7e607588e1c1a92583fbca422727bd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bbabd458f7fc446c7c79fe261b11bf5c00ad57ad"
+        },
+        "date": 1795752649682,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 54.03,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.92,
+            "range": "0.80",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.9,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 139,
+            "range": "4.80",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 33,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 139,
+            "range": "4.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 50.4,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.05,
+            "range": "0.47",
             "unit": "ms"
           }
         ]
