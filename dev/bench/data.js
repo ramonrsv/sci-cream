@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795804823334,
+  "lastUpdate": 1795805723858,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -672669,6 +672669,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.97%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "76842d5f4dd0f2c7c08ee7958a4dc6db070cca63",
+          "message": "Update Underbelly and calculators in resources\n\nLink Underbelly's Standard Base and stabilizer blends pages, note\nthat the blog is cited throughout the reference knowledge base, and\nthat its blends and recipes are available in the app.\n\nSplit the calculators list into spreadsheets and desktop and web\napps, adding Calculate Ice Cream and moving Omni Calculator there\nfrom the Others list. Mention icecreamcalc.com's new web app and\nScoopulator in the section intro.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T13:51:12-05:00",
+          "tree_id": "135f5912667d767a4b8fadf1a306481410f544af",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/76842d5f4dd0f2c7c08ee7958a4dc6db070cca63"
+        },
+        "date": 1795805666169,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 90002,
+            "range": "±2.65%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 695129,
+            "range": "±0.62%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 59568,
+            "range": "±1.45%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 429169,
+            "range": "±1.88%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
