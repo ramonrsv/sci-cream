@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795758410442,
+  "lastUpdate": 1795758437052,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -755234,6 +755234,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.63,
             "range": "0.34",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a06f9a930209e199e4825dca36267c6c68cb291a",
+          "message": "Add an API sidebar item for the hosted rustdoc\n\nIt opens /rustdoc/sci_cream/index.html in a new tab, since the page\nlies outside the app and opening it in place would unload the app.\nOn touch devices the click also dismisses the peek drawer, which no\nroute change does for it.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T00:41:26-05:00",
+          "tree_id": "18356a9e30da872ddb88df008e747881c6b2d216",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a06f9a930209e199e4825dca36267c6c68cb291a"
+        },
+        "date": 1795758338242,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 73.38,
+            "range": "7.64",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 18.71,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 18.69,
+            "range": "2.39",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 195,
+            "range": "9.95",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 195,
+            "range": "9.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 68.92,
+            "range": "7.61",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.31,
+            "range": "0.51",
             "unit": "ms"
           }
         ]
