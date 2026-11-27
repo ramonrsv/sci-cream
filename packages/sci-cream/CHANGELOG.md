@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+## [0.0.9] - 2026-11-27
+
 ### Added
 
 - `DairySheetSpec::salt`, an `AddedSalt` of `Grams` or `FromSodium` (mg), counted as salt, not MSNF.
@@ -351,7 +353,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-url -->
 
-[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.8...HEAD
+[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.9...HEAD
+[0.0.9]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.8...sci-cream-v0.0.9
 [0.0.8]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.7...sci-cream-v0.0.8
 [0.0.7]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.6...sci-cream-v0.0.7
 [0.0.6]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.4...sci-cream-v0.0.6
