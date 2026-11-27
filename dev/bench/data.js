@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795758402168,
+  "lastUpdate": 1795758410442,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -668032,6 +668032,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.64%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a06f9a930209e199e4825dca36267c6c68cb291a",
+          "message": "Add an API sidebar item for the hosted rustdoc\n\nIt opens /rustdoc/sci_cream/index.html in a new tab, since the page\nlies outside the app and opening it in place would unload the app.\nOn touch devices the click also dismisses the peek drawer, which no\nroute change does for it.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T00:41:26-05:00",
+          "tree_id": "18356a9e30da872ddb88df008e747881c6b2d216",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a06f9a930209e199e4825dca36267c6c68cb291a"
+        },
+        "date": 1795758307964,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 46821,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 430076,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 31583,
+            "range": "±0.97%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 335393,
+            "range": "±1.17%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
