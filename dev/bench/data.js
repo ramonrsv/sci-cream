@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795805841253,
+  "lastUpdate": 1795805909297,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -760731,6 +760731,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.59,
             "range": "0.24",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "76842d5f4dd0f2c7c08ee7958a4dc6db070cca63",
+          "message": "Update Underbelly and calculators in resources\n\nLink Underbelly's Standard Base and stabilizer blends pages, note\nthat the blog is cited throughout the reference knowledge base, and\nthat its blends and recipes are available in the app.\n\nSplit the calculators list into spreadsheets and desktop and web\napps, adding Calculate Ice Cream and moving Omni Calculator there\nfrom the Others list. Mention icecreamcalc.com's new web app and\nScoopulator in the section intro.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T13:51:12-05:00",
+          "tree_id": "135f5912667d767a4b8fadf1a306481410f544af",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/76842d5f4dd0f2c7c08ee7958a4dc6db070cca63"
+        },
+        "date": 1795805819590,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 77.84,
+            "range": "11.44",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 21.16,
+            "range": "4.79",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 21.11,
+            "range": "4.81",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 196,
+            "range": "16.25",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 196,
+            "range": "16.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 71.02,
+            "range": "7.87",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.95,
+            "range": "0.54",
             "unit": "ms"
           }
         ]
