@@ -23,6 +23,9 @@
  * link rustdoc rendered for it on the data's `docs` page, into the app's hosted copy at `/rustdoc/`
  * (`lib/doc-links.ts`). A citation rustdoc didn't render the same way is a hard error.
  *
+ * The app's renderer prints raw HTML as text, so comments leave out HTML comments, and each
+ * `<code>` group, an expression with links, becomes joined code spans (`lib/raw-html.ts`).
+ *
  * Those pages come from `pnpm doc:site`, and the crate only compiles once `generated/min/` holds a
  * file for every source `data.rs` embeds. `--min` writes that copy alone, reading no rendered page,
  * so `pnpm gen:data` can seed the crate, build the docs, then pair the links against them.
@@ -37,6 +40,7 @@ import path from "node:path";
 
 import { entryLabel, parseMarkdownEntries } from "./lib/data-entries";
 import { DATA_PAGES, comparable, pairDocLinks, readEntryLinks } from "./lib/doc-links";
+import { joinCodeGroups } from "./lib/raw-html";
 
 const PKG_ROOT = path.resolve(import.meta.dirname, "..");
 const SOURCE_DIRS = ["ingredients", "recipes"] as const;
@@ -93,7 +97,9 @@ function makeCommentResolver(
       throw new Error(`Entry '${label}' is not on ${page}; run \`pnpm doc:site\``);
     }
     /** Links first, so the pairing sees prose and never the appended bibliography. */
-    return resolveFootnotes(label, pairDocLinks(label, comment, links), defs);
+    const paired = pairDocLinks(label, comment, links);
+    /** Then the `<code>` groups, which join around the URLs the pairing wrote. */
+    return resolveFootnotes(label, joinCodeGroups(label, paired), defs);
   };
 }
 

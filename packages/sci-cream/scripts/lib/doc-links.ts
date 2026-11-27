@@ -8,6 +8,7 @@
  * must agree in number and text: a disagreement means this scan read the markdown differently from
  * rustdoc, so it fails rather than write a wrong URL.
  */
+import { CODE_FENCE, CODE_SPAN, blank } from "./markdown-code";
 import {
   brokenAnchors,
   readDocblock,
@@ -21,12 +22,6 @@ export const DATA_PAGES = {
   ingredients: "sci_cream/docs/ingredients/index.html",
   recipes: "sci_cream/docs/recipes/index.html",
 } as const;
-
-/** Fenced code blocks, which rustdoc renders verbatim. */
-const CODE_FENCE = /^```[\s\S]*?^```/gm;
-
-/** A code span within one paragraph, whose text holds no links. */
-const CODE_SPAN = /(`+)(?:(?!\n\s*\n)[\s\S])*?\1/g;
 
 /** A shortcut link to a code-formatted path, `` [`Path`] ``, but no inline link or definition. */
 const SHORTCUT_LINK = /\[`([^`\n]+)`\](?![(:])/g;
@@ -55,11 +50,6 @@ export interface Citation {
   target: string;
   /** Its text: an inline link's as written, otherwise the target without its disambiguator. */
   text: string;
-}
-
-/** `markdown` with each match of `pattern` overwritten by spaces, every offset kept in place. */
-function blank(markdown: string, pattern: RegExp): string {
-  return markdown.replace(pattern, (span) => span.replace(/[^\n]/g, " "));
 }
 
 /** Every intra-doc link in `markdown`, in order. */

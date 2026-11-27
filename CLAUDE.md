@@ -260,7 +260,7 @@ corroborated by them, is a literal, checked by a doctest that asserts the relati
 `[STD_LACTOSE_IN_MSNF]` inside a `<code>` group. Outside rustdoc those are dead links, so
 `gen-data.ts` rewrites the ones in entry comments as it resolves them into `generated/full/`.
 
-Each file directly in the crate's `scripts/` is something `pnpm` runs; `scripts/lib/` holds the
+Each script directly in the crate's `scripts/` is something `pnpm` runs; `scripts/lib/` holds the
 modules they import, such as the link pairing.
 
 The targets are rustdoc's own. It renders each data file on the `docs::ingredients` or
@@ -269,6 +269,11 @@ with CI's `RUSTDOCFLAGS: -D warnings`, so each one resolves. `lib/doc-links.ts` 
 n-th citation the URL of the n-th intra-doc link rustdoc rendered in the entry's section, under
 the app's hosted `/rustdoc/`. The two must agree in number and text, and each fragment must name
 an id on its target page, which rustdoc doesn't check; anything else is a hard error.
+
+An equation with a linked constant is a `<code>` group, `<code>x * [CONST]</code>`, since clippy's
+`doc_link_code` rejects a code span joined to a code link. The app's `Markdown` prints raw HTML as
+text, as it also shows users' comments, so `lib/raw-html.ts` rewrites each group as joined code
+spans and code links, and the entry parser drops HTML comments, such as lint directives.
 
 `gen:data` builds the docs it reads: `gen:data:min` first, since the crate only compiles once
 `generated/min/` holds a file for every source `data.rs` embeds, then `doc:site`, then the full

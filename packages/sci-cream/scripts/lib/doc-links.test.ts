@@ -111,6 +111,12 @@ describe("pairDocLinks", () => {
     );
   });
 
+  test("throws when a bare link in a `<code>` group has no rendered link", () => {
+    expect(() => pairDocLinks("Vanilla Extract", "<code>x \\* [STD_X]</code>", [])).toThrow(
+      /'Vanilla Extract' cites 1 item\(s\), but rustdoc rendered 0 link\(s\)/,
+    );
+  });
+
   test("throws when a citation's text disagrees with the link in its place", () => {
     const rendered = [link("Sugars"), link("Polyols")];
     expect(() => pairDocLinks("Vanilla Extract", "[`Sugars`] and [`Fats`]", rendered)).toThrow(

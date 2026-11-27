@@ -4,10 +4,13 @@
  * Each `##` section is one entry, named by its heading. The section's first code block, a `json`
  * fence, is the entry's spec, whose fields become the entry's; a spec with a `for` key makes the
  * entry an alias, named by `alias` rather than `name`. The rest of the section, prose or code, is
- * kept verbatim as the entry's `comments`. Anything before the first `##`, such as the file's `#`
- * title and intro, belongs to no entry and is skipped.
+ * the entry's `comments`, as written but without HTML comments, such as lint directives, which
+ * aren't meant for readers. Anything before the first `##`, such as the file's `#` title and
+ * intro, belongs to no entry and is skipped.
  */
 import { marked } from "marked";
+
+import { stripHtmlComments } from "./raw-html";
 
 /** An entry: its name or alias, its spec's fields, and its `comments` when it has any. */
 export interface Entry {
@@ -34,7 +37,7 @@ export function parseMarkdownEntries(md: string): Entry[] {
   const flush = (): void => {
     if (!cur) return;
     if (cur.spec === undefined) throw new Error(`Entry '${cur.name}': no fenced spec block`);
-    const comment = cur.body.join("").trim();
+    const comment = stripHtmlComments(cur.body.join("")).trim();
     const entry: Entry =
       "for" in cur.spec ? { alias: cur.name, ...cur.spec } : { name: cur.name, ...cur.spec };
     if (comment) entry.comments = comment;
