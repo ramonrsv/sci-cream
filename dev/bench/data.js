@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795806811210,
+  "lastUpdate": 1795806990930,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -627076,6 +627076,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 705.63,
             "range": "37.80",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3b98c303d252ee42c63ee38a09074b066595b24b",
+          "message": "Fix badge height so a failed badge keeps its row\n\nA badge that fails to load renders as a broken-image placeholder\nwith its alt text, which sizes its line 1px taller than the 20px\nSVG. The visual snapshots mask the badge rows but keep their box,\nso the docs overview page shifted down a pixel whenever GitHub's\nworkflow badge endpoint timed out.\n\nGive badge images their own 20px height, so the row is the same\nsize whether or not every badge loads.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T14:00:39-05:00",
+          "tree_id": "9ae96645448d3eb0a3b83b0bc84e2b1c770912af",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3b98c303d252ee42c63ee38a09074b066595b24b"
+        },
+        "date": 1795806915494,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 34.63,
+            "range": "3.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 37.63,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 44.88,
+            "range": "3.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1865,
+            "range": "41.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 304.38,
+            "range": "3.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 308.5,
+            "range": "3.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 321.13,
+            "range": "4.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15462.5,
+            "range": "51.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.5,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 729.75,
+            "range": "17.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.63,
+            "range": "2.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 46.88,
+            "range": "1.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 35.38,
+            "range": "1.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 33.88,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 117.38,
+            "range": "3.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 61.63,
+            "range": "7.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.61,
+            "range": "0.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.28,
+            "range": "0.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 536.38,
+            "range": "19.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 561.25,
+            "range": "18.71",
             "unit": "ms"
           }
         ]
