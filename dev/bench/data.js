@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795806482437,
+  "lastUpdate": 1795806494052,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -761618,6 +761618,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.95,
             "range": "0.54",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3b98c303d252ee42c63ee38a09074b066595b24b",
+          "message": "Fix badge height so a failed badge keeps its row\n\nA badge that fails to load renders as a broken-image placeholder\nwith its alt text, which sizes its line 1px taller than the 20px\nSVG. The visual snapshots mask the badge rows but keep their box,\nso the docs overview page shifted down a pixel whenever GitHub's\nworkflow badge endpoint timed out.\n\nGive badge images their own 20px height, so the row is the same\nsize whether or not every badge loads.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T14:00:39-05:00",
+          "tree_id": "9ae96645448d3eb0a3b83b0bc84e2b1c770912af",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3b98c303d252ee42c63ee38a09074b066595b24b"
+        },
+        "date": 1795806394705,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 72.06,
+            "range": "8.50",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 17.95,
+            "range": "1.24",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 17.91,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 194,
+            "range": "9.38",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 194,
+            "range": "9.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 67.75,
+            "range": "8.26",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.17,
+            "range": "0.50",
             "unit": "ms"
           }
         ]
