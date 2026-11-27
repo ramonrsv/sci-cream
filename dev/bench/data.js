@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795752648344,
+  "lastUpdate": 1795752654553,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -664938,6 +664938,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.22%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bbabd458f7fc446c7c79fe261b11bf5c00ad57ad",
+          "message": "Add Nutella, Lindt, and Nocciolata spreads\n\nNutella Hazelnut Spread with Cocoa, Lindt Hazelnut Milk Chocolate\nSpread, and Rigoni di Asiago Nocciolata are CompositeSpec entries built\nfrom their labels: the declared shares are taken as given, and the rest\nare fit to the EU or UK nutrition table, in the order the ingredients\nare listed; Lindt's also meets its declared minimum of cocoa solids.\nNutella declares its lecithin, 0.43%, which Lindt and Nocciolata take\ntoo, within the 0.3-0.5% of Icyer et al. (2024). That paper and Marra\net al. (2023), a base formulation with 0.7%, join the literature. Their\nhazelnut is the new Roasted Hazelnut (USDA SR Legacy).\n\nA reconciliation suite checks each spread against its table, each\nfigure rounding to the printed one or within a ceiling sized to the\nfit's residual, and tables the North American labels per serving.\n\nThe two spread TODO items move to Completed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T23:03:57-05:00",
+          "tree_id": "241062a7bc7e607588e1c1a92583fbca422727bd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bbabd458f7fc446c7c79fe261b11bf5c00ad57ad"
+        },
+        "date": 1795752573627,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 71067,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 518768,
+            "range": "±0.98%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 48862,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 381876,
+            "range": "±0.84%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
