@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795754656099,
+  "lastUpdate": 1795755406738,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -754321,6 +754321,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.16,
             "range": "0.42",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "254046dcce278c3537ddecd88144145e237435e4",
+          "message": "chore: Release sci-cream version 0.0.9",
+          "timestamp": "2026-11-26T23:27:28-05:00",
+          "tree_id": "c5ee6a51d6afefd5176b7d2790b67c37fc64decd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/254046dcce278c3537ddecd88144145e237435e4"
+        },
+        "date": 1795755312317,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 73.96,
+            "range": "9.55",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 19.35,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 19.33,
+            "range": "5.26",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 199.5,
+            "range": "15.42",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 35,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 199.5,
+            "range": "15.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 65.81,
+            "range": "6.01",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.17,
+            "range": "0.54",
             "unit": "ms"
           }
         ]
