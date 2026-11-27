@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795753024016,
+  "lastUpdate": 1795753257368,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -619006,6 +619006,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 544,
             "range": "17.80",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bbabd458f7fc446c7c79fe261b11bf5c00ad57ad",
+          "message": "Add Nutella, Lindt, and Nocciolata spreads\n\nNutella Hazelnut Spread with Cocoa, Lindt Hazelnut Milk Chocolate\nSpread, and Rigoni di Asiago Nocciolata are CompositeSpec entries built\nfrom their labels: the declared shares are taken as given, and the rest\nare fit to the EU or UK nutrition table, in the order the ingredients\nare listed; Lindt's also meets its declared minimum of cocoa solids.\nNutella declares its lecithin, 0.43%, which Lindt and Nocciolata take\ntoo, within the 0.3-0.5% of Icyer et al. (2024). That paper and Marra\net al. (2023), a base formulation with 0.7%, join the literature. Their\nhazelnut is the new Roasted Hazelnut (USDA SR Legacy).\n\nA reconciliation suite checks each spread against its table, each\nfigure rounding to the printed one or within a ceiling sized to the\nfit's residual, and tables the North American labels per serving.\n\nThe two spread TODO items move to Completed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-26T23:03:57-05:00",
+          "tree_id": "241062a7bc7e607588e1c1a92583fbca422727bd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bbabd458f7fc446c7c79fe261b11bf5c00ad57ad"
+        },
+        "date": 1795753183413,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 36.75,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 39.88,
+            "range": "2.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 45.75,
+            "range": "3.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1911.25,
+            "range": "65.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 300.25,
+            "range": "3.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 318.25,
+            "range": "3.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 318.5,
+            "range": "2.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15517.63,
+            "range": "75.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.5,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 727.75,
+            "range": "24.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.88,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 44.88,
+            "range": "1.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 36.75,
+            "range": "1.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 31.88,
+            "range": "1.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 111.5,
+            "range": "3.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 58.5,
+            "range": "3.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 40.38,
+            "range": "0.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.18,
+            "range": "0.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 524.13,
+            "range": "24.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 570,
+            "range": "23.76",
             "unit": "ms"
           }
         ]
