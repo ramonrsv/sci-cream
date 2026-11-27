@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795820637489,
+  "lastUpdate": 1795820869417,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -793694,6 +793694,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm package tarball (unpacked)",
             "value": 2245.41,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fb70b576ccfe917305124cbcac1347deb4739338",
+          "message": "Emit data files' intros for the app\n\nA data file's intro, the notes between its title and first entry,\napplies to every entry in the file, but gen-data skipped it, so the\napp never had it. gen-data now writes each directory's intros to\ngenerated/full/intros.json, processed like entries' comments: links\npaired against the intro rustdoc renders, <code> groups joined, and\nfootnotes appended.\n\nThe package's loaders map each built-in entry and recipe to its\nfile's intro, and recipeEntryId takes just the name and author it\nreads, so the recipe map needs no copies of the entries.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T17:50:40-05:00",
+          "tree_id": "872efd18d0d309e41e4abcd452ddd1e526008da2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fb70b576ccfe917305124cbcac1347deb4739338"
+        },
+        "date": 1795820814139,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1249.28,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 371.77,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 2054.59,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 621.07,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 670.9,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2268.87,
             "unit": "KB"
           }
         ]
