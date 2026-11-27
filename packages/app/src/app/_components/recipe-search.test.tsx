@@ -69,6 +69,24 @@ const MOCK_EMBEDDED_ENTRIES = vi.hoisted((): RecipeEntryJson[] => [
     ],
     evaporation: 150,
   },
+  // From `underbelly.md`, whose file intro the real lookup finds by these recipe IDs
+  {
+    name: "French Variation",
+    author: "Underbelly",
+    recipe: [
+      ["Whole Milk", 600],
+      ["Sucrose", 150],
+    ],
+    comments: "Notes on this variation.",
+  },
+  {
+    name: "Light Variation",
+    author: "Underbelly",
+    recipe: [
+      ["Whole Milk", 700],
+      ["Sucrose", 120],
+    ],
+  },
 ]);
 
 vi.mock("@workspace/sci-cream", async (importOriginal) => {
@@ -170,6 +188,23 @@ describe("adaptEmbeddedToGrouped", () => {
       recipe: [["Whole Milk", 1000]],
     } as RecipeEntryJson);
     expect("evaporation" in grouped.versions[0]).toBe(false);
+  });
+
+  it("attaches the intro of the data file a built-in recipe comes from", () => {
+    const grouped = adaptEmbeddedToGrouped({
+      name: "Standard Base",
+      author: "Underbelly",
+      recipe: [["Whole Milk", 1000]],
+    } as RecipeEntryJson);
+    expect(grouped.intro?.title).toBe("Underbelly Recipes");
+  });
+
+  it("omits the intro for an entry from no data file", () => {
+    const grouped = adaptEmbeddedToGrouped({
+      name: "Plain",
+      recipe: [["Whole Milk", 1000]],
+    } as RecipeEntryJson);
+    expect("intro" in grouped).toBe(false);
   });
 });
 
@@ -296,6 +331,33 @@ describe("RecipeSearch", () => {
       const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
       expect(within(detailPanel).queryByTitle(/water evaporated/)).not.toBeInTheDocument();
       expect(within(detailPanel).queryByTitle(/Yield/)).not.toBeInTheDocument();
+    });
+  });
+
+  describe("data file intro", () => {
+    it("shows a built-in recipe's file intro, collapsed, above its comments", () => {
+      const { container } = render(<RecipeSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /French Variation/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+      const intro = within(detailPanel).getByText("About Underbelly Recipes").closest("details");
+      expect(intro).not.toBeNull();
+      expect(intro).not.toHaveAttribute("open");
+      const comments = within(detailPanel).getByText("Notes on this variation.");
+      expect((intro as HTMLElement).compareDocumentPosition(comments)).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+    });
+
+    it("starts collapsed again for another recipe of the same file", () => {
+      const { container } = render(<RecipeSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /French Variation/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+      const summary = within(detailPanel).getByText("About Underbelly Recipes");
+      (summary.closest("details") as HTMLDetailsElement).open = true;
+
+      fireEvent.click(screen.getByRole("button", { name: /Light Variation/ }));
+      const intro = within(detailPanel).getByText("About Underbelly Recipes").closest("details");
+      expect(intro).not.toHaveAttribute("open");
     });
   });
 

@@ -68,11 +68,12 @@ test.describe("Visual Regression: Ingredient Search", () => {
     await goToIngredientsPage(page);
     await selectIngredientByName(page, "USDA Milk Chocolate");
 
-    // gen-data rewrites `<code>` groups as joined code spans, since the app prints HTML as text
-    const notes = page.locator(".search-detail-panel .prose");
-    await expect(notes).not.toContainText("<code>");
+    // gen-data rewrites `<code>` groups as joined code spans, since the app prints HTML as text.
+    // The panel's text holds its file intro's as well, even collapsed.
+    const panel = page.locator(".search-detail-panel");
+    await expect(panel).not.toContainText("<code>");
 
-    const equation = notes.locator("li", { hasText: "MSNF / (1 -" });
+    const equation = panel.locator(".prose li", { hasText: "MSNF / (1 -" });
     await expect(equation.locator("code", { hasText: "MSNF / (1 -" })).toBeVisible();
     const link = equation.getByRole("link", { name: "STD_BUTTERFAT_IN_WHOLE_MILK_POWDER" });
     await expect(link).toHaveAttribute(

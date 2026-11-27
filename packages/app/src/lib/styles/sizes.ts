@@ -18,6 +18,8 @@ export const LIST_ITEM_MARKER_ICON_SIZE = 12;
 export const SELECT_ICON_SIZE = 14;
 /** Icon size (px) for the docs table-of-contents disclosure chevron, under its `text-sm` label. */
 export const DOCS_TOC_ICON_SIZE = 14;
+/** Icon size (px) for a data file intro's disclosure chevron, under its `text-sm` label. */
+export const FILE_INTRO_ICON_SIZE = 14;
 
 /** Icon size (px) used in the header. */
 export const HEADER_ICON_SIZE = 20;

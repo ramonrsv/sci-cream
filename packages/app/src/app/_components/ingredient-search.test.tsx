@@ -37,6 +37,14 @@ const MOCK_EMBEDDED_ENTRIES = vi.hoisted((): SpecEntryJson[] => [
     comments: "Nutrition facts: https://example.com/sealtest",
   },
   { alias: "Whole Milk", for: "3.25% Milk" },
+  // From `chocolates.md`, whose file intro the real lookup finds by these names
+  {
+    name: "70% Dark Chocolate",
+    category: "Chocolate",
+    ChocolateSpec: { cocoa_solids: 70 },
+    comments: "Notes on this chocolate.",
+  },
+  { name: "50% Dark Chocolate", category: "Chocolate", ChocolateSpec: { cocoa_solids: 50 } },
 ]);
 
 vi.mock("@workspace/sci-cream", async (importOriginal) => {
@@ -288,6 +296,54 @@ describe("IngredientSearch", () => {
       fireEvent.click(screen.getByRole("button", { name: /Sealtest 3.25% Milk/ }));
       const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
       expect(within(detailPanel).queryByRole("textbox")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("data file intro", () => {
+    it("shows a built-in entry's file intro, collapsed, above its comments", () => {
+      const { container } = render(<IngredientSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /70% Dark Chocolate/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+      const intro = within(detailPanel).getByText("About Chocolates").closest("details");
+      expect(intro).not.toBeNull();
+      expect(intro).not.toHaveAttribute("open");
+      const comments = within(detailPanel).getByText("Notes on this chocolate.");
+      expect((intro as HTMLElement).compareDocumentPosition(comments)).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+    });
+
+    it("starts collapsed again for another entry of the same file", () => {
+      const { container } = render(<IngredientSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /70% Dark Chocolate/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+      const summary = within(detailPanel).getByText("About Chocolates");
+      (summary.closest("details") as HTMLDetailsElement).open = true;
+
+      fireEvent.click(screen.getByRole("button", { name: /50% Dark Chocolate/ }));
+      const intro = within(detailPanel).getByText("About Chocolates").closest("details");
+      expect(intro).not.toHaveAttribute("open");
+    });
+
+    it("shows none for an entry whose file has only a title", () => {
+      const { container } = render(<IngredientSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /Sucrose/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+      expect(detailPanel.querySelector("details")).toBeNull();
+    });
+
+    it("shows none for a saved entry, even one named like a built-in", () => {
+      const savedChocolate: IngredientSpecJson = {
+        name: "70% Dark Chocolate",
+        category: "Chocolate",
+        ChocolateSpec: { cocoa_solids: 70 },
+      };
+      const { container } = render(<IngredientSearch savedSpecs={[savedChocolate]} />);
+      fireEvent.click(screen.getByRole("button", { name: "Saved" }));
+      fireEvent.click(screen.getByRole("button", { name: /70% Dark Chocolate/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+      expect(within(detailPanel).getByText("saved")).toBeInTheDocument();
+      expect(detailPanel.querySelector("details")).toBeNull();
     });
   });
 

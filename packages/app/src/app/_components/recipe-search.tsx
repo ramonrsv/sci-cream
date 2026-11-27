@@ -4,7 +4,9 @@ import { useCallback, useMemo } from "react";
 import { Star } from "lucide-react";
 import {
   allRecipeEntries,
+  type DataFileIntro,
   type RecipeEntryJson,
+  recipeEntryIntro,
   Bridge as WasmBridge,
   MixProperties,
   type LightRecipe,
@@ -24,6 +26,7 @@ import {
   useRatingFilterState,
 } from "@/app/_elements/selects/rating-filter-select";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
+import { FileIntro } from "@/app/_elements/file-intro";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
 import { DETAIL_PANEL_ACTION_ICON_SIZE, LIST_ITEM_MARKER_ICON_SIZE } from "@/lib/styles/sizes";
@@ -68,6 +71,8 @@ export type GroupedRecipe = {
   author?: string;
   /** Starred by its owner; only ever set for saved recipes, since built-ins are not owned */
   favourite?: boolean;
+  /** The intro of the data file a built-in recipe comes from, if that file has one */
+  intro?: DataFileIntro;
   versions: SavedRecipeVersionJson[];
 };
 
@@ -85,10 +90,12 @@ export function recipeMatchesQuery(entry: GroupedRecipe, q: string): boolean {
 export function adaptEmbeddedToGrouped(entry: RecipeEntryJson): GroupedRecipe {
   const comments = entry.comments as string | undefined;
   const id = entry.author ? `${entry.author}: ${entry.name}` : entry.name;
+  const intro = recipeEntryIntro(entry);
   return {
     id,
     name: entry.name,
     ...(entry.author !== undefined && { author: entry.author }),
+    ...(intro !== undefined && { intro }),
     versions: [
       {
         version: 1,
@@ -410,7 +417,11 @@ function RecipeDetailPanel({
               }
             />
           ) : (
-            selectedVersion?.comments && <RecipeComments text={selectedVersion.comments} />
+            <>
+              {/* Keyed by entry, so one left open won't push the next entry's comments down */}
+              {entry.intro && <FileIntro key={entry.id} intro={entry.intro} />}
+              {selectedVersion?.comments && <RecipeComments text={selectedVersion.comments} />}
+            </>
           )
         }
       />

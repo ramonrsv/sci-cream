@@ -9,10 +9,11 @@ import {
   IngredientSpecJson,
   SpecEntryJson,
   isSpecEntryAlias,
+  specEntryIntro,
   specEntryName,
 } from "@workspace/sci-cream";
 
-import { EntitySearch, Tagged } from "@/app/_components/entity-search";
+import { EntitySearch, EntitySource, Tagged } from "@/app/_components/entity-search";
 import { DetailPanelHeader } from "@/app/_components/detail-panel";
 import { CompositionView } from "@/app/_elements/tables/composition";
 import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
@@ -22,6 +23,7 @@ import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm";
 import { STATE_VAL } from "@/lib/util";
 import { JSON_VIEW_PROPS } from "@/lib/styles/json-view";
 import { specDocLinks } from "@/lib/sci-cream/spec-docs";
+import { FileIntro } from "@/app/_elements/file-intro";
 import { Markdown } from "@/app/_elements/markdown";
 
 /** Props for {@link IngredientSearch} */
@@ -125,11 +127,12 @@ function IngredientDetailBody({ entry }: { entry: Tagged<SpecEntryJson> }) {
   );
 }
 
-/** Full detail panel for an ingredient: header (with category/alias meta) + body + comments */
+/** Full detail panel for an ingredient: header (category/alias meta), body, file intro, comments */
 function IngredientDetailPanel({ entry }: { entry: Tagged<SpecEntryJson> }) {
   const isAlias = isSpecEntryAlias(entry);
   const category = isAlias ? aliasTargetCategory(entry.for) : entry.category;
   const comments = getEntryComments(entry);
+  const intro = entry._source === EntitySource.Embedded ? specEntryIntro(entry) : undefined;
 
   return (
     <>
@@ -144,6 +147,8 @@ function IngredientDetailPanel({ entry }: { entry: Tagged<SpecEntryJson> }) {
         }
       />
       <IngredientDetailBody entry={entry} />
+      {/* Keyed by entry, so one left open won't push the next entry's comments down */}
+      {intro && <FileIntro key={specEntryName(entry)} intro={intro} />}
       {comments && <Markdown text={comments} />}
     </>
   );
