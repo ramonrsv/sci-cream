@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795804091972,
+  "lastUpdate": 1795804098088,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -671810,6 +671810,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.03%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0086970801aae7d532c5edc8b9c654953ae7d1b9",
+          "message": "Snapshot a <code> group's equation in the notes\n\nThe joined code spans gen-data writes for a <code> group read as one\nexpression only while the app's inline code has no background or\nbackticks. A narrow snapshot of USDA Milk Chocolate's MSNF equation\nguards that look, and checks that no <code> tag shows and that the\nconstant links into the hosted rustdoc.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T12:33:14-05:00",
+          "tree_id": "90a6b892b3858ec440df4f03762295b69ee3f10b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0086970801aae7d532c5edc8b9c654953ae7d1b9"
+        },
+        "date": 1795804006271,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 50702,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 427646,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 37452,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 347872,
+            "range": "±0.97%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
