@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795850893153,
+  "lastUpdate": 1795850902448,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -734419,6 +734419,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 15.46,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ea217d8e02f3d6bbd7ab3518f136d98340f44672",
+          "message": "Serve the crate's Reference under /docs/reference\n\nThe chapters `gen:reference` cuts from the crate's docs render at\n`/docs/reference/<chapter>` through `renderHtml`, split out of\n`getMarkdownPage` to share its rehype stage: headings keep rustdoc's\nids and gain the app's permalink. Each chapter mounts a comment\nthread keyed on its docs slug, which the comment actions now accept.\n\n`/docs/reference` indexes the chapters under \"Science Reference\",\nand the one `reference` entry in `_nav.json` places it in the docs\ncontents, its chapters nested by slug. With them three levels deep,\nthe docs index now indents once per level instead of compounding.\n\n`unified`, which `remark` already pulled in, becomes a direct\ndependency for running that stage on HTML.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T02:13:44-05:00",
+          "tree_id": "ccdc6026e5dfa27cd9c81166ba9f4659e7cbcb4c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ea217d8e02f3d6bbd7ab3518f136d98340f44672"
+        },
+        "date": 1795850824045,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 793.19,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 960.92,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 737.81,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 905.54,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 747.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 915.39,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 720.97,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 888.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 722.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 890.25,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1053.49,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.44,
             "unit": "KB"
           },
           {
