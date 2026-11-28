@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795850906207,
+  "lastUpdate": 1795850972309,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -770010,6 +770010,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.92,
             "range": "0.88",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ea217d8e02f3d6bbd7ab3518f136d98340f44672",
+          "message": "Serve the crate's Reference under /docs/reference\n\nThe chapters `gen:reference` cuts from the crate's docs render at\n`/docs/reference/<chapter>` through `renderHtml`, split out of\n`getMarkdownPage` to share its rehype stage: headings keep rustdoc's\nids and gain the app's permalink. Each chapter mounts a comment\nthread keyed on its docs slug, which the comment actions now accept.\n\n`/docs/reference` indexes the chapters under \"Science Reference\",\nand the one `reference` entry in `_nav.json` places it in the docs\ncontents, its chapters nested by slug. With them three levels deep,\nthe docs index now indents once per level instead of compounding.\n\n`unified`, which `remark` already pulled in, becomes a direct\ndependency for running that stage on HTML.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T02:13:44-05:00",
+          "tree_id": "ccdc6026e5dfa27cd9c81166ba9f4659e7cbcb4c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ea217d8e02f3d6bbd7ab3518f136d98340f44672"
+        },
+        "date": 1795850890460,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.62,
+            "range": "6.39",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 17.18,
+            "range": "4.33",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 17.14,
+            "range": "4.35",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 160,
+            "range": "7.75",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 160,
+            "range": "7.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.97,
+            "range": "6.41",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.86,
+            "range": "0.45",
             "unit": "ms"
           }
         ]
