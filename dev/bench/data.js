@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795841629904,
+  "lastUpdate": 1795841669718,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -677823,6 +677823,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.81%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e092809a0a07292c8e0223ad5e5aaa4585d5e9fc",
+          "message": "Stop notes' footnotes from stretching the page\n\nGFM footnotes come with a visually hidden heading, which sr-only\npositions absolutely. Nothing inside the detail panels is positioned,\nso the heading escaped their scrolling, and the page grew to reach\nit: past the viewport for long notes, and far past it with a long\nfile intro open. Markdown's root is now relative, which contains it.\n\nA visual test opens Corvitto's intro, checks the page can't scroll,\nand captures the open \"About\" row with the intro's first paragraph.\n\nCLAUDE.md writes \"About <title>\" as a code span, so markdownlint no\nlonger reads its <title> as HTML.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T21:29:40-05:00",
+          "tree_id": "719ba7deee8be086d5682ec45c121d724a512616",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e092809a0a07292c8e0223ad5e5aaa4585d5e9fc"
+        },
+        "date": 1795841591173,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 71029,
+            "range": "±1.14%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 521087,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 49949,
+            "range": "±2.33%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 389030,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
