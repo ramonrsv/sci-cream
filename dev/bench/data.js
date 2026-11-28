@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795851554986,
+  "lastUpdate": 1795851641687,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -771041,6 +771041,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.86,
             "range": "0.45",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ca11f20b488c6306ea145914a7835f6f53d44ca4",
+          "message": "List only top-level pages on the docs index\n\nThe docs index listed every page, nested ones included, while the\nsidebar now lists only the top-level pages outside a branch. The\nindex matches it, and a branch's pages are found from its own page:\nthe Reference's chapters from its index, which still lists them all.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T02:34:03-05:00",
+          "tree_id": "7476c3a0ebd50ff266603715ad97905aa2f09219",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ca11f20b488c6306ea145914a7835f6f53d44ca4"
+        },
+        "date": 1795851548990,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 75.63,
+            "range": "6.15",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 19.26,
+            "range": "0.96",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 19.22,
+            "range": "0.98",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 192.5,
+            "range": "13.48",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 192.5,
+            "range": "13.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 68.85,
+            "range": "6.41",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 5.15,
+            "range": "0.60",
             "unit": "ms"
           }
         ]
