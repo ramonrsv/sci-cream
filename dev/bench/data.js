@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795861499227,
+  "lastUpdate": 1795861554542,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -682116,6 +682116,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 407745,
             "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "127936f1496e22025e130b85d6b6f9a27a613b2b",
+          "message": "Point links to the crate's docs into the Reference\n\nLinks to an anchor on the crate's `docs` page went to the hosted\nrustdoc; they now go to the Reference chapter that owns the anchor.\n\n- gen-data maps the data notes' 18 such links with the Reference's\n  anchor index, cut from the docs it builds just as `gen:reference`\n  cuts it. An anchor no chapter owns is an error.\n- The app's spec-docs chapter links come from `referenceAnchorUrl`,\n  and `GUIDE_CHAPTERS` becomes `REFERENCE_CHAPTERS`.\n- The docs pages' and the welcome post's six \"knowledge base\" links go\n  to `/docs/reference`.\n\nThe content links and spec-docs tests resolve Reference routes against\nthe chapters' ids.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T05:05:13-05:00",
+          "tree_id": "f662f8a06102b5f94be2f4f08a19183726a65767",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/127936f1496e22025e130b85d6b6f9a27a613b2b"
+        },
+        "date": 1795861482907,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 66894,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 595617,
+            "range": "±0.53%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 46336,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 515709,
+            "range": "±0.97%",
             "unit": "ops/sec",
             "extra": "93 samples"
           }
