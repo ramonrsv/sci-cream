@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795849221329,
+  "lastUpdate": 1795849271242,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -768979,6 +768979,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.16,
             "range": "0.51",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "aa68a2157066097aabf069bb36bfff16bd685b6e",
+          "message": "Collapse docs sidebar branches not being read\n\nThe docs sidebar listed every page, nested ones included, while a\npage's headings showed only once it was being read. Nested pages now\nshow the same way: a page's subpages appear only while the page being\nread is it or one beneath it, at every level, so a branch not being\nread takes one line. The docs index still lists every page.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T01:45:46-05:00",
+          "tree_id": "729f3e20cb9432ba2053da2a289b38aaaf92b644",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/aa68a2157066097aabf069bb36bfff16bd685b6e"
+        },
+        "date": 1795849209456,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.97,
+            "range": "7.08",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 21.59,
+            "range": "5.59",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 21.58,
+            "range": "5.60",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 162.5,
+            "range": "9.15",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 162.5,
+            "range": "9.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.89,
+            "range": "5.90",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.92,
+            "range": "0.88",
             "unit": "ms"
           }
         ]
