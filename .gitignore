@@ -32,6 +32,9 @@
 # transient build product; only generated/min/ (comment-free, embedded in the WASM binary) is tracked.
 /packages/sci-cream/data/*/generated/full/
 
+# The app's Reference, rebuilt by every build from the rendered docs (scripts/gen-reference.ts)
+/packages/sci-cream/docs/generated/
+
 # The crate's rustdoc output, which `packages/app/scripts/copy-rustdoc.sh` copies in at build time.
 /packages/app/public/rustdoc/
 

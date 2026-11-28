@@ -1,0 +1,66 @@
+{
+  "root": "/docs/reference",
+  "omit": ["table-of-content"],
+  "chapters": [
+    {
+      "id": "sweeteners",
+      "slug": "sweeteners",
+      "description": "Sweetening power (POD) and the families of sweeteners used in ice cream."
+    },
+    {
+      "id": "sugars",
+      "slug": "sweeteners/sugars",
+      "description": "Mono- and disaccharides in ice cream: sweetness, freezing point depression, and ice crystal control."
+    },
+    {
+      "id": "polyols",
+      "slug": "sweeteners/polyols",
+      "description": "Sugar alcohols as reduced-calorie bulk sweeteners, and how they differ from artificial sweeteners."
+    },
+    {
+      "id": "artificial-sweeteners",
+      "slug": "sweeteners/artificial-sweeteners",
+      "description": "High-intensity non-saccharide sweeteners, which provide sweetness without bulk or functional properties."
+    },
+    {
+      "id": "fibers",
+      "slug": "sweeteners/fibers",
+      "description": "Soluble fibers such as inulin and oligofructose as substitutes for sugars and fats."
+    },
+    {
+      "id": "glucose-syrups-and-powders",
+      "slug": "sweeteners/glucose-syrups-and-powders",
+      "description": "Starch hydrolysates, dextrose equivalent, retail corn syrup nomenclature, and their sweetness values."
+    },
+    {
+      "id": "dairy",
+      "slug": "dairy",
+      "description": "Milk fat and milk solids non-fat (MSNF), and the specs that build a dairy ingredient's composition."
+    },
+    {
+      "id": "milk-proteins",
+      "slug": "dairy/milk-proteins",
+      "description": "Casein and whey proteins, and why dairy protein values are crude protein, non-protein nitrogen included."
+    },
+    {
+      "id": "freezing-point-depression",
+      "slug": "freezing-point-depression",
+      "description": "PAC, AFP, FPDF and SE, absolute PAC, and the freezing point depression curve."
+    },
+    {
+      "id": "stabilizers",
+      "slug": "stabilizers",
+      "description": "Hydrocolloids that control ice crystal growth, mix viscosity, and melting resistance."
+    },
+    {
+      "id": "emulsifiers",
+      "slug": "emulsifiers",
+      "description": "Surface-active ingredients that destabilize the fat emulsion to build ice cream structure."
+    },
+    {
+      "id": "cocoa",
+      "slug": "cocoa",
+      "description": "Cocoa solids, cocoa butter, and cocoa solids non-fat in chocolate and cocoa powder, and Dutch processing."
+    }
+  ]
+}

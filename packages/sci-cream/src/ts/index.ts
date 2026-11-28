@@ -8,4 +8,5 @@ export * from "./light-recipe";
 export * from "./optimizations";
 export * from "./prop-key";
 export * from "./ranges";
+export * from "./reference-anchors";
 export * from "./util";

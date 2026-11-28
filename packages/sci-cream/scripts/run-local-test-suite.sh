@@ -40,6 +40,7 @@ export RUSTDOCFLAGS="-D warnings"
 
 execute pnpm gen:footnotes:check
 execute pnpm gen:data:check
+execute pnpm gen:reference:check
 
 execute pnpm build:package
 execute pnpm fmt:check

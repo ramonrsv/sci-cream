@@ -256,6 +256,9 @@ importers:
       hast-util-from-html:
         specifier: ^2.1.0
         version: 2.1.0
+      hast-util-to-html:
+        specifier: ^9.0.6
+        version: 9.0.6
       jsdom:
         specifier: ^31.0.1
         version: 31.0.1

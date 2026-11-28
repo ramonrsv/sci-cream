@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { docblockOf, renderedLinks, splitSections } from "./rustdoc-html";
+import { docblockOf, footnotesOf, renderedLinks, splitSections, textOf } from "./rustdoc-html";
 
 const PAGE = "sci_cream/docs/notes/index.html";
 
@@ -34,6 +34,18 @@ describe("docblockOf", () => {
     expect(() => docblockOf("<html><body><p>Not rustdoc</p></body></html>", PAGE)).toThrow(
       /No docblock in sci_cream\/docs\/notes\/index.html/,
     );
+  });
+});
+
+describe("footnotesOf", () => {
+  test("reads the definitions in the page's footnote list, by id", () => {
+    const [[id, item], ...rest] = footnotesOf(HTML, PAGE);
+    expect([id, textOf(item), rest.length]).toEqual(["fn1", "A note. ↩", 0]);
+  });
+
+  test("reads none from a page that cites none", () => {
+    const html = HTML.replace(/<div class="footnotes">.*<\/div>/, "");
+    expect(footnotesOf(html, PAGE).size).toBe(0);
   });
 });
 

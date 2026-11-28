@@ -13,6 +13,10 @@
     "./schema-category": {
       "import": "./src/ts/schema-category.js",
       "require": "./src/ts/schema-category.js"
+    },
+    "./reference": {
+      "types": "./dist/reference.d.ts",
+      "import": "./dist/reference.js"
     }
   },
   "files": [
@@ -28,9 +32,11 @@
     "gen:data": "pnpm gen:data:min && pnpm doc:site && node --import tsx scripts/gen-data.ts",
     "gen:data:min": "node --import tsx scripts/gen-data.ts --min",
     "gen:data:check": "pnpm doc:site && node --import tsx scripts/gen-data.ts --check",
-    "gen:all": "pnpm gen:footnotes && pnpm gen:data",
-    "gen:all:check": "pnpm gen:footnotes:check && pnpm gen:data:check",
-    "build:package": "pnpm gen:data && pnpm build:wasm && pnpm build:js",
+    "gen:reference": "node --import tsx scripts/gen-reference.ts",
+    "gen:reference:check": "node --import tsx scripts/gen-reference.ts --check",
+    "gen:all": "pnpm gen:footnotes && pnpm gen:data && pnpm gen:reference",
+    "gen:all:check": "pnpm gen:footnotes:check && pnpm gen:data:check && pnpm gen:reference:check",
+    "build:package": "pnpm gen:data && pnpm gen:reference && pnpm build:wasm && pnpm build:js",
     "build:wasm": "pnpm set-crate-type:cdylib && pnpm build:wasm-pack && pnpm set-crate-type:rlib",
     "build:wasm-pack": "wasm-pack build --out-dir wasm --out-name index -- --features \"wasm,data,database\"",
     "set-crate-type:cdylib": "./scripts/set-crate-type.sh ./Cargo.toml cdylib",
@@ -78,6 +84,7 @@
     "benchmark": "^2.1.4",
     "eslint": "^10.15.0",
     "hast-util-from-html": "^2.1.0",
+    "hast-util-to-html": "^9.0.6",
     "jsdom": "^31.0.1",
     "marked": "^18.2.1",
     "tsx": "^4.23.15",

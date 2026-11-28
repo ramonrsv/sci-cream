@@ -4,8 +4,9 @@
  *
  * The pages are `pnpm doc:site`'s output in `target/doc`, which the app serves at `/rustdoc/`.
  * {@link readDocblock} takes a module page's own documentation, without rustdoc's sidebar, item
- * listings, or footnote list; {@link splitSections} cuts that at headings; and
- * {@link renderedLinks} lists the intra-doc links in a section, each with its text and site URL.
+ * listings, or footnote list, which {@link readFootnotes} reads; {@link splitSections} cuts that at
+ * headings; and {@link renderedLinks} lists the intra-doc links in a section, each with its text
+ * and site URL.
  *
  * Those URLs are exact: rustdoc resolves each link in the scope of the page that renders it, and
  * CI's `RUSTDOCFLAGS: -D warnings` fails the build on any it can't. It doesn't check a link's
@@ -63,7 +64,7 @@ function readPage(page: string): string {
 }
 
 /** The class names on `node`. */
-function classesOf(node: HtmlNode): unknown[] {
+export function classesOf(node: HtmlNode): unknown[] {
   const names = node.properties?.className;
   return Array.isArray(names) ? names : [];
 }
@@ -79,30 +80,63 @@ function findNode(node: HtmlNode, test: (node: HtmlNode) => boolean): HtmlNode |
 }
 
 /** Concatenated text of `node` and its descendants. */
-function textOf(node: HtmlNode): string {
+export function textOf(node: HtmlNode): string {
   return node.type === "text" ? (node.value ?? "") : (node.children ?? []).map(textOf).join("");
 }
 
 /**
- * The top-level elements of a module page's own documentation, without its footnote list.
+ * The `docblock` of a module page: its own documentation, footnote list included.
  *
  * `html` is the whole page, and `page` names it in errors. Outside the `docblock` sit rustdoc's
  * breadcrumb, sidebar, and item listings, none of them authored.
  */
-export function docblockOf(html: string, page: string): HtmlNode[] {
+function docblockIn(html: string, page: string): HtmlNode {
   const main = findNode(fromHtml(html), (node) => node.properties?.id === "main-content");
   const docblock =
     main &&
     findNode(main, (node) => node.tagName === "div" && classesOf(node).includes("docblock"));
   if (docblock === undefined) throw new Error(`No docblock in ${page}`);
-  return (docblock.children ?? []).filter(
-    (node) => node.type === "element" && !classesOf(node).includes("footnotes"),
+  return docblock;
+}
+
+/** Whether `node` is the list rustdoc gathers a docblock's footnotes into, at its end. */
+function isFootnoteList(node: HtmlNode): boolean {
+  return classesOf(node).includes("footnotes");
+}
+
+/** The top-level elements of a module page's own documentation, without its footnote list. */
+export function docblockOf(html: string, page: string): HtmlNode[] {
+  return (docblockIn(html, page).children ?? []).filter(
+    (node) => node.type === "element" && !isFootnoteList(node),
   );
 }
 
 /** {@link docblockOf} the rendered page at `page`, relative to {@link DOC_ROOT}. */
 export function readDocblock(page: string): HtmlNode[] {
   return docblockOf(readPage(page), page);
+}
+
+/**
+ * A module page's footnote definitions, the `<li>`s of its footnote list, by id, such as `fn3`.
+ *
+ * Rustdoc numbers a page's footnotes in the order they're first cited, and ends each definition
+ * with a backref to every citation, as `fnref3`, `fnref3-2`, and so on.
+ */
+export function footnotesOf(html: string, page: string): Map<string, HtmlNode> {
+  const footnotes = new Map<string, HtmlNode>();
+  const list = (docblockIn(html, page).children ?? []).find(isFootnoteList);
+  const items = (list && findNode(list, (node) => node.tagName === "ol"))?.children ?? [];
+  for (const item of items.filter(({ tagName }) => tagName === "li")) {
+    const id = item.properties?.id;
+    if (typeof id !== "string") throw new Error(`A footnote in ${page} has no id`);
+    footnotes.set(id, item);
+  }
+  return footnotes;
+}
+
+/** {@link footnotesOf} the rendered page at `page`, relative to {@link DOC_ROOT}. */
+export function readFootnotes(page: string): Map<string, HtmlNode> {
+  return footnotesOf(readPage(page), page);
 }
 
 /** Split top-level `nodes` at each heading `starts` accepts; nodes before the first are dropped. */
@@ -127,7 +161,7 @@ export function splitSections(
 }
 
 /** Where `href`, as written on `page`, points on the site. */
-function siteUrl(page: string, href: string): string {
+export function siteUrl(page: string, href: string): string {
   if (/^[a-z][a-z\d+.-]*:/i.test(href)) return href;
   return `${SITE_ROOT}/${path.posix.normalize(path.posix.join(path.posix.dirname(page), href))}`;
 }

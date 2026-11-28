@@ -109,6 +109,9 @@ jobs:
       - name: Run data generation check
         run: pnpm run gen:data:check
 
+      - name: Run reference generation check
+        run: pnpm run gen:reference:check
+
   eslint:
     runs-on: ubuntu-latest
     steps:

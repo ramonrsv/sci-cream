@@ -49,6 +49,7 @@ pnpm doc                 # cargo doc --all-features
 pnpm doc:site            # Clean public docs under the site's icon, for the app's /rustdoc/
 pnpm gen:all             # Every codegen step, in dependency order — the one to reach for
 pnpm gen:data            # Resolve data/**/*.md into generated/{full,min}/*.json, via the site docs
+pnpm gen:reference       # Cut the site docs into the app's Reference chapters, after gen:data
 
 # Cargo directly (only when pnpm can't express it):
 cargo test --all-features <test_name>        # Run a single Rust test
@@ -286,6 +287,13 @@ raw HTML left in an entry's comments is a hard error.
 `generated/min/` holds a file for every source `src/data/` embeds, then `doc:site`, then the full
 pass. CI's `gen_check` runs `gen:data:check`, which validates the pairing and the tracked `min/`.
 
+`gen:reference` cuts the rendered `docs` page into the app's Reference, a chapter at each heading
+`docs/_chapters.json` lists, with its route and description (`lib/reference.ts`). Links
+between chapters go to the route of the chapter owning their anchor, API links to `/rustdoc/`, and
+footnotes are renumbered per chapter. An `h2` the manifest neither lists nor omits, or a link to
+an anchor no chapter owns, is a hard error, so a new `docs/*.md` file needs an entry. It reads the
+docs `gen:data` builds, so `gen:all`, `build:package`, and `gen_check` run it after that.
+
 #### Default vs. reference dairy ingredients
 
 The brand- and country-neutral `DairySimpleSpec` milk/cream entries (`0% Milk`, `3.25% Milk`,
@@ -318,6 +326,9 @@ and `dist/`. Notable helpers:
   access by key.
 - **`schema-category.js`** — separately exported (`@workspace/sci-cream/schema-category`) so the
   app's Drizzle schema can use the `SchemaCategory` enum without pulling in WASM.
+- **`reference.ts`** — the Reference's chapters, a separate vite entry
+  (`@workspace/sci-cream/reference`) so their HTML stays out of the main entry's client bundles,
+  which link into them through `referenceAnchorUrl` (`reference-anchors.ts`).
 
 ### Next.js app (`packages/app/src/`)
 

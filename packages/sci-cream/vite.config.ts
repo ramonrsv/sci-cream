@@ -7,9 +7,13 @@ export default defineConfig({
   plugins: [wasm(), dts({ bundleTypes: true, tsconfigPath: "./tsconfig.json" })],
   build: {
     lib: {
-      entry: path.resolve(import.meta.dirname, "src/ts/index.ts"),
+      entry: {
+        index: path.resolve(import.meta.dirname, "src/ts/index.ts"),
+        // Apart from the main entry, so the chapters' HTML stays out of client bundles
+        reference: path.resolve(import.meta.dirname, "src/ts/reference.ts"),
+      },
       name: "MyLibrary",
-      fileName: "index",
+      fileName: (_format, entryName) => `${entryName}.js`,
       formats: ["es"], // this is important
     },
     minify: false, // for demo purposes
