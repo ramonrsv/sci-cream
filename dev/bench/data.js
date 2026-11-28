@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795849210771,
+  "lastUpdate": 1795849214641,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -780437,6 +780437,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/472ce7ab72bce1822f9c38395717810bd04fc0af"
         },
         "date": 1795842570353,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "aa68a2157066097aabf069bb36bfff16bd685b6e",
+          "message": "Collapse docs sidebar branches not being read\n\nThe docs sidebar listed every page, nested ones included, while a\npage's headings showed only once it was being read. Nested pages now\nshow the same way: a page's subpages appear only while the page being\nread is it or one beneath it, at every level, so a branch not being\nread takes one line. The docs index still lists every page.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T01:45:46-05:00",
+          "tree_id": "729f3e20cb9432ba2053da2a289b38aaaf92b644",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/aa68a2157066097aabf069bb36bfff16bd685b6e"
+        },
+        "date": 1795849213888,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
