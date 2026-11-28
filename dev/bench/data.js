@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795826338218,
+  "lastUpdate": 1795841625830,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -731503,6 +731503,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1052.74,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 15.46,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 252.57,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e092809a0a07292c8e0223ad5e5aaa4585d5e9fc",
+          "message": "Stop notes' footnotes from stretching the page\n\nGFM footnotes come with a visually hidden heading, which sr-only\npositions absolutely. Nothing inside the detail panels is positioned,\nso the heading escaped their scrolling, and the page grew to reach\nit: past the viewport for long notes, and far past it with a long\nfile intro open. Markdown's root is now relative, which contains it.\n\nA visual test opens Corvitto's intro, checks the page can't scroll,\nand captures the open \"About\" row with the intro's first paragraph.\n\nCLAUDE.md writes \"About <title>\" as a code span, so markdownlint no\nlonger reads its <title> as HTML.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T21:29:40-05:00",
+          "tree_id": "719ba7deee8be086d5682ec45c121d724a512616",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e092809a0a07292c8e0223ad5e5aaa4585d5e9fc"
+        },
+        "date": 1795841567620,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 167.72,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 792.47,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 960.19,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 737.09,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 904.81,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 746.95,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 914.67,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 720.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 887.97,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] route-only JS (gzip)",
+            "value": 721.79,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[...slug] first-load JS (gzip)",
+            "value": 889.51,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1052.75,
             "unit": "KB"
           },
           {
