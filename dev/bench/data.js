@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795851488750,
+  "lastUpdate": 1795851492729,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -782557,6 +782557,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/ea217d8e02f3d6bbd7ab3518f136d98340f44672"
         },
         "date": 1795850905396,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ca11f20b488c6306ea145914a7835f6f53d44ca4",
+          "message": "List only top-level pages on the docs index\n\nThe docs index listed every page, nested ones included, while the\nsidebar now lists only the top-level pages outside a branch. The\nindex matches it, and a branch's pages are found from its own page:\nthe Reference's chapters from its index, which still lists them all.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T02:34:03-05:00",
+          "tree_id": "7476c3a0ebd50ff266603715ad97905aa2f09219",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ca11f20b488c6306ea145914a7835f6f53d44ca4"
+        },
+        "date": 1795851491963,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
