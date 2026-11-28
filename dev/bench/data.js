@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795842567211,
+  "lastUpdate": 1795842571130,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -779377,6 +779377,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/e092809a0a07292c8e0223ad5e5aaa4585d5e9fc"
         },
         "date": 1795841629209,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "472ce7ab72bce1822f9c38395717810bd04fc0af",
+          "message": "Cut the crate's docs into Reference chapters\n\n`pnpm gen:reference` cuts the rendered `sci_cream::docs` page into\nthe chapters `docs/_chapters.json` lists, for the app's Reference at\n`/docs/reference/`. Links between chapters go to the route of the\nchapter owning their anchor, API links to the hosted rustdoc, and\nfootnotes are renumbered per chapter. A heading the manifest doesn't\naccount for, or an anchor no chapter owns, is a hard error.\n\nThe package serves the chapters through their own entry,\n`./reference`, keeping their HTML out of client bundles; the main\nentry's `referenceAnchorUrl` links into them. `gen:all`,\n`build:package`, and CI's `gen_check` run it after `gen:data`, which\nbuilds the docs it reads.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T00:01:12-05:00",
+          "tree_id": "ac0634300f6f7a02ab4f2b7df315eaa38f8cf2b4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/472ce7ab72bce1822f9c38395717810bd04fc0af"
+        },
+        "date": 1795842570353,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
