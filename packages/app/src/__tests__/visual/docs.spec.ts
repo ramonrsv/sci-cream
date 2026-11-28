@@ -11,14 +11,15 @@ import {
 /**
  * Visual coverage for the documentation pages, in both themes.
  *
- * A sample of the routes rather than all of them: the index, a top-level page, a nested one, and
- * `getting-started`, the only docs route carrying a seeded comment.
+ * A sample of the routes rather than all of them: the index, a top-level page, a nested one,
+ * `getting-started`, the only docs route carrying a seeded comment, and the Reference's index and
+ * a chapter with a subheading.
  *
  * The theme comes from `emulateMedia`: `ThemeProvider` runs with `next-themes`' system default, so
  * the colour-scheme preference is what puts the `.dark` class on the root.
  */
 
-/** Generated from the nav manifest rather than served by `[...slug]`, so it mounts no thread. */
+/** The landing page, generated from the nav manifest. */
 const DOCS_INDEX = "/docs";
 
 /** One route under coverage, shot in both themes. */
@@ -28,14 +29,27 @@ interface DocsPageCase {
   url: string;
   /** Snapshot basename; the dark variant appends `-dark`. */
   screenshot: string;
+  /** An index, generated from the nav manifest rather than a page's content: it has no thread. */
+  index?: boolean;
 }
 
 const DOCS_PAGES: DocsPageCase[] = [
-  { name: "docs index", url: DOCS_INDEX, screenshot: "docs-index" },
+  { name: "docs index", url: DOCS_INDEX, screenshot: "docs-index", index: true },
   { name: "overview", url: "/docs/overview", screenshot: "docs-overview" },
   { name: "getting started", url: "/docs/getting-started", screenshot: "docs-getting-started" },
   { name: "other resources", url: "/docs/other-resources", screenshot: "docs-other-resources" },
   { name: "recipes", url: "/docs/other-resources/recipes", screenshot: "docs-recipes" },
+  {
+    name: "reference index",
+    url: "/docs/reference",
+    screenshot: "docs-reference-index",
+    index: true,
+  },
+  {
+    name: "reference chapter",
+    url: "/docs/reference/dairy/milk-proteins",
+    screenshot: "docs-reference-chapter",
+  },
 ];
 
 /**
@@ -48,13 +62,13 @@ const DOCS_PAGES: DocsPageCase[] = [
  * with it. The `.badges` wrapper is a full-width block, so its box is stable. Comment metadata rows
  * are masked for the same reason — their relative timestamps age between runs.
  *
- * Every route but the index mounts a comment thread, which loads after mount; waiting for it before
+ * Every route but an index mounts a comment thread, which loads after mount; waiting for it before
  * measuring the content height keeps the viewport from being sized to a page that is about to grow.
  */
 async function shootDocsPage(page: Page, doc: DocsPageCase, dark: boolean) {
   if (dark) await page.emulateMedia({ colorScheme: "dark" });
   await goToPageAndWaitFor(page, doc.url);
-  if (doc.url !== DOCS_INDEX) await waitForCommentThread(page);
+  if (!doc.index) await waitForCommentThread(page);
   await setViewportHeightForAllAppContentScreenshot(page);
   await expect(page).toHaveScreenshot(`${doc.screenshot}${dark ? "-dark" : ""}.png`, {
     mask: [page.locator(".badges"), ...commentMetaMask(page)],

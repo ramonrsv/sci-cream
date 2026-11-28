@@ -202,6 +202,9 @@ describe("fetchComments", () => {
     ["a forged type", { type: "recipe", key: "overview" }],
     ["a path traversal attempt", { type: "docs", key: "../../etc/passwd" }],
     ["an empty key", { type: "docs", key: "" }],
+    ["an unknown Reference chapter", { type: "docs", key: "reference/no-such-chapter" }],
+    ["the Reference's index, which mounts no thread", { type: "docs", key: "reference" }],
+    ["a Reference chapter under another type", { type: "blog", key: "reference/dairy" }],
   ])("refuses %s", async (_label, subject) => {
     expectRefused(await fetchComments(subject as CommentSubject), CommentError.BadSubject);
   });
@@ -230,6 +233,15 @@ describe("postComment", () => {
 
     const result = await postComment(SUBJECT, "   padded   ");
     expect(result.ok && result.value.body).toBe("padded");
+  });
+
+  // Served from the crate's package rather than `content/docs`, yet a docs page all the same
+  test("stores a comment on a Reference chapter", async () => {
+    const chapter: CommentSubject = { type: "docs", key: "reference/sweeteners/sugars" };
+    signInAs(TEST_USER_A.email);
+
+    expect((await postComment(chapter, "On sugars")).ok).toBe(true);
+    expect(expectOk(await fetchComments(chapter))!.map((c) => c.body)).toEqual(["On sugars"]);
   });
 
   test("rejects an anonymous post", async () => {

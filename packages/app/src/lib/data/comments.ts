@@ -12,10 +12,15 @@ import {
   type CommentJson,
   type CommentResult,
 } from "@/lib/comments/comments";
-import { isCommentSubject, type CommentSubject } from "@/lib/comments/subject";
+import {
+  isCommentSubject,
+  type CommentSubject,
+  type CommentSubjectType,
+} from "@/lib/comments/subject";
 import { makeAction } from "@/lib/data/support/action";
 import { requireAdmin, requireUser } from "@/lib/data/support/session";
 import { db } from "@/lib/database/client";
+import { getReferenceDocsSlugs } from "@/lib/docs-reference";
 import {
   commentReportsTable,
   commentsTable,
@@ -76,10 +81,16 @@ function toCommentJson(row: CommentSelect, authorDisplayName: string): CommentJs
 function isKnownSubject(subject: unknown): subject is CommentSubject {
   if (!isCommentSubject(subject)) return false;
   try {
-    return getMarkdownSlugs(subject.type).includes(subject.key);
+    return subjectKeys(subject.type).includes(subject.key);
   } catch {
     return false;
   }
+}
+
+/** Keys of the pages with a thread of `type`: its markdown pages, plus the Reference's for docs. */
+function subjectKeys(type: CommentSubjectType): string[] {
+  const slugs = getMarkdownSlugs(type);
+  return type === "docs" ? [...slugs, ...getReferenceDocsSlugs()] : slugs;
 }
 
 /**

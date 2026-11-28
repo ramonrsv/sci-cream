@@ -1,7 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import fs from "fs";
 
+import { getReferencePages } from "@/lib/docs-reference";
 import { buildDocsNav, readDocsNavOrder } from "./docs-nav";
+
+// The Reference's pages come from the crate's package, which the filesystem mock doesn't reach
+vi.mock("@/lib/docs-reference", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/docs-reference")>()),
+  getReferencePages: vi.fn(),
+}));
 
 const readFileSyncSpy = vi.spyOn(fs, "readFileSync");
 
@@ -103,5 +110,33 @@ describe("buildDocsNav", () => {
     mockDocs(["missing"], {});
 
     await expect(buildDocsNav()).rejects.toThrow("ENOENT: missing");
+  });
+
+  // `mockDocs` serves no `reference.md`, so reading one would throw
+  it("puts the Reference where the manifest lists it, nesting its chapters by slug", async () => {
+    mockDocs(["overview", "reference", "science"], {
+      overview: page("Overview"),
+      science: page("Science"),
+    });
+    vi.mocked(getReferencePages).mockResolvedValue([
+      { slug: "reference", frontmatter: { title: "Science Reference", description: "In depth" } },
+      { slug: "reference/sweeteners", frontmatter: { title: "Sweeteners" }, headings: [] },
+      { slug: "reference/sweeteners/sugars", frontmatter: { title: "Sugars" }, headings: [] },
+      { slug: "reference/dairy", frontmatter: { title: "Dairy" }, headings: [] },
+    ]);
+
+    const nav = await buildDocsNav();
+    expect(nav.map((node) => node.slug)).toEqual(["overview", "reference", "science"]);
+
+    const reference = nav[1];
+    expect(reference).toMatchObject({ title: "Science Reference", description: "In depth" });
+    expect(reference.headings).toEqual([]);
+    expect(reference.children.map((node) => node.slug)).toEqual([
+      "reference/sweeteners",
+      "reference/dairy",
+    ]);
+    expect(reference.children[0].children.map((node) => node.slug)).toEqual([
+      "reference/sweeteners/sugars",
+    ]);
   });
 });

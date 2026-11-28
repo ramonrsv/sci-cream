@@ -422,7 +422,9 @@ to keep the word. Each file drops only its own directory's word: the batch-build
   `pnpm copy:rustdoc` after rebuilding the crate.
 - **`src/__tests__/seed-assets.ts`** — what `scripts/seed.ts` writes and the suites assert against.
 - **`lib/auth.ts`** — NextAuth v5 (beta) with GitHub + Google OAuth providers.
-- **`app/blog/`**, **`app/docs/`** — markdown-rendered content.
+- **`app/blog/`**, **`app/docs/`** — markdown-rendered content. `app/docs/reference/` serves the
+  crate's Reference instead, its chapters' HTML rendered by `lib/docs-reference.ts`. Its one entry
+  in `content/docs/_nav.json`, `reference`, places it and its chapters in the contents.
 
 #### UI layering pattern
 

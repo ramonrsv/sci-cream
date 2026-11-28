@@ -115,3 +115,52 @@ test.describe("Documentation contents", () => {
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 });
+
+/** The Reference, whose chapters come from the crate's docs rather than `content/docs`. */
+test.describe("Science Reference", () => {
+  /** Nested under Dairy, and with a subheading of its own. */
+  const CHAPTER = "/docs/reference/dairy/milk-proteins";
+
+  test("indexes its chapters at its own route", async ({ page }) => {
+    await goToDocs(page, "/docs/reference");
+    await expect(page.getByRole("heading", { level: 1, name: "Science Reference" })).toBeVisible();
+
+    // The index's link: the contents list Milk Proteins only within Dairy's branch
+    await page.locator(".doc-content").getByRole("link", { name: "Milk Proteins" }).click();
+
+    await expect(page).toHaveURL(/\/docs\/reference\/dairy\/milk-proteins$/);
+    await expect(page.getByRole("heading", { level: 1, name: "Milk Proteins" })).toBeVisible();
+  });
+
+  test("lists the chapter being read under it, with the chapter's headings", async ({ page }) => {
+    await goToDocs(page, CHAPTER);
+    await openContents(page);
+
+    const reference = contents(page)
+      .getByRole("listitem")
+      .filter({ has: page.getByRole("link", { name: "Science Reference", exact: true }) });
+    await expect(reference.getByRole("link", { name: "Milk Proteins" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    await expect(
+      contents(page).getByRole("link", { name: "Crude and True Protein" }),
+    ).toBeVisible();
+  });
+
+  test("follows a link between chapters to its section", async ({ page }) => {
+    await goToDocs(page, "/docs/reference/sweeteners/sugars");
+    await page.locator("article").getByRole("link", { name: "Potere Dolcificante (POD)" }).click();
+
+    await expect(page).toHaveURL(/\/docs\/reference\/sweeteners#pod$/);
+    await expect(page.locator("#pod")).toBeInViewport();
+  });
+
+  // A subject the server refuses shows an uncounted heading, saying comments aren't available
+  test("gives each chapter a comment thread of its own", async ({ page }) => {
+    await goToDocs(page, CHAPTER);
+
+    const thread = page.locator(".comments");
+    await expect(thread.getByRole("heading", { name: /^Comments \(\d+\)$/ })).toBeVisible();
+  });
+});

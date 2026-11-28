@@ -11,6 +11,7 @@ import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkRehype from "remark-rehype";
+import { unified, type PluggableList } from "unified";
 
 /** Root of the authored content tree; `docs`/`blog` sections live directly beneath it. */
 export const CONTENT_ROOT = path.join(process.cwd(), "content");
@@ -41,6 +42,12 @@ export interface MarkdownPage {
   contentHtml?: string;
   /** Headings in document order; present whenever `contentHtml` is. */
   headings?: MarkdownHeading[];
+}
+
+/** A page's body as HTML, and the headings it holds, in document order. */
+export interface RenderedContent {
+  contentHtml: string;
+  headings: MarkdownHeading[];
 }
 
 /**
@@ -226,22 +233,46 @@ export function getMarkdownSummaries(section: string): MarkdownPage[] {
   return sortMarkdownPages(filterOutDrafts(summaries));
 }
 
-/** Read a single markdown file, convert to HTML, and return the result. */
-export async function getMarkdownPage(section: string, slug: string): Promise<MarkdownPage> {
-  const { data, content } = matter(readFileFromContentRoot(section, `${slug}.md`));
-  const headings: MarkdownHeading[] = [];
+/** The rehype stage of every page, markdown or HTML, with `headings` collecting its headings. */
+function rehypePagePlugins(headings: MarkdownHeading[]): PluggableList {
+  return [
+    rehypeInlineSvg,
+    rehypeSlug,
+    [rehypeCollectHeadings, headings],
+    [rehypeAutolinkHeadings, HEADING_PERMALINK],
+    [rehypeStringify, { allowDangerousHtml: true }],
+  ];
+}
 
+/** Render a markdown body to HTML. */
+async function renderMarkdown(markdown: string): Promise<RenderedContent> {
+  const headings: MarkdownHeading[] = [];
   const processed = await remark()
     .use(remarkGfm)
     .use(remarkAlert)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
-    .use(rehypeInlineSvg)
-    .use(rehypeSlug)
-    .use(rehypeCollectHeadings, headings)
-    .use(rehypeAutolinkHeadings, HEADING_PERMALINK)
-    .use(rehypeStringify, { allowDangerousHtml: true })
-    .process(content);
+    .use(rehypePagePlugins(headings))
+    .process(markdown);
 
-  return { slug, frontmatter: data as Frontmatter, contentHtml: processed.toString(), headings };
+  return { contentHtml: processed.toString(), headings };
+}
+
+/**
+ * Render an HTML fragment as a page, through the rehype stage a markdown page runs once it is HTML.
+ *
+ * `rehype-slug` keeps the ids headings already carry, so links to them still land.
+ */
+export async function renderHtml(html: string): Promise<RenderedContent> {
+  const headings: MarkdownHeading[] = [];
+  const processor = unified().use(rehypePagePlugins(headings));
+  const tree = await processor.run(fromHtml(html, { fragment: true }));
+
+  return { contentHtml: String(processor.stringify(tree)), headings };
+}
+
+/** Read a single markdown file, convert to HTML, and return the result. */
+export async function getMarkdownPage(section: string, slug: string): Promise<MarkdownPage> {
+  const { data, content } = matter(readFileFromContentRoot(section, `${slug}.md`));
+  return { slug, frontmatter: data as Frontmatter, ...(await renderMarkdown(content)) };
 }

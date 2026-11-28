@@ -125,6 +125,9 @@ importers:
       remark-rehype:
         specifier: ^11.1.2
         version: 11.1.2
+      unified:
+        specifier: ^11.0.5
+        version: 11.0.5
       vitest-canvas-mock:
         specifier: ^1.2.0
         version: 1.2.0(vitest@4.1.12)

@@ -25,18 +25,19 @@ function node(
   return { slug, title, description, headings: [], children };
 }
 
+/** The index of `nav` under the docs landing page's title, for cases about its entries. */
+function renderIndex(nav: DocsNavNode[]) {
+  return render(<DocsIndex title="Documentation" nav={nav} />);
+}
+
 describe("DocsIndex", () => {
   it("links every page at its own route", () => {
-    render(
-      <DocsIndex
-        nav={[
-          node("background", "Background"),
-          node("other-resources", "Other Resources", undefined, [
-            node("other-resources/science", "Science"),
-          ]),
-        ]}
-      />,
-    );
+    renderIndex([
+      node("background", "Background"),
+      node("other-resources", "Other Resources", undefined, [
+        node("other-resources/science", "Science"),
+      ]),
+    ]);
 
     expect(screen.getByRole("link", { name: "Background" })).toHaveAttribute(
       "href",
@@ -50,36 +51,65 @@ describe("DocsIndex", () => {
 
   // The blurbs come from frontmatter, so the index cannot drift from the pages it lists
   it("shows each page's description", () => {
-    render(<DocsIndex nav={[node("background", "Background", "Where it began")]} />);
+    renderIndex([node("background", "Background", "Where it began")]);
 
     expect(screen.getByText("Where it began")).toBeInTheDocument();
   });
 
   it("omits the description when a page has none", () => {
-    const { container } = render(<DocsIndex nav={[node("background", "Background")]} />);
+    const { container } = renderIndex([node("background", "Background")]);
 
     expect(container.querySelectorAll("p")).toHaveLength(0);
   });
 
   it("nests a child page inside its parent's entry", () => {
-    render(
-      <DocsIndex
-        nav={[
-          node("other-resources", "Other Resources", undefined, [
-            node("other-resources/science", "Science"),
-          ]),
-        ]}
-      />,
-    );
+    renderIndex([
+      node("other-resources", "Other Resources", undefined, [
+        node("other-resources/science", "Science"),
+      ]),
+    ]);
 
     const parent = screen.getByRole("link", { name: "Other Resources" }).closest("li")!;
     expect(within(parent).getByRole("link", { name: "Science" })).toBeInTheDocument();
   });
 
-  it("renders a single heading, the page's own", () => {
-    const { container } = render(<DocsIndex nav={[node("background", "Background")]} />);
+  // The Reference's chapters nest two deep under it in the docs index
+  it("nests a grandchild inside its parent's entry, in turn inside its own parent's", () => {
+    renderIndex([
+      node("reference", "Science Reference", undefined, [
+        node("reference/sweeteners", "Sweeteners", undefined, [
+          node("reference/sweeteners/sugars", "Sugars"),
+        ]),
+      ]),
+    ]);
+
+    const parent = screen.getByRole("link", { name: "Sweeteners" }).closest("li")!;
+    const grandparent = screen.getByRole("link", { name: "Science Reference" }).closest("li")!;
+    expect(within(parent).getByRole("link", { name: "Sugars" })).toBeInTheDocument();
+    expect(grandparent.contains(parent)).toBe(true);
+  });
+
+  it("renders a single heading, the title it was given", () => {
+    const { container } = render(
+      <DocsIndex title="Science Reference" nav={[node("reference/dairy", "Dairy")]} />,
+    );
 
     expect(container.querySelectorAll("h1")).toHaveLength(1);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Documentation");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Science Reference");
+  });
+
+  it("leads with the description it was given, before the first entry", () => {
+    render(
+      <DocsIndex
+        title="Science Reference"
+        description="In-depth ice cream science."
+        nav={[node("reference/dairy", "Dairy", "Milk fat and MSNF.")]}
+      />,
+    );
+
+    const lead = screen.getByText("In-depth ice cream science.");
+    const entry = screen.getByText("Milk fat and MSNF.");
+    expect(lead.compareDocumentPosition(entry) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(lead.closest("li")).toBeNull();
   });
 });

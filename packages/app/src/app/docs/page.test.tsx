@@ -11,8 +11,10 @@ vi.mock("@/lib/docs-nav", async (importOriginal) => ({
 }));
 
 vi.mock("@/app/_components/docs-index", () => ({
-  DocsIndex: ({ nav }: { nav: DocsNavNode[] }) => (
-    <div data-testid="docs-index">{nav.map((node) => node.slug).join(",")}</div>
+  DocsIndex: ({ title, nav }: { title: string; nav: DocsNavNode[] }) => (
+    <div data-testid="docs-index" data-title={title}>
+      {nav.map((node) => node.slug).join(",")}
+    </div>
   ),
 }));
 
@@ -29,7 +31,7 @@ describe("metadata", () => {
 });
 
 describe("DocsPage", () => {
-  it("renders the index from the nav tree", async () => {
+  it("renders the index from the nav tree, under the metadata's title", async () => {
     vi.mocked(getDocsNav).mockResolvedValue([
       { slug: "background", title: "Background", headings: [], children: [] },
       { slug: "overview", title: "Overview", headings: [], children: [] },
@@ -38,5 +40,6 @@ describe("DocsPage", () => {
     render(await DocsPage());
 
     expect(screen.getByTestId("docs-index")).toHaveTextContent("background,overview");
+    expect(screen.getByTestId("docs-index")).toHaveAttribute("data-title", "Documentation");
   });
 });

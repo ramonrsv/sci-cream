@@ -7,6 +7,7 @@ import {
   filterOutDrafts,
   getMarkdownSummaries,
   getMarkdownPage,
+  renderHtml,
   type MarkdownPage,
 } from "./markdown";
 
@@ -313,6 +314,59 @@ describe("getMarkdownPage headings", () => {
     // The permalink is in the HTML, but its `#` never reached the text: collection ran first
     expect(page.contentHtml).toContain('<a class="heading-permalink"');
     expect(page.headings?.every((heading) => !heading.text.includes("#"))).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// renderHtml
+// ---------------------------------------------------------------------------
+
+/** The permalink `renderHtml` appends to the heading with id `id`. */
+const permalink = (id: string) =>
+  `<a class="heading-permalink" aria-label="Permalink to this section" href="#${id}">#</a>`;
+
+describe("renderHtml", () => {
+  // Links between the Reference's chapters land on the ids rustdoc gave their headings
+  it("keeps the ids headings carry, and collects them", async () => {
+    const { contentHtml, headings } = await renderHtml(
+      '<h1 id="sugars">Sugars</h1><h2 id="pod">Potere Dolcificante (POD)</h2>',
+    );
+
+    expect(contentHtml).toBe(
+      `<h1 id="sugars">Sugars${permalink("sugars")}</h1>` +
+        `<h2 id="pod">Potere Dolcificante (POD)${permalink("pod")}</h2>`,
+    );
+    expect(headings).toEqual([
+      { id: "sugars", text: "Sugars", level: 1 },
+      { id: "pod", text: "Potere Dolcificante (POD)", level: 2 },
+    ]);
+  });
+
+  it("gives a heading without an id one, as for markdown", async () => {
+    const { contentHtml, headings } = await renderHtml("<h2>My Section</h2>");
+
+    expect(contentHtml).toBe(`<h2 id="my-section">My Section${permalink("my-section")}</h2>`);
+    expect(headings).toEqual([{ id: "my-section", text: "My Section", level: 2 }]);
+  });
+
+  it("flattens inline markup in the heading text", async () => {
+    const { headings } = await renderHtml(
+      '<h2 id="sweetness-values">Sweetness <code>Values</code></h2>',
+    );
+
+    expect(headings).toEqual([{ id: "sweetness-values", text: "Sweetness Values", level: 2 }]);
+  });
+
+  it("leaves the rest of the markup as it was", async () => {
+    const html =
+      '<p>Tracked in <a href="/rustdoc/sci_cream/x.html" title="struct sci_cream::X">' +
+      '<code>X</code></a>, cited<sup id="fnref1"><a href="#fn1">1</a></sup>.</p>';
+
+    expect(await renderHtml(html)).toEqual({ contentHtml: html, headings: [] });
+  });
+
+  it("returns empty HTML for an empty fragment, adding no document around it", async () => {
+    expect(await renderHtml("")).toEqual({ contentHtml: "", headings: [] });
   });
 });
 

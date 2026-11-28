@@ -1,7 +1,7 @@
 import type { MarkdownPage } from "@/lib/markdown";
 
 interface Props {
-  /** Page to render, as returned by `getMarkdownPage`. */
+  /** Page to render, as returned by `getMarkdownPage` or `getReferencePage`. */
   page: MarkdownPage;
 }
 
