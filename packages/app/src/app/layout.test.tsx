@@ -144,10 +144,16 @@ describe("RootLayout", () => {
 
 describe("metadata", () => {
   it("has the correct title", () => {
-    expect(metadata.title).toBe("Ice Cream Calculator");
+    expect(metadata.title).toEqual({
+      default: "Sci-Cream | Ice Cream Calculator & Science",
+      template: "%s | Sci-Cream",
+    });
   });
 
   it("has a description", () => {
-    expect(metadata.description).toBe("A simple ice cream calculator");
+    expect(metadata.description).toBe(
+      "Ice cream recipe software: auto-balance mixes, predict sweetness and texture, compare and " +
+        "share recipes, plus science docs and an open-source library.",
+    );
   });
 });

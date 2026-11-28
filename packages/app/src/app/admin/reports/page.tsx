@@ -8,10 +8,7 @@ import { requireAdmin } from "@/lib/data/support/session";
 export const dynamic = "force-dynamic";
 
 /** Keep the moderation surface out of search indexes, as with `share/embed`. */
-export const metadata: Metadata = {
-  title: "Reported Comments — Ice Cream Calculator",
-  robots: { index: false },
-};
+export const metadata: Metadata = { title: "Reported Comments", robots: { index: false } };
 
 /**
  * Comment moderation, for admins only.

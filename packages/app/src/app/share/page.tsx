@@ -7,7 +7,7 @@ import { ShareViewer } from "@/app/_components/recipe-share-viewer";
  * never sent to the server, so per-recipe previews are not possible with stateless links.
  */
 export const metadata: Metadata = {
-  title: "Shared Recipe — Ice Cream Calculator",
+  title: "Shared Recipe",
   description: "A recipe shared from the Sci-Cream ice cream calculator",
 };
 

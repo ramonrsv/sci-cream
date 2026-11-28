@@ -3,10 +3,7 @@ import type { Metadata } from "next";
 import { ShareViewer } from "@/app/_components/recipe-share-viewer";
 
 /** Embed variants exist to live inside third-party iframes; keep them out of search indexes. */
-export const metadata: Metadata = {
-  title: "Shared Recipe — Ice Cream Calculator",
-  robots: { index: false },
-};
+export const metadata: Metadata = { title: "Shared Recipe", robots: { index: false } };
 
 /**
  * Iframe-friendly share viewer: same payload format as `/share`, minimal chrome (the navbar shell

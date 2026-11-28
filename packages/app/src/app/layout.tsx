@@ -17,8 +17,10 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 /** Next.js metadata for the application */
 export const metadata: Metadata = {
-  title: "Ice Cream Calculator",
-  description: "A simple ice cream calculator",
+  title: { default: "Sci-Cream | Ice Cream Calculator & Science", template: "%s | Sci-Cream" },
+  description:
+    "Ice cream recipe software: auto-balance mixes, predict sweetness and texture, compare and " +
+    "share recipes, plus science docs and an open-source library.",
 };
 
 /** Root layout: sets up fonts, session, theme, navbar, and observability providers */
