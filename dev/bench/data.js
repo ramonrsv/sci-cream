@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795861766166,
+  "lastUpdate": 1795861770093,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -783922,6 +783922,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/127936f1496e22025e130b85d6b6f9a27a613b2b"
         },
         "date": 1795861561839,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 253.97,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "94b8e1f80a28581d0c77875eb6905843196c9d53",
+          "message": "Open in-app links in place, client-side\n\nLinks that the app shell renders now open in place, as Next `Link`s,\nin notes and in the ingredient panel's spec doc links, which opened\nevery link in a new tab. Client-side navigation keeps a page's\nretained state, so coming back from a Reference chapter finds the\nsame ingredient selected. Other sites and the hosted rustdoc still\nopen in a new tab; `lib/links.ts` holds the one rule for both.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T05:11:40-05:00",
+          "tree_id": "bceb710fe2714d32df24ea9ad039d459eb87764c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/94b8e1f80a28581d0c77875eb6905843196c9d53"
+        },
+        "date": 1795861769275,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
