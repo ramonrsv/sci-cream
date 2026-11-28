@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795869460253,
+  "lastUpdate": 1795869469718,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -637567,6 +637567,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 454.25,
             "range": "16.35",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a5fdc003b7e3657a598cf10018ab934645e03332",
+          "message": "Give each note's footnotes ids of their own\n\nGFM derives a footnote's ids from its label, so two notes on a page\nciting the same source shared them, as an entry's notes and its\nfile's intro do for 19 built-in entries. The notes' citations and\nback-links then went to the intro, opening it. Each Markdown now\nprefixes its footnote ids with its own useId().\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T06:24:37-05:00",
+          "tree_id": "471656cdceb6b37cc7f986ffc3df5cb6ecc94f27",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a5fdc003b7e3657a598cf10018ab934645e03332"
+        },
+        "date": 1795869387578,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 39.25,
+            "range": "1.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 46.5,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 46.5,
+            "range": "3.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2031.13,
+            "range": "24.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 314.38,
+            "range": "4.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 319.38,
+            "range": "4.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 328.63,
+            "range": "5.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15735.63,
+            "range": "70.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.5,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 764.5,
+            "range": "20.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 49,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 47.5,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.5,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 34.75,
+            "range": "1.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 117,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 75.25,
+            "range": "3.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 49.59,
+            "range": "0.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 35.48,
+            "range": "0.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 573,
+            "range": "34.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 609.5,
+            "range": "25.58",
             "unit": "ms"
           }
         ]
