@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795842577598,
+  "lastUpdate": 1795842736451,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -767948,6 +767948,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.88,
             "range": "0.36",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "472ce7ab72bce1822f9c38395717810bd04fc0af",
+          "message": "Cut the crate's docs into Reference chapters\n\n`pnpm gen:reference` cuts the rendered `sci_cream::docs` page into\nthe chapters `docs/_chapters.json` lists, for the app's Reference at\n`/docs/reference/`. Links between chapters go to the route of the\nchapter owning their anchor, API links to the hosted rustdoc, and\nfootnotes are renumbered per chapter. A heading the manifest doesn't\naccount for, or an anchor no chapter owns, is a hard error.\n\nThe package serves the chapters through their own entry,\n`./reference`, keeping their HTML out of client bundles; the main\nentry's `referenceAnchorUrl` links into them. `gen:all`,\n`build:package`, and CI's `gen_check` run it after `gen:data`, which\nbuilds the docs it reads.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T00:01:12-05:00",
+          "tree_id": "ac0634300f6f7a02ab4f2b7df315eaa38f8cf2b4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/472ce7ab72bce1822f9c38395717810bd04fc0af"
+        },
+        "date": 1795842636715,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 72.61,
+            "range": "6.05",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 19.09,
+            "range": "4.26",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 19.07,
+            "range": "4.23",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 193.5,
+            "range": "12.16",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 193.5,
+            "range": "12.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 68.61,
+            "range": "5.98",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.16,
+            "range": "0.51",
             "unit": "ms"
           }
         ]
