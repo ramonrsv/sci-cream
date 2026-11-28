@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -22,6 +23,8 @@ const LINK_CLASS = "text-blue-500 hover:underline dark:text-blue-400";
  * points at. Applied to every caller rather than via props, so new public surface cannot forget it.
  */
 export function Markdown({ text, className = "" }: { text: string; className?: string }) {
+  // Footnote ids come from their labels, so each Markdown on a page needs a prefix of its own
+  const footnotePrefix = `${useId()}-`;
   return (
     // `relative` contains the footnotes' `sr-only` heading, which is absolute:
     // past the bottom of a scrolling ancestor, it would otherwise stretch the page to reach it
@@ -30,6 +33,7 @@ export function Markdown({ text, className = "" }: { text: string; className?: s
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        remarkRehypeOptions={{ clobberPrefix: footnotePrefix }}
         components={{
           // Footnotes link back by id, so other attributes pass on; `node` is react-markdown's own
           // eslint-disable-next-line @typescript-eslint/no-unused-vars

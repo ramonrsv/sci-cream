@@ -119,4 +119,21 @@ describe("Markdown footnotes", () => {
 
     expect(screen.getByRole("link", { name: "1" })).toHaveAccessibleDescription("Footnotes");
   });
+
+  it("links each note's footnotes within it, though two cite the same label", () => {
+    const { container } = render(
+      <>
+        <Markdown text={TEXT} />
+        <Markdown text={TEXT} />
+      </>,
+    );
+
+    // Each note's citation and back-link
+    expect(container.querySelectorAll("a")).toHaveLength(4);
+    for (const note of container.children) {
+      for (const link of note.querySelectorAll("a")) {
+        expect(note).toContainElement(document.getElementById(link.hash.slice(1)));
+      }
+    }
+  });
 });
