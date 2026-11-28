@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795862268706,
+  "lastUpdate": 1795862375311,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -635953,6 +635953,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 562.63,
             "range": "26.67",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "94b8e1f80a28581d0c77875eb6905843196c9d53",
+          "message": "Open in-app links in place, client-side\n\nLinks that the app shell renders now open in place, as Next `Link`s,\nin notes and in the ingredient panel's spec doc links, which opened\nevery link in a new tab. Client-side navigation keeps a page's\nretained state, so coming back from a Reference chapter finds the\nsame ingredient selected. Other sites and the hosted rustdoc still\nopen in a new tab; `lib/links.ts` holds the one rule for both.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T05:11:40-05:00",
+          "tree_id": "bceb710fe2714d32df24ea9ad039d459eb87764c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/94b8e1f80a28581d0c77875eb6905843196c9d53"
+        },
+        "date": 1795862305805,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 27.88,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 35.25,
+            "range": "2.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 40.88,
+            "range": "2.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1460.38,
+            "range": "30.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 257.88,
+            "range": "2.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 266.75,
+            "range": "2.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 273.75,
+            "range": "3.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 13050.5,
+            "range": "90.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 15.35,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 693.5,
+            "range": "10.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 42.25,
+            "range": "1.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 39.38,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 34.25,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 26.5,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 99.5,
+            "range": "4.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 45.75,
+            "range": "5.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 32.01,
+            "range": "0.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 23.1,
+            "range": "0.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 477.63,
+            "range": "20.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 490.5,
+            "range": "17.07",
             "unit": "ms"
           }
         ]
