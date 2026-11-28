@@ -12,7 +12,12 @@ export const metadata: Metadata = {
   description: "Index of the Sci-Cream documentation.",
 };
 
-/** Docs landing page, generated from the nav manifest; every page is served at its own route. */
+/**
+ * Docs landing page, generated from the nav manifest: the top-level pages only, as the sidebar
+ * lists them outside any branch. A branch's pages are found from its own page.
+ */
 export default async function DocsPage() {
-  return <DocsIndex title={TITLE} nav={await getDocsNav()} />;
+  // New nodes, as the layout's sidebar shares the cached tree
+  const topLevel = (await getDocsNav()).map((node) => ({ ...node, children: [] }));
+  return <DocsIndex title={TITLE} nav={topLevel} />;
 }
