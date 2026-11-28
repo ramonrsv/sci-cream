@@ -31,10 +31,12 @@ export function Markdown({ text, className = "" }: { text: string; className?: s
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          a: ({ href, children }) => {
+          // Footnotes link back by id, so other attributes pass on; `node` is react-markdown's own
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          a: ({ node, href, children, ...attributes }) => {
             if (href !== undefined && isAppRoute(href)) {
               return (
-                <Link href={href} className={LINK_CLASS}>
+                <Link {...attributes} href={href} className={LINK_CLASS}>
                   {children}
                 </Link>
               );
@@ -42,6 +44,7 @@ export function Markdown({ text, className = "" }: { text: string; className?: s
             const newTab = href !== undefined && opensInNewTab(href);
             return (
               <a
+                {...attributes}
                 href={href}
                 {...(newTab ? { target: "_blank", rel: "noopener noreferrer ugc nofollow" } : {})}
                 className={LINK_CLASS}

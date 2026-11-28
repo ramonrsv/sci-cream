@@ -127,9 +127,10 @@ describe("buildReference", () => {
   test("links a footnote back to each of its chapter's citations, as rustdoc does", () => {
     const sweet = chapter("sweet");
     expect(sweet).toContain('<sup id="fnref1-2"><a href="#fn1">1</a></sup>');
+    // Plain spaces between backrefs, not rustdoc's no-break ones, let a long run wrap
     expect(sweet).toContain(
       '<li id="fn1"><p>One.\u00a0<a href="#fnref1">↩\u00a0<sup>1</sup></a>' +
-        '\u00a0<sup><a href="#fnref1-2">2</a></sup></p></li>',
+        ' <sup><a href="#fnref1-2">2</a></sup></p></li>',
     );
     // Cited twice on the page, but once in this chapter
     expect(sweet).toContain('<li id="fn2"><p>Two.\u00a0<a href="#fnref2">↩</a></p></li>');

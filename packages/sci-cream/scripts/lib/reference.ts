@@ -145,11 +145,14 @@ function withoutBackrefs(item: HtmlNode): HtmlNode[] {
   });
 }
 
-/** Links back from footnote `n` to its `count` citations, as rustdoc writes them. */
+/**
+ * Links back from footnote `n` to its `count` citations, as rustdoc writes them but for plain
+ * spaces between them, so a long run can wrap.
+ */
 function backrefs(n: number, count: number): HtmlNode[] {
   if (count === 1) return [text("\u00a0"), element("a", { href: `#fnref${n}` }, [text("↩")])];
   const rest = Array.from({ length: count - 1 }, (_, i) => [
-    text("\u00a0"),
+    text(" "),
     element("sup", {}, [element("a", { href: `#fnref${n}-${i + 2}` }, [text(String(i + 2))])]),
   ]);
   return [

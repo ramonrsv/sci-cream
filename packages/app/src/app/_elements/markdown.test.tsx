@@ -101,3 +101,22 @@ describe("Markdown links", () => {
     expect(link).not.toHaveAttribute("target");
   });
 });
+
+describe("Markdown footnotes", () => {
+  const TEXT = "Sweet[^1].\n\n[^1]: Sugar.";
+
+  afterEach(() => cleanup());
+
+  it("links a footnote back to its citation", () => {
+    render(<Markdown text={TEXT} />);
+
+    const back = screen.getByRole("link", { name: "Back to reference 1" });
+    expect(back).toHaveAttribute("href", `#${screen.getByRole("link", { name: "1" }).id}`);
+  });
+
+  it("describes a citation by the footnotes' heading", () => {
+    render(<Markdown text={TEXT} />);
+
+    expect(screen.getByRole("link", { name: "1" })).toHaveAccessibleDescription("Footnotes");
+  });
+});
