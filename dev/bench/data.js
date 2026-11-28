@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795841718515,
+  "lastUpdate": 1795841764473,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -766917,6 +766917,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.82,
             "range": "0.63",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e092809a0a07292c8e0223ad5e5aaa4585d5e9fc",
+          "message": "Stop notes' footnotes from stretching the page\n\nGFM footnotes come with a visually hidden heading, which sr-only\npositions absolutely. Nothing inside the detail panels is positioned,\nso the heading escaped their scrolling, and the page grew to reach\nit: past the viewport for long notes, and far past it with a long\nfile intro open. Markdown's root is now relative, which contains it.\n\nA visual test opens Corvitto's intro, checks the page can't scroll,\nand captures the open \"About\" row with the intro's first paragraph.\n\nCLAUDE.md writes \"About <title>\" as a code span, so markdownlint no\nlonger reads its <title> as HTML.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T21:29:40-05:00",
+          "tree_id": "719ba7deee8be086d5682ec45c121d724a512616",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e092809a0a07292c8e0223ad5e5aaa4585d5e9fc"
+        },
+        "date": 1795841684078,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.81,
+            "range": "2.49",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 16.68,
+            "range": "0.82",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 16.63,
+            "range": "0.84",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 157,
+            "range": "3.87",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 157,
+            "range": "3.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.09,
+            "range": "2.46",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.88,
+            "range": "0.36",
             "unit": "ms"
           }
         ]
