@@ -67,11 +67,16 @@ interface ItemProps {
   onNavigate: () => void;
 }
 
-/** A page link, its headings when it is the page being read, then the pages nested under it. */
+/**
+ * A page link, its headings when it is the page being read, then the pages nested under it when
+ * the page being read is it or one beneath it: a branch not being read takes one line.
+ */
 function NavItem({ node, pathname, activeId, onNavigate }: ItemProps) {
   const href = docsHref(node.slug);
   // Exact, not `startsWith`: `/docs/other-resources` would otherwise match its own child pages.
   const current = pathname === href;
+  // The trailing `/` keeps `/docs/other` from opening for `/docs/other-resources`
+  const open = current || pathname.startsWith(`${href}/`);
 
   return (
     <li>
@@ -86,7 +91,7 @@ function NavItem({ node, pathname, activeId, onNavigate }: ItemProps) {
       {current && (
         <HeadingList headings={node.headings} activeId={activeId} onNavigate={onNavigate} />
       )}
-      {node.children.length > 0 && (
+      {open && node.children.length > 0 && (
         <ul className={`${NEST_CLASS} flex flex-col`}>
           {node.children.map((child) => (
             <NavItem
@@ -109,7 +114,8 @@ interface Props {
 }
 
 /**
- * Table of contents for the docs section: every page, plus the current page's headings.
+ * Table of contents for the docs section: the top-level pages, the pages of the branch being read,
+ * and the current page's headings.
  *
  * A rail beside the article at `md+`, a collapsible bar above it below that.
  */

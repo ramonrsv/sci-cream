@@ -56,6 +56,21 @@ function sampleNav(): DocsNavNode[] {
   ];
 }
 
+/** A nav node without headings, for cases about which pages are listed. */
+function navNode(slug: string, title: string, children: DocsNavNode[] = []): DocsNavNode {
+  return { slug, title, headings: [], children };
+}
+
+/** A page with two child pages, each with one of its own: branches two levels deep. */
+function deepNav(): DocsNavNode[] {
+  return [
+    navNode("hub", "Hub", [
+      navNode("hub/topic", "Topic", [navNode("hub/topic/detail", "Detail")]),
+      navNode("hub/side", "Side", [navNode("hub/side/aside", "Aside")]),
+    ]),
+  ];
+}
+
 beforeEach(() => {
   mockPathname = "/docs";
 });
@@ -63,7 +78,8 @@ beforeEach(() => {
 afterEach(() => cleanup());
 
 describe("DocsToc", () => {
-  it("links every page in the tree, nested pages included", () => {
+  it("links every top-level page, and the nested pages of the branch being read", () => {
+    mockPathname = "/docs/other-resources";
     render(<DocsToc nav={sampleNav()} />);
 
     expect(screen.getByRole("link", { name: "Overview" })).toHaveAttribute(
@@ -130,11 +146,40 @@ describe("DocsToc", () => {
   });
 
   it("nests a child page under its parent's entry", () => {
+    mockPathname = "/docs/other-resources";
     render(<DocsToc nav={sampleNav()} />);
 
     const parent = screen.getByRole("link", { name: "Other Resources" }).closest("li");
     expect(parent).not.toBeNull();
     expect(within(parent!).getByRole("link", { name: "Science" })).toBeInTheDocument();
+  });
+
+  it.each([
+    ["the generated index", "/docs"],
+    ["a page in another branch", "/docs/overview"],
+  ])("leaves a page's nested pages out on %s", (_label, pathname) => {
+    mockPathname = pathname;
+    render(<DocsToc nav={sampleNav()} />);
+
+    expect(screen.getByRole("link", { name: "Other Resources" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Science" })).toBeNull();
+  });
+
+  it("opens every level of the branch being read, and no other branch", () => {
+    mockPathname = "/docs/hub/topic/detail";
+    render(<DocsToc nav={deepNav()} />);
+
+    expect(screen.getByRole("link", { name: "Detail" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Side" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Aside" })).toBeNull();
+  });
+
+  it("opens no branch whose route merely prefixes the one being read", () => {
+    mockPathname = "/docs/hub-notes";
+    render(<DocsToc nav={[...deepNav(), navNode("hub-notes", "Hub Notes")]} />);
+
+    expect(screen.getByRole("link", { name: "Hub Notes" })).toHaveAttribute("aria-current", "page");
+    expect(screen.queryByRole("link", { name: "Topic" })).toBeNull();
   });
 
   it("starts the mobile list collapsed and expands it on toggle", async () => {

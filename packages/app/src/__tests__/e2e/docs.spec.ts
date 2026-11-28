@@ -52,6 +52,19 @@ test.describe("Documentation contents", () => {
     await expect(contents(page).locator("[aria-current]")).toHaveCount(1);
   });
 
+  test("lists a page's nested pages only within its branch", async ({ page }) => {
+    await goToDocs(page, "/docs/overview");
+    await openContents(page);
+    const recipes = contents(page).getByRole("link", { name: "Recipes", exact: true });
+    await expect(recipes).toHaveCount(0);
+
+    await contents(page).getByRole("link", { name: "Other Resources" }).click();
+
+    await expect(page).toHaveURL(/\/docs\/other-resources$/);
+    await openContents(page);
+    await expect(recipes).toBeVisible();
+  });
+
   test("lists the headings of the page being read, and no others", async ({ page }) => {
     await goToDocs(page, "/docs/other-resources");
     await openContents(page);
