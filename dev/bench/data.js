@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795851497202,
+  "lastUpdate": 1795851554986,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -681259,6 +681259,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.90%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ca11f20b488c6306ea145914a7835f6f53d44ca4",
+          "message": "List only top-level pages on the docs index\n\nThe docs index listed every page, nested ones included, while the\nsidebar now lists only the top-level pages outside a branch. The\nindex matches it, and a branch's pages are found from its own page:\nthe Reference's chapters from its index, which still lists them all.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T02:34:03-05:00",
+          "tree_id": "7476c3a0ebd50ff266603715ad97905aa2f09219",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ca11f20b488c6306ea145914a7835f6f53d44ca4"
+        },
+        "date": 1795851473936,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74565,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 552313,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 50310,
+            "range": "±2.00%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 407745,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
