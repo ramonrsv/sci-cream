@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795826094441,
+  "lastUpdate": 1795826338218,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -630304,6 +630304,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 504.38,
             "range": "14.95",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "454efbeb5c57692082c2ec70f29175a3ecdc71ff",
+          "message": "Show a built-in entry's file intro in its panel\n\nThe ingredient and recipe detail panels show the intro of the data\nfile a built-in entry comes from above the entry's own notes, as an\n\"About <title>\" disclosure that starts collapsed for each entry.\nSaved entries never show one.\n\nThe <code> group visual test checks the whole panel, as a .prose\nlocator there also matches the intro's, collapsed or not.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T18:51:41-05:00",
+          "tree_id": "e48f3b65d2ec45c6ec5921a81cba5e19ca97fe61",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/454efbeb5c57692082c2ec70f29175a3ecdc71ff"
+        },
+        "date": 1795826260461,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 37.88,
+            "range": "3.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 40.63,
+            "range": "4.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 44,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1817.63,
+            "range": "60.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 302.88,
+            "range": "3.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 316.13,
+            "range": "4.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 324.25,
+            "range": "6.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15711.88,
+            "range": "66.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.5,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 728.38,
+            "range": "18.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.88,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 47.13,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 32.88,
+            "range": "1.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 114,
+            "range": "5.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 60.5,
+            "range": "6.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 40.8,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.45,
+            "range": "0.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 527.38,
+            "range": "21.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 582.63,
+            "range": "35.99",
             "unit": "ms"
           }
         ]
