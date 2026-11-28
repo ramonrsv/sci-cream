@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795825685882,
+  "lastUpdate": 1795825766300,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -765886,6 +765886,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 4.16,
             "range": "0.42",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "454efbeb5c57692082c2ec70f29175a3ecdc71ff",
+          "message": "Show a built-in entry's file intro in its panel\n\nThe ingredient and recipe detail panels show the intro of the data\nfile a built-in entry comes from above the entry's own notes, as an\n\"About <title>\" disclosure that starts collapsed for each entry.\nSaved entries never show one.\n\nThe <code> group visual test checks the whole panel, as a .prose\nlocator there also matches the intro's, collapsed or not.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T18:51:41-05:00",
+          "tree_id": "e48f3b65d2ec45c6ec5921a81cba5e19ca97fe61",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/454efbeb5c57692082c2ec70f29175a3ecdc71ff"
+        },
+        "date": 1795825676445,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 71.8,
+            "range": "8.08",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 20.01,
+            "range": "4.43",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 19.96,
+            "range": "4.41",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 180.5,
+            "range": "8.59",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 180.5,
+            "range": "8.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 67.57,
+            "range": "8.09",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.82,
+            "range": "0.63",
             "unit": "ms"
           }
         ]
