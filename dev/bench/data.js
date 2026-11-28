@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795861775564,
+  "lastUpdate": 1795861837576,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -772296,6 +772296,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.85,
             "range": "0.81",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "94b8e1f80a28581d0c77875eb6905843196c9d53",
+          "message": "Open in-app links in place, client-side\n\nLinks that the app shell renders now open in place, as Next `Link`s,\nin notes and in the ingredient panel's spec doc links, which opened\nevery link in a new tab. Client-side navigation keeps a page's\nretained state, so coming back from a Reference chapter finds the\nsame ingredient selected. Other sites and the hosted rustdoc still\nopen in a new tab; `lib/links.ts` holds the one rule for both.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T05:11:40-05:00",
+          "tree_id": "bceb710fe2714d32df24ea9ad039d459eb87764c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/94b8e1f80a28581d0c77875eb6905843196c9d53"
+        },
+        "date": 1795861745586,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 73.13,
+            "range": "6.41",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 22.07,
+            "range": "6.13",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 22.01,
+            "range": "6.13",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 184.5,
+            "range": "8.11",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 184.5,
+            "range": "8.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 67.19,
+            "range": "6.11",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 4.76,
+            "range": "0.48",
             "unit": "ms"
           }
         ]
