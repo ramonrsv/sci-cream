@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795821511583,
+  "lastUpdate": 1795825642763,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -676964,6 +676964,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.09%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "454efbeb5c57692082c2ec70f29175a3ecdc71ff",
+          "message": "Show a built-in entry's file intro in its panel\n\nThe ingredient and recipe detail panels show the intro of the data\nfile a built-in entry comes from above the entry's own notes, as an\n\"About <title>\" disclosure that starts collapsed for each entry.\nSaved entries never show one.\n\nThe <code> group visual test checks the whole panel, as a .prose\nlocator there also matches the intro's, collapsed or not.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-27T18:51:41-05:00",
+          "tree_id": "e48f3b65d2ec45c6ec5921a81cba5e19ca97fe61",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/454efbeb5c57692082c2ec70f29175a3ecdc71ff"
+        },
+        "date": 1795825586243,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 98243,
+            "range": "±2.45%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 760646,
+            "range": "±1.81%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 60716,
+            "range": "±1.13%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 545103,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
