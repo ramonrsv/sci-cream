@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795861562704,
+  "lastUpdate": 1795861585082,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -772072,6 +772072,84 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 5.15,
             "range": "0.60",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "127936f1496e22025e130b85d6b6f9a27a613b2b",
+          "message": "Point links to the crate's docs into the Reference\n\nLinks to an anchor on the crate's `docs` page went to the hosted\nrustdoc; they now go to the Reference chapter that owns the anchor.\n\n- gen-data maps the data notes' 18 such links with the Reference's\n  anchor index, cut from the docs it builds just as `gen:reference`\n  cuts it. An anchor no chapter owns is an error.\n- The app's spec-docs chapter links come from `referenceAnchorUrl`,\n  and `GUIDE_CHAPTERS` becomes `REFERENCE_CHAPTERS`.\n- The docs pages' and the welcome post's six \"knowledge base\" links go\n  to `/docs/reference`.\n\nThe content links and spec-docs tests resolve Reference routes against\nthe chapters' ids.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T05:05:13-05:00",
+          "tree_id": "f662f8a06102b5f94be2f4f08a19183726a65767",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/127936f1496e22025e130b85d6b6f9a27a613b2b"
+        },
+        "date": 1795861527121,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 50.74,
+            "range": "7.42",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 16.96,
+            "range": "4.50",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 16.9,
+            "range": "4.52",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 122.5,
+            "range": "11.12",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 122.5,
+            "range": "11.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 47.5,
+            "range": "6.47",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.85,
+            "range": "0.81",
             "unit": "ms"
           }
         ]
