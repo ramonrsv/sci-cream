@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795869237144,
+  "lastUpdate": 1795869360850,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -636760,6 +636760,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 490.5,
             "range": "17.07",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "31b9a3f32c61cf5b106912a01c14d6c14a3bfb98",
+          "message": "Brand the site title and expand its description\n\nSet the root title to \"Sci-Cream | Ice Cream Calculator & Science\"\nwith a \"%s | Sci-Cream\" template for pages that set their own, and\nreplace the placeholder description with one sized for search\nsnippets (150 characters).\n\nDrop the \"— Ice Cream Calculator\" suffix from the share, embed, and\nreported-comments titles, which the template now supplies.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T06:24:37-05:00",
+          "tree_id": "c10db4682582449e11048dcd8e21ab9916bb44aa",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/31b9a3f32c61cf5b106912a01c14d6c14a3bfb98"
+        },
+        "date": 1795869304961,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 26.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 28.75,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 34.63,
+            "range": "2.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1321.75,
+            "range": "52.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 211.25,
+            "range": "2.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 213.25,
+            "range": "3.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 227.13,
+            "range": "4.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 10958.63,
+            "range": "72.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 15.35,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 669.13,
+            "range": "8.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 35.63,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 34.75,
+            "range": "1.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 27.63,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 24.13,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 87.38,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 41.13,
+            "range": "1.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 28.85,
+            "range": "0.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 20.64,
+            "range": "0.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 436.13,
+            "range": "19.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 454.25,
+            "range": "16.35",
             "unit": "ms"
           }
         ]
