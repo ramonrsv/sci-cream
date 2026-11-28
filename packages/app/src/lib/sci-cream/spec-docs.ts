@@ -1,4 +1,11 @@
-import { isSpecEntryAlias, specEntryName, type SpecEntryJson } from "@workspace/sci-cream";
+import {
+  isSpecEntryAlias,
+  referenceAnchorUrl,
+  specEntryName,
+  type SpecEntryJson,
+} from "@workspace/sci-cream";
+
+import { verifyDefined } from "@/lib/util";
 
 /** The crate's rustdoc, which the app hosts for the build it deploys. */
 const DOCS_BASE = "/rustdoc/sci_cream";
@@ -7,7 +14,7 @@ const DOCS_BASE = "/rustdoc/sci_cream";
 export interface SpecDocLink {
   /** Link text */
   label: string;
-  /** A page of the hosted rustdoc */
+  /** A page of the hosted rustdoc, or a chapter of the Reference */
   href: string;
 }
 
@@ -36,10 +43,10 @@ const SPEC_TYPE_PAGES: Readonly<Record<string, string>> = {
 };
 
 /**
- * Chapters of the crate's guide (`sci_cream::docs`), keyed by the anchor rustdoc derives from the
- * heading. Add a chapter here first, then point a {@link SPEC_DOC_RULES} rule at it.
+ * Chapters and sections of the Reference (`sci_cream::docs`), keyed by their headings' anchors.
+ * Add one here first, then point a {@link SPEC_DOC_RULES} rule at it.
  */
-const GUIDE_CHAPTERS = {
+const REFERENCE_CHAPTERS = {
   sweeteners: "Sweeteners",
   sugars: "Sugars",
   polyols: "Polyols",
@@ -55,15 +62,22 @@ const GUIDE_CHAPTERS = {
   cocoa: "Cocoa",
 } as const satisfies Record<string, string>;
 
-/** Anchor of a chapter in {@link GUIDE_CHAPTERS} */
-type GuideChapter = keyof typeof GUIDE_CHAPTERS;
+/** Anchor of a chapter, or section, in {@link REFERENCE_CHAPTERS} */
+type ReferenceAnchor = keyof typeof REFERENCE_CHAPTERS;
 
-/** Adds guide chapters to an entry's links when {@link SpecDocRule.when} matches it */
+/** The Reference's route to `anchor`, from the anchors its chapters define */
+function referenceHref(anchor: ReferenceAnchor): string {
+  const href = referenceAnchorUrl(anchor);
+  verifyDefined(href, `No chapter of the Reference defines #${anchor}`);
+  return href;
+}
+
+/** Adds Reference chapters to an entry's links when {@link SpecDocRule.when} matches it */
 interface SpecDocRule {
   /** `kind` is the entry's spec type name, as keyed in {@link SPEC_TYPE_PAGES} */
   when: (entry: SpecEntryJson, kind: string | undefined) => boolean;
   /** Chapters to link, in order; repeats across matching rules are dropped */
-  chapters: readonly GuideChapter[];
+  chapters: readonly ReferenceAnchor[];
 }
 
 /** Matches entries of any of the given spec types */
@@ -91,8 +105,8 @@ function nameMatches(pattern: RegExp): SpecDocRule["when"] {
 }
 
 /**
- * Which guide chapters each entry gets, beyond its spec type's own page. Rules are independent and
- * additive — every match contributes — so a new heuristic is one more entry in this list.
+ * Which Reference chapters each entry gets, beyond its spec type's own page. Rules are independent
+ * and additive — every match contributes — so a new heuristic is one more entry in this list.
  */
 const SPEC_DOC_RULES: readonly SpecDocRule[] = [
   { when: ofKind("ChocolateSpec", "CocoaPowderSpec", "ChocolateLabelSpec"), chapters: ["cocoa"] },
@@ -121,8 +135,8 @@ export function specKindOf(entry: SpecEntryJson): string | undefined {
 }
 
 /**
- * Documentation links for an entry: its spec type's rustdoc page, then the guide chapters every
- * matching {@link SPEC_DOC_RULES} rule contributes. Empty for an unrecognized spec type.
+ * Documentation links for an entry: its spec type's rustdoc page, then the Reference chapters
+ * every matching {@link SPEC_DOC_RULES} rule contributes. Empty for an unrecognized spec type.
  */
 export function specDocLinks(entry: SpecEntryJson): SpecDocLink[] {
   const kind = specKindOf(entry);
@@ -136,8 +150,8 @@ export function specDocLinks(entry: SpecEntryJson): SpecDocLink[] {
   return [
     { label: kind, href: `${DOCS_BASE}/${page}` },
     ...[...new Set(chapters)].map((anchor) => ({
-      label: GUIDE_CHAPTERS[anchor],
-      href: `${DOCS_BASE}/docs/index.html#${anchor}`,
+      label: REFERENCE_CHAPTERS[anchor],
+      href: referenceHref(anchor),
     })),
   ];
 }

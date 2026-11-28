@@ -1,6 +1,12 @@
 import { describe, expect, test } from "vitest";
 
-import { type Reference, type ReferenceManifest, buildReference, readReference } from "./reference";
+import {
+  type Reference,
+  type ReferenceManifest,
+  buildReference,
+  readReference,
+  referenceUrl,
+} from "./reference";
 import { docblockOf, footnotesOf } from "./rustdoc-html";
 
 const PAGE = "sci_cream/docs/index.html";
@@ -170,6 +176,40 @@ describe("buildReference", () => {
   });
 });
 
+describe("referenceUrl", () => {
+  /** Two anchors of one chapter: its heading's, at its route, and a subheading's. */
+  const reference = {
+    root: "/docs/reference",
+    anchors: { sweet: "/docs/reference/sweet", pod: "/docs/reference/sweet#pod" },
+  };
+  const docsPage = `/rustdoc/${PAGE}`;
+
+  test("sends a link to an anchor on the docs page to the chapter owning it", () => {
+    expect(referenceUrl(`${docsPage}#pod`, reference)).toBe("/docs/reference/sweet#pod");
+    expect(referenceUrl(`${docsPage}#sweet`, reference)).toBe("/docs/reference/sweet");
+  });
+
+  test("sends a link to the docs page itself to the root", () => {
+    expect(referenceUrl(docsPage, reference)).toBe("/docs/reference");
+  });
+
+  test("leaves a link to any other page as it is", () => {
+    for (const url of [
+      "/rustdoc/sci_cream/composition/struct.Sugars.html",
+      "/rustdoc/sci_cream/docs/ingredients/index.html#pod",
+      "https://example.org/docs/index.html#pod",
+    ]) {
+      expect(referenceUrl(url, reference)).toBe(url);
+    }
+  });
+
+  test("throws for an anchor no chapter owns", () => {
+    expect(() => referenceUrl(`${docsPage}#contents`, reference)).toThrow(
+      `No chapter of the Reference owns the anchor of ${docsPage}#contents`,
+    );
+  });
+});
+
 describe("the crate's Reference", () => {
   let built: Reference | undefined;
   /** The Reference cut from the rendered docs, which `pnpm doc:site` writes. */
@@ -197,6 +237,26 @@ describe("the crate's Reference", () => {
         expect(urls.has(href), `${slug} links to ${href}`).toBe(true);
       }
     }
+  });
+
+  test("defines the anchors the app's spec-docs links to", () => {
+    /** Mirrors `REFERENCE_CHAPTERS` in the app's `lib/sci-cream/spec-docs.ts`. */
+    const anchors = [
+      "sweeteners",
+      "sugars",
+      "polyols",
+      "artificial-sweeteners",
+      "fibers",
+      "glucose-syrups-and-powders",
+      "dairy",
+      "freezing-point-depression",
+      "pac-afp-fpdf-se",
+      "absolute-pac",
+      "stabilizers",
+      "emulsifiers",
+      "cocoa",
+    ];
+    expect(anchors.filter((anchor) => reference().anchors[anchor] === undefined)).toEqual([]);
   });
 
   test("numbers each chapter's footnotes from 1, defining each it cites", () => {

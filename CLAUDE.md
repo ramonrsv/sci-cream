@@ -275,7 +275,8 @@ with CI's `RUSTDOCFLAGS: -D warnings`, so each one resolves. `lib/doc-links.ts` 
 citation in an entry's comments, or a file's intro, the URL of the n-th intra-doc link rustdoc
 rendered in the same section, under the app's hosted `/rustdoc/`. The two must agree in number and
 text, and each fragment must name an id on its target page, which rustdoc doesn't check; anything
-else is a hard error.
+else is a hard error. A link to an anchor on the `docs` page, such as `crate::docs#pod`, goes to
+the Reference chapter that owns it instead, and an anchor no chapter owns is an error too.
 
 An equation with a linked constant is a `<code>` group, `<code>x * [CONST]</code>`, since clippy's
 `doc_link_code` rejects a code span joined to a code link. The app's `Markdown` prints raw HTML as

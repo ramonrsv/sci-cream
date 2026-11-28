@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { allSpecEntries, getSpecEntryByName } from "@workspace/sci-cream";
 
+import { resolveReferenceLink } from "@/__tests__/unit/reference";
 import { resolveRustdocLink } from "@/__tests__/unit/rustdoc";
 import { specDocLinks, specKindOf } from "@/lib/sci-cream/spec-docs";
 
@@ -64,19 +65,24 @@ describe("specDocLinks", () => {
     expect(labelsFor("Sucrose")).not.toContain("Glucose Syrups");
   });
 
-  test("chapter links target the guide's anchors", () => {
+  test("chapter links go to the Reference, at a section's anchor within its chapter", () => {
     const chocolate = specDocLinks(getSpecEntryByName("70% Dark Chocolate"));
-    expect(chocolate.find((l) => l.label === "Cocoa")?.href).toBe(
-      "/rustdoc/sci_cream/docs/index.html#cocoa",
+    expect(chocolate.find((l) => l.label === "Cocoa")?.href).toBe("/docs/reference/cocoa");
+
+    const sucrose = specDocLinks(getSpecEntryByName("Sucrose"));
+    expect(sucrose.find((l) => l.label === "PAC, AFP, FPDF, SE")?.href).toBe(
+      "/docs/reference/freezing-point-depression#pac-afp-fpdf-se",
     );
   });
 
-  test("every embedded entry's links resolve in the crate's docs build", () => {
+  test("every embedded entry's links resolve, in the crate's docs build or the Reference", () => {
     const hrefs = new Set(
       allSpecEntries.flatMap((entry) => specDocLinks(entry).map((l) => l.href)),
     );
     const broken = [...hrefs].flatMap((href) => {
-      const problem = resolveRustdocLink(href);
+      const problem = href.startsWith("/rustdoc/")
+        ? resolveRustdocLink(href)
+        : resolveReferenceLink(href);
       return problem === undefined ? [] : [`${href}: ${problem}`];
     });
     expect(broken).toEqual([]);

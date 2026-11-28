@@ -3,6 +3,7 @@ import path from "path";
 
 import { describe, it, expect } from "vitest";
 
+import { isReferenceLink, resolveReferenceLink } from "@/__tests__/unit/reference";
 import { resolveRustdocLink } from "@/__tests__/unit/rustdoc";
 import { getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
 
@@ -10,10 +11,10 @@ import { getMarkdownPage, getMarkdownSlugs } from "@/lib/markdown";
 // Internal content links
 //
 // Reads the real `content/docs` and `content/blog` files and resolves every link they author
-// against what the app actually serves: a markdown slug, a public asset, a route directory, or a
-// page of the hosted rustdoc. Fragments resolve against the ids the target renders, so a section
-// rename breaks the links pointing at it. External `http(s)` links are out of scope — checking
-// them needs network.
+// against what the app actually serves: a markdown slug, a public asset, a route directory, a page
+// of the hosted rustdoc, or one of the Reference's. Fragments resolve against the ids the target
+// renders, so a section rename breaks the links pointing at it. External `http(s)` links are out
+// of scope — checking them needs network.
 // ---------------------------------------------------------------------------
 
 const CONTENT_ROOT = path.join(process.cwd(), "content");
@@ -78,6 +79,8 @@ function resolveLink(link: string, content: Content): string | undefined {
   const slug = rest.join("/");
 
   if (segment === "rustdoc") return resolveRustdocLink(link);
+  // Served from the crate's chapters rather than `content/docs`
+  if (isReferenceLink(link)) return resolveReferenceLink(link);
 
   // Any link naming a real file under `public/` is an asset, wherever in that tree it sits —
   // `/images/…` and `/icons/…`, but also the marks served from the root, such as `/logo.svg`.

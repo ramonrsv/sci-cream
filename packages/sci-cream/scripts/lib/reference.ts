@@ -326,6 +326,22 @@ export function readManifest(): ReferenceManifest {
   return JSON.parse(fs.readFileSync(MANIFEST_FILE, "utf8")) as ReferenceManifest;
 }
 
+/**
+ * Where `url`, a site URL as {@link siteUrl} gives it, goes once the docs page is the Reference: a
+ * link into that page goes to the route of the chapter owning its anchor, or without an anchor to
+ * the root. Any other URL stays as it is, and an anchor no chapter owns is an error.
+ */
+export function referenceUrl(url: string, { root, anchors }: Omit<Reference, "chapters">): string {
+  const [target, fragment] = url.split("#");
+  if (target !== `${SITE_ROOT}/${REFERENCE_PAGE}`) return url;
+  if (fragment === undefined) return root;
+  const anchor = anchors[fragment];
+  if (anchor === undefined) {
+    throw new Error(`No chapter of the Reference owns the anchor of ${url}`);
+  }
+  return anchor;
+}
+
 /** {@link buildReference} from the crate's rendered docs, checking its API links' fragments too. */
 export function readReference(): Reference {
   const { reference, apiLinks } = buildReference(

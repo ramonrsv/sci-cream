@@ -7,9 +7,11 @@
  * `docs` module page, in the order it's written, so the n-th citation found here takes the URL of
  * the n-th intra-doc link rustdoc rendered in the same section. The two must agree in number and
  * text: a disagreement means this scan read the markdown differently from rustdoc, so it fails
- * rather than write a wrong URL.
+ * rather than write a wrong URL. A link into the crate's own `docs` page, such as
+ * `crate::docs#pod`, takes the app's route to the Reference chapter that owns the anchor instead.
  */
 import { CODE_FENCE, CODE_SPAN, blank } from "./markdown-code";
+import { referenceUrl, type Reference } from "./reference";
 import {
   brokenAnchors,
   readDocblock,
@@ -151,13 +153,20 @@ export interface DataPageLinks {
  * Each file intro's and entry's rendered intra-doc links, from a data directory's page.
  *
  * A data file's `#` title renders as an `h2` and each `##` entry as an `h3`, whose section runs to
- * the next heading of either, so an `h2`'s section is the file's intro. A link to an anchor its
- * target page lacks is an error here.
+ * the next heading of either, so an `h2`'s section is the file's intro. A link into the `docs`
+ * page goes to the `reference` chapter owning its anchor ({@link referenceUrl}). A link to an
+ * anchor its target page lacks, or that no chapter owns, is an error here.
  */
-export function readDataPageLinks(page: string): DataPageLinks {
+export function readDataPageLinks(
+  page: string,
+  reference: Omit<Reference, "chapters">,
+): DataPageLinks {
   const sections = splitSections(readDocblock(page), ({ tagName }) =>
     ["h2", "h3"].includes(tagName ?? ""),
   );
+
+  /** A rendered link where the app serves its target. */
+  const served = (link: RenderedLink) => ({ ...link, url: referenceUrl(link.url, reference) });
 
   const links: DataPageLinks = { intros: new Map(), entries: new Map() };
   for (const { heading, title, nodes } of sections) {
@@ -165,7 +174,7 @@ export function readDataPageLinks(page: string): DataPageLinks {
       heading.tagName === "h2" ? [links.intros, "files"] : [links.entries, "entries"];
     const name = comparable(title);
     if (map.has(name)) throw new Error(`${page} renders two ${kind} titled '${title}'`);
-    map.set(name, renderedLinks(page, nodes));
+    map.set(name, renderedLinks(page, nodes).map(served));
   }
 
   const broken = brokenAnchors([...links.intros.values(), ...links.entries.values()].flat());

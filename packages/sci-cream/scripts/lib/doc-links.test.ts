@@ -10,6 +10,7 @@ import {
   pairDocLinks,
   readDataPageLinks,
 } from "./doc-links";
+import { REFERENCE_PAGE, type Reference, readReference } from "./reference";
 import { DOC_ROOT, SITE_ROOT, brokenAnchors } from "./rustdoc-html";
 
 const PKG_ROOT = path.resolve(import.meta.dirname, "../..");
@@ -148,10 +149,14 @@ function commentedEntries(dir: string): (Entry & { comments: string })[] {
 }
 
 describe("the rendered docs", () => {
+  let built: Reference | undefined;
+  /** The Reference cut from the same docs, whose chapters the links into its page go to. */
+  const reference = () => (built ??= readReference());
+
   test("pair with every data entry's citations", () => {
     const failures: string[] = [];
     for (const [dir, page] of Object.entries(DATA_PAGES)) {
-      const rendered = readDataPageLinks(page).entries;
+      const rendered = readDataPageLinks(page, reference()).entries;
       for (const entry of commentedEntries(dir)) {
         const label = entryLabel(entry);
         const links = rendered.get(comparable(label));
@@ -173,7 +178,7 @@ describe("the rendered docs", () => {
     const failures: string[] = [];
     let intros = 0;
     for (const [dir, page] of Object.entries(DATA_PAGES)) {
-      const rendered = readDataPageLinks(page).intros;
+      const rendered = readDataPageLinks(page, reference()).intros;
       for (const { title, intro } of dataSources(dir)) {
         if (intro === undefined) continue;
         intros += 1;
@@ -201,12 +206,18 @@ describe("the rendered docs", () => {
     expect(cited.length).toBeGreaterThan(0);
   });
 
-  test("point every intro's and entry's links at a hosted page that exists", () => {
-    const urls = Object.values(DATA_PAGES).flatMap((page) => {
-      const { intros, entries } = readDataPageLinks(page);
+  /** Every intro's and entry's link, where the app serves its target. */
+  const dataLinkUrls = () =>
+    Object.values(DATA_PAGES).flatMap((page) => {
+      const { intros, entries } = readDataPageLinks(page, reference());
       return [...intros.values(), ...entries.values()].flat().map(({ url }) => url);
     });
+
+  test("point every intro's and entry's link at an existing page or Reference route", () => {
+    const routes = new Set([reference().root, ...Object.values(reference().anchors)]);
+    const urls = dataLinkUrls();
     const missing = urls.filter((url) => {
+      if (routes.has(url)) return false;
       if (!url.startsWith(`${SITE_ROOT}/`)) return true;
       const file = url.slice(SITE_ROOT.length + 1).split("#")[0];
       return !fs.existsSync(path.join(DOC_ROOT, file));
@@ -215,32 +226,17 @@ describe("the rendered docs", () => {
     expect(missing).toEqual([]);
   });
 
+  test("send the links into the crate's docs page to the Reference", () => {
+    const urls = dataLinkUrls();
+    const docsPage = `${SITE_ROOT}/${REFERENCE_PAGE}`;
+    expect(urls.filter((url) => url.split("#")[0] === docsPage)).toEqual([]);
+    // Without this the check above passes vacuously should the notes stop citing the docs page
+    expect(urls.some((url) => url.startsWith(`${reference().root}/`))).toBe(true);
+  });
+
   test("report an anchor its page lacks", () => {
     const missing = link("x", `${SITE_ROOT}/sci_cream/docs/index.html#no-such-anchor`);
     const present = link("POD", `${SITE_ROOT}/sci_cream/docs/index.html#pod`);
     expect(brokenAnchors([missing, present])).toEqual([missing]);
-  });
-
-  test("define the guide anchors the app's spec-docs links to", () => {
-    /** Mirrors `GUIDE_CHAPTERS` in the app's `lib/sci-cream/spec-docs.ts`. */
-    const chapters = [
-      "sweeteners",
-      "sugars",
-      "polyols",
-      "artificial-sweeteners",
-      "fibers",
-      "glucose-syrups-and-powders",
-      "dairy",
-      "freezing-point-depression",
-      "pac-afp-fpdf-se",
-      "absolute-pac",
-      "stabilizers",
-      "emulsifiers",
-      "cocoa",
-    ];
-    const links = chapters.map((anchor) =>
-      link(anchor, `${SITE_ROOT}/sci_cream/docs/index.html#${anchor}`),
-    );
-    expect(brokenAnchors(links)).toEqual([]);
   });
 });

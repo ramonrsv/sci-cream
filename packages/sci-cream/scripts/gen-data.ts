@@ -28,9 +28,9 @@
  *
  * Comments and intros also cite crate items the way rustdoc resolves them, e.g.
  * `[POD](crate::docs#pod)`. The app renders them outside rustdoc, where those are dead links, so
- * each is rewritten to the link rustdoc rendered for it on the data's `docs` page, into the app's
- * hosted copy at `/rustdoc/` (`lib/doc-links.ts`). A citation rustdoc didn't render the same way is
- * a hard error.
+ * each is rewritten to the link rustdoc rendered for it on the data's `docs` page: into the app's
+ * hosted copy at `/rustdoc/` (`lib/doc-links.ts`), or into its Reference for an anchor on the
+ * crate's own `docs` page (`lib/reference.ts`). A citation rendered differently is a hard error.
  *
  * The app's renderer prints raw HTML as text, so comments and intros leave out HTML comments, and
  * each `<code>` group, an expression with links, becomes joined code spans (`lib/raw-html.ts`). Any
@@ -51,6 +51,7 @@ import path from "node:path";
 import { entryLabel, parseDataSource } from "./lib/data-entries";
 import { DATA_PAGES, comparable, pairDocLinks, readDataPageLinks } from "./lib/doc-links";
 import { findRawHtml, joinCodeGroups } from "./lib/raw-html";
+import { readReference, type Reference } from "./lib/reference";
 import type { RenderedLink } from "./lib/rustdoc-html";
 
 const PKG_ROOT = path.resolve(import.meta.dirname, "..");
@@ -104,9 +105,13 @@ interface NotesResolver {
 }
 
 /** The {@link NotesResolver} of `dir`, pairing links against the page it renders on. */
-function makeNotesResolver(dir: (typeof SOURCE_DIRS)[number], defs: Map<string, string>) {
+function makeNotesResolver(
+  dir: (typeof SOURCE_DIRS)[number],
+  defs: Map<string, string>,
+  reference: Reference,
+) {
   const page = DATA_PAGES[dir];
-  const rendered = readDataPageLinks(page);
+  const rendered = readDataPageLinks(page, reference);
 
   /** `markdown`, named `label` in errors, given `links`, the ones rustdoc rendered for it. */
   const resolve = (label: string, markdown: string, links: RenderedLink[] | undefined): string => {
@@ -134,10 +139,11 @@ function makeNotesResolver(dir: (typeof SOURCE_DIRS)[number], defs: Map<string, 
 function generate(kinds: ReadonlySet<Kind>): Map<string, string> {
   /** The `full` inputs, loaded once — and only for `full`, since `min` precedes the docs build. */
   const defs = kinds.has("full") ? loadFootnoteDefs() : undefined;
+  const reference = kinds.has("full") ? readReference() : undefined;
   const outputs = new Map<string, string>();
 
   for (const dir of SOURCE_DIRS) {
-    const resolver = defs === undefined ? undefined : makeNotesResolver(dir, defs);
+    const resolver = defs && reference ? makeNotesResolver(dir, defs, reference) : undefined;
     const base = path.join(PKG_ROOT, "data", dir);
     const sources = fs
       .readdirSync(base)

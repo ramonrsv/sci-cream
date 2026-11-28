@@ -20,8 +20,8 @@ and my own journey in ice cream making:
   cream science calculations powering this app.
 - [This app](/docs/overview#sci-cream-app), including an [ice cream calculator](/calculator),
   [ingredient](/ingredients) and [recipe](/recipes) databases, and other tools.
-- Ice cream science knowledge base: [reference knowledge](/rustdoc/sci_cream/docs/index.html) from
-  the crate, and a less rigorous [supplemental collection](/docs/science) here.
+- Ice cream science knowledge base: [reference knowledge](/docs/reference) from the crate, and a
+  less rigorous [supplemental collection](/docs/science) here.
 - A [blog](/blog) where I share that journey: experiments, lessons learned, recipes, this project,
   etc.
 

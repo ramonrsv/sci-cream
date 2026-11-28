@@ -232,7 +232,7 @@ describe("IngredientSearch", () => {
       expect(tree.textContent).not.toContain("_source");
     });
 
-    it("links the spec type and its guide chapters to the crate docs", () => {
+    it("links the spec type to the crate docs, and its chapters to the Reference", () => {
       const { container } = render(<IngredientSearch savedSpecs={[savedFructose]} />);
       fireEvent.click(screen.getByRole("button", { name: /Fructose/ }));
       const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
@@ -247,7 +247,7 @@ describe("IngredientSearch", () => {
 
       expect(within(detailPanel).getByRole("link", { name: "Sweeteners" })).toHaveAttribute(
         "href",
-        "/rustdoc/sci_cream/docs/index.html#sweeteners",
+        "/docs/reference/sweeteners",
       );
     });
 
