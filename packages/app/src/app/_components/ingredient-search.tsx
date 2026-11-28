@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { JsonView } from "react-json-view-lite";
 
 import {
@@ -22,6 +23,7 @@ import { STORAGE_KEYS } from "@/lib/storage-keys";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm";
 import { STATE_VAL } from "@/lib/util";
 import { JSON_VIEW_PROPS } from "@/lib/styles/json-view";
+import { isAppRoute } from "@/lib/links";
 import { specDocLinks } from "@/lib/sci-cream/spec-docs";
 import { FileIntro } from "@/app/_elements/file-intro";
 import { Markdown } from "@/app/_elements/markdown";
@@ -63,24 +65,36 @@ function displayEntry(entry: Tagged<SpecEntryJson>): object {
   return display;
 }
 
-/** Crate documentation for the entry's spec type and the topics it involves; empty if unmapped */
+/** Link styling for {@link SpecDocLinks}, which renders both kinds of link */
+const SPEC_DOC_LINK_CLASS = "text-blue-500 hover:underline dark:text-blue-400";
+
+/**
+ * Crate documentation for the entry's spec type and the topics it involves; empty if unmapped.
+ * The spec type's rustdoc page opens in a new tab, and the Reference's chapters in place.
+ */
 function SpecDocLinks({ entry }: { entry: SpecEntryJson }) {
   const links = specDocLinks(entry);
   if (links.length === 0) return null;
 
   return (
     <p className="text-secondary mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
-      {links.map(({ label, href }) => (
-        <a
-          key={href}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 hover:underline dark:text-blue-400"
-        >
-          {label}
-        </a>
-      ))}
+      {links.map(({ label, href }) =>
+        isAppRoute(href) ? (
+          <Link key={href} href={href} className={SPEC_DOC_LINK_CLASS}>
+            {label}
+          </Link>
+        ) : (
+          <a
+            key={href}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={SPEC_DOC_LINK_CLASS}
+          >
+            {label}
+          </a>
+        ),
+      )}
     </p>
   );
 }

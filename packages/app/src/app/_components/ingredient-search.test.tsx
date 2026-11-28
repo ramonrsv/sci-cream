@@ -245,10 +245,10 @@ describe("IngredientSearch", () => {
       expect(typeLink).toHaveAttribute("target", "_blank");
       expect(typeLink).toHaveAttribute("rel", "noopener noreferrer");
 
-      expect(within(detailPanel).getByRole("link", { name: "Sweeteners" })).toHaveAttribute(
-        "href",
-        "/docs/reference/sweeteners",
-      );
+      // The Reference is in the app shell, so its chapters open in place, unlike the rustdoc page
+      const chapterLink = within(detailPanel).getByRole("link", { name: "Sweeteners" });
+      expect(chapterLink).toHaveAttribute("href", "/docs/reference/sweeteners");
+      expect(chapterLink).not.toHaveAttribute("target");
     });
 
     it("renders the CompositionView alongside the JSON spec", () => {

@@ -1,16 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { isAppRoute, opensInNewTab } from "@/lib/links";
 import { leafKey } from "@/lib/storage-keys";
+
+/** Link styling, the same whether a link is a Next `Link` or a plain anchor. */
+const LINK_CLASS = "text-blue-500 hover:underline dark:text-blue-400";
 
 /**
  * Read-only markdown renderer for comments and notes. Supports GFM (tables, task lists, footnotes,
  * autolinks) via `remark-gfm`. Raw HTML is not rendered (react-markdown's safe default), so user
- * text can't inject markup. External links open in a new tab, as do links into the hosted rustdoc,
- * which is static pages outside the app; in-app links stay in place.
+ * text can't inject markup. Links leaving the app shell, to another site or the hosted rustdoc,
+ * open in a new tab; an in-app route opens in place, as a `Link` (`lib/links.ts`).
  *
  * Outbound links carry `ugc nofollow` alongside `noopener noreferrer`: this renders public comment
  * threads as well as private notes, and untrusted text must not pass link equity to whatever it
@@ -27,12 +32,19 @@ export function Markdown({ text, className = "" }: { text: string; className?: s
         remarkPlugins={[remarkGfm]}
         components={{
           a: ({ href, children }) => {
-            const newTab = /^https?:\/\//.test(href ?? "") || (href ?? "").startsWith("/rustdoc/");
+            if (href !== undefined && isAppRoute(href)) {
+              return (
+                <Link href={href} className={LINK_CLASS}>
+                  {children}
+                </Link>
+              );
+            }
+            const newTab = href !== undefined && opensInNewTab(href);
             return (
               <a
                 href={href}
                 {...(newTab ? { target: "_blank", rel: "noopener noreferrer ugc nofollow" } : {})}
-                className="text-blue-500 hover:underline dark:text-blue-400"
+                className={LINK_CLASS}
               >
                 {children}
               </a>

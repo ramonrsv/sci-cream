@@ -91,4 +91,13 @@ describe("Markdown links", () => {
     expect(link).not.toHaveAttribute("target");
     expect(link).not.toHaveAttribute("rel");
   });
+
+  // The Reference is the app's own, unlike the hosted rustdoc that notes linked to before it
+  it("opens a link into the Reference in place, anchor and all", () => {
+    render(<Markdown text="[POD](/docs/reference/sweeteners#pod)" />);
+
+    const link = screen.getByRole("link", { name: "POD" });
+    expect(link).toHaveAttribute("href", "/docs/reference/sweeteners#pod");
+    expect(link).not.toHaveAttribute("target");
+  });
 });
