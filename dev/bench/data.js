@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795868974909,
+  "lastUpdate": 1795869025109,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -804432,6 +804432,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/a5fdc003b7e3657a598cf10018ab934645e03332"
         },
         "date": 1795868712964,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1249.28,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 371.77,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 2059.33,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 622,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 97.88,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.69,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 704.76,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 2411.23,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "31b9a3f32c61cf5b106912a01c14d6c14a3bfb98",
+          "message": "Brand the site title and expand its description\n\nSet the root title to \"Sci-Cream | Ice Cream Calculator & Science\"\nwith a \"%s | Sci-Cream\" template for pages that set their own, and\nreplace the placeholder description with one sized for search\nsnippets (150 characters).\n\nDrop the \"— Ice Cream Calculator\" suffix from the share, embed, and\nreported-comments titles, which the template now supplies.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-28T06:24:37-05:00",
+          "tree_id": "c10db4682582449e11048dcd8e21ab9916bb44aa",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/31b9a3f32c61cf5b106912a01c14d6c14a3bfb98"
+        },
+        "date": 1795868921191,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
